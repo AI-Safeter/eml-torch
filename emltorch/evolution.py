@@ -168,8 +168,42 @@ def _crossover_(tree: BatchedEMLTree, dst: torch.Tensor,
             logits[dst] = mixed
 
 
+def _seed_from_shallower_(
+    deep_tree: BatchedEMLTree,
+    seed_slots: torch.Tensor,
+    src_tree: BatchedEMLTree,
+    src_idx: int,
+):
+    """Place src_tree[src_idx] (depth d-1) into the left-subtree slot of
+    deep_tree's `seed_slots` (depth d).
+
+    The left subtree at depth d occupies the first 2^(d-2) leaves and the
+    first 2^(d-1-l) nodes of internal level l (for l = 2 .. d-1).
+    The root internal node + right subtree are left as their random init —
+    evolution explores how to combine the warm-started subtree.
+    """
+    with torch.no_grad():
+        n_prev_leaves = src_tree.leaf_logits.shape[1]
+        # Sanity check: prev leaves should equal half of deep's leaves
+        assert deep_tree.leaf_logits.shape[1] == 2 * n_prev_leaves, \
+            f"Depth mismatch: deep {deep_tree.leaf_logits.shape[1]} vs 2*src {2*n_prev_leaves}"
+
+        src_leaf = src_tree.leaf_logits.data[src_idx]             # (L_prev, 2, C)
+        deep_tree.leaf_logits.data[seed_slots, :n_prev_leaves] = src_leaf
+
+        for lvl_idx, src_lg in enumerate(src_tree.internal_logits):
+            src_block = src_lg.data[src_idx]                      # (n_nodes_src, 2, C)
+            n_src_nodes = src_block.shape[0]
+            deep_tree.internal_logits[lvl_idx].data[
+                seed_slots, :n_src_nodes
+            ] = src_block
+
+
 def evolve(x: torch.Tensor, y: torch.Tensor, cfg: EvolutionConfig,
-           var_names: list[str] | None = None) -> EvolutionResult:
+           var_names: list[str] | None = None,
+           seed_tree: BatchedEMLTree | None = None,
+           seed_idx: int | None = None,
+           seed_fraction: float = 0.2) -> EvolutionResult:
     """
     Run evolutionary search for y ≈ EML(x).
 
@@ -203,6 +237,18 @@ def evolve(x: torch.Tensor, y: torch.Tensor, cfg: EvolutionConfig,
         init_scale=50.0, init_mode="peaked",
     )
     _snap_peaked(tree)
+
+    # Warm-start: seed a fraction of the population with `seed_tree[seed_idx]`
+    # placed in the left-subtree slot (depth d-1 embedded into depth d).
+    if seed_tree is not None and seed_idx is not None:
+        n_seed = max(1, int(cfg.population * seed_fraction))
+        seed_slots = torch.arange(n_seed, device=device)
+        _seed_from_shallower_(tree, seed_slots, seed_tree, seed_idx)
+        # Diversify: mutate a single edge on all but the first seed
+        if n_seed > 1:
+            _mutate_(tree, seed_slots[1:], n_mutations=1)
+        print(f"[evo] seeded {n_seed}/{cfg.population} from shallower tree "
+              f"(depth {seed_tree.depth} → {cfg.depth})")
 
     n_elite = max(1, int(cfg.population * cfg.elite_fraction))
     generation_r2s = []
