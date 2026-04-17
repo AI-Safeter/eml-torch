@@ -267,6 +267,18 @@ def polish(
         with torch.no_grad():
             fixed.constants.copy_(best_state["constants"])
 
+    # Safeguard: never return a polish that made things worse than warm-start.
+    # If best_mse tracking got polluted (NaN/inf interference), revert.
+    import math as _math
+    if not _math.isfinite(best_mse) or best_mse > initial_mse:
+        with torch.no_grad():
+            fixed.constants.fill_(1.0)
+        best_state = {
+            "constants": fixed.constants.detach().clone(),
+            "a": warm_a,
+            "b": warm_b,
+        }
+
     # Final eval
     with torch.no_grad():
         pred = fixed(x_dev)
