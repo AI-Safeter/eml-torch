@@ -284,6 +284,20 @@ def polish(
         pred = fixed(x_dev)
         fit = best_state["a"] + best_state["b"] * pred
         final_mse = (fit - y_dev).pow(2).mean().item()
+
+    # Second safeguard: post-restoration MSE can differ from tracked best_mse
+    # when constants are large (numerical drift). Fall back if final > initial.
+    if not _math.isfinite(final_mse) or final_mse > initial_mse:
+        with torch.no_grad():
+            fixed.constants.fill_(1.0)
+            pred = fixed(x_dev)
+            fit = warm_a + warm_b * pred
+            final_mse = (fit - y_dev).pow(2).mean().item()
+        best_state = {
+            "constants": fixed.constants.detach().clone(),
+            "a": warm_a,
+            "b": warm_b,
+        }
         ss_tot = ((y_dev - y_dev.mean()).pow(2).sum()).item()
         r2 = 1 - final_mse * N / max(ss_tot, 1e-12)
 
