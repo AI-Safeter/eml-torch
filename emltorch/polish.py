@@ -24,7 +24,7 @@ import torch
 import torch.nn as nn
 
 from .operator import safe_eml
-from .tree import BatchedEMLTree
+from .tree import BatchedEMLTree, build_base, enumerate_combos, num_combos
 
 
 @dataclass
@@ -109,20 +109,21 @@ class _FixedTopologyTree(nn.Module):
         """
         Map one (node, input) choice to its actual value tensor at this forward.
 
-        choice_idx: int — the stored discrete choice for this position
-        flat_idx_tensor: (nodes, 2) — where the learnable constant index lives
-        base_vals: (C_base, N) — values of {1, x_1, ..., x_V} (C_base = V+1)
-        child_val: (N,) or None — f_child output (None if leaf-level)
+        Choice layout (0-indexed):
+            0                           -> learnable constant (was '1')
+            1 .. V                      -> x_v
+            V+1 .. V+K                  -> combo v (K = num_combos(V))
+            V+K+1                       -> f_child (internal nodes only)
         """
+        V = self.num_vars
+        K = base_vals.shape[0] - 1 - V              # combo count from base width
         if choice_idx == 0:
-            # Use the learnable constant for this (node, input)
             c_idx = int(flat_idx_tensor[node_i, input_i].item())
             const_val = self.constants[c_idx]
-            # Broadcast to (N,)
             return const_val.expand(base_vals.shape[-1])
-        if 1 <= choice_idx <= self.num_vars:
-            return base_vals[choice_idx]       # (N,)
-        # choice_idx == V+1 → f_child
+        if choice_idx <= V + K:
+            return base_vals[choice_idx]
+        # f_child
         assert child_val is not None
         return child_val
 
@@ -133,8 +134,10 @@ class _FixedTopologyTree(nn.Module):
         """
         V, N = x.shape
         assert V == self.num_vars
-        ones = torch.ones(1, N, dtype=self.dtype, device=x.device)
-        base = torch.cat([ones, x.to(self.dtype)], dim=0)    # (V+1, N)
+        # Use the shared base builder. build_base expects (B, V, N); we run
+        # polish single-batch so B=1, then squeeze.
+        base = build_base(x.to(self.dtype).unsqueeze(0), V, self.dtype).squeeze(0)
+        # base: (C_base, N) where C_base = 1 + V + num_combos(V)
 
         # Leaf level — evaluate all leaves
         leaf_outputs = []
@@ -327,6 +330,13 @@ def _format_with_constants(
 ):
     """Recursively format the tree with learned constants in place of '1' slots."""
     V = len(var_names)
+    combos = enumerate_combos(V)
+    K = len(combos)
+
+    def combo_str(k: int) -> str:
+        op, i, j = combos[k]
+        sym = "+" if op == "add" else "-"
+        return f"({var_names[i]} {sym} {var_names[j]})"
 
     def choice_str(idx, flat_idx_tensor, node, input_side, child_str):
         if idx == 0:
@@ -334,6 +344,8 @@ def _format_with_constants(
             return f"{constants[k]:.4f}"
         if 1 <= idx <= V:
             return var_names[idx - 1]
+        if idx <= V + K:
+            return combo_str(idx - V - 1)
         return child_str
 
     def leaf_expr(leaf_idx):

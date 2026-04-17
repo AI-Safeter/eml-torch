@@ -4,21 +4,77 @@ Batched EML tree module for GPU-parallel symbolic regression.
 Simultaneously evaluates B independent depth-d EML trees on GPU, where
 each tree is a perfect binary tree of eml(x, y) = exp(x) - ln(y) nodes.
 
-Node inputs are soft-selected from {1, x_1, ..., x_V [, f_child]} via
-softmax over learned logits. After training, logits are snapped to argmax
-for exact symbolic expressions.
+Node inputs are soft-selected from a base choice set via softmax over
+learned logits. After training, logits are snapped to argmax for exact
+symbolic expressions.
 
-Architecture (depth d):
-    Leaf EML nodes:     2^(d-1) nodes, inputs select from {1, x_1, ..., x_V}
-    Internal EML nodes: 2^(d-1)-1 nodes, inputs select from {1, x_1, ..., x_V, f_child}
-    Total EML nodes:    2^d - 1
-    Parameters/tree:    2*(V+1)*2^(d-1) + 2*(V+2)*(2^(d-1)-1)  (for V variables)
+Base choice set per input slot:
+    leaf:     {1, x_1, ..., x_V, <combos>}
+    internal: {1, x_1, ..., x_V, <combos>, f_child}
+
+Combos (active only when V >= 2) encode 2-variable linear pre-features:
+    x_i + x_j  for each unordered pair i<j                (V*(V-1)/2 entries)
+    x_i - x_j  for each ordered pair i!=j                 (V*(V-1) entries)
+
+These unblock 2-variable targets like softmax[0] = sigmoid(x_1 - x_2),
+which otherwise require an external linear stage before the EML tree.
 """
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from .operator import safe_eml
+
+
+def enumerate_combos(num_vars: int) -> list[tuple[str, int, int]]:
+    """Return the ordered list of (op, i, j) combos active for V variables.
+
+    op is 'add' or 'sub'; indices i, j are 0-based variable indices.
+    Empty when V < 2. The order here defines the choice-index mapping used
+    everywhere (tree forward, symbolic, polish).
+    """
+    combos: list[tuple[str, int, int]] = []
+    if num_vars < 2:
+        return combos
+    for i in range(num_vars):
+        for j in range(i + 1, num_vars):
+            combos.append(("add", i, j))
+    for i in range(num_vars):
+        for j in range(num_vars):
+            if i == j:
+                continue
+            combos.append(("sub", i, j))
+    return combos
+
+
+def build_base(x: torch.Tensor, num_vars: int, dtype: torch.dtype) -> torch.Tensor:
+    """Build the extended base tensor from input x.
+
+    Args:
+        x: (B, V, N) input, already in `dtype`.
+        num_vars: V (must match x.shape[1]).
+        dtype: working dtype.
+
+    Returns:
+        (B, C_base, N) with columns [1, x_1, ..., x_V, <combos>] where
+        combos follow `enumerate_combos(num_vars)` ordering.
+    """
+    B, V, N = x.shape
+    assert V == num_vars
+    ones = torch.ones(B, 1, N, dtype=dtype, device=x.device)
+    parts = [ones, x]
+    for op, i, j in enumerate_combos(num_vars):
+        xi = x[:, i : i + 1]
+        xj = x[:, j : j + 1]
+        parts.append(xi + xj if op == "add" else xi - xj)
+    return torch.cat(parts, dim=1)
+
+
+def num_combos(num_vars: int) -> int:
+    """Number of combo entries for V variables."""
+    if num_vars < 2:
+        return 0
+    return num_vars * (num_vars - 1) // 2 + num_vars * (num_vars - 1)
 
 
 class BatchedEMLTree(nn.Module):
@@ -59,8 +115,13 @@ class BatchedEMLTree(nn.Module):
         self.num_vars = num_vars
         self.dtype = dtype
 
-        leaf_choices = num_vars + 1       # {1, x_1, ..., x_V}
-        internal_choices = num_vars + 2   # {1, x_1, ..., x_V, f_child}
+        n_combo = num_combos(num_vars)
+        # Leaves pick from {1, x_1..V, <combos>}; internals add f_child.
+        # f_child therefore lives at index (1 + V + n_combo) in internal choice sets.
+        leaf_choices = 1 + num_vars + n_combo
+        internal_choices = leaf_choices + 1
+        self.n_combo = n_combo
+        self.f_child_idx = leaf_choices          # == 1 + V + n_combo
         num_leaves = 2 ** (depth - 1)
 
         def _make_logits(shape, n_choices):
@@ -152,13 +213,13 @@ class BatchedEMLTree(nn.Module):
         if x.dtype != self.dtype:
             x = x.to(self.dtype)
 
-        # Base choices shared across all levels: [1, x_1, ..., x_V] → (B, V+1, N)
-        ones = torch.ones(B, 1, N, dtype=self.dtype, device=device)
-        base = torch.cat([ones, x], dim=1)  # (B, V+1, N)
+        # Base choices: [1, x_1, ..., x_V, <combos>] → (B, C_base, N)
+        base = build_base(x, self.num_vars, self.dtype)
+        C_base = base.shape[1]                    # == 1 + V + n_combo
 
         # ---- Leaf level ----
         w = self._weights(self.leaf_logits)                           # (B, L, 2, C)
-        leaf_ch = base.unsqueeze(1).expand(B, num_leaves, V + 1, N)  # (B, L, C, N)
+        leaf_ch = base.unsqueeze(1).expand(B, num_leaves, C_base, N)  # (B, L, C, N)
 
         # Weighted selection: sum_c(w[c] * choice[c]) for left and right inputs
         left = (w[:, :, 0, :].unsqueeze(-1) * leaf_ch).sum(dim=2)    # (B, L, N)
@@ -174,10 +235,10 @@ class BatchedEMLTree(nn.Module):
             child_left = outputs[:, 0::2, :]    # (B, M, N)
             child_right = outputs[:, 1::2, :]   # (B, M, N)
 
-            # Build choice tensors: [1, x_1..V, f_child]
-            int_base = base.unsqueeze(1).expand(B, M, V + 1, N)       # (B, M, V+1, N)
-            l_ch = torch.cat([int_base, child_left.unsqueeze(2)], 2)   # (B, M, V+2, N)
-            r_ch = torch.cat([int_base, child_right.unsqueeze(2)], 2)  # (B, M, V+2, N)
+            # Build choice tensors: [1, x_1..V, <combos>, f_child]
+            int_base = base.unsqueeze(1).expand(B, M, C_base, N)       # (B, M, C_base, N)
+            l_ch = torch.cat([int_base, child_left.unsqueeze(2)], 2)   # (B, M, C_base+1, N)
+            r_ch = torch.cat([int_base, child_right.unsqueeze(2)], 2)
 
             left = (w[:, :, 0, :].unsqueeze(-1) * l_ch).sum(dim=2)    # (B, M, N)
             right = (w[:, :, 1, :].unsqueeze(-1) * r_ch).sum(dim=2)   # (B, M, N)

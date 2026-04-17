@@ -12,6 +12,8 @@ import re
 import torch
 from typing import TYPE_CHECKING
 
+from .tree import enumerate_combos
+
 if TYPE_CHECKING:
     from .tree import BatchedEMLTree
 
@@ -34,17 +36,29 @@ def extract_expressions(
     """
     leaf_idx, internal_idx = tree.snapped_choices()
 
+    combo_strs = _combo_strings(var_names)
     results = []
     for b in tree_indices:
         if tree.depth == 1:
-            raw = _leaf_expr(b, 0, leaf_idx, var_names)
+            raw = _leaf_expr(b, 0, leaf_idx, var_names, combo_strs)
         else:
             raw = _internal_expr(
                 b, len(internal_idx) - 1, 0,
-                leaf_idx, internal_idx, var_names,
+                leaf_idx, internal_idx, var_names, combo_strs,
             )
         results.append(raw)
     return results
+
+
+def _combo_strings(var_names: list[str]) -> list[str]:
+    """Render each combo entry as a math string, ordered as in enumerate_combos."""
+    out = []
+    for op, i, j in enumerate_combos(len(var_names)):
+        if op == "add":
+            out.append(f"({var_names[i]} + {var_names[j]})")
+        else:
+            out.append(f"({var_names[i]} - {var_names[j]})")
+    return out
 
 
 def annotate(expr: str) -> str:
@@ -70,9 +84,10 @@ def annotate(expr: str) -> str:
 def _leaf_expr(
     b: int, node: int,
     leaf_idx: torch.Tensor, var_names: list[str],
+    combo_strs: list[str],
 ) -> str:
-    left = _choice_str(leaf_idx[b, node, 0].item(), var_names, child=None)
-    right = _choice_str(leaf_idx[b, node, 1].item(), var_names, child=None)
+    left = _choice_str(leaf_idx[b, node, 0].item(), var_names, combo_strs, child=None)
+    right = _choice_str(leaf_idx[b, node, 1].item(), var_names, combo_strs, child=None)
     return f"eml({left}, {right})"
 
 
@@ -81,33 +96,39 @@ def _internal_expr(
     leaf_idx: torch.Tensor,
     internal_idx: list[torch.Tensor],
     var_names: list[str],
+    combo_strs: list[str],
 ) -> str:
     # Recurse to children
     if level == 0:
-        child_l = _leaf_expr(b, 2 * node, leaf_idx, var_names)
-        child_r = _leaf_expr(b, 2 * node + 1, leaf_idx, var_names)
+        child_l = _leaf_expr(b, 2 * node, leaf_idx, var_names, combo_strs)
+        child_r = _leaf_expr(b, 2 * node + 1, leaf_idx, var_names, combo_strs)
     else:
         child_l = _internal_expr(b, level - 1, 2 * node,
-                                 leaf_idx, internal_idx, var_names)
+                                 leaf_idx, internal_idx, var_names, combo_strs)
         child_r = _internal_expr(b, level - 1, 2 * node + 1,
-                                 leaf_idx, internal_idx, var_names)
+                                 leaf_idx, internal_idx, var_names, combo_strs)
 
     left = _choice_str(internal_idx[level][b, node, 0].item(),
-                       var_names, child=child_l)
+                       var_names, combo_strs, child=child_l)
     right = _choice_str(internal_idx[level][b, node, 1].item(),
-                        var_names, child=child_r)
+                        var_names, combo_strs, child=child_r)
     return f"eml({left}, {right})"
 
 
-def _choice_str(idx: int, var_names: list[str], child: str | None) -> str:
+def _choice_str(idx: int, var_names: list[str], combo_strs: list[str],
+                child: str | None) -> str:
     """Map integer choice index to string.
 
-    Ordering: 0 → '1',  1..V → var_names[0..V-1],  V+1 → child expression.
+    Layout: 0='1', 1..V=vars, V+1..V+K=combos, V+K+1=f_child (only at internal).
     """
+    V = len(var_names)
+    K = len(combo_strs)
     if idx == 0:
         return "1"
-    if idx <= len(var_names):
+    if idx <= V:
         return var_names[idx - 1]
+    if idx <= V + K:
+        return combo_strs[idx - V - 1]
     if child is not None:
         return child
     return "?"
