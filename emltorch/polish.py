@@ -179,6 +179,9 @@ def polish(
     device: str = "cuda:7",
     warm_a: float = 0.0,
     warm_b: float = 1.0,
+    const_reg: float = 0.0,
+    min_b_abs: float = 0.0,
+    range_reg: float = 0.0,
 ) -> PolishResult:
     """
     Fit learnable numeric constants at the fixed topology of `tree[best_idx]`.
@@ -232,7 +235,15 @@ def polish(
         opt.zero_grad()
         pred = fixed(x_dev)
         fit = a + b * pred
-        loss = (fit - y_dev).pow(2).mean()
+        mse_loss = (fit - y_dev).pow(2).mean()
+        loss = mse_loss
+        if const_reg > 0.0:
+            loss = loss + const_reg * (fixed.constants - 1.0).pow(2).sum()
+        if range_reg > 0.0 and min_b_abs > 0.0:
+            # Penalize |b| dropping below min_b_abs — forces the tree to
+            # carry the signal's dynamic range instead of the affine wrapper.
+            b_shortfall = torch.relu(min_b_abs - b.abs())
+            loss = loss + range_reg * b_shortfall.pow(2).sum()
         if not torch.isfinite(loss):
             # Perturb constants slightly and continue
             with torch.no_grad():
@@ -243,8 +254,8 @@ def polish(
         nn.utils.clip_grad_norm_(list(fixed.parameters()) + [a, b], 1.0)
         opt.step()
 
-        if loss.item() < best_mse:
-            best_mse = loss.item()
+        if mse_loss.item() < best_mse:
+            best_mse = mse_loss.item()
             best_state = {
                 "constants": fixed.constants.detach().clone(),
                 "a": float(a.detach().item()),
