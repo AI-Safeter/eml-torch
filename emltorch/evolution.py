@@ -36,6 +36,11 @@ class EvolutionConfig:
     dtype: str = "float32"
     r2_target: float = 0.99          # early-exit when any tree hits this
     log_every: int = 5
+    # Range-aware fitness: penalize trees whose output scale differs from y's.
+    # Adds `range_penalty * log(std(tree_out)/std(y))^2` to per-tree MSE.
+    # Prevents evolution from hiding scale-collapsed trees (|b|~0.05) behind
+    # the affine wrapper. 0.0 disables.
+    range_penalty: float = 0.0
 
     @property
     def torch_dtype(self):
@@ -64,7 +69,7 @@ def _snap_peaked(tree: BatchedEMLTree):
 
 
 def _evaluate(tree: BatchedEMLTree, x: torch.Tensor, y: torch.Tensor,
-              affine: bool = True) -> torch.Tensor:
+              affine: bool = True, range_penalty: float = 0.0) -> torch.Tensor:
     """Per-tree MSE (B,). NaN trees get +inf.
 
     If affine=True, MSE is after the best per-tree affine rescaling
@@ -93,6 +98,12 @@ def _evaluate(tree: BatchedEMLTree, x: torch.Tensor, y: torch.Tensor,
     else:
         diff = pred - y
     mse = diff.abs().pow(2).mean(dim=-1) if diff.is_complex() else diff.pow(2).mean(dim=-1)
+    if range_penalty > 0.0 and affine:
+        # var_pred is (B, 1); std ratio vs target
+        y_std = y_c.pow(2).mean(dim=-1, keepdim=True).clamp(min=1e-12).sqrt()
+        p_std = var_pred.clamp(min=1e-12).sqrt()
+        log_ratio_sq = (p_std / y_std).log().pow(2).squeeze(-1)
+        mse = mse + range_penalty * log_ratio_sq
     return torch.where(torch.isfinite(mse), mse,
                        torch.full_like(mse, float("inf")))
 
@@ -200,13 +211,15 @@ def evolve(x: torch.Tensor, y: torch.Tensor, cfg: EvolutionConfig,
     best_ever_logits = None
 
     for gen in range(cfg.generations):
-        mse = _evaluate(tree, x_pop, y_pop)
+        # Fitness (for selection) uses range penalty; r2 report uses raw MSE.
+        fitness = _evaluate(tree, x_pop, y_pop, range_penalty=cfg.range_penalty)
+        mse = _evaluate(tree, x_pop, y_pop, range_penalty=0.0) if cfg.range_penalty > 0.0 else fitness
         r2 = 1 - mse * N / ss_tot
 
-        # Track global best
-        min_mse_this_gen, argmin_this_gen = mse.min(dim=0)
-        if min_mse_this_gen < best_ever_mse:
-            best_ever_mse = min_mse_this_gen
+        # Track global best by fitness (so range penalty actually biases it)
+        min_fit_this_gen, argmin_this_gen = fitness.min(dim=0)
+        if min_fit_this_gen < best_ever_mse:
+            best_ever_mse = min_fit_this_gen
             best_ever_idx = int(argmin_this_gen)
             # Snapshot best tree's logits
             best_ever_logits = (
@@ -226,8 +239,8 @@ def evolve(x: torch.Tensor, y: torch.Tensor, cfg: EvolutionConfig,
             print(f"[evo] r2_target reached at gen {gen}")
             break
 
-        # Selection: top-k indices
-        _, elite_idx = mse.topk(n_elite, largest=False)
+        # Selection: top-k by fitness (MSE + range penalty)
+        _, elite_idx = fitness.topk(n_elite, largest=False)
 
         # Offspring slots = all slots except elites
         n_offspring = cfg.population - n_elite
@@ -289,7 +302,9 @@ def evolve(x: torch.Tensor, y: torch.Tensor, cfg: EvolutionConfig,
     tree_str = annotate(best_expr_raw)
     best_expr = f"{a_coef:+.4f} + ({b_coef:+.4f}) * [{tree_str}]"
 
-    best_mse_val = best_ever_mse.item()
+    # Recompute raw (no-penalty) MSE for the restored best tree
+    raw_mse_all = _evaluate(tree, x_pop, y_pop, range_penalty=0.0)
+    best_mse_val = float(raw_mse_all[best_ever_idx].item())
     best_r2 = 1 - best_mse_val * N / ss_tot.item()
 
     return EvolutionResult(
