@@ -298,8 +298,9 @@ def polish(
             "a": warm_a,
             "b": warm_b,
         }
-        ss_tot = ((y_dev - y_dev.mean()).pow(2).sum()).item()
-        r2 = 1 - final_mse * N / max(ss_tot, 1e-12)
+
+    ss_tot = ((y_dev - y_dev.mean()).pow(2).sum()).item()
+    r2 = 1 - final_mse * N / max(ss_tot, 1e-12)
 
     # Build formula with constants substituted
     constants_list = best_state["constants"].detach().cpu().tolist()
