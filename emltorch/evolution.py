@@ -174,13 +174,18 @@ def _seed_from_shallower_(
     src_tree: BatchedEMLTree,
     src_idx: int,
 ):
-    """Place src_tree[src_idx] (depth d-1) into the left-subtree slot of
+    """Plant src_tree[src_idx] (depth d-1) as the left subtree of
     deep_tree's `seed_slots` (depth d).
 
     The left subtree at depth d occupies the first 2^(d-2) leaves and the
     first 2^(d-1-l) nodes of internal level l (for l = 2 .. d-1).
-    The root internal node + right subtree are left as their random init —
-    evolution explores how to combine the warm-started subtree.
+    The root internal node + right subtree are left as their random init.
+
+    NOTE: this does not preserve the shallower tree's exact output — EML's
+    primitive `eml(x, y) = exp(x) - ln(y)` has no identity, so any root node
+    will transform the subtree's output. Seeding works by giving evolution a
+    known-good building block to compose around, not by warm-starting with
+    the prior answer verbatim.
     """
     with torch.no_grad():
         n_prev_leaves = src_tree.leaf_logits.shape[1]
