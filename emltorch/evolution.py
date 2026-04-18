@@ -27,14 +27,14 @@ class EvolutionConfig:
     num_vars: int = 1
     population: int = 2048
     generations: int = 20
-    elite_fraction: float = 0.1     # keep top-k of each generation as parents
-    mutations_per_child: int = 1    # edges flipped per offspring
+    elite_fraction: float = 0.1  # keep top-k of each generation as parents
+    mutations_per_child: int = 1  # edges flipped per offspring
     # Crossover: fraction of offspring produced by mixing two elite parents
     # (0 → pure mutation, 0.5 → half crossover / half mutation).
     crossover_fraction: float = 0.3
     device: str = "cuda:7"
     dtype: str = "float32"
-    r2_target: float = 0.99          # early-exit when any tree hits this
+    r2_target: float = 0.99  # early-exit when any tree hits this
     log_every: int = 5
     # Range-aware fitness: penalize trees whose output scale differs from y's.
     # Adds `range_penalty * log(std(tree_out)/std(y))^2` to per-tree MSE.
@@ -49,15 +49,15 @@ class EvolutionConfig:
 
 @dataclass
 class EvolutionResult:
-    best_expression: str             # "a + b * (eml_tree_formula)"
-    best_r2: float                   # affine-adjusted R² on full data
+    best_expression: str  # "a + b * (eml_tree_formula)"
+    best_r2: float  # affine-adjusted R² on full data
     best_mse: float
     best_tree: BatchedEMLTree
     best_idx: int
-    generation_r2s: list[float]      # best R² per generation (affine-adjusted)
+    generation_r2s: list[float]  # best R² per generation (affine-adjusted)
     total_time_s: float
-    best_a: float = 0.0              # affine bias (intercept)
-    best_b: float = 1.0              # affine scale (slope)
+    best_a: float = 0.0  # affine bias (intercept)
+    best_b: float = 1.0  # affine scale (slope)
 
 
 def _snap_peaked(tree: BatchedEMLTree):
@@ -68,8 +68,13 @@ def _snap_peaked(tree: BatchedEMLTree):
     tree.training = False
 
 
-def _evaluate(tree: BatchedEMLTree, x: torch.Tensor, y: torch.Tensor,
-              affine: bool = True, range_penalty: float = 0.0) -> torch.Tensor:
+def _evaluate(
+    tree: BatchedEMLTree,
+    x: torch.Tensor,
+    y: torch.Tensor,
+    affine: bool = True,
+    range_penalty: float = 0.0,
+) -> torch.Tensor:
     """Per-tree MSE (B,). NaN trees get +inf.
 
     If affine=True, MSE is after the best per-tree affine rescaling
@@ -77,7 +82,7 @@ def _evaluate(tree: BatchedEMLTree, x: torch.Tensor, y: torch.Tensor,
     that are close up to linear rescaling — much more forgiving than raw MSE.
     """
     with torch.no_grad():
-        pred = tree(x)                         # (B, N)
+        pred = tree(x)  # (B, N)
     if affine:
         # Closed-form best affine fit per tree:
         #   b = cov(pred, y) / var(pred);  a = mean(y) - b * mean(pred)
@@ -87,8 +92,9 @@ def _evaluate(tree: BatchedEMLTree, x: torch.Tensor, y: torch.Tensor,
         y_c = y - y_mean
         var_pred = (pred_c * pred_c).mean(dim=-1, keepdim=True)
         # Avoid div-by-zero for constant predictions
-        safe_var = torch.where(var_pred > 1e-12, var_pred,
-                               torch.full_like(var_pred, 1e-12))
+        safe_var = torch.where(
+            var_pred > 1e-12, var_pred, torch.full_like(var_pred, 1e-12)
+        )
         b = (pred_c * y_c).mean(dim=-1, keepdim=True) / safe_var
         # If tree is ~constant (var<1e-12), force b=0 so affine fit = mean(y)
         b = torch.where(var_pred > 1e-12, b, torch.zeros_like(b))
@@ -97,15 +103,18 @@ def _evaluate(tree: BatchedEMLTree, x: torch.Tensor, y: torch.Tensor,
         diff = fit - y
     else:
         diff = pred - y
-    mse = diff.abs().pow(2).mean(dim=-1) if diff.is_complex() else diff.pow(2).mean(dim=-1)
+    mse = (
+        diff.abs().pow(2).mean(dim=-1)
+        if diff.is_complex()
+        else diff.pow(2).mean(dim=-1)
+    )
     if range_penalty > 0.0 and affine:
         # var_pred is (B, 1); std ratio vs target
         y_std = y_c.pow(2).mean(dim=-1, keepdim=True).clamp(min=1e-12).sqrt()
         p_std = var_pred.clamp(min=1e-12).sqrt()
         log_ratio_sq = (p_std / y_std).log().pow(2).squeeze(-1)
         mse = mse + range_penalty * log_ratio_sq
-    return torch.where(torch.isfinite(mse), mse,
-                       torch.full_like(mse, float("inf")))
+    return torch.where(torch.isfinite(mse), mse, torch.full_like(mse, float("inf")))
 
 
 def _mutate_(tree: BatchedEMLTree, indices: torch.Tensor, n_mutations: int = 1):
@@ -113,12 +122,14 @@ def _mutate_(tree: BatchedEMLTree, indices: torch.Tensor, n_mutations: int = 1):
     randomize their one-hot choice. `indices` is a LongTensor of tree indices.
     """
     with torch.no_grad():
-        all_logit_tensors = [tree.leaf_logits.data] + \
-                            [lg.data for lg in tree.internal_logits]
+        all_logit_tensors = [tree.leaf_logits.data] + [
+            lg.data for lg in tree.internal_logits
+        ]
         n = len(indices)
         for _ in range(n_mutations):
-            which = torch.randint(0, len(all_logit_tensors), (n,),
-                                  device=indices.device)
+            which = torch.randint(
+                0, len(all_logit_tensors), (n,), device=indices.device
+            )
             for tensor_idx, logits in enumerate(all_logit_tensors):
                 mask = which == tensor_idx
                 if not mask.any():
@@ -132,14 +143,14 @@ def _mutate_(tree: BatchedEMLTree, indices: torch.Tensor, n_mutations: int = 1):
                 input_i = torch.randint(0, n_inputs, (n_sel,), device=logits.device)
                 new_choice = torch.randint(0, n_choices, (n_sel,), device=logits.device)
                 # Build one-hot row of size (n_sel, n_choices) with 50.0 at new_choice
-                row = torch.zeros(n_sel, n_choices, device=logits.device,
-                                  dtype=logits.dtype)
+                row = torch.zeros(
+                    n_sel, n_choices, device=logits.device, dtype=logits.dtype
+                )
                 row.scatter_(-1, new_choice.unsqueeze(-1), 50.0)
                 logits[sel_indices, node_i, input_i] = row
 
 
-def _clone_(tree: BatchedEMLTree, dst_indices: torch.Tensor,
-            src_indices: torch.Tensor):
+def _clone_(tree: BatchedEMLTree, dst_indices: torch.Tensor, src_indices: torch.Tensor):
     """In-place copy: dst_indices <- src_indices for each logit tensor."""
     with torch.no_grad():
         tree.leaf_logits.data[dst_indices] = tree.leaf_logits.data[src_indices]
@@ -147,8 +158,9 @@ def _clone_(tree: BatchedEMLTree, dst_indices: torch.Tensor,
             lg.data[dst_indices] = lg.data[src_indices]
 
 
-def _crossover_(tree: BatchedEMLTree, dst: torch.Tensor,
-                p1: torch.Tensor, p2: torch.Tensor):
+def _crossover_(
+    tree: BatchedEMLTree, dst: torch.Tensor, p1: torch.Tensor, p2: torch.Tensor
+):
     """Uniform crossover: for each (node, input), pick p1 or p2 with 50/50.
 
     `dst`, `p1`, `p2` are equal-length LongTensors of tree indices. The logits
@@ -156,13 +168,14 @@ def _crossover_(tree: BatchedEMLTree, dst: torch.Tensor,
     slots, one flip per (node, input) position.
     """
     with torch.no_grad():
-        all_logit_tensors = [tree.leaf_logits.data] + \
-                            [lg.data for lg in tree.internal_logits]
+        all_logit_tensors = [tree.leaf_logits.data] + [
+            lg.data for lg in tree.internal_logits
+        ]
         for logits in all_logit_tensors:
             # shape: (B, nodes, inputs, choices)
             shape_mask = (len(dst), logits.shape[1], logits.shape[2], 1)
             mask = torch.rand(*shape_mask, device=logits.device) < 0.5
-            src_1 = logits[p1]                          # (D, nodes, inputs, choices)
+            src_1 = logits[p1]  # (D, nodes, inputs, choices)
             src_2 = logits[p2]
             mixed = torch.where(mask, src_1, src_2)
             logits[dst] = mixed
@@ -190,25 +203,30 @@ def _seed_from_shallower_(
     with torch.no_grad():
         n_prev_leaves = src_tree.leaf_logits.shape[1]
         # Sanity check: prev leaves should equal half of deep's leaves
-        assert deep_tree.leaf_logits.shape[1] == 2 * n_prev_leaves, \
-            f"Depth mismatch: deep {deep_tree.leaf_logits.shape[1]} vs 2*src {2*n_prev_leaves}"
+        assert (
+            deep_tree.leaf_logits.shape[1] == 2 * n_prev_leaves
+        ), f"Depth mismatch: deep {deep_tree.leaf_logits.shape[1]} vs 2*src {2*n_prev_leaves}"
 
-        src_leaf = src_tree.leaf_logits.data[src_idx]             # (L_prev, 2, C)
+        src_leaf = src_tree.leaf_logits.data[src_idx]  # (L_prev, 2, C)
         deep_tree.leaf_logits.data[seed_slots, :n_prev_leaves] = src_leaf
 
         for lvl_idx, src_lg in enumerate(src_tree.internal_logits):
-            src_block = src_lg.data[src_idx]                      # (n_nodes_src, 2, C)
+            src_block = src_lg.data[src_idx]  # (n_nodes_src, 2, C)
             n_src_nodes = src_block.shape[0]
             deep_tree.internal_logits[lvl_idx].data[
                 seed_slots, :n_src_nodes
             ] = src_block
 
 
-def evolve(x: torch.Tensor, y: torch.Tensor, cfg: EvolutionConfig,
-           var_names: list[str] | None = None,
-           seed_tree: BatchedEMLTree | None = None,
-           seed_idx: int | None = None,
-           seed_fraction: float = 0.2) -> EvolutionResult:
+def evolve(
+    x: torch.Tensor,
+    y: torch.Tensor,
+    cfg: EvolutionConfig,
+    var_names: list[str] | None = None,
+    seed_tree: BatchedEMLTree | None = None,
+    seed_idx: int | None = None,
+    seed_fraction: float = 0.2,
+) -> EvolutionResult:
     """
     Run evolutionary search for y ≈ EML(x).
 
@@ -237,9 +255,13 @@ def evolve(x: torch.Tensor, y: torch.Tensor, cfg: EvolutionConfig,
 
     # Initialize population
     tree = BatchedEMLTree(
-        num_trees=cfg.population, depth=cfg.depth, num_vars=V,
-        dtype=cfg.torch_dtype, device=device,
-        init_scale=50.0, init_mode="peaked",
+        num_trees=cfg.population,
+        depth=cfg.depth,
+        num_vars=V,
+        dtype=cfg.torch_dtype,
+        device=device,
+        init_scale=50.0,
+        init_mode="peaked",
     )
     _snap_peaked(tree)
 
@@ -252,8 +274,10 @@ def evolve(x: torch.Tensor, y: torch.Tensor, cfg: EvolutionConfig,
         # Diversify: mutate a single edge on all but the first seed
         if n_seed > 1:
             _mutate_(tree, seed_slots[1:], n_mutations=1)
-        print(f"[evo] seeded {n_seed}/{cfg.population} from shallower tree "
-              f"(depth {seed_tree.depth} → {cfg.depth})")
+        print(
+            f"[evo] seeded {n_seed}/{cfg.population} from shallower tree "
+            f"(depth {seed_tree.depth} → {cfg.depth})"
+        )
 
     n_elite = max(1, int(cfg.population * cfg.elite_fraction))
     generation_r2s = []
@@ -264,14 +288,19 @@ def evolve(x: torch.Tensor, y: torch.Tensor, cfg: EvolutionConfig,
     for gen in range(cfg.generations):
         # Fitness (for selection) uses range penalty; r2 report uses raw MSE.
         fitness = _evaluate(tree, x_pop, y_pop, range_penalty=cfg.range_penalty)
-        mse = _evaluate(tree, x_pop, y_pop, range_penalty=0.0) if cfg.range_penalty > 0.0 else fitness
+        mse = (
+            _evaluate(tree, x_pop, y_pop, range_penalty=0.0)
+            if cfg.range_penalty > 0.0
+            else fitness
+        )
         r2 = 1 - mse * N / ss_tot
 
-        # Track global best by fitness (so range penalty actually biases it)
-        min_fit_this_gen, argmin_this_gen = fitness.min(dim=0)
-        if min_fit_this_gen < best_ever_mse:
-            best_ever_mse = min_fit_this_gen
-            best_ever_idx = int(argmin_this_gen)
+        # Track global best by raw MSE (not fitness) so range_penalty doesn't
+        # bias which tree snapshot we return — selection elites still use fitness.
+        min_mse_this_gen, argmin_mse_this_gen = mse.min(dim=0)
+        if min_mse_this_gen < best_ever_mse:
+            best_ever_mse = min_mse_this_gen
+            best_ever_idx = int(argmin_mse_this_gen)
             # Snapshot best tree's logits
             best_ever_logits = (
                 tree.leaf_logits[best_ever_idx].clone(),
@@ -282,9 +311,11 @@ def evolve(x: torch.Tensor, y: torch.Tensor, cfg: EvolutionConfig,
         generation_r2s.append(best_r2)
 
         if gen % cfg.log_every == 0 or gen == cfg.generations - 1:
-            print(f"[evo] gen {gen:>3d}  best R²={best_r2:+.4f}  "
-                  f"elite R² [{r2.topk(n_elite).values.min().item():+.4f}, "
-                  f"{best_r2:+.4f}]")
+            print(
+                f"[evo] gen {gen:>3d}  best R²={best_r2:+.4f}  "
+                f"elite R² [{r2.topk(n_elite).values.min().item():+.4f}, "
+                f"{best_r2:+.4f}]"
+            )
 
         if best_r2 >= cfg.r2_target:
             print(f"[evo] r2_target reached at gen {gen}")
@@ -308,8 +339,7 @@ def evolve(x: torch.Tensor, y: torch.Tensor, cfg: EvolutionConfig,
 
         # Mutation branch: pick a random elite parent, clone, mutate
         if n_mut > 0:
-            parent_idx = elite_idx[torch.randint(0, n_elite, (n_mut,),
-                                                 device=device)]
+            parent_idx = elite_idx[torch.randint(0, n_elite, (n_mut,), device=device)]
             _clone_(tree, mut_slots, parent_idx)
             _mutate_(tree, mut_slots, n_mutations=cfg.mutations_per_child)
 
@@ -333,7 +363,7 @@ def evolve(x: torch.Tensor, y: torch.Tensor, cfg: EvolutionConfig,
     # We must evaluate the entire population (the tree is fixed batch-size),
     # then slice out the restored best slot.
     with torch.no_grad():
-        all_preds = tree(x_pop)                         # (B, N)
+        all_preds = tree(x_pop)  # (B, N)
     best_pred = all_preds[best_ever_idx]
     pred_mean = best_pred.mean()
     pred_c = best_pred - pred_mean
