@@ -32,6 +32,14 @@ from .evolution import EvolutionConfig, EvolutionResult, evolve
 from .api import fit, FitResult
 from . import interp  # noqa: F401
 from .gradient import diff_formula, gradient_at, sensitivity_vector, torch_gradient_fn
+from .smt import (
+    SafetyCertificate,
+    eml_formula_to_z3,
+    certify_linear_threshold_safe,
+    find_min_norm_witness,
+    optimize_min_linf_witness,
+    emit_smtlib2,
+)
 
 __all__ = [
     "__version__",
@@ -44,6 +52,13 @@ __all__ = [
     "gradient_at",
     "sensitivity_vector",
     "torch_gradient_fn",
+    # SMT / Z3 formal verification bridge
+    "SafetyCertificate",
+    "eml_formula_to_z3",
+    "certify_linear_threshold_safe",
+    "find_min_norm_witness",
+    "optimize_min_linf_witness",
+    "emit_smtlib2",
     # Lower-level (may change in 0.x)
     "safe_eml",
     "BatchedEMLTree",
