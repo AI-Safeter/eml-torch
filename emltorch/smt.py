@@ -395,23 +395,30 @@ def emit_smtlib2(
     r_center: np.ndarray,
     radius: float,
     feature_name: str = "feature_k",
+    norm: str = "linf",
 ) -> str:
     """
     Produce a standalone SMT-LIB2 text asserting the safety-negation.
 
     UNSAT when passed to any SMT solver (z3, cvc5, yices) proves the
-    feature is inactive for all ||delta||_2 <= radius.
+    feature is inactive for all ||delta||_norm <= radius.
+
+    Default norm is L_inf because QF_LRA (linear real arithmetic) is decidable
+    in polynomial time and scales to d_model=768+ in seconds; the L2 encoding
+    is QF_NRA (nonlinear) and is typically too slow for external re-verification
+    of large residuals even though it is formally more stringent for Euclidean
+    perturbation budgets.
     """
     cert = certify_linear_threshold_safe(
-        W_enc_k, threshold_k, r_center, radius, norm="l2", timeout_ms=1
+        W_enc_k, threshold_k, r_center, radius, norm=norm, timeout_ms=1
     )
     header = (
         f"; SMT-LIB2 proof obligation for EML safety certificate\n"
         f"; Feature: {feature_name}\n"
         f"; Threshold: {threshold_k}\n"
         f"; Center norm: {np.linalg.norm(r_center):.4f}\n"
-        f"; Perturbation budget: {radius}\n"
-        f"; UNSAT implies feature provably inactive for all ||delta||_2 <= {radius}.\n"
+        f"; Perturbation budget (||delta||_{norm}): {radius}\n"
+        f"; UNSAT implies feature provably inactive for all ||delta||_{norm} <= {radius}.\n"
     )
     return header + cert.smt2
 
