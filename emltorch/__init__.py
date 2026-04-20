@@ -31,6 +31,7 @@ from .evolution import EvolutionConfig, EvolutionResult, evolve
 
 from .api import fit, FitResult
 from . import interp  # noqa: F401
+from .gradient import diff_formula, gradient_at, sensitivity_vector, torch_gradient_fn
 
 __all__ = [
     "__version__",
@@ -38,6 +39,11 @@ __all__ = [
     "fit",
     "FitResult",
     "interp",
+    # Symbolic differentiation
+    "diff_formula",
+    "gradient_at",
+    "sensitivity_vector",
+    "torch_gradient_fn",
     # Lower-level (may change in 0.x)
     "safe_eml",
     "BatchedEMLTree",
