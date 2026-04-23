@@ -63,7 +63,7 @@ class _Var:
 @dataclass
 class _Combo:
     left: str
-    op: str  # "+" or "-"
+    op: str  # "+", "-", or "*" (mul combo added 2026-04-24)
     right: str
 
     def __str__(self) -> str:
@@ -184,9 +184,27 @@ def _diff(node: _Node, wrt: str) -> _Node:
         return _ONE if node.name == wrt else _ZERO
 
     if isinstance(node, _Combo):
-        dx = _ONE if node.left == wrt else _ZERO
-        dy = _ONE if node.right == wrt else _ZERO
-        return _mk_add(dx, dy) if node.op == "+" else _mk_sub(dx, dy)
+        # Combo operands are bare variable names (parser stores left/right as str).
+        # d/dz (a op b) where a, b are variables, op in {+, -, *}.
+        l_is_wrt = node.left == wrt
+        r_is_wrt = node.right == wrt
+        if node.op == "+":
+            dx = _ONE if l_is_wrt else _ZERO
+            dy = _ONE if r_is_wrt else _ZERO
+            return _mk_add(dx, dy)
+        if node.op == "-":
+            dx = _ONE if l_is_wrt else _ZERO
+            dy = _ONE if r_is_wrt else _ZERO
+            return _mk_sub(dx, dy)
+        # op == "*": d/dz (a*b) = da/dz * b + a * db/dz
+        dx = _Var(node.left) if r_is_wrt else _ZERO  # da/dz * b: da=?
+        # Actually reuse product rule on the bare multiplication expression.
+        dL = _ONE if l_is_wrt else _ZERO
+        dR = _ONE if r_is_wrt else _ZERO
+        # d(a*b)/dz = dL*b + a*dR
+        term1 = _mk_mul(dL, _Var(node.right))
+        term2 = _mk_mul(_Var(node.left), dR)
+        return _mk_add(term1, term2)
 
     if isinstance(node, _EML):
         # d/dz eml(L, R) = exp(L) * dL/dz  −  dR/dz / R
@@ -314,7 +332,7 @@ class _Parser:
         self.consume("(")
         left = self._parse_atom()
         op = self.peek()
-        if op in ("+", "-"):
+        if op in ("+", "-", "*"):
             self.consume()
             right = self._parse_atom()
             self.consume(")")
@@ -366,7 +384,11 @@ def _compute(node: _Node, vals: dict[str, float]) -> float:
     if isinstance(node, _Combo):
         lv = vals.get(node.left, 0.0)
         rv = vals.get(node.right, 0.0)
-        return lv + rv if node.op == "+" else lv - rv
+        if node.op == "+":
+            return lv + rv
+        if node.op == "-":
+            return lv - rv
+        return lv * rv  # "*"
     if isinstance(node, _EML):
         L = _compute(node.left, vals)
         R = _compute(node.right, vals)

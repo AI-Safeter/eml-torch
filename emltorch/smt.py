@@ -120,7 +120,11 @@ def eml_formula_to_z3(formula: str, z3_vars: dict[str, "_z3.ArithRef"]):
         if isinstance(n, _Combo):
             lv = z3_vars.get(n.left, z3.RealVal(0))
             rv = z3_vars.get(n.right, z3.RealVal(0))
-            return (lv + rv) if n.op == "+" else (lv - rv)
+            if n.op == "+":
+                return lv + rv
+            if n.op == "-":
+                return lv - rv
+            return lv * rv  # "*" (mul combo)
         if isinstance(n, _EML):
             if not hasattr(z3, "Exp") or not hasattr(z3, "Ln"):
                 raise RuntimeError(
