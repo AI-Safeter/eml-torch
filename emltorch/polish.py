@@ -31,10 +31,10 @@ from .tree import BatchedEMLTree, build_base, enumerate_combos, num_combos
 class PolishResult:
     r2: float
     mse: float
-    constants: list[float]           # learned per-leaf constants (in tree order)
-    a: float                         # affine intercept
-    b: float                         # affine scale
-    formula: str                     # formula with constants substituted
+    constants: list[float]  # learned per-leaf constants (in tree order)
+    a: float  # affine intercept
+    b: float  # affine scale
+    formula: str  # formula with constants substituted
 
 
 class _FixedTopologyTree(nn.Module):
@@ -47,14 +47,16 @@ class _FixedTopologyTree(nn.Module):
 
     def __init__(
         self,
-        leaf_choices: torch.Tensor,          # (num_leaves, 2)  int
-        internal_choices: list[torch.Tensor], # list of (M_level, 2) int
+        leaf_choices: torch.Tensor,  # (num_leaves, 2)  int
+        internal_choices: list[torch.Tensor],  # list of (M_level, 2) int
         num_vars: int,
         dtype: torch.dtype = torch.float32,
+        use_mul: bool = False,
     ):
         super().__init__()
         self.num_vars = num_vars
         self.dtype = dtype
+        self.use_mul = use_mul
         self.num_leaves = leaf_choices.shape[0]
 
         self.register_buffer("leaf_choices", leaf_choices.clone())
@@ -64,7 +66,7 @@ class _FixedTopologyTree(nn.Module):
 
         # One learnable scalar per (node, input) position whose choice == 0 (was "1").
         # Store them in a flat parameter; a mask tells us which positions use them.
-        self.leaf_const_mask = (leaf_choices == 0)                # (L, 2) bool
+        self.leaf_const_mask = leaf_choices == 0  # (L, 2) bool
         self.internal_const_masks = [c == 0 for c in internal_choices]
 
         n_leaf_consts = int(self.leaf_const_mask.sum().item())
@@ -97,15 +99,21 @@ class _FixedTopologyTree(nn.Module):
 
     @property
     def internal_flat_idxs(self):
-        return [getattr(self, f"internal_flat_idx_{i}")
-                for i in range(len(self._internal_choices))]
+        return [
+            getattr(self, f"internal_flat_idx_{i}")
+            for i in range(len(self._internal_choices))
+        ]
 
     @property
     def internal_choices(self):
-        return [getattr(self, f"internal_choices_{i}")
-                for i in range(len(self._internal_choices))]
+        return [
+            getattr(self, f"internal_choices_{i}")
+            for i in range(len(self._internal_choices))
+        ]
 
-    def _select(self, choice_idx, flat_idx_tensor, base_vals, child_val, node_i, input_i):
+    def _select(
+        self, choice_idx, flat_idx_tensor, base_vals, child_val, node_i, input_i
+    ):
         """
         Map one (node, input) choice to its actual value tensor at this forward.
 
@@ -116,7 +124,7 @@ class _FixedTopologyTree(nn.Module):
             V+K+1                       -> f_child (internal nodes only)
         """
         V = self.num_vars
-        K = base_vals.shape[0] - 1 - V              # combo count from base width
+        K = base_vals.shape[0] - 1 - V  # combo count from base width
         if choice_idx == 0:
             c_idx = int(flat_idx_tensor[node_i, input_i].item())
             const_val = self.constants[c_idx]
@@ -136,24 +144,29 @@ class _FixedTopologyTree(nn.Module):
         assert V == self.num_vars
         # Use the shared base builder. build_base expects (B, V, N); we run
         # polish single-batch so B=1, then squeeze.
-        base = build_base(x.to(self.dtype).unsqueeze(0), V, self.dtype).squeeze(0)
-        # base: (C_base, N) where C_base = 1 + V + num_combos(V)
+        base = build_base(
+            x.to(self.dtype).unsqueeze(0), V, self.dtype, use_mul=self.use_mul
+        ).squeeze(0)
+        # base: (C_base, N) where C_base = 1 + V + num_combos(V, use_mul)
 
         # Leaf level — evaluate all leaves
         leaf_outputs = []
         for node in range(self.num_leaves):
             left_choice = int(self.leaf_choices[node, 0].item())
             right_choice = int(self.leaf_choices[node, 1].item())
-            left_val = self._select(left_choice, self.leaf_flat_idx,
-                                    base, None, node, 0)
-            right_val = self._select(right_choice, self.leaf_flat_idx,
-                                     base, None, node, 1)
+            left_val = self._select(
+                left_choice, self.leaf_flat_idx, base, None, node, 0
+            )
+            right_val = self._select(
+                right_choice, self.leaf_flat_idx, base, None, node, 1
+            )
             leaf_outputs.append(safe_eml(left_val, right_val))
-        outputs = torch.stack(leaf_outputs, dim=0)      # (L, N)
+        outputs = torch.stack(leaf_outputs, dim=0)  # (L, N)
 
         # Internal levels (bottom-up)
-        for lvl, (choices, flat_idx) in enumerate(zip(
-                self.internal_choices, self.internal_flat_idxs)):
+        for lvl, (choices, flat_idx) in enumerate(
+            zip(self.internal_choices, self.internal_flat_idxs)
+        ):
             M = choices.shape[0]
             new_outputs = []
             for node in range(M):
@@ -161,12 +174,14 @@ class _FixedTopologyTree(nn.Module):
                 child_right = outputs[2 * node + 1]
                 left_choice = int(choices[node, 0].item())
                 right_choice = int(choices[node, 1].item())
-                left_val = self._select(left_choice, flat_idx,
-                                        base, child_left, node, 0)
-                right_val = self._select(right_choice, flat_idx,
-                                         base, child_right, node, 1)
+                left_val = self._select(
+                    left_choice, flat_idx, base, child_left, node, 0
+                )
+                right_val = self._select(
+                    right_choice, flat_idx, base, child_right, node, 1
+                )
                 new_outputs.append(safe_eml(left_val, right_val))
-            outputs = torch.stack(new_outputs, dim=0)    # (M, N)
+            outputs = torch.stack(new_outputs, dim=0)  # (M, N)
 
         return outputs[0]  # Root
 
@@ -174,8 +189,8 @@ class _FixedTopologyTree(nn.Module):
 def polish(
     tree: BatchedEMLTree,
     best_idx: int,
-    x: torch.Tensor,                        # (V, N) or (N,)
-    y: torch.Tensor,                        # (N,)
+    x: torch.Tensor,  # (V, N) or (N,)
+    y: torch.Tensor,  # (N,)
     var_names: list[str],
     n_iters: int = 2000,
     lr: float = 5e-2,
@@ -198,7 +213,7 @@ def polish(
     """
     # Pull choice indices from the snapped tree
     leaf_idx_all, internal_idx_all = tree.snapped_choices()
-    leaf_choices = leaf_idx_all[best_idx].to("cpu")                  # (L, 2)
+    leaf_choices = leaf_idx_all[best_idx].to("cpu")  # (L, 2)
     internal_choices = [c[best_idx].to("cpu") for c in internal_idx_all]
 
     # Build the specialized tree
@@ -211,6 +226,7 @@ def polish(
         internal_choices=internal_choices,
         num_vars=V,
         dtype=dtype,
+        use_mul=getattr(tree, "use_mul", False),
     ).to(device)
 
     x_dev = x.to(device, dtype)
@@ -273,6 +289,7 @@ def polish(
     # Safeguard: never return a polish that made things worse than warm-start.
     # If best_mse tracking got polluted (NaN/inf interference), revert.
     import math as _math
+
     if not _math.isfinite(best_mse) or best_mse > initial_mse:
         with torch.no_grad():
             fixed.constants.fill_(1.0)
@@ -308,34 +325,43 @@ def polish(
     # Build formula with constants substituted
     constants_list = best_state["constants"].detach().cpu().tolist()
     formula = _format_with_constants(
-        leaf_choices, internal_choices, var_names,
+        leaf_choices,
+        internal_choices,
+        var_names,
         fixed.leaf_flat_idx.cpu(),
         [fi.cpu() for fi in fixed.internal_flat_idxs],
         constants_list,
+        use_mul=getattr(tree, "use_mul", False),
     )
-    full = (f"{best_state['a']:+.4f} + ({best_state['b']:+.4f}) * "
-            f"[{formula}]")
+    full = f"{best_state['a']:+.4f} + ({best_state['b']:+.4f}) * " f"[{formula}]"
 
     return PolishResult(
-        r2=r2, mse=final_mse,
+        r2=r2,
+        mse=final_mse,
         constants=constants_list,
-        a=best_state["a"], b=best_state["b"],
+        a=best_state["a"],
+        b=best_state["b"],
         formula=full,
     )
 
 
 def _format_with_constants(
-    leaf_choices, internal_choices, var_names,
-    leaf_flat_idx, internal_flat_idxs, constants,
+    leaf_choices,
+    internal_choices,
+    var_names,
+    leaf_flat_idx,
+    internal_flat_idxs,
+    constants,
+    use_mul: bool = False,
 ):
     """Recursively format the tree with learned constants in place of '1' slots."""
     V = len(var_names)
-    combos = enumerate_combos(V)
+    combos = enumerate_combos(V, use_mul=use_mul)
     K = len(combos)
 
     def combo_str(k: int) -> str:
         op, i, j = combos[k]
-        sym = "+" if op == "add" else "-"
+        sym = {"add": "+", "sub": "-", "mul": "*"}[op]
         return f"({var_names[i]} {sym} {var_names[j]})"
 
     def choice_str(idx, flat_idx_tensor, node, input_side, child_str):
@@ -349,25 +375,26 @@ def _format_with_constants(
         return child_str
 
     def leaf_expr(leaf_idx):
-        left = choice_str(int(leaf_choices[leaf_idx, 0]),
-                          leaf_flat_idx, leaf_idx, 0, None)
-        right = choice_str(int(leaf_choices[leaf_idx, 1]),
-                           leaf_flat_idx, leaf_idx, 1, None)
+        left = choice_str(
+            int(leaf_choices[leaf_idx, 0]), leaf_flat_idx, leaf_idx, 0, None
+        )
+        right = choice_str(
+            int(leaf_choices[leaf_idx, 1]), leaf_flat_idx, leaf_idx, 1, None
+        )
         return f"eml({left}, {right})"
 
     # Build bottom-up
     level_exprs = [leaf_expr(i) for i in range(leaf_choices.shape[0])]
     for lvl, (choices, flat_idx) in enumerate(
-            zip(internal_choices, internal_flat_idxs)):
+        zip(internal_choices, internal_flat_idxs)
+    ):
         new_exprs = []
         M = choices.shape[0]
         for node in range(M):
             child_l = level_exprs[2 * node]
             child_r = level_exprs[2 * node + 1]
-            left = choice_str(int(choices[node, 0]),
-                              flat_idx, node, 0, child_l)
-            right = choice_str(int(choices[node, 1]),
-                               flat_idx, node, 1, child_r)
+            left = choice_str(int(choices[node, 0]), flat_idx, node, 0, child_l)
+            right = choice_str(int(choices[node, 1]), flat_idx, node, 1, child_r)
             new_exprs.append(f"eml({left}, {right})")
         level_exprs = new_exprs
 

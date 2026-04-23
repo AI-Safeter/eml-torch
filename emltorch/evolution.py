@@ -41,6 +41,9 @@ class EvolutionConfig:
     # Prevents evolution from hiding scale-collapsed trees (|b|~0.05) behind
     # the affine wrapper. 0.0 disables.
     range_penalty: float = 0.0
+    # Enable multiplicative combos (x_i * x_j) in the leaf/internal choice set.
+    # Opt-in; breaks multiplicative ceilings (e.g. h·SiLU(z) Mamba gate).
+    use_mul: bool = False
 
     @property
     def torch_dtype(self):
@@ -262,6 +265,7 @@ def evolve(
         device=device,
         init_scale=50.0,
         init_mode="peaked",
+        use_mul=cfg.use_mul,
     )
     _snap_peaked(tree)
 

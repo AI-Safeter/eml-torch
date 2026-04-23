@@ -26,12 +26,19 @@ import torch.nn.functional as F
 from .operator import safe_eml
 
 
-def enumerate_combos(num_vars: int) -> list[tuple[str, int, int]]:
+def enumerate_combos(
+    num_vars: int, use_mul: bool = False
+) -> list[tuple[str, int, int]]:
     """Return the ordered list of (op, i, j) combos active for V variables.
 
-    op is 'add' or 'sub'; indices i, j are 0-based variable indices.
-    Empty when V < 2. The order here defines the choice-index mapping used
-    everywhere (tree forward, symbolic, polish).
+    op is 'add', 'sub', or (optional) 'mul'; indices i, j are 0-based variable
+    indices. Empty when V < 2. The order here defines the choice-index mapping
+    used everywhere (tree forward, symbolic, polish).
+
+    If `use_mul` is True, the combo list is extended with unordered pairs
+    x_i * x_j for i<j. Opt-in; default preserves backward compatibility.
+    Multiplicative combos unblock targets like h * SiLU(z) (multiplicative gates)
+    where the EML operator's additive-only composition has documented ceilings.
     """
     combos: list[tuple[str, int, int]] = []
     if num_vars < 2:
@@ -44,37 +51,52 @@ def enumerate_combos(num_vars: int) -> list[tuple[str, int, int]]:
             if i == j:
                 continue
             combos.append(("sub", i, j))
+    if use_mul:
+        for i in range(num_vars):
+            for j in range(i + 1, num_vars):
+                combos.append(("mul", i, j))
     return combos
 
 
-def build_base(x: torch.Tensor, num_vars: int, dtype: torch.dtype) -> torch.Tensor:
+def build_base(
+    x: torch.Tensor, num_vars: int, dtype: torch.dtype, use_mul: bool = False
+) -> torch.Tensor:
     """Build the extended base tensor from input x.
 
     Args:
         x: (B, V, N) input, already in `dtype`.
         num_vars: V (must match x.shape[1]).
         dtype: working dtype.
+        use_mul: include x_i * x_j combos (see enumerate_combos).
 
     Returns:
         (B, C_base, N) with columns [1, x_1, ..., x_V, <combos>] where
-        combos follow `enumerate_combos(num_vars)` ordering.
+        combos follow `enumerate_combos(num_vars, use_mul)` ordering.
     """
     B, V, N = x.shape
     assert V == num_vars
     ones = torch.ones(B, 1, N, dtype=dtype, device=x.device)
     parts = [ones, x]
-    for op, i, j in enumerate_combos(num_vars):
+    for op, i, j in enumerate_combos(num_vars, use_mul=use_mul):
         xi = x[:, i : i + 1]
         xj = x[:, j : j + 1]
-        parts.append(xi + xj if op == "add" else xi - xj)
+        if op == "add":
+            parts.append(xi + xj)
+        elif op == "sub":
+            parts.append(xi - xj)
+        else:  # mul
+            parts.append(xi * xj)
     return torch.cat(parts, dim=1)
 
 
-def num_combos(num_vars: int) -> int:
-    """Number of combo entries for V variables."""
+def num_combos(num_vars: int, use_mul: bool = False) -> int:
+    """Number of combo entries for V variables (optionally including mul)."""
     if num_vars < 2:
         return 0
-    return num_vars * (num_vars - 1) // 2 + num_vars * (num_vars - 1)
+    base = num_vars * (num_vars - 1) // 2 + num_vars * (num_vars - 1)
+    if use_mul:
+        base += num_vars * (num_vars - 1) // 2
+    return base
 
 
 class BatchedEMLTree(nn.Module):
@@ -98,6 +120,7 @@ class BatchedEMLTree(nn.Module):
         device: torch.device | str = "cuda:7",
         init_scale: float = 0.1,
         init_mode: str = "uniform",
+        use_mul: bool = False,
     ):
         """
         Args:
@@ -107,6 +130,8 @@ class BatchedEMLTree(nn.Module):
             init_mode:  "uniform" = all restarts drawn from same randn*scale;
                         "peaked"  = each restart initialized to a random
                                     specific tree (one-hot logits with scale).
+            use_mul: include x_i * x_j pre-feature combos in the leaf/internal
+                        choice set. Opt-in; default preserves backward behavior.
         """
         super().__init__()
         assert depth >= 1, "Depth must be >= 1"
@@ -114,14 +139,15 @@ class BatchedEMLTree(nn.Module):
         self.depth = depth
         self.num_vars = num_vars
         self.dtype = dtype
+        self.use_mul = use_mul
 
-        n_combo = num_combos(num_vars)
+        n_combo = num_combos(num_vars, use_mul=use_mul)
         # Leaves pick from {1, x_1..V, <combos>}; internals add f_child.
         # f_child therefore lives at index (1 + V + n_combo) in internal choice sets.
         leaf_choices = 1 + num_vars + n_combo
         internal_choices = leaf_choices + 1
         self.n_combo = n_combo
-        self.f_child_idx = leaf_choices          # == 1 + V + n_combo
+        self.f_child_idx = leaf_choices  # == 1 + V + n_combo
         num_leaves = 2 ** (depth - 1)
 
         def _make_logits(shape, n_choices):
@@ -132,9 +158,7 @@ class BatchedEMLTree(nn.Module):
                 base = torch.randn(*shape, device=device) * 0.1
                 base.scatter_(-1, idx.unsqueeze(-1), init_scale)
                 return nn.Parameter(base)
-            return nn.Parameter(
-                torch.randn(*shape, device=device) * init_scale
-            )
+            return nn.Parameter(torch.randn(*shape, device=device) * init_scale)
 
         # Leaf logits: (B, num_leaves, 2_inputs, choices)
         self.leaf_logits = _make_logits(
@@ -145,9 +169,11 @@ class BatchedEMLTree(nn.Module):
         self.internal_logits = nn.ParameterList()
         for level in range(2, depth + 1):
             num_nodes = 2 ** (depth - level)
-            self.internal_logits.append(_make_logits(
-                (num_trees, num_nodes, 2, internal_choices), internal_choices
-            ))
+            self.internal_logits.append(
+                _make_logits(
+                    (num_trees, num_nodes, 2, internal_choices), internal_choices
+                )
+            )
 
         # Temperature inverse — increased during hardening to sharpen softmax
         self.register_buffer("temp_inv", torch.tensor(1.0, device=device))
@@ -175,16 +201,24 @@ class BatchedEMLTree(nn.Module):
         # Gumbel variants — tau is the temperature (1.0 default; decays during
         # hardening). Equivalent shape, but adds Gumbel noise so Adam can move
         # restarts *between* basins instead of averaging them.
-        tau = 1.0 / (self.temp_inv.item() if self.temp_inv.numel() == 1
-                     else self.temp_inv.mean().item())
+        tau = 1.0 / (
+            self.temp_inv.item()
+            if self.temp_inv.numel() == 1
+            else self.temp_inv.mean().item()
+        )
         tau = max(tau, 1e-3)
         hard = self.selection_mode == "gumbel_hard"
         if self.training:
             return F.gumbel_softmax(logits, tau=tau, hard=hard, dim=-1)
         # At eval time, fall back to deterministic softmax so results are
         # reproducible — equivalent to (sampling without noise) + argmax.
-        return torch.softmax(scaled, dim=-1) if not hard else \
-            F.one_hot(scaled.argmax(dim=-1), num_classes=scaled.shape[-1]).to(scaled.dtype)
+        return (
+            torch.softmax(scaled, dim=-1)
+            if not hard
+            else F.one_hot(scaled.argmax(dim=-1), num_classes=scaled.shape[-1]).to(
+                scaled.dtype
+            )
+        )
 
     # ------------------------------------------------------------------
     # Forward pass
@@ -214,35 +248,37 @@ class BatchedEMLTree(nn.Module):
             x = x.to(self.dtype)
 
         # Base choices: [1, x_1, ..., x_V, <combos>] → (B, C_base, N)
-        base = build_base(x, self.num_vars, self.dtype)
-        C_base = base.shape[1]                    # == 1 + V + n_combo
+        base = build_base(x, self.num_vars, self.dtype, use_mul=self.use_mul)
+        C_base = base.shape[1]  # == 1 + V + n_combo
 
         # ---- Leaf level ----
-        w = self._weights(self.leaf_logits)                           # (B, L, 2, C)
+        w = self._weights(self.leaf_logits)  # (B, L, 2, C)
         leaf_ch = base.unsqueeze(1).expand(B, num_leaves, C_base, N)  # (B, L, C, N)
 
         # Weighted selection: sum_c(w[c] * choice[c]) for left and right inputs
-        left = (w[:, :, 0, :].unsqueeze(-1) * leaf_ch).sum(dim=2)    # (B, L, N)
-        right = (w[:, :, 1, :].unsqueeze(-1) * leaf_ch).sum(dim=2)   # (B, L, N)
-        outputs = safe_eml(left, right)                                # (B, L, N)
+        left = (w[:, :, 0, :].unsqueeze(-1) * leaf_ch).sum(dim=2)  # (B, L, N)
+        right = (w[:, :, 1, :].unsqueeze(-1) * leaf_ch).sum(dim=2)  # (B, L, N)
+        outputs = safe_eml(left, right)  # (B, L, N)
 
         # ---- Internal levels (bottom-up) ----
         for logits in self.internal_logits:
             M = logits.shape[1]  # nodes at this level
-            w = self._weights(logits)                             # (B, M, 2, C+1)
+            w = self._weights(logits)  # (B, M, 2, C+1)
 
             # Pair consecutive children from the level below
-            child_left = outputs[:, 0::2, :]    # (B, M, N)
-            child_right = outputs[:, 1::2, :]   # (B, M, N)
+            child_left = outputs[:, 0::2, :]  # (B, M, N)
+            child_right = outputs[:, 1::2, :]  # (B, M, N)
 
             # Build choice tensors: [1, x_1..V, <combos>, f_child]
-            int_base = base.unsqueeze(1).expand(B, M, C_base, N)       # (B, M, C_base, N)
-            l_ch = torch.cat([int_base, child_left.unsqueeze(2)], 2)   # (B, M, C_base+1, N)
+            int_base = base.unsqueeze(1).expand(B, M, C_base, N)  # (B, M, C_base, N)
+            l_ch = torch.cat(
+                [int_base, child_left.unsqueeze(2)], 2
+            )  # (B, M, C_base+1, N)
             r_ch = torch.cat([int_base, child_right.unsqueeze(2)], 2)
 
-            left = (w[:, :, 0, :].unsqueeze(-1) * l_ch).sum(dim=2)    # (B, M, N)
-            right = (w[:, :, 1, :].unsqueeze(-1) * r_ch).sum(dim=2)   # (B, M, N)
-            outputs = safe_eml(left, right)                             # (B, M, N)
+            left = (w[:, :, 0, :].unsqueeze(-1) * l_ch).sum(dim=2)  # (B, M, N)
+            right = (w[:, :, 1, :].unsqueeze(-1) * r_ch).sum(dim=2)  # (B, M, N)
+            outputs = safe_eml(left, right)  # (B, M, N)
 
         # Root is the sole remaining node → (B, 1, N) → (B, N)
         return outputs.squeeze(1)

@@ -36,28 +36,36 @@ def extract_expressions(
     """
     leaf_idx, internal_idx = tree.snapped_choices()
 
-    combo_strs = _combo_strings(var_names)
+    use_mul = getattr(tree, "use_mul", False)
+    combo_strs = _combo_strings(var_names, use_mul=use_mul)
     results = []
     for b in tree_indices:
         if tree.depth == 1:
             raw = _leaf_expr(b, 0, leaf_idx, var_names, combo_strs)
         else:
             raw = _internal_expr(
-                b, len(internal_idx) - 1, 0,
-                leaf_idx, internal_idx, var_names, combo_strs,
+                b,
+                len(internal_idx) - 1,
+                0,
+                leaf_idx,
+                internal_idx,
+                var_names,
+                combo_strs,
             )
         results.append(raw)
     return results
 
 
-def _combo_strings(var_names: list[str]) -> list[str]:
+def _combo_strings(var_names: list[str], use_mul: bool = False) -> list[str]:
     """Render each combo entry as a math string, ordered as in enumerate_combos."""
     out = []
-    for op, i, j in enumerate_combos(len(var_names)):
+    for op, i, j in enumerate_combos(len(var_names), use_mul=use_mul):
         if op == "add":
             out.append(f"({var_names[i]} + {var_names[j]})")
-        else:
+        elif op == "sub":
             out.append(f"({var_names[i]} - {var_names[j]})")
+        else:  # mul
+            out.append(f"({var_names[i]} * {var_names[j]})")
     return out
 
 
@@ -81,9 +89,12 @@ def annotate(expr: str) -> str:
 # Internal helpers
 # ------------------------------------------------------------------
 
+
 def _leaf_expr(
-    b: int, node: int,
-    leaf_idx: torch.Tensor, var_names: list[str],
+    b: int,
+    node: int,
+    leaf_idx: torch.Tensor,
+    var_names: list[str],
     combo_strs: list[str],
 ) -> str:
     left = _choice_str(leaf_idx[b, node, 0].item(), var_names, combo_strs, child=None)
@@ -92,7 +103,9 @@ def _leaf_expr(
 
 
 def _internal_expr(
-    b: int, level: int, node: int,
+    b: int,
+    level: int,
+    node: int,
     leaf_idx: torch.Tensor,
     internal_idx: list[torch.Tensor],
     var_names: list[str],
@@ -103,20 +116,25 @@ def _internal_expr(
         child_l = _leaf_expr(b, 2 * node, leaf_idx, var_names, combo_strs)
         child_r = _leaf_expr(b, 2 * node + 1, leaf_idx, var_names, combo_strs)
     else:
-        child_l = _internal_expr(b, level - 1, 2 * node,
-                                 leaf_idx, internal_idx, var_names, combo_strs)
-        child_r = _internal_expr(b, level - 1, 2 * node + 1,
-                                 leaf_idx, internal_idx, var_names, combo_strs)
+        child_l = _internal_expr(
+            b, level - 1, 2 * node, leaf_idx, internal_idx, var_names, combo_strs
+        )
+        child_r = _internal_expr(
+            b, level - 1, 2 * node + 1, leaf_idx, internal_idx, var_names, combo_strs
+        )
 
-    left = _choice_str(internal_idx[level][b, node, 0].item(),
-                       var_names, combo_strs, child=child_l)
-    right = _choice_str(internal_idx[level][b, node, 1].item(),
-                        var_names, combo_strs, child=child_r)
+    left = _choice_str(
+        internal_idx[level][b, node, 0].item(), var_names, combo_strs, child=child_l
+    )
+    right = _choice_str(
+        internal_idx[level][b, node, 1].item(), var_names, combo_strs, child=child_r
+    )
     return f"eml({left}, {right})"
 
 
-def _choice_str(idx: int, var_names: list[str], combo_strs: list[str],
-                child: str | None) -> str:
+def _choice_str(
+    idx: int, var_names: list[str], combo_strs: list[str], child: str | None
+) -> str:
     """Map integer choice index to string.
 
     Layout: 0='1', 1..V=vars, V+1..V+K=combos, V+K+1=f_child (only at internal).
