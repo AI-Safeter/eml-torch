@@ -150,7 +150,7 @@ class BatchedEMLMulTree(nn.Module):
         def peaked(shape, C):
             base = torch.randn(*shape, device=device, dtype=dtype) * 0.1
             idx = torch.randint(0, C, shape[:-1], device=device)
-            base.scatter_(-1, idx.unsqueeze(-1), 50.0)
+            base.scatter_(-1, idx.unsqueeze(-1), 150.0)
             return nn.Parameter(base)
 
         self.leaf_logits = peaked(
@@ -359,7 +359,7 @@ def evolve_hybrid_mul(
                         n = int(torch.randint(0, tree.num_leaves, (1,)).item())
                         new_op = int(torch.randint(0, 2, (1,)).item())
                         tree.leaf_op_logits.data[offsp, n] = 0
-                        tree.leaf_op_logits.data[offsp, n, new_op] = 50.0
+                        tree.leaf_op_logits.data[offsp, n, new_op] = 150.0
                     else:
                         lvl = int(
                             torch.randint(0, len(tree.internal_op_logits), (1,)).item()
@@ -368,7 +368,7 @@ def evolve_hybrid_mul(
                         n = int(torch.randint(0, M, (1,)).item())
                         new_op = int(torch.randint(0, 2, (1,)).item())
                         tree.internal_op_logits[lvl].data[offsp, n] = 0
-                        tree.internal_op_logits[lvl].data[offsp, n, new_op] = 50.0
+                        tree.internal_op_logits[lvl].data[offsp, n, new_op] = 150.0
                 else:
                     # Mutate input choice
                     if torch.rand(1).item() < 0.5 or tree.depth == 1:
@@ -377,7 +377,7 @@ def evolve_hybrid_mul(
                         C = tree.leaf_logits.shape[-1]
                         new_c = int(torch.randint(0, C, (1,)).item())
                         tree.leaf_logits.data[offsp, n, side] = 0
-                        tree.leaf_logits.data[offsp, n, side, new_c] = 50.0
+                        tree.leaf_logits.data[offsp, n, side, new_c] = 150.0
                     else:
                         lvl = int(
                             torch.randint(0, len(tree.internal_logits), (1,)).item()
@@ -388,7 +388,7 @@ def evolve_hybrid_mul(
                         C = tree.internal_logits[lvl].shape[-1]
                         new_c = int(torch.randint(0, C, (1,)).item())
                         tree.internal_logits[lvl].data[offsp, n, side] = 0
-                        tree.internal_logits[lvl].data[offsp, n, side, new_c] = 50.0
+                        tree.internal_logits[lvl].data[offsp, n, side, new_c] = 150.0
 
     # Denormalize a, b back to original target scale.
     # y ~ a + b * tree(x)  where y = y_work * y_std + y_mean,

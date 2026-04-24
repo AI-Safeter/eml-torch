@@ -398,6 +398,126 @@ def test_safe_eml_clamp_prevents_overflow():
     assert torch.isfinite(out).all()
 
 
+# ─── 8. Forward-path consistency: batched softmax vs argmax loop ────────────
+#
+# Regression test for the 2026-04-25 bug where mutation wrote logit=50 to the
+# selected slot, giving softmax weight exp(-50) ≈ 1.9e-22 on non-selected
+# slots. When multiplied by a saturated safe_eml output (exp(60) ≈ 1.14e+26)
+# from the operator-mixing term `w_op[0]*eml_out + w_op[1]*mul_out`, the
+# "zeroed" non-selected operator contributed ~2.2e+4 of spurious value.
+# The fix: write logit=150 so softmax[non-argmax] underflows to 0 even when
+# multiplied by saturated values. This test asserts that, for a mutation-
+# heavy evolved tree, the batched softmax forward output matches an
+# argmax-selection forward exactly.
+
+
+def _argmax_forward_hybrid(tree, idx: int, x_t: torch.Tensor) -> torch.Tensor:
+    """Reference forward: deterministic argmax-selection walk of the snapped tree.
+    Must match BatchedEMLMulTree.forward()[idx] exactly when softmax ≈ argmax."""
+    from emltorch.hybrid_mul import build_base as build_base_hyb
+
+    device = tree.leaf_logits.device
+    V = tree.num_vars
+    n_combo = tree.n_combo
+    leaf_in, leaf_op, int_in, int_op = tree.snapped()
+    leaf_in_ch = leaf_in[idx]
+    leaf_op_ch = leaf_op[idx]
+    int_in_ch = [c[idx] for c in int_in]
+    int_op_ch = [c[idx] for c in int_op]
+
+    x_dev = x_t.to(device, torch.float32)
+    if x_dev.dim() == 1:
+        x_dev = x_dev.unsqueeze(0)
+    base = build_base_hyb(
+        x_dev.unsqueeze(0), V, torch.float32, use_mul=tree.use_mul
+    ).squeeze(0)
+
+    def sel_leaf(n, s):
+        c = int(leaf_in_ch[n, s].item())
+        if c == 0:
+            return torch.ones(base.shape[-1], device=device)
+        if c <= V + n_combo:
+            return base[c]
+        # No child at leaf level
+        raise ValueError(f"Unexpected leaf choice c={c}")
+
+    L = leaf_in_ch.shape[0]
+    outs = []
+    for n in range(L):
+        lft = sel_leaf(n, 0)
+        rgt = sel_leaf(n, 1)
+        op = int(leaf_op_ch[n].item())
+        outs.append(safe_eml_hyb(lft, rgt) if op == 0 else safe_mul(lft, rgt))
+    cur = torch.stack(outs)
+
+    def sel_int(ch_i, n, s, child_v):
+        c = int(ch_i[n, s].item())
+        if c == 0:
+            return torch.ones(base.shape[-1], device=device)
+        if c <= V + n_combo:
+            return base[c]
+        return child_v
+
+    for ch_i, op_i in zip(int_in_ch, int_op_ch):
+        M = ch_i.shape[0]
+        new = []
+        for n in range(M):
+            cL = cur[2 * n]
+            cR = cur[2 * n + 1]
+            lft = sel_int(ch_i, n, 0, cL)
+            rgt = sel_int(ch_i, n, 1, cR)
+            op = int(op_i[n].item())
+            new.append(safe_eml_hyb(lft, rgt) if op == 0 else safe_mul(lft, rgt))
+        cur = torch.stack(new)
+    return cur[0]
+
+
+def test_forward_consistency_batched_vs_argmax():
+    """After evolve_hybrid_mul mutates, the batched softmax forward and the
+    argmax-walk forward must match exactly for any individual's snapped
+    topology. Regresses the 2026-04-25 softmax-contamination bug where
+    logit=50 gave 1.9e-22 weight × 1.14e+26 saturated = 2.2e+4 spurious.
+    """
+    torch.manual_seed(0)
+    # Large-magnitude 2-var target → forces safe_eml saturation at exp(60)
+    # during evolution, exposing the softmax-mixing bug.
+    N = 200
+    x = torch.randn(2, N) * 2.0
+    y = (100.0 + 30.0 * x[0] * x[1]).float()
+
+    cfg = HybridMulConfig(
+        depth=5,
+        num_vars=2,
+        population=2048,
+        generations=15,
+        use_mul=False,
+        device=DEVICE,
+    )
+    res = evolve_hybrid_mul(x, y, cfg)
+
+    # Full-batch forward
+    x_pop = (
+        x.to(DEVICE)
+        .unsqueeze(0)
+        .expand(res.tree.num_trees, 2, x.shape[-1])
+        .contiguous()
+    )
+    with torch.no_grad():
+        pred_batched = res.tree(x_pop)[res.idx]
+
+    # Argmax-walk forward
+    pred_argmax = _argmax_forward_hybrid(res.tree, res.idx, x)
+
+    max_diff = (pred_batched - pred_argmax).abs().max().item()
+    assert max_diff < 1e-4, (
+        f"Batched softmax forward and argmax-walk forward diverge by "
+        f"{max_diff:.4g} — softmax-mixing contamination regression. Check "
+        f"that mutation sets logit >= 150 (or equivalent) so "
+        f"softmax[non-argmax] underflows to 0 in float32 even when other "
+        f"ops saturate at exp(60) ≈ 1e26."
+    )
+
+
 if __name__ == "__main__":
     import pytest as _pytest
 

@@ -147,11 +147,16 @@ def _mutate_(tree: BatchedEMLTree, indices: torch.Tensor, n_mutations: int = 1):
                 node_i = torch.randint(0, n_nodes, (n_sel,), device=logits.device)
                 input_i = torch.randint(0, n_inputs, (n_sel,), device=logits.device)
                 new_choice = torch.randint(0, n_choices, (n_sel,), device=logits.device)
-                # Build one-hot row of size (n_sel, n_choices) with 50.0 at new_choice
+                # Build one-hot row of size (n_sel, n_choices) with 150.0 at new_choice.
+                # Logit 150 ensures softmax[non-argmax] = exp(-150) underflows to 0
+                # in float32, preventing softmax-mixing contamination when a
+                # non-selected choice holds a saturated value (e.g., safe_eml at
+                # exp(60) ≈ 1.14e26): logit=50 gave weight 1.9e-22 and a 2.2e+4
+                # spurious contribution; logit=150 gives exactly 0.
                 row = torch.zeros(
                     n_sel, n_choices, device=logits.device, dtype=logits.dtype
                 )
-                row.scatter_(-1, new_choice.unsqueeze(-1), 50.0)
+                row.scatter_(-1, new_choice.unsqueeze(-1), 150.0)
                 logits[sel_indices, node_i, input_i] = row
 
 
