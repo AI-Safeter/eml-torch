@@ -32,6 +32,14 @@ from .evolution import EvolutionConfig, EvolutionResult, evolve
 from .api import fit, FitResult
 from . import interp  # noqa: F401
 from .gradient import diff_formula, gradient_at, sensitivity_vector, torch_gradient_fn
+from .hybrid_mul import (
+    BatchedEMLMulTree,
+    HybridMulConfig,
+    HybridMulResult,
+    evolve_hybrid_mul,
+    safe_eml as safe_eml_hybrid,
+    safe_mul,
+)
 from .smt import (
     SafetyCertificate,
     eml_formula_to_z3,
@@ -73,4 +81,10 @@ __all__ = [
     "evolve",
     "extract_expressions",
     "annotate",
+    # Hybrid EML+MUL (2nd binary operator at internal nodes; added 2026-04-24)
+    "BatchedEMLMulTree",
+    "HybridMulConfig",
+    "HybridMulResult",
+    "evolve_hybrid_mul",
+    "safe_mul",
 ]
