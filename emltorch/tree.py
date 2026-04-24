@@ -29,7 +29,7 @@ from .operator import safe_eml
 def enumerate_combos(
     num_vars: int, use_mul: bool = False
 ) -> list[tuple[str, int, int]]:
-    """Return the ordered list of (op, i, j) combos active for V variables.
+    """Return the ordered list of (op, i, j) pair combos active for V variables.
 
     op is 'add', 'sub', or (optional) 'mul'; indices i, j are 0-based variable
     indices. Empty when V < 2. The order here defines the choice-index mapping
@@ -58,8 +58,32 @@ def enumerate_combos(
     return combos
 
 
+def enumerate_triples(
+    num_vars: int, use_mul3: bool = False
+) -> list[tuple[int, int, int]]:
+    """Return the ordered list of unordered triple products x_i * x_j * x_k
+    for i<j<k. Only populated when `use_mul3=True` and V >= 3.
+
+    Triple combos live AFTER the pair combos in the choice index space; the
+    layout is therefore [1, x_1..V, <pair_combos>, <triple_combos>, f_child].
+    Backward-compat: with `use_mul3=False` (default), this returns [].
+    """
+    if not use_mul3 or num_vars < 3:
+        return []
+    triples: list[tuple[int, int, int]] = []
+    for i in range(num_vars):
+        for j in range(i + 1, num_vars):
+            for k in range(j + 1, num_vars):
+                triples.append((i, j, k))
+    return triples
+
+
 def build_base(
-    x: torch.Tensor, num_vars: int, dtype: torch.dtype, use_mul: bool = False
+    x: torch.Tensor,
+    num_vars: int,
+    dtype: torch.dtype,
+    use_mul: bool = False,
+    use_mul3: bool = False,
 ) -> torch.Tensor:
     """Build the extended base tensor from input x.
 
@@ -67,11 +91,13 @@ def build_base(
         x: (B, V, N) input, already in `dtype`.
         num_vars: V (must match x.shape[1]).
         dtype: working dtype.
-        use_mul: include x_i * x_j combos (see enumerate_combos).
+        use_mul: include x_i * x_j pair combos (see enumerate_combos).
+        use_mul3: include x_i * x_j * x_k triple combos (V >= 3).
 
     Returns:
-        (B, C_base, N) with columns [1, x_1, ..., x_V, <combos>] where
-        combos follow `enumerate_combos(num_vars, use_mul)` ordering.
+        (B, C_base, N) with columns [1, x_1, ..., x_V, <pair_combos>,
+        <triple_combos>]. Pair combos follow `enumerate_combos(num_vars, use_mul)`;
+        triple combos follow `enumerate_triples(num_vars, use_mul3)`.
     """
     B, V, N = x.shape
     assert V == num_vars
@@ -86,16 +112,21 @@ def build_base(
             parts.append(xi - xj)
         else:  # mul
             parts.append(xi * xj)
+    for i, j, k in enumerate_triples(num_vars, use_mul3=use_mul3):
+        parts.append(x[:, i : i + 1] * x[:, j : j + 1] * x[:, k : k + 1])
     return torch.cat(parts, dim=1)
 
 
-def num_combos(num_vars: int, use_mul: bool = False) -> int:
-    """Number of combo entries for V variables (optionally including mul)."""
+def num_combos(num_vars: int, use_mul: bool = False, use_mul3: bool = False) -> int:
+    """Number of combo entries for V variables (pairs and optionally triples)."""
     if num_vars < 2:
         return 0
     base = num_vars * (num_vars - 1) // 2 + num_vars * (num_vars - 1)
     if use_mul:
         base += num_vars * (num_vars - 1) // 2
+    if use_mul3 and num_vars >= 3:
+        # C(V, 3)
+        base += num_vars * (num_vars - 1) * (num_vars - 2) // 6
     return base
 
 
@@ -121,6 +152,7 @@ class BatchedEMLTree(nn.Module):
         init_scale: float = 0.1,
         init_mode: str = "uniform",
         use_mul: bool = False,
+        use_mul3: bool = False,
     ):
         """
         Args:
@@ -132,6 +164,8 @@ class BatchedEMLTree(nn.Module):
                                     specific tree (one-hot logits with scale).
             use_mul: include x_i * x_j pre-feature combos in the leaf/internal
                         choice set. Opt-in; default preserves backward behavior.
+            use_mul3: include x_i * x_j * x_k triple-product combos (V >= 3).
+                        Opt-in; default preserves backward behavior.
         """
         super().__init__()
         assert depth >= 1, "Depth must be >= 1"
@@ -140,8 +174,9 @@ class BatchedEMLTree(nn.Module):
         self.num_vars = num_vars
         self.dtype = dtype
         self.use_mul = use_mul
+        self.use_mul3 = use_mul3
 
-        n_combo = num_combos(num_vars, use_mul=use_mul)
+        n_combo = num_combos(num_vars, use_mul=use_mul, use_mul3=use_mul3)
         # Leaves pick from {1, x_1..V, <combos>}; internals add f_child.
         # f_child therefore lives at index (1 + V + n_combo) in internal choice sets.
         leaf_choices = 1 + num_vars + n_combo
@@ -248,7 +283,13 @@ class BatchedEMLTree(nn.Module):
             x = x.to(self.dtype)
 
         # Base choices: [1, x_1, ..., x_V, <combos>] → (B, C_base, N)
-        base = build_base(x, self.num_vars, self.dtype, use_mul=self.use_mul)
+        base = build_base(
+            x,
+            self.num_vars,
+            self.dtype,
+            use_mul=self.use_mul,
+            use_mul3=self.use_mul3,
+        )
         C_base = base.shape[1]  # == 1 + V + n_combo
 
         # ---- Leaf level ----

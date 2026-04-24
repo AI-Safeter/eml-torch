@@ -12,7 +12,7 @@ import re
 import torch
 from typing import TYPE_CHECKING
 
-from .tree import enumerate_combos
+from .tree import enumerate_combos, enumerate_triples
 
 if TYPE_CHECKING:
     from .tree import BatchedEMLTree
@@ -37,7 +37,8 @@ def extract_expressions(
     leaf_idx, internal_idx = tree.snapped_choices()
 
     use_mul = getattr(tree, "use_mul", False)
-    combo_strs = _combo_strings(var_names, use_mul=use_mul)
+    use_mul3 = getattr(tree, "use_mul3", False)
+    combo_strs = _combo_strings(var_names, use_mul=use_mul, use_mul3=use_mul3)
     results = []
     for b in tree_indices:
         if tree.depth == 1:
@@ -56,8 +57,14 @@ def extract_expressions(
     return results
 
 
-def _combo_strings(var_names: list[str], use_mul: bool = False) -> list[str]:
-    """Render each combo entry as a math string, ordered as in enumerate_combos."""
+def _combo_strings(
+    var_names: list[str], use_mul: bool = False, use_mul3: bool = False
+) -> list[str]:
+    """Render each combo entry as a math string.
+
+    Order: pair combos (add, sub, [mul]) then triple combos (mul3) —
+    same order as `enumerate_combos` followed by `enumerate_triples`.
+    """
     out = []
     for op, i, j in enumerate_combos(len(var_names), use_mul=use_mul):
         if op == "add":
@@ -66,6 +73,10 @@ def _combo_strings(var_names: list[str], use_mul: bool = False) -> list[str]:
             out.append(f"({var_names[i]} - {var_names[j]})")
         else:  # mul
             out.append(f"({var_names[i]} * {var_names[j]})")
+    for i, j, k in enumerate_triples(len(var_names), use_mul3=use_mul3):
+        # Emit as nested pair-mul so the gradient / Z3 parser (which expects
+        # binary `(atom op atom)`) handles the triple without changes.
+        out.append(f"(({var_names[i]} * {var_names[j]}) * {var_names[k]})")
     return out
 
 

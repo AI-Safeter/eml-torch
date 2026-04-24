@@ -52,11 +52,13 @@ class _FixedTopologyTree(nn.Module):
         num_vars: int,
         dtype: torch.dtype = torch.float32,
         use_mul: bool = False,
+        use_mul3: bool = False,
     ):
         super().__init__()
         self.num_vars = num_vars
         self.dtype = dtype
         self.use_mul = use_mul
+        self.use_mul3 = use_mul3
         self.num_leaves = leaf_choices.shape[0]
 
         self.register_buffer("leaf_choices", leaf_choices.clone())
@@ -145,9 +147,13 @@ class _FixedTopologyTree(nn.Module):
         # Use the shared base builder. build_base expects (B, V, N); we run
         # polish single-batch so B=1, then squeeze.
         base = build_base(
-            x.to(self.dtype).unsqueeze(0), V, self.dtype, use_mul=self.use_mul
+            x.to(self.dtype).unsqueeze(0),
+            V,
+            self.dtype,
+            use_mul=self.use_mul,
+            use_mul3=self.use_mul3,
         ).squeeze(0)
-        # base: (C_base, N) where C_base = 1 + V + num_combos(V, use_mul)
+        # base: (C_base, N) where C_base = 1 + V + num_combos(V, use_mul, use_mul3)
 
         # Leaf level — evaluate all leaves
         leaf_outputs = []
@@ -227,6 +233,7 @@ def polish(
         num_vars=V,
         dtype=dtype,
         use_mul=getattr(tree, "use_mul", False),
+        use_mul3=getattr(tree, "use_mul3", False),
     ).to(device)
 
     x_dev = x.to(device, dtype)
@@ -332,6 +339,7 @@ def polish(
         [fi.cpu() for fi in fixed.internal_flat_idxs],
         constants_list,
         use_mul=getattr(tree, "use_mul", False),
+        use_mul3=getattr(tree, "use_mul3", False),
     )
     full = f"{best_state['a']:+.4f} + ({best_state['b']:+.4f}) * " f"[{formula}]"
 
@@ -353,16 +361,26 @@ def _format_with_constants(
     internal_flat_idxs,
     constants,
     use_mul: bool = False,
+    use_mul3: bool = False,
 ):
     """Recursively format the tree with learned constants in place of '1' slots."""
+    from .tree import enumerate_triples
+
     V = len(var_names)
     combos = enumerate_combos(V, use_mul=use_mul)
+    triples = enumerate_triples(V, use_mul3=use_mul3)
     K = len(combos)
+    T = len(triples)
 
     def combo_str(k: int) -> str:
         op, i, j = combos[k]
         sym = {"add": "+", "sub": "-", "mul": "*"}[op]
         return f"({var_names[i]} {sym} {var_names[j]})"
+
+    def triple_str(t: int) -> str:
+        i, j, k = triples[t]
+        # Nested binary form so gradient/Z3 parser handles it.
+        return f"(({var_names[i]} * {var_names[j]}) * {var_names[k]})"
 
     def choice_str(idx, flat_idx_tensor, node, input_side, child_str):
         if idx == 0:
@@ -372,6 +390,8 @@ def _format_with_constants(
             return var_names[idx - 1]
         if idx <= V + K:
             return combo_str(idx - V - 1)
+        if idx <= V + K + T:
+            return triple_str(idx - V - K - 1)
         return child_str
 
     def leaf_expr(leaf_idx):

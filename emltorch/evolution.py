@@ -44,6 +44,8 @@ class EvolutionConfig:
     # Enable multiplicative combos (x_i * x_j) in the leaf/internal choice set.
     # Opt-in; breaks multiplicative ceilings (e.g. h·SiLU(z) Mamba gate).
     use_mul: bool = False
+    # Enable triple-product combos (x_i * x_j * x_k) for V >= 3. Opt-in.
+    use_mul3: bool = False
 
     @property
     def torch_dtype(self):
@@ -266,6 +268,7 @@ def evolve(
         init_scale=50.0,
         init_mode="peaked",
         use_mul=cfg.use_mul,
+        use_mul3=cfg.use_mul3,
     )
     _snap_peaked(tree)
 
