@@ -43,6 +43,18 @@ import torch.nn as nn
 
 from .tree import enumerate_combos, num_combos
 
+__all__ = [
+    "safe_eml",
+    "safe_mul",
+    "build_base",
+    "BatchedEMLMulTree",
+    "HybridMulConfig",
+    "HybridMulResult",
+    "HybridMulPolishResult",
+    "evolve_hybrid_mul",
+    "polish_hybrid_mul",
+]
+
 
 def safe_eml(
     left: torch.Tensor, right: torch.Tensor, clamp: float = 60.0, log_eps: float = 1e-6
@@ -391,4 +403,218 @@ def evolve_hybrid_mul(
         b=b_orig,
         target_mean=y_mean,
         target_std=y_std,
+    )
+
+
+# ------------------------------------------------------------------
+# Polishing
+# ------------------------------------------------------------------
+
+
+@dataclass
+class HybridMulPolishResult:
+    """Polish result for hybrid EML+MUL trees.
+
+    `a`, `b` are on the ORIGINAL target scale (internal normalization is
+    denormalized before return). `constants` lists the learned scalar
+    values for leaves that chose the `1`-slot.
+    """
+
+    r2: float
+    mse: float
+    a: float
+    b: float
+    constants: list
+    # Topology (integer choice indices per node, per side):
+    leaf_in: list
+    leaf_op: list
+    int_in: list
+    int_op: list
+
+
+def polish_hybrid_mul(
+    tree: BatchedEMLMulTree,
+    idx: int,
+    x_train: torch.Tensor,
+    y_train: torch.Tensor,
+    n_iters: int = 2500,
+    lr: float = 0.05,
+    warm_a: float = 0.0,
+    warm_b: float = 1.0,
+    normalize_target: bool = True,
+    grad_clip: float = 1.0,
+) -> HybridMulPolishResult:
+    """Adam-polish constants at a fixed snapped topology + op-choice.
+
+    Mirrors the semantics of `emltorch.polish.polish` for the hybrid tree:
+    every leaf whose choice slot is 0 (the `1`-slot) becomes a learnable
+    constant, jointly optimized with the outer affine `a + b · tree(x)`.
+
+    Robustness features added 2026-04-24:
+      - `normalize_target=True` (default): train in `(y - mean)/std` frame;
+        denormalize on return. Prevents R² collapse on large-magnitude
+        targets (e.g. Chinchilla L~100) where Adam/grad-clip get pinned
+        at one end of the trade-off.
+      - NaN-revert: non-finite `fit` OR `mse` at any iteration rolls back
+        constants/a/b to the last best state + small perturbation, so the
+        function never returns worse than the warm start.
+
+    Args:
+        tree: BatchedEMLMulTree (must already be .snap()-ed).
+        idx:  Individual index within the batched tree.
+        x_train, y_train: Training data. x shape (V, N) or (N,) if V=1.
+        n_iters: Adam iterations.
+        lr: Learning rate (default 0.05).
+        warm_a, warm_b: Outer affine warm start (from evolve).
+        normalize_target: Internally normalize y_train to unit std.
+        grad_clip: Gradient clip norm for [constants, a, b].
+
+    Returns:
+        HybridMulPolishResult — a, b on the ORIGINAL target scale.
+    """
+    device = next(tree.parameters()).device
+    dtype = torch.float32
+
+    leaf_in, leaf_op, int_in, int_op = tree.snapped()
+    leaf_in_ch = leaf_in[idx]  # (L, 2)
+    leaf_op_ch = leaf_op[idx]  # (L,)
+    int_in_ch = [c[idx] for c in int_in]
+    int_op_ch = [c[idx] for c in int_op]
+
+    V = tree.num_vars
+    n_combo = tree.n_combo
+
+    # Count '1' leaves (choice idx 0) in leaf + internal
+    leaf_mask = leaf_in_ch == 0
+    int_masks = [c == 0 for c in int_in_ch]
+    n_consts = int(leaf_mask.sum() + sum(m.sum() for m in int_masks))
+    constants = nn.Parameter(torch.ones(n_consts, dtype=dtype, device=device))
+
+    # Build flat index maps: (leaf, side) -> constant slot
+    leaf_flat = torch.full(leaf_in_ch.shape, -1, dtype=torch.long, device=device)
+    k = 0
+    for n_i in range(leaf_in_ch.shape[0]):
+        for s in range(2):
+            if int(leaf_in_ch[n_i, s].item()) == 0:
+                leaf_flat[n_i, s] = k
+                k += 1
+    int_flats = []
+    for ch_i in int_in_ch:
+        flat = torch.full(ch_i.shape, -1, dtype=torch.long, device=device)
+        for n_i in range(ch_i.shape[0]):
+            for s in range(2):
+                if int(ch_i[n_i, s].item()) == 0:
+                    flat[n_i, s] = k
+                    k += 1
+        int_flats.append(flat)
+
+    x_dev = x_train.to(device, dtype)
+    if x_dev.dim() == 1:
+        x_dev = x_dev.unsqueeze(0)
+    y_dev = y_train.to(device, dtype)
+
+    # Target normalization (see HybridMulConfig.normalize_target for rationale)
+    if normalize_target:
+        y_mu = float(y_dev.mean().item())
+        y_sd = float(y_dev.std().clamp(min=1e-8).item())
+    else:
+        y_mu, y_sd = 0.0, 1.0
+    y_work = (y_dev - y_mu) / y_sd
+
+    warm_a_work = (warm_a - y_mu) / y_sd
+    warm_b_work = warm_b / y_sd
+    a = nn.Parameter(torch.tensor([warm_a_work], dtype=dtype, device=device))
+    b = nn.Parameter(torch.tensor([warm_b_work], dtype=dtype, device=device))
+
+    def forward_fixed() -> torch.Tensor:
+        base = build_base(x_dev.unsqueeze(0), V, dtype, use_mul=tree.use_mul).squeeze(0)
+
+        def sel(choice_i, flat_t, n, s, base_v, child_v):
+            c = int(choice_i[n, s].item())
+            if c == 0:
+                return constants[int(flat_t[n, s].item())].expand(base_v.shape[-1])
+            if c <= V + n_combo:
+                return base_v[c]
+            return child_v
+
+        L = leaf_in_ch.shape[0]
+        outs = []
+        for n in range(L):
+            lft = sel(leaf_in_ch, leaf_flat, n, 0, base, None)
+            rgt = sel(leaf_in_ch, leaf_flat, n, 1, base, None)
+            op = int(leaf_op_ch[n].item())
+            outs.append(safe_eml(lft, rgt) if op == 0 else safe_mul(lft, rgt))
+        cur = torch.stack(outs)
+        for ch_i, op_i, flat in zip(int_in_ch, int_op_ch, int_flats):
+            M = ch_i.shape[0]
+            new = []
+            for n in range(M):
+                cL = cur[2 * n]
+                cR = cur[2 * n + 1]
+                lft = sel(ch_i, flat, n, 0, base, cL)
+                rgt = sel(ch_i, flat, n, 1, base, cR)
+                op = int(op_i[n].item())
+                new.append(safe_eml(lft, rgt) if op == 0 else safe_mul(lft, rgt))
+            cur = torch.stack(new)
+        return cur[0]
+
+    opt = torch.optim.Adam([constants, a, b], lr=lr)
+    best_state = (constants.detach().clone(), float(a.item()), float(b.item()))
+    with torch.no_grad():
+        init_pred = forward_fixed()
+        init_mse_t = ((a + b * init_pred - y_work) ** 2).mean()
+        init_mse = (
+            float(init_mse_t.item()) if torch.isfinite(init_mse_t) else float("inf")
+        )
+    best_mse = init_mse
+    for _ in range(n_iters):
+        opt.zero_grad()
+        pred = forward_fixed()
+        fit = a + b * pred
+        if not torch.isfinite(fit).all():
+            with torch.no_grad():
+                a.data.fill_(best_state[1])
+                b.data.fill_(best_state[2])
+                constants.data.copy_(best_state[0])
+                constants.add_(torch.randn_like(constants) * 0.01)
+            continue
+        mse = ((fit - y_work) ** 2).mean()
+        if not torch.isfinite(mse):
+            with torch.no_grad():
+                a.data.fill_(best_state[1])
+                b.data.fill_(best_state[2])
+                constants.data.copy_(best_state[0])
+                constants.add_(torch.randn_like(constants) * 0.01)
+            continue
+        mse.backward()
+        nn.utils.clip_grad_norm_([constants, a, b], grad_clip)
+        opt.step()
+        mse_i = float(mse.item())
+        if mse_i < best_mse:
+            best_mse = mse_i
+            best_state = (
+                constants.detach().clone(),
+                float(a.item()),
+                float(b.item()),
+            )
+
+    with torch.no_grad():
+        constants.copy_(best_state[0])
+
+    a_orig = best_state[1] * y_sd + y_mu
+    b_orig = best_state[2] * y_sd
+    ss_tot = ((y_dev - y_dev.mean()) ** 2).sum().clamp(min=1e-12).item()
+    final_mse = best_mse * (y_sd * y_sd)
+    final_r2 = 1 - final_mse * y_dev.shape[-1] / ss_tot
+
+    return HybridMulPolishResult(
+        r2=float(final_r2),
+        mse=float(final_mse),
+        a=float(a_orig),
+        b=float(b_orig),
+        constants=best_state[0].detach().cpu().tolist(),
+        leaf_in=leaf_in_ch.cpu().tolist(),
+        leaf_op=leaf_op_ch.cpu().tolist(),
+        int_in=[c.cpu().tolist() for c in int_in_ch],
+        int_op=[c.cpu().tolist() for c in int_op_ch],
     )

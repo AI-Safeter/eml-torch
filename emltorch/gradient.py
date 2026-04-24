@@ -430,7 +430,11 @@ def _torch_compute(node: _Node, vals: dict[str, torch.Tensor]) -> torch.Tensor:
     if isinstance(node, _Combo):
         lv = vals.get(node.left, torch.tensor(0.0))
         rv = vals.get(node.right, torch.tensor(0.0))
-        return (lv + rv) if node.op == "+" else (lv - rv)
+        if node.op == "+":
+            return lv + rv
+        if node.op == "-":
+            return lv - rv
+        return lv * rv  # "*" — mul combo (use_mul=True)
     if isinstance(node, _EML):
         L = _torch_compute(node.left, vals)
         R = _torch_compute(node.right, vals)

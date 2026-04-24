@@ -36,7 +36,9 @@ from .hybrid_mul import (
     BatchedEMLMulTree,
     HybridMulConfig,
     HybridMulResult,
+    HybridMulPolishResult,
     evolve_hybrid_mul,
+    polish_hybrid_mul,
     safe_eml as safe_eml_hybrid,
     safe_mul,
 )
@@ -85,6 +87,8 @@ __all__ = [
     "BatchedEMLMulTree",
     "HybridMulConfig",
     "HybridMulResult",
+    "HybridMulPolishResult",
     "evolve_hybrid_mul",
+    "polish_hybrid_mul",
     "safe_mul",
 ]
