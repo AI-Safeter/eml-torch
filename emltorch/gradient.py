@@ -329,14 +329,28 @@ class _Parser:
         return _EML(left, right)
 
     def _parse_paren(self) -> _Node:
+        """Parse a parenthesized expression. Supports:
+        (a + b), (a - b), (a * b)           -> _Combo (flat pair)
+        ((a * b) * c), (a * (b + c)), ...   -> _Mul/_Add/_Sub of sub-AST
+        """
         self.consume("(")
-        left = self._parse_atom()
+        # Left operand can be an atom OR a nested paren expression
+        left = self._parse_paren() if self.peek() == "(" else self._parse_atom()
         op = self.peek()
         if op in ("+", "-", "*"):
             self.consume()
-            right = self._parse_atom()
+            right = self._parse_paren() if self.peek() == "(" else self._parse_atom()
             self.consume(")")
-            return _Combo(str(left), op, str(right))
+            # If both operands are bare variables/constants, emit flat _Combo
+            # (preserves legacy behavior for pair combos from use_mul).
+            if isinstance(left, (_Var, _Const)) and isinstance(right, (_Var, _Const)):
+                return _Combo(str(left), op, str(right))
+            # Otherwise emit proper AST node so nested expressions work
+            if op == "+":
+                return _Add(left, right)
+            if op == "-":
+                return _Sub(left, right)
+            return _Mul(left, right)
         self.consume(")")
         return left
 
