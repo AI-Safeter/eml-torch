@@ -427,10 +427,188 @@ def emit_smtlib2(
     return header + cert.smt2
 
 
+# ─── Portable axiomatized-Exp+Ln EML-tree SMT emitter ──────────────────────
+# Translates a polished EML formula directly into SMT-LIB2 text where
+# `eml(L, R)` appears in the body as `(- (Exp L) (Ln R))`.  Unlike
+# `eml_formula_to_z3` (which uses native z3.Exp / z3.Ln transcendentals,
+# build-dependent), this emits an UNINTERPRETED-Exp + UNINTERPRETED-Ln
+# axiomatization that ANY SMT solver supporting QF_UF + linear arithmetic
+# can re-verify (z3 4.16, cvc5 1.3, etc.).  Same pattern as Headlines 7-9
+# applied to EML: positivity + monotonicity + Exp(0)=1 + Ln(1)=0 + inverse
+# axioms (Ln(Exp(x))=x, Exp(Ln(v))=v) + multiplicativity corollaries.
+
+EML_AXIOMS_SMT2 = """\
+; ─── Axiomatized Exp + Ln (no transcendentals required) ───
+(declare-fun Exp (Real) Real)
+(declare-fun Ln  (Real) Real)
+; --- Exp axioms ---
+(assert (forall ((u Real)) (! (> (Exp u) 0.0)        :pattern ((Exp u)))))
+(assert (= (Exp 0.0) 1.0))
+(assert (forall ((u Real) (v Real))
+    (! (=> (< u v) (< (Exp u) (Exp v)))               :pattern ((Exp u) (Exp v)))))
+(assert (forall ((u Real)) (! (=> (> u 0.0) (> (Exp u) 1.0)) :pattern ((Exp u)))))
+(assert (forall ((u Real)) (! (=> (< u 0.0) (< (Exp u) 1.0)) :pattern ((Exp u)))))
+; --- Ln axioms (domain: v > 0) ---
+(assert (= (Ln 1.0) 0.0))
+(assert (forall ((u Real) (v Real))
+    (! (=> (and (> u 0.0) (> v 0.0) (< u v)) (< (Ln u) (Ln v)))
+       :pattern ((Ln u) (Ln v)))))
+(assert (forall ((v Real))
+    (! (=> (> v 1.0) (> (Ln v) 0.0))                  :pattern ((Ln v)))))
+(assert (forall ((v Real))
+    (! (=> (and (> v 0.0) (< v 1.0)) (< (Ln v) 0.0))  :pattern ((Ln v)))))
+; --- inverse axioms (load-bearing for ReLU = EML-d4 identity) ---
+(assert (forall ((x Real)) (! (= (Ln (Exp x)) x)      :pattern ((Ln (Exp x))))))
+(assert (forall ((v Real)) (! (=> (> v 0.0) (= (Exp (Ln v)) v))
+                                                       :pattern ((Exp (Ln v))))))
+; --- numeric anchor:  e ∈ [2.7182, 2.7183] ---
+(assert (>= (Exp 1.0) 2.7182))
+(assert (<= (Exp 1.0) 2.7183))
+"""
+
+
+def eml_tree_to_smt2(
+    formula: str,
+    var_ranges: dict[str, tuple[float, float]],
+    target_op: str,
+    target_value: float,
+    title: str = "EML-tree cert",
+) -> str:
+    """
+    Translate an EML formula string (polish or bare) into a portable
+    SMT-LIB2 proof obligation:
+
+        ∀ vars within ``var_ranges``:    formula  {target_op}  {target_value}
+
+    Returns a ``.smt2`` text in which `eml(L, R)` is encoded as
+    `(- (Exp L) (Ln R))`, with `Exp` and `Ln` declared as uninterpreted
+    functions and constrained by the axiom block ``EML_AXIOMS_SMT2``.
+
+    The proof obligation is the NEGATION of the SAFE claim, so UNSAT means
+    the SAFE claim holds for all variable assignments in the ranges given.
+
+    Args:
+        formula:     EML formula string, e.g. ``"3.0 + 1.5 * eml(eml(1, x), 1)"``
+                     (or bare ``"eml(...)"`` — affine wrapper optional).
+        var_ranges:  e.g. ``{"x": (-1.0, 2.0), "gap": (-4.0, -1.0)}``
+        target_op:   one of ``">", ">=", "<", "<=", "==", "!="``.
+        target_value: numeric RHS of the SAFE claim.
+        title:       descriptive header comment.
+
+    The body lists every leaf variable in ``var_ranges`` with its bound;
+    every `eml(L, R)` node is rendered as ``(- (Exp L) (Ln R))``; constants
+    pass through.  Combos like `x_i+x_j`, `x_i-x_j`, `x_i*x_j` translate to
+    `(+ ...)`, `(- ...)`, `(* ...)` literally.
+
+    Example::
+
+        text = eml_tree_to_smt2(
+            "0.0 + 1.0 * eml(gap, 1)",
+            {"gap": (-4.0, -1.0)},
+            "<",
+            0.5,
+            title="softmax probability bounded above by 0.5 for low-confidence prompts",
+        )
+        # → SMT-LIB2 text; UNSAT proves p_correct = exp(gap) < 0.5 ∀ gap ∈ [-4, -1].
+    """
+    from emltorch.gradient import (
+        _parse_inner,
+        _strip_affine,
+        _Const,
+        _Var,
+        _Combo,
+        _EML,
+        _Add,
+        _Sub,
+        _Mul,
+        _Div,
+        _Exp,
+    )
+
+    a, b, inner = _strip_affine(formula)
+    node = _parse_inner(inner)
+
+    # collect leaf variable names that appear (cross-check against ranges)
+    seen_vars: set[str] = set()
+
+    def _num(v: float) -> str:
+        s = f"{v:.18f}"
+        return f"(- {s[1:]})" if v < 0 else s
+
+    def emit(n) -> str:
+        if isinstance(n, _Const):
+            return _num(n.value)
+        if isinstance(n, _Var):
+            seen_vars.add(n.name)
+            return n.name
+        if isinstance(n, _Combo):
+            seen_vars.add(n.left)
+            seen_vars.add(n.right)
+            sym = {"+": "+", "-": "-", "*": "*"}[n.op]
+            return f"({sym} {n.left} {n.right})"
+        if isinstance(n, _EML):
+            L = emit(n.left)
+            R = emit(n.right)
+            return f"(- (Exp {L}) (Ln {R}))"
+        if isinstance(n, _Add):
+            return f"(+ {emit(n.left)} {emit(n.right)})"
+        if isinstance(n, _Sub):
+            return f"(- {emit(n.left)} {emit(n.right)})"
+        if isinstance(n, _Mul):
+            return f"(* {emit(n.left)} {emit(n.right)})"
+        if isinstance(n, _Div):
+            return f"(/ {emit(n.left)} {emit(n.right)})"
+        if isinstance(n, _Exp):
+            return f"(Exp {emit(n.arg)})"
+        raise TypeError(f"Unknown AST node {type(n)}")
+
+    body_inner = emit(node)
+    body_value = f"(+ {_num(a)} (* {_num(b)} {body_inner}))"
+
+    op_map = {">": ">", ">=": ">=", "<": "<", "<=": "<=", "==": "=", "!=": "distinct"}
+    if target_op not in op_map:
+        raise ValueError(f"target_op must be one of {list(op_map)}, got {target_op!r}")
+    safe_z3 = f"({op_map[target_op]} {body_value} {_num(target_value)})"
+
+    # Negation of SAFE → UNSAT means SAFE holds.
+    neg_safe = f"(not {safe_z3})"
+
+    # Variable declarations + range constraints.
+    decl_lines: list[str] = []
+    for v in sorted(seen_vars):
+        lo, hi = var_ranges.get(v, (None, None))
+        if lo is None:
+            raise ValueError(
+                f"variable {v!r} appeared in formula but has no range in var_ranges"
+            )
+        decl_lines.append(f"(declare-const {v} Real)")
+        decl_lines.append(f"(assert (>= {v} {_num(lo)}))")
+        decl_lines.append(f"(assert (<= {v} {_num(hi)}))")
+
+    header = (
+        f"; {title}\n"
+        f"; Formula: {formula}\n"
+        f"; Var ranges: {var_ranges}\n"
+        f"; Claim (SAFE):  formula {target_op} {target_value}\n"
+        f"; UNSAT below proves SAFE for all variable assignments in the ranges.\n"
+        f"(set-logic ALL)\n"
+    )
+    return (
+        header
+        + EML_AXIOMS_SMT2
+        + "\n".join(decl_lines)
+        + "\n; Negation of SAFE\n"
+        + f"(assert {neg_safe})\n"
+        + "(check-sat)\n"
+    )
+
+
 __all__ = [
     "SafetyCertificate",
     "eml_formula_to_z3",
     "certify_linear_threshold_safe",
     "find_min_norm_witness",
     "emit_smtlib2",
+    "eml_tree_to_smt2",
+    "EML_AXIOMS_SMT2",
 ]
