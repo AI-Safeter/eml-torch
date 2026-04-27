@@ -596,6 +596,69 @@ def test_cert_friendly_bonus_zero_is_zero_tensor():
     assert (bonus == 0.0).all().item()
 
 
+# ─── Interval propagation tests (Track 1 follow-up, 2026-04-27) ──────────
+
+
+def test_interval_arithmetic_basic():
+    """`_interval_arithmetic` propagates [lo, hi] correctly through eml(L, R)."""
+    from emltorch.smt import _interval_arithmetic
+    from emltorch.gradient import _parse_inner
+
+    # eml(g, 1) = exp(g) - ln(1) = exp(g);  for g ∈ [-1, 1] ⇒ [exp(-1), exp(1)] ≈ [0.368, 2.718]
+    node = _parse_inner("eml(g, 1)")
+    lo, hi = _interval_arithmetic(node, {"g": (-1.0, 1.0)}, eps=0.0)
+    assert abs(lo - math.exp(-1)) < 1e-6
+    assert abs(hi - math.exp(1)) < 1e-6
+
+
+def test_interval_arithmetic_widens_with_eps():
+    """Eps widens the interval by ±eps on each side."""
+    from emltorch.smt import _interval_arithmetic
+    from emltorch.gradient import _parse_inner
+
+    node = _parse_inner("eml(g, 1)")
+    lo0, hi0 = _interval_arithmetic(node, {"g": (-1.0, 1.0)}, eps=0.0)
+    lo1, hi1 = _interval_arithmetic(node, {"g": (-1.0, 1.0)}, eps=1e-6)
+    assert lo1 < lo0
+    assert hi1 > hi0
+
+
+def test_eml_tree_to_smt2_intervals_emits_qf_lra():
+    """The interval-propagation emitter uses QF_LRA logic (no Exp/Ln decls)."""
+    from emltorch.smt import eml_tree_to_smt2_intervals
+
+    text = eml_tree_to_smt2_intervals(
+        "eml(g, 1)",
+        {"g": (-2.0, 2.0)},
+        ">",
+        0.0,
+        title="positivity sanity",
+    )
+    assert "(set-logic QF_LRA)" in text
+    # No Exp/Ln declarations — the body uses fresh Reals only.
+    assert "(declare-fun Exp" not in text
+    assert "(declare-fun Ln" not in text
+    # Exp/Ln tokens DO appear in comments (debug info) but NOT in assertions.
+    body = text.split("; Negation of SAFE")[1]
+    assert "(Exp " not in body
+    assert "(Ln " not in body
+
+
+def test_eml_tree_to_smt2_intervals_rejects_negative_ln_arg():
+    """Ln of a non-positive interval must raise ValueError."""
+    from emltorch.smt import eml_tree_to_smt2_intervals
+
+    # eml(1, x) where x ∈ [-1, 1] includes 0 — Ln(x) undefined at 0 / negative.
+    try:
+        eml_tree_to_smt2_intervals(
+            "eml(1, x)", {"x": (-1.0, 1.0)}, ">", 0.0, title="bad domain"
+        )
+    except ValueError as e:
+        assert "Ln" in str(e) or "non-positive" in str(e).lower()
+        return
+    raise AssertionError("Expected ValueError for Ln of non-positive interval")
+
+
 if __name__ == "__main__":
     import pytest as _pytest
 
