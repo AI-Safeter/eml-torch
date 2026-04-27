@@ -467,6 +467,241 @@ EML_AXIOMS_SMT2 = """\
 """
 
 
+# ─── Pre-proven / asserted EML lemma library ──────────────────────────────
+#
+# These are EXTENSION axioms beyond the base ``EML_AXIOMS_SMT2`` set,
+# discovered as load-bearing across Headlines 7/8/9 when the base axioms
+# alone left the solver at ``unknown``.  Each entry pairs the SMT-LIB2
+# block with ITS PROVENANCE (where it was discovered to be required) and
+# WHAT IT UNBLOCKS (which class of cert needs it).
+#
+# Convention (mirrors Headline 8c):  multiplicativity / ratio corollaries
+# cannot be derived from monotonicity + positivity in a quantifier-free
+# fragment, so they are **asserted as axioms** with documented provenance.
+# The lemma name is the dict key; the SMT body is the value's "smt2".
+#
+# Usage::
+#
+#     from emltorch.smt import (
+#         eml_tree_to_smt2, EML_LEMMAS, with_lemmas,
+#     )
+#     text = eml_tree_to_smt2(formula, var_ranges, ">", 0.0, title="...")
+#     text = with_lemmas(text, "multiplicativity", "ratio_corollary")
+#
+
+_LEMMA_MULTIPLICATIVITY = """\
+; Lemma:  ∀ u, v.  Exp(u + v) = Exp(u) · Exp(v)
+; Universal multiplicativity of Exp.  Asserted (cannot be derived from
+; base monotonicity + positivity).  Load-bearing for shared-input EML
+; composition (Headline 8c) and any cert where Exp arguments share a
+; perturbation.
+(assert (forall ((u Real) (v Real))
+    (! (= (Exp (+ u v)) (* (Exp u) (Exp v)))
+       :pattern ((Exp (+ u v))) )))
+"""
+
+_LEMMA_LN_MULTIPLICATIVITY = """\
+; Lemma:  ∀ u, v > 0.  Ln(u · v) = Ln(u) + Ln(v)
+; Multiplicativity of Ln on positive reals.  Asserted.  Useful when a
+; cert needs to fold a product inside Ln to a sum outside Ln.
+(assert (forall ((u Real) (v Real))
+    (! (=> (and (> u 0.0) (> v 0.0))
+           (= (Ln (* u v)) (+ (Ln u) (Ln v))))
+       :pattern ((Ln (* u v))) )))
+"""
+
+_LEMMA_RATIO_COROLLARY = """\
+; Lemma:  ∀ u, v.  u ≥ v + 1.0  ⇒  Exp(u) ≥ 2.5 · Exp(v)
+; Pattern-matchable ratio corollary discovered load-bearing for T=3
+; softmax (Headline 7).  Discharges 6-7ms vs 60s timeout without.
+(assert (forall ((u Real) (v Real))
+    (! (=> (>= u (+ v 1.0)) (>= (Exp u) (* 2.5 (Exp v))))
+       :pattern ((Exp u) (Exp v)) )))
+"""
+
+_LEMMA_DEPTH3_LN = """\
+; Lemma:  ∀ z > 0.  Ln(Exp(1.0) - Ln(z)) - Ln(z) ... = ln(z) (depth-3 EML)
+; Specifically:  eml(1, eml(eml(1, z), 1)) = ln(z)  for z > 0.
+; In SMT body that becomes: (- (Exp 1.0) (Ln (- (Exp (- (Exp 1.0) (Ln z))) (Ln 1.0))))
+; Provenance: gatekeeper T2 (already discharged by base axioms in 2-5ms).
+; Bundled here as a *named* lemma for cert authors who want the named
+; identity rather than the raw nested expression in their assertion.
+; Not a new axiom — derivable from base; included for ergonomics.
+(assert true)  ; no-op; identity holds via base axioms
+"""
+
+_LEMMA_RELU_DEPTH4 = """\
+; Lemma:  ∀ z > 0.  eml(eml(1, eml(eml(1, z), 1)), 1) = z
+; Depth-4 EML identity for z > 0 branch.  Foundational for SAE feature
+; cert via ReLU=EML.  Discharged by base axioms (Ln∘Exp inverse + Exp∘Ln
+; inverse) — provenance: gatekeeper T3 (2-5ms).  Bundled for ergonomic
+; reuse.
+(assert true)
+"""
+
+_LEMMA_EXP_MINUS_Y = """\
+; Lemma:  ∀ x, y.  eml(x, eml(y, 1)) = Exp(x) - y
+; Depth-2 EML composition where the right child is itself a depth-1 EML
+; (eml(y, 1) = Exp(y)).  Then Ln(Exp(y)) = y by inverse axiom, so the
+; outer eml reduces to Exp(x) - y.  Discharged by base axioms; bundled
+; for ergonomic reuse.
+(assert true)
+"""
+
+_LEMMA_E_INTERVAL_TIGHT = """\
+; Lemma:  e = Exp(1) ∈ [2.71828182, 2.71828183]
+; Tighter numeric anchor than the base [2.7182, 2.7183].  Useful when a
+; cert needs O(1e-7) precision around e (e.g. ReLU identity composed
+; with a small linear margin).
+(assert (>= (Exp 1.0) 2.71828182))
+(assert (<= (Exp 1.0) 2.71828183))
+"""
+
+_LEMMA_LN_AT_E = """\
+; Lemma:  Ln(e) = 1, equivalently Ln(Exp(1)) = 1.
+; Derivable from Ln(Exp(x))=x at x=1; bundled as numeric anchor for Ln.
+(assert (= (Ln (Exp 1.0)) 1.0))
+"""
+
+
+EML_LEMMAS: dict[str, dict] = {
+    "multiplicativity": {
+        "smt2": _LEMMA_MULTIPLICATIVITY,
+        "provenance": (
+            "Headline 8c shared-input composition `y(u) = sigmoid(u) − sigmoid(u-1)`. "
+            "Base axioms returned `unknown` on the SAFE direction; adding this "
+            "axiom discharges in 4ms (z3 + cvc5)."
+        ),
+        "load_bearing_for": (
+            "Any cert where two or more Exp arguments share a perturbation δ. "
+            "Without it, the SMT cannot link Exp(u) and Exp(u + c)."
+        ),
+        "is_axiom": True,
+    },
+    "ln_multiplicativity": {
+        "smt2": _LEMMA_LN_MULTIPLICATIVITY,
+        "provenance": (
+            "Symmetric counterpart of multiplicativity.  Useful when a cert "
+            "needs to factor a product inside Ln(·) — relevant to certs over "
+            "products of positive quantities (e.g. attention weights)."
+        ),
+        "load_bearing_for": (
+            "Certs that need ln(a·b) = ln(a) + ln(b) inside the body."
+        ),
+        "is_axiom": True,
+    },
+    "ratio_corollary": {
+        "smt2": _LEMMA_RATIO_COROLLARY,
+        "provenance": (
+            "Headline 7 T=3 softmax (multi-key attention).  Base axioms time out "
+            "at 60s on `‖δ‖_∞ ≤ ρ ⇒ a_target > τ` for T=3; adding this single "
+            "pattern-matched ratio lemma discharges in 6-7ms."
+        ),
+        "load_bearing_for": (
+            "Multi-key softmax certs where the target weight is a ratio "
+            "E_target / Σ E_j and the SMT must reason about Exp ratios."
+        ),
+        "is_axiom": True,
+    },
+    "depth3_ln_identity": {
+        "smt2": _LEMMA_DEPTH3_LN,
+        "provenance": (
+            "Gatekeeper T2 (Headline 10b).  Discharged by base inverse "
+            "axioms in 2-5ms.  Listed for ergonomic reuse only."
+        ),
+        "load_bearing_for": "ergonomic naming; no new axiom",
+        "is_axiom": False,
+    },
+    "relu_depth4_identity": {
+        "smt2": _LEMMA_RELU_DEPTH4,
+        "provenance": (
+            "Gatekeeper T3 (Headline 10b).  Discharged by base inverse "
+            "axioms (Ln∘Exp + Exp∘Ln) in 2-5ms.  Foundational for "
+            "SAE-feature ReLU-via-EML cert (Track 2)."
+        ),
+        "load_bearing_for": "ergonomic naming; no new axiom",
+        "is_axiom": False,
+    },
+    "exp_minus_y": {
+        "smt2": _LEMMA_EXP_MINUS_Y,
+        "provenance": (
+            "Depth-2 EML composition with right-child = Exp.  Discharged "
+            "by base inverse axiom `Ln(Exp(y)) = y` directly."
+        ),
+        "load_bearing_for": "ergonomic naming; no new axiom",
+        "is_axiom": False,
+    },
+    "e_interval_tight": {
+        "smt2": _LEMMA_E_INTERVAL_TIGHT,
+        "provenance": (
+            "Tightening of base e-interval from 4-digit to 8-digit.  Useful "
+            "for certs whose margin is below ~1e-4 around e."
+        ),
+        "load_bearing_for": (
+            "Certs needing O(1e-7) precision around e (small-margin ReLU "
+            "compositions, etc.)."
+        ),
+        "is_axiom": True,
+    },
+    "ln_at_e": {
+        "smt2": _LEMMA_LN_AT_E,
+        "provenance": (
+            "Numeric anchor for Ln at the point e.  Derivable from "
+            "Ln(Exp(x))=x at x=1; asserted explicitly to give the SMT a "
+            "concrete Ln value."
+        ),
+        "load_bearing_for": (
+            "Certs needing a numeric upper bound on Ln(z) for z near e — "
+            "the base axiom set has no Ln numeric anchor (only Exp)."
+        ),
+        "is_axiom": True,
+    },
+}
+
+
+def with_lemmas(smt2_text: str, *lemma_keys: str) -> str:
+    """Insert pre-proven / asserted lemma blocks into the cert text.
+
+    Lemmas are inserted AFTER ``EML_AXIOMS_SMT2`` but BEFORE the variable
+    declarations and (check-sat).  This preserves the cert's portability
+    across z3 and cvc5: the lemma-extended cert is still self-contained
+    SMT-LIB2 with no external dependencies.
+
+    Args:
+        smt2_text:   output of ``eml_tree_to_smt2`` (or any cert text
+                     containing ``(check-sat)`` near the end).
+        *lemma_keys: names of lemmas in ``EML_LEMMAS`` to splice in.
+
+    Raises:
+        KeyError: if a lemma name is not in ``EML_LEMMAS``.
+
+    Example::
+
+        text = eml_tree_to_smt2("eml(g, 1)", {"g": (-4, -1)}, ">", 0, "...")
+        text = with_lemmas(text, "multiplicativity", "ratio_corollary")
+        # 'text' now has both lemma blocks asserted before (check-sat).
+    """
+    blocks = []
+    for key in lemma_keys:
+        if key not in EML_LEMMAS:
+            raise KeyError(
+                f"Unknown lemma {key!r}; available: {sorted(EML_LEMMAS.keys())}"
+            )
+        blocks.append(
+            f"; --- LEMMA: {key} ---\n; {EML_LEMMAS[key]['provenance']}\n"
+            + EML_LEMMAS[key]["smt2"]
+        )
+    if not blocks:
+        return smt2_text
+    bundle = "\n".join(blocks)
+    # Insert before (check-sat); fall back to appending at the end if no marker.
+    marker = "(check-sat)"
+    if marker in smt2_text:
+        head, _, tail = smt2_text.rpartition(marker)
+        return head + bundle + "\n" + marker + tail
+    return smt2_text + "\n" + bundle + "\n"
+
+
 def eml_tree_to_smt2(
     formula: str,
     var_ranges: dict[str, tuple[float, float]],
@@ -611,4 +846,6 @@ __all__ = [
     "emit_smtlib2",
     "eml_tree_to_smt2",
     "EML_AXIOMS_SMT2",
+    "EML_LEMMAS",
+    "with_lemmas",
 ]

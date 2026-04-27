@@ -49,6 +49,10 @@ from .smt import (
     find_min_norm_witness,
     optimize_min_linf_witness,
     emit_smtlib2,
+    eml_tree_to_smt2,
+    EML_AXIOMS_SMT2,
+    EML_LEMMAS,
+    with_lemmas,
 )
 
 __all__ = [
@@ -69,6 +73,10 @@ __all__ = [
     "find_min_norm_witness",
     "optimize_min_linf_witness",
     "emit_smtlib2",
+    "eml_tree_to_smt2",
+    "EML_AXIOMS_SMT2",
+    "EML_LEMMAS",
+    "with_lemmas",
     # Lower-level (may change in 0.x)
     "safe_eml",
     "BatchedEMLTree",

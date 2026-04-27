@@ -518,6 +518,84 @@ def test_forward_consistency_batched_vs_argmax():
     )
 
 
+# Track 5 tests use CPU for portability — the bias logic is independent of
+# device and the population/depth here is small enough to run on CPU in <2s.
+_TRACK5_DEVICE = "cpu"
+
+
+def test_cert_friendly_const_bonus_default_is_no_op():
+    """`cert_friendly_const_bonus = 0.0` must produce identical results to
+    not setting the flag — backward compat invariant."""
+    from emltorch.evolution import EvolutionConfig, evolve
+
+    torch.manual_seed(0)
+    x = torch.linspace(0.5, 5.0, 100).unsqueeze(0)
+    y = torch.log(x[0])
+
+    cfg_default = EvolutionConfig(
+        depth=3,
+        num_vars=1,
+        population=128,
+        generations=4,
+        device=_TRACK5_DEVICE,
+        log_every=10,
+        r2_target=2.0,
+    )
+    cfg_zero_bonus = EvolutionConfig(
+        depth=3,
+        num_vars=1,
+        population=128,
+        generations=4,
+        device=_TRACK5_DEVICE,
+        log_every=10,
+        r2_target=2.0,
+        cert_friendly_const_bonus=0.0,
+    )
+    torch.manual_seed(42)
+    r_default = evolve(x, y, cfg_default)
+    torch.manual_seed(42)
+    r_zero = evolve(x, y, cfg_zero_bonus)
+    # Both runs use identical RNG; bonus = 0 must produce identical R².
+    assert abs(r_default.best_r2 - r_zero.best_r2) < 1e-6
+
+
+def test_cert_friendly_bonus_function_returns_negative_for_const_one():
+    """`_cert_friendly_bonus` is a fitness DELTA — must be ≤ 0 (reward) for
+    any tree, and proportional to the count of leaves at choice 0."""
+    from emltorch.evolution import _cert_friendly_bonus
+
+    tree = BatchedEMLTree(num_trees=4, depth=3, num_vars=1, device=_TRACK5_DEVICE)
+    # Snap all leaves to choice 0 (constant 1) for tree 0.
+    tree.leaf_logits.data[0, :, :, :] = -50.0
+    tree.leaf_logits.data[0, :, :, 0] = 150.0
+    # Snap all leaves to choice 1 for tree 1.
+    tree.leaf_logits.data[1, :, :, :] = -50.0
+    tree.leaf_logits.data[1, :, :, 1] = 150.0
+    bonus = _cert_friendly_bonus(tree, bonus=1e-2)
+    assert bonus.shape == (4,)
+    assert bonus[0] < bonus[1], (
+        f"Tree with all-1 leaves should get a more negative (better) bonus "
+        f"than a tree without; got bonus[0]={bonus[0]}, bonus[1]={bonus[1]}"
+    )
+    # Reward magnitude should be proportional to count of leaves at choice 0.
+    n_leaves = tree.leaf_logits.shape[1]
+    expected_tree0 = -1e-2 * n_leaves * 2  # 2 inputs per leaf
+    assert abs(bonus[0].item() - expected_tree0) < 1e-6, (
+        f"bonus[0] should be -0.01 × 2 × n_leaves = {expected_tree0}; "
+        f"got {bonus[0].item()}"
+    )
+
+
+def test_cert_friendly_bonus_zero_is_zero_tensor():
+    """When bonus = 0.0, return a zero tensor (no allocation surprise)."""
+    from emltorch.evolution import _cert_friendly_bonus
+
+    tree = BatchedEMLTree(num_trees=2, depth=3, num_vars=1, device=_TRACK5_DEVICE)
+    bonus = _cert_friendly_bonus(tree, bonus=0.0)
+    assert bonus.shape == (2,)
+    assert (bonus == 0.0).all().item()
+
+
 if __name__ == "__main__":
     import pytest as _pytest
 

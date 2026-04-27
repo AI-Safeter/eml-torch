@@ -46,6 +46,20 @@ class EvolutionConfig:
     use_mul: bool = False
     # Enable triple-product combos (x_i * x_j * x_k) for V >= 3. Opt-in.
     use_mul3: bool = False
+    # ─── Cert-friendly evolution flags (Track 5, 2026-04-27) ─────────────
+    # When > 0, biases evolution toward formulas that compose more cleanly
+    # with the axiomatized Exp/Ln SMT track (Headlines 7-10).  The penalty
+    # is added to fitness; selection-elite still tracked by MSE so a final
+    # solution with cert_friendly_penalty > 0 may have slightly higher MSE
+    # than the unpenalized run.
+    #
+    # `cert_friendly_const_bonus`:  reward (negative penalty) per LEAF slot
+    # that snaps to the constant `1` choice (choice index 0).  Trees with
+    # more `1` leaves discharge more cleanly under the inverse axioms
+    # `Ln(Exp(x)) = x` and `Exp(Ln(v)) = v`, since `eml(L, 1) = exp(L)`
+    # and `eml(1, R) = e − ln(R)` are the canonical EML reduction patterns.
+    # Typical value: 1e-3 (small).  0.0 disables (default).
+    cert_friendly_const_bonus: float = 0.0
 
     @property
     def torch_dtype(self):
@@ -71,6 +85,26 @@ def _snap_peaked(tree: BatchedEMLTree):
     tree.temp_inv.fill_(1.0)
     tree.selection_mode = "softmax"
     tree.training = False
+
+
+def _cert_friendly_bonus(tree: BatchedEMLTree, bonus: float) -> torch.Tensor:
+    """Per-tree fitness bonus for using the constant-1 choice (idx 0) at leaves.
+
+    Returns a (B,) tensor to ADD to fitness (so a NEGATIVE value is a reward
+    that encourages evolution to favor that tree).  When bonus = 0, returns
+    a zero tensor.
+
+    The motivation is cert-tractability: trees whose leaves are mostly the
+    constant `1` discharge more cleanly under the axiomatized Exp/Ln SMT
+    track (Headlines 7-10), since `eml(L, 1) = exp(L) - ln(1) = exp(L)`
+    is the canonical reduction pattern that the inverse axioms target.
+    """
+    leaf_logits = tree.leaf_logits.data  # (B, n_leaves, 2, n_choices)
+    if bonus <= 0.0 or leaf_logits.numel() == 0:
+        return torch.zeros(leaf_logits.shape[0], device=leaf_logits.device)
+    chosen = leaf_logits.argmax(dim=-1)  # (B, n_leaves, 2)
+    n_const_one = (chosen == 0).float().sum(dim=(-1, -2))  # (B,)
+    return -bonus * n_const_one  # negative = reward
 
 
 def _evaluate(
@@ -303,8 +337,16 @@ def evolve(
         mse = (
             _evaluate(tree, x_pop, y_pop, range_penalty=0.0)
             if cfg.range_penalty > 0.0
-            else fitness
+            else fitness.clone()
         )
+        # Cert-friendly bias (Track 5): reward leaf-constant-1 usage.
+        # Fitness is the SELECTION criterion, so the bonus only changes which
+        # individuals are kept as elites — the MSE-based best_ever_idx tracker
+        # is unaffected.
+        if cfg.cert_friendly_const_bonus > 0.0:
+            fitness = fitness + _cert_friendly_bonus(
+                tree, cfg.cert_friendly_const_bonus
+            )
         r2 = 1 - mse * N / ss_tot
 
         # Track global best by raw MSE (not fitness) so range_penalty doesn't
