@@ -1165,6 +1165,261 @@ def eml_tree_to_smt2_intervals(
     )
 
 
+# ─── Sound attention-block Lipschitz primitive ────────────────────────────
+#
+# Adoption of arxiv:2507.07814 (Yudin et al. 2025, "Pay Attention to
+# Attention Distribution: A New Local Lipschitz Bound for Transformers").
+#
+# The naive "softmax is 1-Lipschitz" abstraction is 2× looser than truth.
+# Corollary 1 of the paper proves the spectral norm of the softmax Jacobian
+# at probability vector ``p`` is bounded by
+#
+#     ‖J_softmax(z)‖_2  ≤  g_1(p)  =  p_(1) · (1 - p_(1) + p_(2))   ≤ 1/2
+#
+# where p_(1) ≥ p_(2) ≥ ... are the order statistics of ``p = softmax(z)``.
+# Equality holds at p = (1/2, 1/2, 0, ..., 0).
+#
+# Theorem 3 then gives the per-attention-block Jacobian spectral bound
+#
+#     ‖J_Attn(X)‖_2  ≤  ‖W^V‖_2 · (‖P‖_2 + 2·‖X‖_2² · ‖A‖_2 · max_i g_1(P_i))
+#
+# where ``A = (W^Q · (W^K)^T) / sqrt(d_head)`` and ``P`` is the row-stochastic
+# attention matrix at the operating point.  The bound is LOCAL — it depends
+# on the attention probabilities at the clean input, so a sound L_∞-ball
+# certificate must replace each operating-point quantity by an interval that
+# bounds the perturbed value (see ``attention_block_lipschitz_interval``).
+#
+# This is the SOUNDNESS PRIMITIVE that Headline 9c flagged as missing:
+# naive 1-layer Jacobian-IBP at ρ = 0.1 on real GPT-2 was UNSOUND (PGD
+# found wider ranges than IBP predicted).  Theorem 3 restores soundness.
+
+
+def softmax_jacobian_g1(p) -> float:
+    """Tight upper bound on ``‖J_softmax(z)‖_2`` at probability ``p``.
+
+    From Corollary 1 / Theorem 4 of arxiv:2507.07814.  Returns
+    ``g_1(p) = p_(1) · (1 - p_(1) + p_(2))`` where p_(k) is the k-th
+    largest order statistic of ``p``.  Always ≤ 1/2; equality at
+    ``p = (1/2, 1/2, 0, ...)``.
+
+    For peaked attention distributions (e.g. induction-search heads
+    attending to one position with weight ≈ 1), ``g_1`` is close to 0,
+    so the resulting attention-block bound is much tighter than the
+    naive 1/2 worst case.
+    """
+    arr = np.asarray(p, dtype=np.float64).ravel()
+    if arr.size == 0:
+        return 0.0
+    p_sorted = np.sort(arr)[::-1]
+    p1 = float(p_sorted[0])
+    p2 = float(p_sorted[1]) if p_sorted.size > 1 else 0.0
+    return float(p1 * (1.0 - p1 + p2))
+
+
+def softmax_jacobian_g1_max(P) -> float:
+    """``max_i g_1(P[i, :])`` — the worst-row softmax-Jacobian bound for a
+    full attention probability matrix ``P`` of shape ``(T_q, T_k)``."""
+    P_arr = np.asarray(P, dtype=np.float64)
+    if P_arr.ndim == 1:
+        return softmax_jacobian_g1(P_arr)
+    if P_arr.ndim != 2:
+        raise ValueError(f"P must be 1D or 2D, got shape {P_arr.shape}")
+    return float(max(softmax_jacobian_g1(P_arr[i]) for i in range(P_arr.shape[0])))
+
+
+def attention_block_lipschitz_clean(
+    P: np.ndarray,
+    W_Q: np.ndarray,
+    W_K: np.ndarray,
+    W_V: np.ndarray,
+    X: np.ndarray,
+    d_head: int,
+) -> dict:
+    """Per-attention-block local Lipschitz bound at the CLEAN operating point.
+
+    Implements Theorem 3 of arxiv:2507.07814 verbatim for the attention block
+    ``Attn(X) = softmax(QK^T / √d_head) · V`` with Q = X·W_Q, K = X·W_K,
+    V = X·W_V.  Returns a dict with the bound ``L`` and its components for
+    diagnostic logging.
+
+    ⚠ SCOPE WARNING ⚠  Theorem 3 is stated for the canonical attention block
+    above.  Modern transformers may apply ADDITIONAL nonlinear transformations
+    BETWEEN projection and the QK dot-product — notably per-head RMSNorm
+    (``q_norm``, ``k_norm``) in Qwen3, Gemma2, etc.  These contribute
+    multiplicative Lipschitz factors that this primitive does NOT capture.
+    For a real attention block with q_norm/k_norm, the full per-head Jacobian
+    bound is approximately
+
+        L_full ≈  ‖J_q_norm(q)‖_2  ·  L_clean  ·  (k_norm_blow-up factor)
+
+    where ``‖J_q_norm(q)‖_2 ≤ ‖γ_q‖_∞ / RMS(q)``.  Validate empirically via
+    full-model PGD before using this primitive's output as a safety bound on
+    a model with q_norm/k_norm — see
+    ``sae-eml/scripts/qwen3_residual_input_pgd_full_forward.py`` for the
+    Phase B' methodology.
+
+    Args:
+        P: attention probability matrix, shape ``(T_q, T_k)``, row-stochastic.
+        W_Q, W_K, W_V: per-head projection matrices, shape ``(d_model, d_head)``.
+        X: input token activations (post-LN/RMSNorm), shape ``(T, d_model)``.
+        d_head: integer head dimension.
+
+    Returns:
+        dict with keys
+            ``L``         spectral-norm bound on the attention Jacobian
+                          treated as a linear map ``X ↦ Attn(X)`` evaluated
+                          at the given ``X`` and ``P``.
+            ``components`` raw values of ``W_V_norm``, ``P_norm``,
+                          ``X_norm``, ``A_norm``, ``g1_max`` for traceability.
+
+    Sound at the clean operating point only.  For an L_∞-ball cert use
+    ``attention_block_lipschitz_interval``.
+    """
+    P_arr = np.asarray(P, dtype=np.float64)
+    W_Q_arr = np.asarray(W_Q, dtype=np.float64)
+    W_K_arr = np.asarray(W_K, dtype=np.float64)
+    W_V_arr = np.asarray(W_V, dtype=np.float64)
+    X_arr = np.asarray(X, dtype=np.float64)
+
+    W_V_norm = float(np.linalg.norm(W_V_arr, ord=2))
+    P_norm = float(np.linalg.norm(P_arr, ord=2))
+    X_norm = float(np.linalg.norm(X_arr, ord=2))
+    A = (W_Q_arr @ W_K_arr.T) / float(np.sqrt(d_head))
+    A_norm = float(np.linalg.norm(A, ord=2))
+    g1_max = softmax_jacobian_g1_max(P_arr)
+
+    L = W_V_norm * (P_norm + 2.0 * X_norm * X_norm * A_norm * g1_max)
+    return {
+        "L": float(L),
+        "components": {
+            "W_V_norm": W_V_norm,
+            "P_norm": P_norm,
+            "X_norm": X_norm,
+            "A_norm": A_norm,
+            "g1_max": g1_max,
+        },
+    }
+
+
+def attention_block_lipschitz_interval(
+    P: np.ndarray,
+    W_Q: np.ndarray,
+    W_K: np.ndarray,
+    W_V: np.ndarray,
+    X: np.ndarray,
+    d_head: int,
+    delta_l2: float,
+) -> dict:
+    """Operating-point-aware spectral-norm Jacobian bound, sound under
+    perturbations of the attention input ``X`` with ``‖δ‖_2 ≤ delta_l2``.
+
+    ⚠ SCOPE WARNING ⚠  Same caveat as ``attention_block_lipschitz_clean``:
+    this bound is for the canonical Theorem-3 block ``softmax(QK^T/√d)·V``.
+    Real attention blocks with per-head q_norm/k_norm RMSNorm (Qwen3,
+    Gemma2, etc.) compose ADDITIONAL Lipschitz factors not captured here.
+    Run a full-model PGD validation before treating this primitive's output
+    as a safety bound on such models.
+
+    Each operating-point quantity in Theorem 3 (``‖X‖_2``, ``‖P‖_2``,
+    ``g_1(P_i)``) is replaced by a sound upper bound that tolerates
+    arbitrary δ with ``‖δ‖_2 ≤ delta_l2``:
+
+        ‖X_perturbed‖_2 ≤ ‖X_clean‖_2 + delta_l2     (triangle inequality)
+        ‖P_perturbed‖_2 ≤ √(T_q · T_k)               (any row-stochastic P)
+        max_i g_1(P_i)  ≤ 1/2                        (Corollary 1 worst case)
+
+    The first is the dominant slack term (since 2·‖X‖²·‖A‖·g_1 typically
+    dominates ‖P‖ in Theorem 3).  Worst-case ``P_norm`` and ``g1_max`` are
+    used because P moves under δ in a way that's hard to bound tightly
+    without unrolling another softmax-Lipschitz layer.
+
+    Returns the upper bound ``L_upper`` and its components.  This bound is
+    SOUND for all δ with ``‖δ‖_2 ≤ delta_l2`` applied to ``X``.
+    """
+    P_arr = np.asarray(P, dtype=np.float64)
+    W_Q_arr = np.asarray(W_Q, dtype=np.float64)
+    W_K_arr = np.asarray(W_K, dtype=np.float64)
+    W_V_arr = np.asarray(W_V, dtype=np.float64)
+    X_arr = np.asarray(X, dtype=np.float64)
+
+    W_V_norm = float(np.linalg.norm(W_V_arr, ord=2))
+    A = (W_Q_arr @ W_K_arr.T) / float(np.sqrt(d_head))
+    A_norm = float(np.linalg.norm(A, ord=2))
+
+    X_norm_clean = float(np.linalg.norm(X_arr, ord=2))
+    X_norm_upper = X_norm_clean + float(delta_l2)
+
+    T_q, T_k = P_arr.shape if P_arr.ndim == 2 else (1, P_arr.size)
+    P_norm_clean = float(np.linalg.norm(P_arr, ord=2))
+    # Any row-stochastic P satisfies ‖P‖_2 ≤ sqrt(T_q · T_k); use as ceiling.
+    P_norm_upper = max(P_norm_clean, float(np.sqrt(T_q * T_k)))
+
+    g1_max_upper = 0.5  # Corollary 1 worst case across all attention rows
+
+    L_upper = W_V_norm * (
+        P_norm_upper + 2.0 * X_norm_upper * X_norm_upper * A_norm * g1_max_upper
+    )
+    return {
+        "L_upper": float(L_upper),
+        "L_clean": float(
+            W_V_norm
+            * (
+                P_norm_clean
+                + 2.0
+                * X_norm_clean
+                * X_norm_clean
+                * A_norm
+                * softmax_jacobian_g1_max(P_arr)
+            )
+        ),
+        "components": {
+            "W_V_norm": W_V_norm,
+            "A_norm": A_norm,
+            "X_norm_clean": X_norm_clean,
+            "X_norm_upper": X_norm_upper,
+            "P_norm_clean": P_norm_clean,
+            "P_norm_upper": P_norm_upper,
+            "g1_max_clean": softmax_jacobian_g1_max(P_arr),
+            "g1_max_upper": g1_max_upper,
+            "delta_l2": float(delta_l2),
+        },
+    }
+
+
+def emit_attention_lipschitz_smt2_block(
+    name: str,
+    L_upper: float,
+    delta_l2_upper: float,
+    output_dim: int = 1,
+) -> str:
+    """Emit a portable QF_LRA SMT-LIB2 block representing the constraint
+    ``‖attn_out_perturbation‖_2 ≤ L_upper · delta_l2_upper`` for a named
+    attention sub-output.
+
+    The block declares ``{name}_perturb_norm`` as a Real bounded by
+    ``[0, L_upper * delta_l2_upper]``.  Cert authors compose this with the
+    Headline-14-style ratio_corollary cert by using the perturbation norm
+    to widen the score interval at the certified head.
+
+    Returns SMT-LIB2 text without a check-sat — splice into a larger cert.
+    """
+    bound = float(L_upper) * float(delta_l2_upper)
+
+    def _num(v: float) -> str:
+        s = f"{v:.18f}"
+        return f"(- {s[1:]})" if v < 0 else s
+
+    return (
+        f"; --- Attention-block Lipschitz bound (Theorem 3, arxiv:2507.07814) ---\n"
+        f"; {name}: ‖J_Attn‖_2 ≤ L_upper = {L_upper:.6e}\n"
+        f"; ‖δ_in‖_2 ≤ {delta_l2_upper:.6e}\n"
+        f"; ⇒ ‖attn_out_perturbation‖_2 ≤ {bound:.6e}\n"
+        f"(declare-const {name}_perturb_norm Real)\n"
+        f"(assert (>= {name}_perturb_norm 0.0))\n"
+        f"(assert (<= {name}_perturb_norm {_num(bound)}))\n"
+    )
+
+
 __all__ = [
     "SafetyCertificate",
     "eml_formula_to_z3",
@@ -1176,4 +1431,10 @@ __all__ = [
     "EML_AXIOMS_SMT2",
     "EML_LEMMAS",
     "with_lemmas",
+    # Attention-block Lipschitz primitive (arxiv:2507.07814)
+    "softmax_jacobian_g1",
+    "softmax_jacobian_g1_max",
+    "attention_block_lipschitz_clean",
+    "attention_block_lipschitz_interval",
+    "emit_attention_lipschitz_smt2_block",
 ]

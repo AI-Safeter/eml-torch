@@ -54,6 +54,11 @@ from .smt import (
     EML_AXIOMS_SMT2,
     EML_LEMMAS,
     with_lemmas,
+    softmax_jacobian_g1,
+    softmax_jacobian_g1_max,
+    attention_block_lipschitz_clean,
+    attention_block_lipschitz_interval,
+    emit_attention_lipschitz_smt2_block,
 )
 
 __all__ = [
@@ -79,6 +84,12 @@ __all__ = [
     "EML_AXIOMS_SMT2",
     "EML_LEMMAS",
     "with_lemmas",
+    # Headline 15 — sound attention-block Lipschitz primitive (arxiv:2507.07814)
+    "softmax_jacobian_g1",
+    "softmax_jacobian_g1_max",
+    "attention_block_lipschitz_clean",
+    "attention_block_lipschitz_interval",
+    "emit_attention_lipschitz_smt2_block",
     # Lower-level (may change in 0.x)
     "safe_eml",
     "BatchedEMLTree",
