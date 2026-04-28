@@ -1,14 +1,40 @@
 # emltorch
 
-**GPU-batched symbolic regression via the EML operator `exp(x) − ln(y)`.**
+**GPU-batched symbolic regression + portable SMT-LIB2 verification via
+the EML operator `exp(x) − ln(y)`.**
 
-A PyTorch library for discovering compact closed-form expressions from data.
-Particularly suited for mechanistic interpretability of neural networks.
+A PyTorch library for discovering compact closed-form expressions from
+data, AND machine-checking properties of those expressions via z3 +
+cvc5.  Particularly suited for mechanistic interpretability of
+transformers.
 
 Based on Andrzej Odrzywolek's work
 [*All elementary functions from a single binary operator*](https://arxiv.org/abs/2603.21852)
-(arXiv:2603.21852, 2026), with a novel search algorithm that recovers
-formulas the reference implementations could not reach.
+(arXiv:2603.21852, 2026), with a novel search algorithm + axiomatized-
+Exp/Ln SMT bridge that scales to 8B-class transformer mech-interp.
+
+## Featured application — INDUCTION-PURE 7 heads on Qwen3-8B (2026-04-28)
+
+The library's `emltorch.smt.eml_tree_to_smt2` + `with_lemmas`
++ `EML_AXIOMS_SMT2` enabled a comprehensive cert atlas across all 1152
+attention heads of Qwen3-8B in 4 minutes wall-clock.  Combined with
+multi-prompt intersection and negative-control filtering, this
+mechanically discovered the **7 INDUCTION-PURE heads** of Qwen3-8B
+that compute exactly two structural functions:
+
+- **3 SEARCH heads** (L7.H7, L19.H27, L24.H7): attend to
+  `first_prior_occurrence(token[last_q])`
+- **4 PREV-TOKEN heads** (L25.H13, L25.H14, L27.H9, L35.H2):
+  attend to `last_q − 1`
+
+Verified across 8 induction prompts × 4 negative controls; 56/56
+structural-function consistency; no hand-picking; dual-verified by
+z3 4.16 + cvc5 1.3.  Matches Olsson et al. 2022's described 2-layer
+induction circuit, now SMT-verified at 8B scale.
+
+See [`../sae-eml/`](../sae-eml/) for the full scripts.
+
+## Why emltorch?
 
 ## Why emltorch?
 
