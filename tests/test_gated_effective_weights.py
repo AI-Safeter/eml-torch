@@ -94,3 +94,45 @@ def test_lower_triangular_only():
             assert (
                 float(a[0, 0, t, j]) == 0.0
             ), f"a[{t}, {j}] = {float(a[0, 0, t, j])} (should be 0)"
+
+
+def test_single_key_reconstruction_against_recurrence():
+    """For a small synthetic step, verify the unrolled formula
+    out_t = sum_{j} a[t, j] * delta_j matches the explicit recurrence
+    out_t = q_t^T S_t computed step-by-step.
+    """
+    torch.manual_seed(4)
+    B, T, H_k, H_v, D_k, D_v = 1, 6, 1, 1, 4, 4
+    q = torch.randn(B, T, H_k, D_k)
+    k = torch.randn(B, T, H_k, D_k)
+    v = torch.randn(B, T, H_v, D_v)
+    log_g = torch.full((B, T, H_v), -0.05)
+    beta = torch.full((B, T, H_v), 0.7)
+
+    q_n = F.normalize(q, dim=-1, eps=1e-6)
+    k_n = F.normalize(k, dim=-1, eps=1e-6)
+    g = log_g.exp()
+
+    S = torch.zeros(B, H_v, D_k, D_v)
+    out_ref = torch.zeros(B, T, H_v, D_v)
+    deltas = []
+    for t in range(T):
+        q_t = q_n[:, t]
+        k_t = k_n[:, t]
+        v_t = v[:, t]
+        g_t = g[:, t, :, None, None]
+        beta_t = beta[:, t, :, None]
+
+        S = S * g_t
+        kv_mem = (S * k_t.unsqueeze(-1)).sum(dim=-2)
+        delta = (v_t - kv_mem) * beta_t
+        deltas.append(delta)
+        S = S + k_t.unsqueeze(-1) * delta.unsqueeze(-2)
+        out_ref[:, t] = (S * q_t.unsqueeze(-1)).sum(dim=-2)
+
+    a = extract_gated_effective_weights(q, k, log_g, beta, num_v_heads=H_v)
+    deltas_stack = torch.stack(deltas, dim=1)  # (B, T, H_v, D_v)
+    out_unrolled = torch.einsum("bhtj,bjhd->bthd", a, deltas_stack)
+
+    diff = float((out_unrolled - out_ref).abs().max())
+    assert torch.allclose(out_unrolled, out_ref, atol=1e-4), f"max |diff| = {diff}"
