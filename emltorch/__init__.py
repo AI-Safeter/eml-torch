@@ -42,6 +42,7 @@ from .hybrid_mul import (
     safe_eml as safe_eml_hybrid,
     safe_mul,
 )
+from .gated_attn import extract_gated_effective_weights
 from .smt import (
     SafetyCertificate,
     eml_formula_to_z3,
@@ -112,4 +113,6 @@ __all__ = [
     "evolve_hybrid_mul",
     "polish_hybrid_mul",
     "safe_mul",
+    # H23a — Gated DeltaNet effective-weight extractor (added 2026-05-02)
+    "extract_gated_effective_weights",
 ]

@@ -136,3 +136,10 @@ def test_single_key_reconstruction_against_recurrence():
 
     diff = float((out_unrolled - out_ref).abs().max())
     assert torch.allclose(out_unrolled, out_ref, atol=1e-4), f"max |diff| = {diff}"
+
+
+def test_public_api_export():
+    """extract_gated_effective_weights is exported at the top level."""
+    import emltorch
+
+    assert hasattr(emltorch, "extract_gated_effective_weights")
