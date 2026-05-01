@@ -1438,3 +1438,88 @@ __all__ = [
     "attention_block_lipschitz_interval",
     "emit_attention_lipschitz_smt2_block",
 ]
+
+
+# ─────────────────────────────────────────────────────────────────────
+# H23a — Raw-weight concentration cert (QF_LRA, no axiomatized Exp/Ln)
+# Companion to V3 softmax cert (_cert_v3.build_cert_text_v3); used for
+# Gated DeltaNet / linear-attention layers where weights are signed and
+# NOT softmax-normalized.
+# ─────────────────────────────────────────────────────────────────────
+
+
+def emit_raw_weight_concentration_cert(
+    abs_a_obs,
+    target_idx: int,
+    tau: float,
+    rho_log: float,
+    head_label: str = "",
+) -> str:
+    """Cert: abs(a_target) > tau * sum_j abs(a_j) under multiplicative box
+    on each |a_j|.
+
+    QF_LRA, decidable in polynomial time. Each |a_j| is declared as a
+    non-negative Real bounded by [|a_j_obs| * exp(-rho_log),
+    |a_j_obs| * exp(+rho_log)]; the cert asserts the negation of the
+    SAFE claim and (via solver) returns UNSAT iff the claim holds for
+    all admissible |a_j| in the box.
+
+    Args:
+        abs_a_obs: list of T non-negative floats - observed |a[last_q, j]|
+        target_idx: int in [0, T) - the cert's target key position
+        tau: float in (0, 1) - concentration threshold (e.g. 0.95)
+        rho_log: float >= 0 - log-multiplicative perturbation budget
+        head_label: optional string for the cert title
+
+    Returns:
+        Self-contained SMT-LIB2 text ending with `(check-sat)`. UNSAT
+        means the SAFE claim holds (target dominates by tau over all
+        admissible perturbations).
+    """
+    if not (0.0 < tau < 1.0):
+        raise ValueError(f"tau must be in (0, 1), got {tau!r}")
+    if rho_log < 0.0:
+        raise ValueError(f"rho_log must be >= 0, got {rho_log!r}")
+    if not (0 <= target_idx < len(abs_a_obs)):
+        raise ValueError(
+            f"target_idx={target_idx} out of range [0, {len(abs_a_obs)})"
+        )
+    for j, v in enumerate(abs_a_obs):
+        if v < 0:
+            raise ValueError(f"abs_a_obs[{j}]={v} must be non-negative")
+
+    import math as _math
+
+    T = len(abs_a_obs)
+    decl_lines = []
+    bound_lines = []
+    box_factor = _math.exp(rho_log)
+    for j in range(T):
+        lo = abs_a_obs[j] / box_factor
+        hi = abs_a_obs[j] * box_factor
+        decl_lines.append(f"(declare-const abs_a_{j} Real)")
+        bound_lines.append(f"(assert (>= abs_a_{j} 0.0))")
+        bound_lines.append(f"(assert (>= abs_a_{j} {lo:.18f}))")
+        bound_lines.append(f"(assert (<= abs_a_{j} {hi:.18f}))")
+
+    sum_expr = "(+ " + " ".join(f"abs_a_{j}" for j in range(T)) + ")"
+    safe_claim = f"(> abs_a_{target_idx} (* {tau:.18f} {sum_expr}))"
+    neg_safe = f"(assert (not {safe_claim}))"
+
+    title = (
+        f"H23a raw-weight concentration cert"
+        + (f" {head_label}: " if head_label else ": ")
+        + f"|a_target={target_idx}| > {tau:.4f} * sum_j |a_j|"
+    )
+    text = (
+        f"; {title}\n"
+        f";   rho_log = {rho_log:.4f}  (multiplicative box: x{box_factor:.4f})\n"
+        "(set-logic QF_LRA)\n"
+        + "\n".join(decl_lines)
+        + "\n"
+        + "\n".join(bound_lines)
+        + "\n"
+        + neg_safe
+        + "\n(check-sat)\n"
+    )
+    return text
