@@ -1454,9 +1454,10 @@ def emit_raw_weight_concentration_cert(
     tau: float,
     rho_log: float,
     head_label: str = "",
+    exclude_from_sum=None,
 ) -> str:
-    """Cert: abs(a_target) > tau * sum_j abs(a_j) under multiplicative box
-    on each |a_j|.
+    """Cert: abs(a_target) > tau * sum_{j∉excluded} abs(a_j) under
+    multiplicative box on each |a_j|.
 
     QF_LRA, decidable in polynomial time. Each |a_j| is declared as a
     non-negative Real bounded by [|a_j_obs| * exp(-rho_log),
@@ -1470,6 +1471,12 @@ def emit_raw_weight_concentration_cert(
         tau: float in (0, 1) - concentration threshold (e.g. 0.95)
         rho_log: float >= 0 - log-multiplicative perturbation budget
         head_label: optional string for the cert title
+        exclude_from_sum: iterable of int positions to OMIT from the
+            comparison Σ. Target is always excluded automatically. Use
+            for degenerate positions like BOS (j=0) and self (j=last_q),
+            esp. for Gated DeltaNet where self-contribution magnitude
+            can dominate Σ even when target genuinely concentrates over
+            PRIOR positions only.
 
     Returns:
         Self-contained SMT-LIB2 text ending with `(check-sat)`. UNSAT
@@ -1481,9 +1488,7 @@ def emit_raw_weight_concentration_cert(
     if rho_log < 0.0:
         raise ValueError(f"rho_log must be >= 0, got {rho_log!r}")
     if not (0 <= target_idx < len(abs_a_obs)):
-        raise ValueError(
-            f"target_idx={target_idx} out of range [0, {len(abs_a_obs)})"
-        )
+        raise ValueError(f"target_idx={target_idx} out of range [0, {len(abs_a_obs)})")
     for j, v in enumerate(abs_a_obs):
         if v < 0:
             raise ValueError(f"abs_a_obs[{j}]={v} must be non-negative")
@@ -1502,14 +1507,25 @@ def emit_raw_weight_concentration_cert(
         bound_lines.append(f"(assert (>= abs_a_{j} {lo:.18f}))")
         bound_lines.append(f"(assert (<= abs_a_{j} {hi:.18f}))")
 
-    sum_expr = "(+ " + " ".join(f"abs_a_{j}" for j in range(T)) + ")"
+    excluded = set(exclude_from_sum) if exclude_from_sum else set()
+    excluded.add(target_idx)  # target excluded from Σ_others by definition
+    sum_terms = [f"abs_a_{j}" for j in range(T) if j not in excluded]
+    if not sum_terms:
+        sum_expr = "0.0"
+    elif len(sum_terms) == 1:
+        sum_expr = sum_terms[0]
+    else:
+        sum_expr = "(+ " + " ".join(sum_terms) + ")"
     safe_claim = f"(> abs_a_{target_idx} (* {tau:.18f} {sum_expr}))"
     neg_safe = f"(assert (not {safe_claim}))"
 
+    excl_others = sorted(excluded - {target_idx})
+    excl_desc = f" (Σ excludes target + {excl_others})" if excl_others else ""
     title = (
         f"H23a raw-weight concentration cert"
         + (f" {head_label}: " if head_label else ": ")
-        + f"|a_target={target_idx}| > {tau:.4f} * sum_j |a_j|"
+        + f"|a_target={target_idx}| > {tau:.4f} * Σ_others |a_j|"
+        + excl_desc
     )
     text = (
         f"; {title}\n"

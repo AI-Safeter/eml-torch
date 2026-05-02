@@ -93,3 +93,33 @@ def test_dual_verify_cvc5():
         assert result == "unsat", f"cvc5 returned {result!r}"
     finally:
         os.unlink(path)
+
+
+def test_exclude_from_sum_recovers_target():
+    """Without exclude, self-position dominance kills cert. With exclude
+    {self}, the cert discharges target dominance over remaining positions.
+    """
+    # T=21 positions; target=19 with |a*delta|=1e-10; self=20 with |a*delta|=1e-3
+    # All others are 1e-30 (eps clamp). Sum dominated by self.
+    abs_a_obs = [1e-30] * 21
+    abs_a_obs[19] = 1e-10
+    abs_a_obs[20] = 1e-3  # self position dominates everything
+
+    # Without exclude — target loses (1e-10 vs ~1e-3)
+    text_no_excl = emit_raw_weight_concentration_cert(
+        abs_a_obs, target_idx=19, tau=0.95, rho_log=0.10, head_label="prev_tok"
+    )
+    assert _solve(text_no_excl) == "sat"  # cert FAILS (target doesn't dominate Σ)
+
+    # With exclude {0, 20} — target should dominate the rest by 1e10x
+    text_with_excl = emit_raw_weight_concentration_cert(
+        abs_a_obs,
+        target_idx=19,
+        tau=0.95,
+        rho_log=0.10,
+        head_label="prev_tok_excl",
+        exclude_from_sum={0, 20},
+    )
+    assert _solve(text_with_excl) == "unsat"  # cert PASSES
+    # Confirm description in title
+    assert "Σ excludes target + [0, 20]" in text_with_excl
