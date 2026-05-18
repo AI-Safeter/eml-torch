@@ -9,6 +9,7 @@ The routing logic (as of v0.1.0):
     (any)           → fall back to gradient trainer if user asks
 """
 
+import warnings
 from dataclasses import dataclass
 from typing import Literal
 
@@ -38,6 +39,8 @@ def _coerce_inputs(x, y, device):
     if y.ndim != 1:
         raise ValueError(f"y must be 1D (or (N,1)); got shape {tuple(y.shape)}")
     N = y.shape[0]
+    if N == 0:
+        raise ValueError("x and y must be non-empty")
 
     if x.ndim == 1:
         x = x.unsqueeze(0)  # → (1, N)
@@ -48,7 +51,11 @@ def _coerce_inputs(x, y, device):
         elif rows == N and cols != N:
             x = x.t().contiguous()  # (N, V) → (V, N)
         elif rows == N and cols == N:
-            # ambiguous square — assume sklearn (N, V) convention
+            warnings.warn(
+                f"x is square ({N}x{N}); assuming sklearn (N, V) convention "
+                "and transposing to (V, N). Pass shape explicitly if wrong.",
+                stacklevel=3,
+            )
             x = x.t().contiguous()
         else:
             raise ValueError(
@@ -57,6 +64,9 @@ def _coerce_inputs(x, y, device):
             )
     else:
         raise ValueError(f"x must be 1D or 2D; got {x.ndim}D")
+
+    if not torch.isfinite(x).all() or not torch.isfinite(y).all():
+        raise ValueError("x or y contains NaN/Inf; clean inputs before calling fit().")
 
     return x.to(device), y.to(device)
 

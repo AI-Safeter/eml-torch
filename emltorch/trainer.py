@@ -30,7 +30,7 @@ class EMLConfig:
     depth: int = 3
     num_restarts: int = 12
     num_vars: int = 1
-    dtype: str = "complex64"  # "complex64" | "complex128" | "float32"
+    dtype: str = "float32"  # "float32" | "complex64" | "complex128"
     device: str = field(
         default_factory=lambda: "cuda" if torch.cuda.is_available() else "cpu"
     )

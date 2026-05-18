@@ -68,3 +68,33 @@ def test_fit_rejects_incompatible_shapes():
     y = torch.randn(100)
     with pytest.raises(ValueError, match="incompatible"):
         emltorch.fit(x, y, depth=2, population=64, generations=2)
+
+
+def test_fit_rejects_empty_input():
+    """Non-empty x/y is a hard requirement (downstream evolve crashes opaquely)."""
+    with pytest.raises(ValueError, match="non-empty"):
+        emltorch.fit(torch.empty(0), torch.empty(0), depth=2)
+
+
+def test_fit_rejects_nan_inf():
+    """NaN/Inf in inputs must error early, not produce NaN R² silently."""
+    x = torch.linspace(-1.0, 1.0, 64)
+    y = torch.exp(x)
+    y_nan = y.clone()
+    y_nan[5] = float("nan")
+    with pytest.raises(ValueError, match="NaN/Inf"):
+        emltorch.fit(x, y_nan, depth=2, population=64, generations=2)
+
+    x_inf = x.clone()
+    x_inf[3] = float("inf")
+    with pytest.raises(ValueError, match="NaN/Inf"):
+        emltorch.fit(x_inf, y, depth=2, population=64, generations=2)
+
+
+def test_fit_warns_on_square_input():
+    """Ambiguous square input should warn, not silently transpose."""
+    N = 32
+    x = torch.randn(N, N)
+    y = torch.randn(N)
+    with pytest.warns(UserWarning, match="square"):
+        emltorch.fit(x, y, depth=2, population=64, generations=2)

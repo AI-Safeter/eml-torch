@@ -190,7 +190,7 @@ from emltorch import (
 ## Tests
 
 ```bash
-pytest                                       # 80 tests
+pytest                                       # 83 tests
 pytest tests/test_attention_lipschitz.py -v  # Theorem-3 primitive
 pytest tests/test_raw_weight_cert.py -v      # gated/SSM cert dual-verify
 ```
@@ -211,7 +211,7 @@ If you want to use the SMT bridge for a different application (control barriers,
 
 | version | scope |
 |---|---|
-| **v0.2.0** (current) | Stable `fit` API, SMT bridge, Theorem-3 Lipschitz, gated DeltaNet, sklearn wrapper, 80 tests |
+| **v0.2.0** (current) | Stable `fit` API, SMT bridge, Theorem-3 Lipschitz, gated DeltaNet, sklearn wrapper, 83 tests |
 | v0.3.x (planned) | Cross-architecture cert atlas examples; Mamba1/Mamba2 walk-through; cleaner `interp.*` API |
 | v1.0.0 (planned) | API freeze; deprecation of legacy gradient-trainer entry points; reproducible benchmark suite |
 

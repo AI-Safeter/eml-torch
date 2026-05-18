@@ -38,6 +38,7 @@ class EvolutionConfig:
     dtype: str = "float32"
     r2_target: float = 0.99  # early-exit when any tree hits this
     log_every: int = 5
+    verbose: bool = False  # if False (default), suppress per-generation stdout
     # Range-aware fitness: penalize trees whose output scale differs from y's.
     # Adds `range_penalty * log(std(tree_out)/std(y))^2` to per-tree MSE.
     # Prevents evolution from hiding scale-collapsed trees (|b|~0.05) behind
@@ -322,10 +323,11 @@ def evolve(
         # Diversify: mutate a single edge on all but the first seed
         if n_seed > 1:
             _mutate_(tree, seed_slots[1:], n_mutations=1)
-        print(
-            f"[evo] seeded {n_seed}/{cfg.population} from shallower tree "
-            f"(depth {seed_tree.depth} → {cfg.depth})"
-        )
+        if cfg.verbose:
+            print(
+                f"[evo] seeded {n_seed}/{cfg.population} from shallower tree "
+                f"(depth {seed_tree.depth} → {cfg.depth})"
+            )
 
     n_elite = max(1, int(cfg.population * cfg.elite_fraction))
     generation_r2s = []
@@ -366,7 +368,7 @@ def evolve(
         best_r2 = r2.max().item()
         generation_r2s.append(best_r2)
 
-        if gen % cfg.log_every == 0 or gen == cfg.generations - 1:
+        if cfg.verbose and (gen % cfg.log_every == 0 or gen == cfg.generations - 1):
             print(
                 f"[evo] gen {gen:>3d}  best R²={best_r2:+.4f}  "
                 f"elite R² [{r2.topk(n_elite).values.min().item():+.4f}, "
@@ -374,7 +376,8 @@ def evolve(
             )
 
         if best_r2 >= cfg.r2_target:
-            print(f"[evo] r2_target reached at gen {gen}")
+            if cfg.verbose:
+                print(f"[evo] r2_target reached at gen {gen}")
             break
 
         # Selection: top-k by fitness (MSE + range penalty)

@@ -6,3 +6,31 @@ __pycache__/
 wandb/
 *.log
 .DS_Store
+
+# Build / dist
+dist/
+build/
+*.whl
+*.tar.gz
+
+# Coverage / type checking
+.coverage
+.coverage.*
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Secrets
+.env
+.env.*
+*.pem
+*.key
