@@ -13,7 +13,7 @@ All operations are GPU-batched over the population.
 from __future__ import annotations
 
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import torch
 
@@ -32,7 +32,9 @@ class EvolutionConfig:
     # Crossover: fraction of offspring produced by mixing two elite parents
     # (0 → pure mutation, 0.5 → half crossover / half mutation).
     crossover_fraction: float = 0.3
-    device: str = "cuda:7"
+    device: str = field(
+        default_factory=lambda: "cuda" if torch.cuda.is_available() else "cpu"
+    )
     dtype: str = "float32"
     r2_target: float = 0.99  # early-exit when any tree hits this
     log_every: int = 5

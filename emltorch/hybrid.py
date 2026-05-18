@@ -19,7 +19,7 @@ Interpretation of the learned expression:
 from __future__ import annotations
 
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import torch
 import torch.nn as nn
@@ -34,7 +34,9 @@ class HybridConfig:
     num_restarts: int = 24
     num_vars: int = 1
     dtype: str = "float32"
-    device: str = "cuda:7"
+    device: str = field(
+        default_factory=lambda: "cuda" if torch.cuda.is_available() else "cpu"
+    )
 
     fit_steps: int = 5000
     fit_lr: float = 2e-2
@@ -57,15 +59,15 @@ class HybridConfig:
 
 @dataclass
 class HybridResult:
-    expressions: list[str]       # "a + b*x1 + c*(eml_tree)" per feature
-    linear_r2: torch.Tensor      # (F,) R2 explained by linear alone
-    hybrid_r2: torch.Tensor      # (F,) R2 from full hybrid fit
-    nonlinear_r2: torch.Tensor   # (F,) R2 on residuals that EML captured
-    bias: torch.Tensor           # (F,)
+    expressions: list[str]  # "a + b*x1 + c*(eml_tree)" per feature
+    linear_r2: torch.Tensor  # (F,) R2 explained by linear alone
+    hybrid_r2: torch.Tensor  # (F,) R2 from full hybrid fit
+    nonlinear_r2: torch.Tensor  # (F,) R2 on residuals that EML captured
+    bias: torch.Tensor  # (F,)
     linear_coeffs: torch.Tensor  # (F, V)
-    eml_scale: torch.Tensor      # (F,)
-    eml_expressions: list[str]   # just the EML sub-tree expression
-    best_restart: torch.Tensor   # (F,)
+    eml_scale: torch.Tensor  # (F,)
+    eml_expressions: list[str]  # just the EML sub-tree expression
+    best_restart: torch.Tensor  # (F,)
     tree: BatchedEMLTree
     total_time_s: float
 
@@ -100,15 +102,22 @@ class HybridEMLTrainer:
 
         # ---- Build hybrid model ----
         tree = BatchedEMLTree(
-            num_trees=B, depth=cfg.depth, num_vars=V,
-            dtype=cfg.torch_dtype, device=cfg.device,
+            num_trees=B,
+            depth=cfg.depth,
+            num_vars=V,
+            dtype=cfg.torch_dtype,
+            device=cfg.device,
         )
         # Warm-start bias/lin_coef from closed-form — same across restarts
         bias_tensor = bias_init.to(cfg.device, cfg.torch_dtype).repeat_interleave(R)
-        lin_tensor = lin_init.to(cfg.device, cfg.torch_dtype).repeat_interleave(R, dim=0)
+        lin_tensor = lin_init.to(cfg.device, cfg.torch_dtype).repeat_interleave(
+            R, dim=0
+        )
         bias = nn.Parameter(bias_tensor.clone())
         lin_coef = nn.Parameter(lin_tensor.clone())
-        eml_scale = nn.Parameter(torch.full((B,), 0.05, device=cfg.device, dtype=cfg.torch_dtype))
+        eml_scale = nn.Parameter(
+            torch.full((B,), 0.05, device=cfg.device, dtype=cfg.torch_dtype)
+        )
 
         params = list(tree.parameters()) + [bias, lin_coef, eml_scale]
 
@@ -139,8 +148,10 @@ class HybridEMLTrainer:
             opt.step()
 
             if (step + 1) % cfg.log_every == 0:
-                self._log(f"  step {step+1}/{cfg.fit_steps} recon={recon.item():.4e} "
-                          f"|eml_scale|={eml_scale.abs().mean().item():.3f} nan={nan_ct}")
+                self._log(
+                    f"  step {step+1}/{cfg.fit_steps} recon={recon.item():.4e} "
+                    f"|eml_scale|={eml_scale.abs().mean().item():.3f} nan={nan_ct}"
+                )
 
         # ---- Phase 2: Harden ----
         self._log(f"Phase 2 Hardening ({cfg.harden_steps} steps)")
@@ -169,9 +180,11 @@ class HybridEMLTrainer:
         with torch.no_grad():
             pred = self._forward(tree, bias, lin_coef, eml_scale, x_exp)
             per_tree = (pred - y_exp).pow(2).mean(dim=-1)
-            per_tree = torch.where(torch.isfinite(per_tree), per_tree,
-                                   torch.tensor(1e20, device=per_tree.device,
-                                                dtype=per_tree.dtype))
+            per_tree = torch.where(
+                torch.isfinite(per_tree),
+                per_tree,
+                torch.tensor(1e20, device=per_tree.device, dtype=per_tree.dtype),
+            )
 
         # Best restart per feature
         mse_mat = per_tree.reshape(F, R)
@@ -180,7 +193,11 @@ class HybridEMLTrainer:
         best_idx = arange_f * R + best_r
 
         # Hybrid R2
-        ss_tot = (y.to(cfg.device) - y.to(cfg.device).mean(dim=-1, keepdim=True)).pow(2).sum(dim=-1)
+        ss_tot = (
+            (y.to(cfg.device) - y.to(cfg.device).mean(dim=-1, keepdim=True))
+            .pow(2)
+            .sum(dim=-1)
+        )
         hybrid_mse = mse_mat[arange_f, best_r]
         hybrid_ss_res = hybrid_mse * N
         hybrid_r2 = 1 - hybrid_ss_res / ss_tot.clamp(min=1e-8)
@@ -200,9 +217,7 @@ class HybridEMLTrainer:
             b_val = bias[idx].item()
             coefs = lin_coef[idx].tolist()
             s_val = eml_scale[idx].item()
-            lin_str = " ".join(
-                f"{c:+.3f}*{var_names[i]}" for i, c in enumerate(coefs)
-            )
+            lin_str = " ".join(f"{c:+.3f}*{var_names[i]}" for i, c in enumerate(coefs))
             parts = [f"{b_val:+.3f}"]
             if lin_str:
                 parts.append(lin_str)
@@ -230,8 +245,8 @@ class HybridEMLTrainer:
     @staticmethod
     def _forward(tree, bias, lin_coef, eml_scale, x):
         # x: (B, V, N)
-        linear = bias[:, None] + (lin_coef[:, :, None] * x).sum(dim=1)   # (B, N)
-        eml_out = tree(x)                                                # (B, N)
+        linear = bias[:, None] + (lin_coef[:, :, None] * x).sum(dim=1)  # (B, N)
+        eml_out = tree(x)  # (B, N)
         return linear + eml_scale[:, None] * eml_out
 
     @staticmethod
@@ -250,7 +265,7 @@ class HybridEMLTrainer:
         lin_init = torch.zeros(F_, V_)
         bias_init = torch.zeros(F_)
         for f in range(F_):
-            Xf = x_cpu[f].T                                    # (N, V)
+            Xf = x_cpu[f].T  # (N, V)
             Xf_aug = torch.cat([Xf, torch.ones(N_, 1, dtype=torch.float64)], dim=1)
             yf = y_cpu[f]
             sol = torch.linalg.lstsq(Xf_aug, yf.unsqueeze(1)).solution.squeeze(1)

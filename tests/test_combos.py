@@ -14,7 +14,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import emltorch as eml  # noqa: E402
 from emltorch.tree import BatchedEMLTree, build_base, enumerate_combos, num_combos  # noqa: E402
 
-DEVICE = "cuda:7" if torch.cuda.is_available() else "cpu"
+DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 
 def test_combo_enumeration():

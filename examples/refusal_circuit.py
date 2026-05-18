@@ -29,7 +29,7 @@ import emltorch as eml  # noqa: E402
 
 
 CACHE_DIR = Path("/data2/workspace/sae-eml/cache/contrastive")
-DEVICE = "cuda:7" if torch.cuda.is_available() else "cpu"
+DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 
 def load_contrastive(layer: int):

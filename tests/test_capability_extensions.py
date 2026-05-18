@@ -39,7 +39,7 @@ from emltorch.hybrid_mul import (  # noqa: E402
 )
 from emltorch.gradient import diff_formula, gradient_at, torch_gradient_fn  # noqa: E402
 
-DEVICE = "cuda:0" if torch.cuda.is_available() else "cpu"
+DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 
 # ─── 1. use_mul combo enumeration + sizing ──────────────────────────────────

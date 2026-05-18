@@ -148,7 +148,7 @@ class BatchedEMLTree(nn.Module):
         depth: int,
         num_vars: int = 1,
         dtype: torch.dtype = torch.complex64,
-        device: torch.device | str = "cuda:7",
+        device: torch.device | str | None = None,
         init_scale: float = 0.1,
         init_mode: str = "uniform",
         use_mul: bool = False,
@@ -168,6 +168,8 @@ class BatchedEMLTree(nn.Module):
                         Opt-in; default preserves backward behavior.
         """
         super().__init__()
+        if device is None:
+            device = "cuda" if torch.cuda.is_available() else "cpu"
         assert depth >= 1, "Depth must be >= 1"
         self.num_trees = num_trees
         self.depth = depth

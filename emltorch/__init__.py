@@ -22,12 +22,11 @@ Quick start:
 
 __version__ = "0.2.0"
 
-from .operator import safe_eml
+from .operator import safe_eml, safe_eml_param
 from .tree import BatchedEMLTree
-from .trainer import EMLTrainer, EMLConfig, EMLResult
 from .symbolic import extract_expressions, annotate
-from .hybrid import HybridEMLTrainer, HybridConfig, HybridResult
 from .evolution import EvolutionConfig, EvolutionResult, evolve
+from .polish import polish
 
 from .api import fit, FitResult
 from . import interp  # noqa: F401
@@ -39,7 +38,6 @@ from .hybrid_mul import (
     HybridMulPolishResult,
     evolve_hybrid_mul,
     polish_hybrid_mul,
-    safe_eml as safe_eml_hybrid,
     safe_mul,
 )
 from .gated_attn import (
@@ -66,18 +64,44 @@ from .smt import (
     emit_attention_lipschitz_smt2_block,
 )
 
+# ---------------------------------------------------------------------------
+# Legacy gradient-based trainer API (pre-evolution).
+# Importable but NOT in the primary `__all__`.
+# Deprecated, will be removed in 1.0 — use `fit` / `evolve` / `polish` instead.
+# ---------------------------------------------------------------------------
+from .trainer import EMLTrainer, EMLConfig, EMLResult  # noqa: F401
+from .hybrid import HybridEMLTrainer, HybridConfig, HybridResult  # noqa: F401
+
 __all__ = [
     "__version__",
-    # Public, stable API
+    # ---- Core fit API ----
     "fit",
     "FitResult",
     "interp",
-    # Symbolic differentiation
+    # ---- Building blocks ----
+    "safe_eml",
+    "safe_eml_param",
+    "BatchedEMLTree",
+    "evolve",
+    "EvolutionConfig",
+    "EvolutionResult",
+    "polish",
+    "extract_expressions",
+    "annotate",
+    # ---- Hybrid EML+MUL (2nd binary operator at internal nodes) ----
+    "BatchedEMLMulTree",
+    "HybridMulConfig",
+    "HybridMulResult",
+    "HybridMulPolishResult",
+    "evolve_hybrid_mul",
+    "polish_hybrid_mul",
+    "safe_mul",
+    # ---- Symbolic differentiation ----
     "diff_formula",
     "gradient_at",
     "sensitivity_vector",
     "torch_gradient_fn",
-    # SMT / Z3 formal verification bridge
+    # ---- SMT / formal verification bridge (load-bearing public API) ----
     "SafetyCertificate",
     "eml_formula_to_z3",
     "certify_linear_threshold_safe",
@@ -89,35 +113,13 @@ __all__ = [
     "EML_AXIOMS_SMT2",
     "EML_LEMMAS",
     "with_lemmas",
-    # Headline 15 — sound attention-block Lipschitz primitive (arxiv:2507.07814)
+    # ---- Attention-block Lipschitz primitives ----
     "softmax_jacobian_g1",
     "softmax_jacobian_g1_max",
     "attention_block_lipschitz_clean",
     "attention_block_lipschitz_interval",
     "emit_attention_lipschitz_smt2_block",
-    # Lower-level (may change in 0.x)
-    "safe_eml",
-    "BatchedEMLTree",
-    "EMLTrainer",
-    "EMLConfig",
-    "EMLResult",
-    "HybridEMLTrainer",
-    "HybridConfig",
-    "HybridResult",
-    "EvolutionConfig",
-    "EvolutionResult",
-    "evolve",
-    "extract_expressions",
-    "annotate",
-    # Hybrid EML+MUL (2nd binary operator at internal nodes; added 2026-04-24)
-    "BatchedEMLMulTree",
-    "HybridMulConfig",
-    "HybridMulResult",
-    "HybridMulPolishResult",
-    "evolve_hybrid_mul",
-    "polish_hybrid_mul",
-    "safe_mul",
-    # H23a — Gated DeltaNet effective-weight extractor (added 2026-05-02)
+    # ---- Gated DeltaNet effective-weight extractor ----
     "extract_gated_effective_weights",
     "compute_delta_rule_deltas",
     "extract_gated_contribution_log_magnitudes",

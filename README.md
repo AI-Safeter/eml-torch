@@ -13,28 +13,8 @@ Based on Andrzej Odrzywolek's work
 (arXiv:2603.21852, 2026), with a novel search algorithm + axiomatized-
 Exp/Ln SMT bridge that scales to 8B-class transformer mech-interp.
 
-## Featured application — INDUCTION-PURE 7 heads on Qwen3-8B (2026-04-28)
-
-The library's `emltorch.smt.eml_tree_to_smt2` + `with_lemmas`
-+ `EML_AXIOMS_SMT2` enabled a comprehensive cert atlas across all 1152
-attention heads of Qwen3-8B in 4 minutes wall-clock.  Combined with
-multi-prompt intersection and negative-control filtering, this
-mechanically discovered the **7 INDUCTION-PURE heads** of Qwen3-8B
-that compute exactly two structural functions:
-
-- **3 SEARCH heads** (L7.H7, L19.H27, L24.H7): attend to
-  `first_prior_occurrence(token[last_q])`
-- **4 PREV-TOKEN heads** (L25.H13, L25.H14, L27.H9, L35.H2):
-  attend to `last_q − 1`
-
-Verified across 8 induction prompts × 4 negative controls; 56/56
-structural-function consistency; no hand-picking; dual-verified by
-z3 4.16 + cvc5 1.3.  Matches Olsson et al. 2022's described 2-layer
-induction circuit, now SMT-verified at 8B scale.
-
-See [`../sae-eml/`](../sae-eml/) for the full scripts.
-
-## Why emltorch?
+Used in research on Qwen3-8B / Llama-3.1 / Mamba1 cert atlases (paper
+in preparation; experiment-script release pending).
 
 ## Why emltorch?
 
@@ -53,8 +33,14 @@ See [`../sae-eml/`](../sae-eml/) for the full scripts.
 ## Install
 
 ```bash
-# From source (v0.1.0 — dev install)
-pip install -e /path/to/emltorch
+pip install emltorch
+```
+
+Or from a local checkout:
+
+```bash
+git clone https://github.com/samuelhong-newmes/emltorch
+pip install -e ./emltorch
 ```
 
 ## Quick start

@@ -11,7 +11,7 @@ All phases run batched over F features × R restarts in a single GPU pass.
 from __future__ import annotations
 
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import torch
 import torch.nn as nn
@@ -24,13 +24,16 @@ from .symbolic import extract_expressions
 # Config & result types
 # ------------------------------------------------------------------
 
+
 @dataclass
 class EMLConfig:
     depth: int = 3
     num_restarts: int = 12
     num_vars: int = 1
-    dtype: str = "complex64"       # "complex64" | "complex128" | "float32"
-    device: str = "cuda:7"
+    dtype: str = "complex64"  # "complex64" | "complex128" | "float32"
+    device: str = field(
+        default_factory=lambda: "cuda" if torch.cuda.is_available() else "cpu"
+    )
 
     # Phase 1: Fitting
     fit_steps: int = 3000
@@ -68,7 +71,9 @@ class EMLConfig:
     snap_mse_threshold: float = 1e-4
 
     # Preprocessing
-    safe_shift: float = 0.0  # Add this offset to all data to avoid log(0). Set > 0 for SAE features.
+    safe_shift: float = (
+        0.0  # Add this offset to all data to avoid log(0). Set > 0 for SAE features.
+    )
 
     # Logging
     log_every: int = 500
@@ -85,17 +90,18 @@ class EMLConfig:
 
 @dataclass
 class EMLResult:
-    expressions: list[str]            # symbolic expression per feature
-    mse_values: torch.Tensor          # (F,) best MSE per feature
-    snapped_ok: torch.Tensor          # (F,) bool — MSE < threshold
-    best_restart: torch.Tensor        # (F,) which restart won
-    tree: BatchedEMLTree              # the fitted (snapped) tree
+    expressions: list[str]  # symbolic expression per feature
+    mse_values: torch.Tensor  # (F,) best MSE per feature
+    snapped_ok: torch.Tensor  # (F,) bool — MSE < threshold
+    best_restart: torch.Tensor  # (F,) which restart won
+    tree: BatchedEMLTree  # the fitted (snapped) tree
     total_time_s: float
 
 
 # ------------------------------------------------------------------
 # Trainer
 # ------------------------------------------------------------------
+
 
 class EMLTrainer:
     """Fit batched EML trees with 3-phase training."""
@@ -126,7 +132,7 @@ class EMLTrainer:
 
         # ---- Shape handling ----
         if x.dim() == 2:
-            x = x.unsqueeze(1)           # (F, 1, N)
+            x = x.unsqueeze(1)  # (F, 1, N)
         F, V, N = x.shape
         assert y.shape == (F, N), f"y shape {y.shape} != expected ({F}, {N})"
 
@@ -139,8 +145,8 @@ class EMLTrainer:
             y = y + cfg.safe_shift
 
         # ---- Expand for restarts ----
-        x_exp = x.repeat_interleave(R, dim=0).to(cfg.device)   # (F*R, V, N)
-        y_exp = y.repeat_interleave(R, dim=0).to(cfg.device)   # (F*R, N)
+        x_exp = x.repeat_interleave(R, dim=0).to(cfg.device)  # (F*R, V, N)
+        y_exp = y.repeat_interleave(R, dim=0).to(cfg.device)  # (F*R, N)
         if cfg.torch_dtype.is_complex:
             y_exp = y_exp.to(cfg.torch_dtype)
 
@@ -149,7 +155,7 @@ class EMLTrainer:
         # ---- Create tree ----
         # Strategy-specific init overrides
         if cfg.strategy == "random":
-            init_scale = max(cfg.init_scale, 50.0)   # force hard one-hot
+            init_scale = max(cfg.init_scale, 50.0)  # force hard one-hot
             init_mode = "peaked"
         else:
             init_scale = cfg.init_scale
@@ -164,9 +170,11 @@ class EMLTrainer:
             init_scale=init_scale,
             init_mode=init_mode,
         )
-        self._log(f"Tree: depth={cfg.depth}, {B} trees ({F} features × "
-                  f"{R} restarts), {tree.total_params_per_tree} params/tree, "
-                  f"strategy={cfg.strategy}")
+        self._log(
+            f"Tree: depth={cfg.depth}, {B} trees ({F} features × "
+            f"{R} restarts), {tree.total_params_per_tree} params/tree, "
+            f"strategy={cfg.strategy}"
+        )
 
         # ---- Strategy "random": skip training, snap, evaluate ----
         if cfg.strategy == "random":
@@ -174,14 +182,15 @@ class EMLTrainer:
             tree.snap()
             tree.selection_mode = "softmax"
             tree.training = False
-            return self._finalize(tree, x_exp, y_exp, F, R, V, var_names,
-                                  cfg, t0)
+            return self._finalize(tree, x_exp, y_exp, F, R, V, var_names, cfg, t0)
 
         # ---- Phase 1: Fitting ----
         tree.selection_mode = cfg.fit_selection
         tree.train()
-        self._log(f"Phase 1  Fitting  ({cfg.fit_steps} steps, lr={cfg.fit_lr}, "
-                  f"selection={cfg.fit_selection})")
+        self._log(
+            f"Phase 1  Fitting  ({cfg.fit_steps} steps, lr={cfg.fit_lr}, "
+            f"selection={cfg.fit_selection})"
+        )
         opt = torch.optim.Adam(tree.parameters(), lr=cfg.fit_lr)
         nan_ct = 0
 
@@ -203,13 +212,17 @@ class EMLTrainer:
             opt.step()
 
             if (step + 1) % cfg.log_every == 0:
-                self._log(f"  step {step+1:>5}/{cfg.fit_steps}  "
-                          f"loss={loss.item():.4e}  nan_recover={nan_ct}")
+                self._log(
+                    f"  step {step+1:>5}/{cfg.fit_steps}  "
+                    f"loss={loss.item():.4e}  nan_recover={nan_ct}"
+                )
 
         # ---- Phase 2: Hardening ----
         tree.selection_mode = cfg.harden_selection
-        self._log(f"Phase 2  Hardening  ({cfg.harden_steps} steps, "
-                  f"selection={cfg.harden_selection})")
+        self._log(
+            f"Phase 2  Hardening  ({cfg.harden_steps} steps, "
+            f"selection={cfg.harden_selection})"
+        )
         opt = torch.optim.Adam(tree.parameters(), lr=cfg.harden_lr)
 
         for step in range(cfg.harden_steps):
@@ -234,15 +247,17 @@ class EMLTrainer:
             opt.step()
 
             if (step + 1) % cfg.log_every == 0:
-                self._log(f"  step {step+1:>5}/{cfg.harden_steps}  "
-                          f"recon={recon.item():.4e}  ent={ent.item():.4e}  "
-                          f"temp_inv={tree.temp_inv.item():.1f}")
+                self._log(
+                    f"  step {step+1:>5}/{cfg.harden_steps}  "
+                    f"recon={recon.item():.4e}  ent={ent.item():.4e}  "
+                    f"temp_inv={tree.temp_inv.item():.1f}"
+                )
 
         # ---- Phase 3: Snap & verify ----
         self._log("Phase 3  Snap to argmax")
         tree.temp_inv.fill_(1.0)
         tree.snap()
-        tree.selection_mode = "softmax"   # deterministic for verification
+        tree.selection_mode = "softmax"  # deterministic for verification
         tree.training = False
 
         return self._finalize(tree, x_exp, y_exp, F, R, V, var_names, cfg, t0)
@@ -254,17 +269,21 @@ class EMLTrainer:
             per_tree = self._per_tree_mse(pred, y_exp)  # (B,)
 
         mse_mat = per_tree.reshape(F, R)
-        best_r = mse_mat.argmin(dim=1)                          # (F,)
+        best_r = mse_mat.argmin(dim=1)  # (F,)
         arange_f = torch.arange(F, device=cfg.device)
-        best_idx = arange_f * R + best_r                        # (F,)
-        best_mse = mse_mat[arange_f, best_r]                    # (F,)
+        best_idx = arange_f * R + best_r  # (F,)
+        best_mse = mse_mat[arange_f, best_r]  # (F,)
 
         snapped_ok = best_mse < cfg.snap_mse_threshold
 
-        self._log(f"  {snapped_ok.sum().item()}/{F} features below "
-                  f"MSE threshold ({cfg.snap_mse_threshold:.0e})")
-        self._log(f"  MSE range: [{best_mse.min().item():.2e}, "
-                  f"{best_mse.max().item():.2e}]")
+        self._log(
+            f"  {snapped_ok.sum().item()}/{F} features below "
+            f"MSE threshold ({cfg.snap_mse_threshold:.0e})"
+        )
+        self._log(
+            f"  MSE range: [{best_mse.min().item():.2e}, "
+            f"{best_mse.max().item():.2e}]"
+        )
 
         if var_names is None:
             var_names = [f"x{i}" for i in range(V)] if V > 1 else ["x"]
@@ -302,8 +321,11 @@ class EMLTrainer:
         else:
             mse = diff.pow(2).mean(dim=-1)
         # NaN trees get a large MSE so they're never selected as best
-        return torch.where(torch.isfinite(mse), mse,
-                           torch.tensor(1e20, device=mse.device, dtype=mse.dtype))
+        return torch.where(
+            torch.isfinite(mse),
+            mse,
+            torch.tensor(1e20, device=mse.device, dtype=mse.dtype),
+        )
 
     @staticmethod
     def _nan_recover(tree: BatchedEMLTree):

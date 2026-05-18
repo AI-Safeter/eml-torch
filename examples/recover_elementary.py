@@ -18,7 +18,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import emltorch as eml  # noqa: E402
 
 
-DEVICE = "cuda:7" if torch.cuda.is_available() else "cpu"
+DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 TARGETS = [
     # (name, callable, depth, lo, hi)

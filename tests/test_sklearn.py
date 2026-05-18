@@ -11,7 +11,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from emltorch.sklearn import EMLRegressor  # noqa: E402
 
 
-DEVICE = "cuda:7" if torch.cuda.is_available() else "cpu"
+DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 
 def test_ln_recovery_sklearn_api():

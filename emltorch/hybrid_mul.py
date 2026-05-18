@@ -247,7 +247,9 @@ class HybridMulConfig:
     mutations_per_child: int = 1
     r2_target: float = 0.99995
     use_mul: bool = False
-    device: str = "cuda:0"
+    device: str = field(
+        default_factory=lambda: "cuda" if torch.cuda.is_available() else "cpu"
+    )
     # Normalize target to unit std before evolution; denormalize in result.
     # Avoids exp() overflow on large-magnitude targets (e.g. Chinchilla L~100).
     normalize_target: bool = True

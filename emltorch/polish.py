@@ -200,7 +200,7 @@ def polish(
     var_names: list[str],
     n_iters: int = 2000,
     lr: float = 5e-2,
-    device: str = "cuda:7",
+    device: str | None = None,
     warm_a: float = 0.0,
     warm_b: float = 1.0,
     const_reg: float = 0.0,
@@ -217,6 +217,8 @@ def polish(
     Result contains the learned constants, affine coefficients, and a
     formula string with all constants substituted in.
     """
+    if device is None:
+        device = "cuda" if torch.cuda.is_available() else "cpu"
     # Pull choice indices from the snapped tree
     leaf_idx_all, internal_idx_all = tree.snapped_choices()
     leaf_choices = leaf_idx_all[best_idx].to("cpu")  # (L, 2)
@@ -516,7 +518,7 @@ def polish_param(
     var_names: list[str],
     n_iters: int = 2000,
     lr: float = 5e-2,
-    device: str = "cuda:7",
+    device: str | None = None,
     warm_a: float = 0.0,
     warm_b: float = 1.0,
     alpha_beta_reg: float = 1e-3,
@@ -533,6 +535,8 @@ def polish_param(
     The `formula` string is identical to standard polish (does not yet
     surface α, β — future enhancement).
     """
+    if device is None:
+        device = "cuda" if torch.cuda.is_available() else "cpu"
     leaf_idx_all, internal_idx_all = tree.snapped_choices()
     leaf_choices = leaf_idx_all[best_idx].to("cpu")
     internal_choices = [c[best_idx].to("cpu") for c in internal_idx_all]
