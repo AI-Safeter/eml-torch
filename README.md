@@ -42,7 +42,7 @@ pip install emltorch
 Or from a checkout:
 
 ```bash
-git clone https://github.com/samuelhong-newmes/emltorch
+git clone https://github.com/SabaPivot/emltorch
 pip install -e ./emltorch
 ```
 
@@ -235,7 +235,7 @@ If you use `emltorch`, please cite both:
   title   = {emltorch: GPU-batched symbolic regression and SMT verification via EML},
   author  = {Hong, Samuel},
   year    = {2026},
-  url     = {https://github.com/samuelhong-newmes/emltorch},
+  url     = {https://github.com/SabaPivot/emltorch},
   version = {0.2.0},
 }
 ```
@@ -244,7 +244,7 @@ If you use `emltorch`, please cite both:
 
 ## Contributing & issues
 
-Bug reports and feature requests welcome at [github.com/samuelhong-newmes/emltorch/issues](https://github.com/samuelhong-newmes/emltorch/issues). For substantive PRs, please open an issue first to discuss.
+Bug reports and feature requests welcome at [github.com/SabaPivot/emltorch/issues](https://github.com/SabaPivot/emltorch/issues). For substantive PRs, please open an issue first to discuss.
 
 ## License
 

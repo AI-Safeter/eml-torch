@@ -45,8 +45,8 @@ interp = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/samuelhong-newmes/emltorch"
-Repository = "https://github.com/samuelhong-newmes/emltorch"
+Homepage = "https://github.com/SabaPivot/emltorch"
+Repository = "https://github.com/SabaPivot/emltorch"
 
 [tool.setuptools.packages.find]
 where = ["."]
