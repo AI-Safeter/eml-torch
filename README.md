@@ -164,8 +164,8 @@ pip install emltorch
 From a checkout:
 
 ```bash
-git clone https://github.com/<owner>/emltorch
-pip install -e ./emltorch
+git clone https://github.com/AI-Safeter/eml-torch
+pip install -e ./eml-torch
 ```
 
 For the SMT bridge: `pip install z3-solver cvc5`. Both are pure-Python wheels. For the sklearn wrapper: `pip install scikit-learn`. Python ≥ 3.10, PyTorch ≥ 2.3. CPU works; CUDA is auto-detected.
