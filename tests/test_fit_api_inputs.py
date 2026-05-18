@@ -98,3 +98,36 @@ def test_fit_warns_on_square_input():
     y = torch.randn(N)
     with pytest.warns(UserWarning, match="square"):
         emltorch.fit(x, y, depth=2, population=64, generations=2)
+
+
+def test_fit_predict_round_trip():
+    """FitResult.predict(x) recovers training values; in-sample R² matches."""
+    torch.manual_seed(0)
+    x = torch.linspace(-2.0, 2.0, 128)
+    y = torch.exp(x)
+    r = emltorch.fit(x, y, depth=3, population=512, generations=20)
+    y_pred = r.predict(x)
+    ss_res = ((y - y_pred) ** 2).sum().item()
+    ss_tot = ((y - y.mean()) ** 2).sum().item()
+    r2_eval = 1 - ss_res / max(ss_tot, 1e-12)
+    # predict should agree with reported R² to within numerical noise
+    assert abs(r2_eval - r.r2) < 0.01, (r2_eval, r.r2)
+
+
+def test_fit_predict_ood():
+    """Discovered exp(x) extrapolates exactly off-distribution."""
+    torch.manual_seed(0)
+    x_tr = torch.linspace(-3.0, 0.0, 256)
+    y_tr = torch.exp(x_tr)
+    r = emltorch.fit(x_tr, y_tr, depth=3, population=1024, generations=20)
+    if r.r2 < 0.999:
+        pytest.skip(f"train R²={r.r2:.4f} < 0.999; structural recovery missed")
+    x_te = torch.linspace(-10.0, -5.0, 256)
+    y_te = torch.exp(x_te)
+    y_pred = r.predict(x_te)
+    ss_res = ((y_te - y_pred) ** 2).sum().item()
+    ss_tot = ((y_te - y_te.mean()) ** 2).sum().item()
+    r2_ood = 1 - ss_res / max(ss_tot, 1e-12)
+    assert (
+        r2_ood > 0.99
+    ), f"OOD R²={r2_ood} (expected > 0.99 on structural exp recovery)"

@@ -84,6 +84,57 @@ class FitResult:
     b: float  # affine scale (1 if strategy=gradient)
     time_s: float
     generations: list[float] | None = None  # R² per generation (evolution only)
+    # Internal handles for evaluation; set by fit() for evolution strategies.
+    _tree: object = None  # BatchedEMLTree, or None
+    _idx: int = -1  # index of best individual inside _tree
+    _device: str = "cpu"
+
+    def predict(self, x) -> torch.Tensor:
+        """Evaluate the discovered formula on new data.
+
+        Accepts the same x conventions as ``fit`` (numpy / list / torch;
+        (N,), (N, V), or (V, N)). Returns a 1-D torch.Tensor of length N
+        with the affine-wrapped prediction ``a + b * tree(x)``.
+
+        Raises NotImplementedError when the strategy is "gradient" (the
+        legacy gradient trainer doesn't expose a tree handle).
+        """
+        if self._tree is None:
+            raise NotImplementedError(
+                "predict() not available for strategy="
+                f"{self.strategy!r}; use evolution / evolution+polish / random."
+            )
+        # Coerce x to (V, N) shape matching training
+        if not isinstance(x, torch.Tensor):
+            x = torch.as_tensor(x)
+        if not x.is_floating_point():
+            x = x.float()
+        if x.ndim == 1:
+            x = x.unsqueeze(0)
+        elif x.ndim == 2:
+            # If V doesn't match tree's V, try transposing
+            V_tree = self._tree.num_vars
+            if x.shape[0] != V_tree and x.shape[1] == V_tree:
+                x = x.t().contiguous()
+        x = x.to(self._device)
+        # Tree forward expects (B, V, N) or (B, N) for V=1; broadcast same x
+        # to all B trees, then select the best one.
+        with torch.no_grad():
+            B = self._tree.num_trees
+            V = self._tree.num_vars
+            N = x.shape[-1]
+            if V == 1:
+                x_b = (
+                    (x.squeeze(0) if x.ndim == 2 else x)
+                    .unsqueeze(0)
+                    .expand(B, N)
+                    .contiguous()
+                )
+            else:
+                x_b = x.unsqueeze(0).expand(B, V, N).contiguous()
+            preds_all = self._tree.forward(x_b)  # (B, N)
+            tree_pred = preds_all[self._idx]
+        return (self.a + self.b * tree_pred).cpu()
 
 
 def fit(
@@ -166,6 +217,9 @@ def fit(
             b=res.best_b,
             time_s=time.time() - t0,
             generations=res.generation_r2s,
+            _tree=res.best_tree,
+            _idx=res.best_idx,
+            _device=device,
         )
 
     if strategy == "evolution":
@@ -209,6 +263,9 @@ def fit(
                     b=pol.b,
                     time_s=time.time() - t0,
                     generations=res.generation_r2s,
+                    _tree=res.best_tree,
+                    _idx=res.best_idx,
+                    _device=device,
                 )
 
         return FitResult(
@@ -221,6 +278,9 @@ def fit(
             b=res.best_b,
             time_s=time.time() - t0,
             generations=res.generation_r2s,
+            _tree=res.best_tree,
+            _idx=res.best_idx,
+            _device=device,
         )
 
     if strategy == "gradient":
