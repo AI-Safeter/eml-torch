@@ -1,8 +1,12 @@
 # emltorch
 
+[![PyPI](https://img.shields.io/pypi/v/emltorch.svg)](https://pypi.org/project/emltorch/)
+[![Python](https://img.shields.io/pypi/pyversions/emltorch.svg)](https://pypi.org/project/emltorch/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 **GPU-batched symbolic regression with portable SMT-LIB2 verification, via the EML operator `exp(x) − ln(y)`.**
 
-`emltorch` discovers compact closed-form expressions from data — and machine-checks properties of those expressions with z3 + cvc5. Built on Andrzej Odrzywolek's [*All elementary functions from a single binary operator*](https://arxiv.org/abs/2603.21852) (arXiv:2603.21852), with a GPU-batched evolutionary search plus an axiomatized-`Exp`/`Ln` SMT bridge.
+`emltorch` discovers compact closed-form expressions from data, then machine-checks properties of those expressions with z3 + cvc5. Built on Andrzej Odrzywolek's [*All elementary functions from a single binary operator*](https://arxiv.org/abs/2603.21852) (arXiv:2603.21852), with a GPU-batched evolutionary search plus an axiomatized-`Exp`/`Ln` SMT bridge.
 
 ---
 
@@ -46,7 +50,7 @@ y_pred = r.predict(x_te)
 # Numbers from a real run (seed=0):
 # emltorch expr:  '+1.0000 + (+1.0000) * [eml(x, exp(1))]'    # = exp(x)
 # emltorch OOD R²: 1.000000           max|pred| = 6.738e-03    ✓ exact
-# poly K=5  OOD R²: −1.41e+08         max|pred| = 5.3e+01      ✗ wrong by 4 OOM
+# poly K=5  OOD R²: −1.41e+08         max|pred| = 5.3e+01      ✗ wrong by 4 orders of magnitude
 ```
 
 This is `emltorch`'s strongest case versus PySR / polynomial baselines: when the target is `exp`/`log`/`softplus`/`sigmoid`-native and depth-3 is enough, evolution recovers the canonical analytic form and the formula extrapolates exactly. On bounded analytic targets where polynomial K=5 already fits well, both tie.
@@ -76,7 +80,7 @@ Two emission paths:
 | `eml_tree_to_smt2_intervals(...)` | QF_LRA + analytic interval bound | shallow formulas; fast (single-digit ms); requires `Ln`-arg positivity over the box |
 | `eml_tree_to_smt2(...)` | axiomatized `Exp` / `Ln` | deeper formulas; can pair with `with_lemmas("ratio_corollary", ...)`; works when `Ln` args go negative |
 
-Available lemmas: `multiplicativity`, `ratio_corollary`, `ln_multiplicativity`, `e_interval_tight`, `depth3_ln_identity`, `ln_at_e`, `exp_minus_y`, `relu_depth4_identity`. Pair them with the axiomatized emitter, not the interval one — interval-form is pure QF_LRA and does not declare `Exp`/`Ln`.
+Available lemmas: `multiplicativity`, `ratio_corollary`, `ln_multiplicativity`, `e_interval_tight`, `depth3_ln_identity`, `ln_at_e`, `exp_minus_y`, `relu_depth4_identity`. Pair them with the axiomatized emitter, not the interval one. Interval-form is pure QF_LRA and does not declare `Exp`/`Ln`.
 
 ### 4. scikit-learn drop-in
 
@@ -140,18 +144,18 @@ from emltorch import (
 
 ---
 
-## Honest limitations
+## Limitations
 
 | target | result |
 |---|---|
 | ReLU | exact at depth 4 |
 | `sin`/`cos` on `[−π, π]` | R² ≥ 0.994 at depth 5 (ties poly K=9) |
 | SiLU / sigmoid | R² ≤ 0.9999 ceiling, depth 3–7 (fundamental approximation limit) |
-| Modular arithmetic / grokking | not addressable — multi-cycle structure outside elementary-function class |
+| Modular arithmetic / grokking | not addressable; multi-cycle structure outside elementary-function class |
 | General tabular SR (high-dim, smooth) | polynomial K=5 ties or wins on most bounded analytic targets within training range |
 | Networks bigger than ~20 features | depth-d tree search is sweet-spotted for V ≈ 1–20 |
 
-EML's value is not raw HELDOUT R² across all tasks. It is (i) **symbolic parsimony** (a depth-3 EML tree is auditable; a 21-coefficient polynomial is not), (ii) **OOD-bounded extrapolation** on `exp` / `log` / `sigmoid` / `softplus` targets when structural recovery succeeds, and (iii) **portable SMT-LIB2** certificates of the discovered formula.
+EML's value is not raw HELDOUT R² across all tasks. It is (i) symbolic parsimony (a depth-3 EML tree is auditable; a 21-coefficient polynomial is not), (ii) OOD-bounded extrapolation on `exp` / `log` / `sigmoid` / `softplus` targets when structural recovery succeeds, and (iii) portable SMT-LIB2 certificates of the discovered formula.
 
 ---
 
