@@ -13,7 +13,7 @@ P_target ≈ 0.5954 + (−0.1353) · eml(L, eml(L − H, 1))
 `L` = induction lag (0 on factual prompts).
 `H` = entropy of the model's top-50 logprob distribution.
 
-The formula was discovered by depth-4 evolutionary search over the EML operator on 50 prompts of the form `"The capital of {country} is"`. The pipeline uses only `prompt → top-K logprobs`: no hooks, no attention output, no hidden states. HELDOUT R² = 0.89 on a 75-25 random split. The formula renders to a portable `.smt2` certificate that z3 and cvc5 both verify in single-digit milliseconds. Reproduction package (scripts + shipped artifacts + pre-registration): `examples/h31_blackbox_cert/`.
+*Factual* probes here are completion prompts asking for a single canonical fact the model is expected to know — 50 prompts of the form `"The capital of {country} is"`, target = the canonical capital. The formula was discovered by depth-4 evolutionary search over the EML operator on this set. The pipeline uses only `prompt → top-K logprobs`: no hooks, no attention output, no hidden states. HELDOUT R² = 0.89 on a 75-25 random split. The formula renders to a portable `.smt2` certificate that z3 and cvc5 both verify in single-digit milliseconds. Reproduction package (scripts + shipped artifacts + pre-registration): `examples/h31_blackbox_cert/`.
 
 ## Limitations
 
