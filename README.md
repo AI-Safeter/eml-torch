@@ -88,34 +88,38 @@ The formula's algebraic content on the training slice equals linear regression o
 
 ## Reproducing
 
+The full reproduction package — scripts, shipped artifacts, pre-registration, local README — lives at `examples/h31_blackbox_cert/`.
+
 ```bash
 git clone https://github.com/AI-Safeter/eml-torch
-pip install -e ./eml-torch
-pip install z3-solver cvc5
+cd eml-torch
+pip install -e . && pip install z3-solver cvc5
+
+cd examples/h31_blackbox_cert
 
 # 1. Generate probes (no GPU)
-python sae-eml/scripts/h31_probe_generator.py
+python h31_probe_generator.py
 
-# 2. Run black-box probe
-python sae-eml/scripts/h31_blackbox_runner.py Qwen/Qwen3.6-27B 0 qwen36
+# 2. Run black-box probe on Qwen3.6-27B
+python h31_blackbox_runner.py Qwen/Qwen3.6-27B 0 qwen36
 
 # 3. Fit EML + poly baselines (11-filter discipline)
-PYTHONPATH=emltorch python sae-eml/scripts/h31_fit_and_baseline.py
+python h31_fit_and_baseline.py
 
 # 4. Emit and dual-verify certs
-PYTHONPATH=emltorch python sae-eml/scripts/h31_emit_certs.py
+python h31_emit_certs.py
 
 # 5. Anti-tautology guards
-python sae-eml/scripts/h31_random_target_runner.py
-PYTHONPATH=emltorch python sae-eml/scripts/h31_anti_tautology_guards.py
+python h31_random_target_runner.py
+python h31_anti_tautology_guards.py
 
-# 6. H-only walk-back audit (linear baseline vs EML at depth 4, 10 seeds)
-PYTHONPATH=emltorch python sae-eml/scripts/h31_h_only_refit.py
+# 6. Walk-back audit (linear baseline vs EML d=4, 10 seeds, H only)
+python h31_h_only_refit.py
 ```
 
-Pre-reg: `docs/superpowers/specs/2026-05-22-h31-blackbox-behavioral-cert-prereg.md`.
-Full evidence: `RESULTS.md` section `Headline 31`.
-Figure: `outputs/h31_blackbox_cert/headline_figure.png`.
+Pre-registration: `examples/h31_blackbox_cert/PREREG.md`.
+Shipped artifacts (from the original 2026-05-22 run): `examples/h31_blackbox_cert/outputs/`.
+Figure: `examples/h31_blackbox_cert/outputs/headline_figure.png`.
 
 ## License
 

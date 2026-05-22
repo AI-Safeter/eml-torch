@@ -1,0 +1,64 @@
+{
+  "headline_refit_holdout_r2": 0.8876292917512557,
+  "headline_formula": "+0.5954 + (-0.1353) * [eml(x2, eml((x2 - x4), 1))]",
+  "guard_1_inter_circuit_cross_fit": {
+    "protocol": "inter_circuit_cross_fit",
+    "reference_circuit": "factual",
+    "reference_holdout_r2": 0.8876292917512557,
+    "cross_circuits": {
+      "induction": {
+        "n": 56,
+        "r2": -9.140690522659661e+70,
+        "y_mean": 0.9585970310228211,
+        "y_std": 0.024799202143553117,
+        "pred_mean": -7.497684740045107e+33,
+        "pred_std": Infinity
+      },
+      "copy_oneshot": {
+        "n": 50,
+        "r2": -29.847327656277233,
+        "y_mean": 0.07776264533400536,
+        "y_std": 0.0930059238477488,
+        "pred_mean": 0.5247923731803894,
+        "pred_std": 0.21030515432357788
+      },
+      "ioi": {
+        "n": 50,
+        "r2": -1.3896850513041628,
+        "y_mean": 0.537369130551815,
+        "y_std": 0.19289888985941972,
+        "pred_mean": 0.78887939453125,
+        "pred_std": 0.10901941359043121
+      },
+      "syntactic": {
+        "n": 50,
+        "r2": 0.7481327013379138,
+        "y_mean": 0.6580562883615494,
+        "y_std": 0.16029002461862296,
+        "pred_mean": 0.7158294916152954,
+        "pred_std": 0.2075997292995453
+      }
+    }
+  },
+  "guard_2_random_target": {
+    "protocol": "random_target_measurement",
+    "note": "h31_random_target_runner.py re-ran Qwen3.6 on the 50 factual prompts with target replaced by a random non-self capital. The measured P(random_target) is the TRUE model output, not a proxy.",
+    "reference_holdout_r2": 0.8876292917512557,
+    "r2_on_random_target": -10987215168045.396,
+    "y_rand_mean": 0.0,
+    "y_rand_std": 0.0,
+    "pred_mean_on_factual_features": 0.443522185087204,
+    "pred_std": 0.15176425874233246,
+    "interpretation": "R\u00b2 \u226a 0 \u2192 formula predicts high while truth ~0 \u2192 target-specific. R\u00b2 > 0.3 \u2192 formula matches random-target P \u2192 BAD (prompt-statistic)."
+  },
+  "guard_3_vendor_cross_fit": {
+    "protocol": "vendor_cross_fit",
+    "reference_holdout_r2": 0.8876292917512557,
+    "r2_qwen_formula_on_gemma_factual": -65.1415748724048,
+    "gemma_y_mean": 0.019873546248482084,
+    "gemma_y_std": 0.1387877586292205,
+    "qwen_formula_pred_mean": 1.136175274848938,
+    "qwen_formula_pred_std": 0.1069474071264267,
+    "interpretation": "R\u00b2 > 0.5 \u2192 vendor-generic behavior (formula transfers). R\u00b2 \u2208 [0.0, 0.5] \u2192 partial vendor-specificity. R\u00b2 < 0.0 \u2192 vendor-specific signature (Qwen formula does not predict Gemma's near-degenerate target distribution)."
+  }
+}

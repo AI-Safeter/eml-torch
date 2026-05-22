@@ -1,0 +1,107 @@
+[
+  {
+    "tag": "qwen36",
+    "circuit": "copy_oneshot",
+    "status": "skipped_low_r2",
+    "best_score": 0.42637349799850466,
+    "median_seed_r2": -6.561308765405447
+  },
+  {
+    "cert_id": "qwen36_factual_working_lb",
+    "smt_path": "outputs/certs/qwen36_factual_working_lb.smt2",
+    "formula": "+0.5954 + (-0.1353) * [eml(x2, eml((x2 - x4), 1))]",
+    "var_ranges": {
+      "x2": [
+        -0.1,
+        0.1
+      ],
+      "x4": [
+        1.9390155673027039,
+        2.3998414278030396
+      ]
+    },
+    "target_op": ">",
+    "target_value": 0.1,
+    "cert_kind": "working_lb",
+    "z3": {
+      "verdict": "unsat",
+      "wall_s": 0.00951838493347168
+    },
+    "cvc5": {
+      "verdict": "unsat",
+      "wall_s": 0.0041615962982177734
+    },
+    "dual_unsat": true,
+    "dual_sat": false
+  },
+  {
+    "cert_id": "qwen36_factual_failure_ub",
+    "smt_path": "outputs/certs/qwen36_factual_failure_ub.smt2",
+    "formula": "+0.5954 + (-0.1353) * [eml(x2, eml((x2 - x4), 1))]",
+    "var_ranges": {
+      "x2": [
+        0.05,
+        0.25
+      ],
+      "x4": [
+        3.522344970703125,
+        4.355861663818359
+      ]
+    },
+    "target_op": ">",
+    "target_value": 0.1,
+    "cert_kind": "failure_ub",
+    "z3": {
+      "verdict": "sat",
+      "wall_s": 0.0016341209411621094
+    },
+    "cvc5": {
+      "verdict": "sat",
+      "wall_s": 0.002656698226928711
+    },
+    "dual_unsat": false,
+    "dual_sat": true
+  },
+  {
+    "tag": "qwen36",
+    "circuit": "induction",
+    "status": "skipped_low_r2",
+    "best_score": null,
+    "median_seed_r2": null
+  },
+  {
+    "tag": "qwen36",
+    "circuit": "ioi",
+    "status": "skipped_low_r2",
+    "best_score": 0.38727497899103047,
+    "median_seed_r2": 0.36453574944170375
+  },
+  {
+    "tag": "qwen36",
+    "circuit": "syntactic",
+    "status": "skipped_low_r2",
+    "best_score": null,
+    "median_seed_r2": null
+  },
+  {
+    "tag": "gemma4",
+    "circuit": "copy_oneshot",
+    "status": "skipped_low_r2",
+    "best_score": -0.24537151420352288,
+    "median_seed_r2": -0.24991125607650777
+  },
+  {
+    "tag": "gemma4",
+    "circuit": "induction",
+    "status": "skipped_low_r2",
+    "best_score": 0.0327723154937517,
+    "median_seed_r2": 0.01852031761077011
+  },
+  {
+    "tag": "gemma4",
+    "circuit": "syntactic",
+    "status": "skipped_low_r2",
+    "best_score": null,
+    "median_seed_r2": null
+  }
+]
