@@ -21,7 +21,7 @@ Quick start:
 
 __version__ = "0.3.0"
 
-from .operator import safe_eml, safe_eml_param
+from .operator import safe_eml
 from .tree import BatchedEMLTree
 from .symbolic import extract_expressions, annotate
 from .evolution import EvolutionConfig, EvolutionResult, evolve
@@ -54,7 +54,6 @@ __all__ = [
     "FitResult",
     # Building blocks
     "safe_eml",
-    "safe_eml_param",
     "BatchedEMLTree",
     "evolve",
     "EvolutionConfig",

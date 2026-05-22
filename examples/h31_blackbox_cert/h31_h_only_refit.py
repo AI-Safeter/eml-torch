@@ -19,17 +19,10 @@ from pathlib import Path
 import numpy as np
 import torch
 
-REPO_ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 import emltorch  # noqa: E402
 
-OUT_DIR = REPO_ROOT / "outputs"
-
-
-def r2_score(y_true: np.ndarray, y_pred: np.ndarray) -> float:
-    ss_res = float(np.sum((y_true - y_pred) ** 2))
-    ss_tot = float(np.sum((y_true - y_true.mean()) ** 2)) + 1e-12
-    return 1.0 - ss_res / ss_tot
+from _h31_common import OUT_DIR, load_measurements, r2_score  # noqa: E402
 
 
 def linear_r2(H_tr, y_tr, H_te, y_te) -> tuple[float, tuple[float, float]]:
@@ -75,8 +68,7 @@ def eml_r2(H_tr, y_tr, H_te, y_te, depth: int, seed: int):
 
 
 def main():
-    with (OUT_DIR / "measurements_qwen36.jsonl").open() as f:
-        rows = [json.loads(l) for l in f if json.loads(l)["circuit"] == "factual"]
+    rows = [m for m in load_measurements("qwen36") if m["circuit"] == "factual"]
     H = np.array([r["entropy_top50"] for r in rows])
     y = np.array([r["p_target"] for r in rows])
 

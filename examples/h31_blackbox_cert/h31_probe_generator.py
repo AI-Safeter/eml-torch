@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import random
+from collections import Counter
 from pathlib import Path
 
 OUT_DIR = Path(__file__).resolve().parent / "outputs"
@@ -438,8 +439,6 @@ def main() -> None:
     with OUT_PATH.open("w") as f:
         for p in probes:
             f.write(json.dumps(p, ensure_ascii=False) + "\n")
-
-    from collections import Counter
 
     by_circuit = Counter(p["circuit"] for p in probes)
     print(f"Wrote {len(probes)} probes → {OUT_PATH}")

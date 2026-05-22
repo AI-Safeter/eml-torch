@@ -19,26 +19,20 @@ for lib in ("transformer_lens", "sae_lens"):
     if lib in sys.modules:
         raise ImportError(f"Black-box discipline violation: {lib} already imported")
 
+import random  # noqa: E402
+
 import torch  # noqa: E402
 from transformers import AutoModelForCausalLM, AutoTokenizer  # noqa: E402
 
-REPO_ROOT = Path(__file__).resolve().parent
-OUT_DIR = REPO_ROOT / "outputs"
+from _h31_common import OUT_DIR, assert_no_hooks  # noqa: E402
+
 PROBES_PATH = OUT_DIR / "probes.jsonl"
 
 SEED = 20260522 + 99
 
 
-def assert_no_hooks(model):
-    for name, mod in model.named_modules():
-        assert len(mod._forward_hooks) == 0, name
-        assert len(mod._forward_pre_hooks) == 0, name
-
-
 @torch.no_grad()
 def main():
-    import random
-
     rng = random.Random(SEED)
 
     probes = [json.loads(line) for line in PROBES_PATH.open()]

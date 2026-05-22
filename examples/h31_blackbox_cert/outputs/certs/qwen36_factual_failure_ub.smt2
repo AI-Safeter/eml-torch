@@ -1,6 +1,6 @@
 ; H31 qwen36_factual_failure_ub
 ; Formula: +0.5954 + (-0.1353) * [eml(x2, eml((x2 - x4), 1))]
-; Var ranges: {'x2': (0.05, 0.25), 'x4': (3.522344970703125, 4.355861663818359)}
+; Var ranges: {'x1': (6.1, 6.5), 'x2': (0.05, 0.25), 'x3': (0.05, 0.25), 'x4': (3.522344970703125, 4.355861663818359), 'x5': (11.715104410614499, 13.743241631170232)}
 ; Claim (SAFE):  formula > 0.1
 ; Interval-propagation analytic bound: formula ∈ [-1.609117e-01, 1.041475e-02]
 ; UNSAT below proves SAFE for all variable assignments in the ranges.

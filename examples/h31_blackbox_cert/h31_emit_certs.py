@@ -26,6 +26,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from emltorch.smt import eml_tree_to_smt2_intervals  # noqa: E402
 
+from _h31_common import FEAT_ORDER, build_features  # noqa: E402
+
 OUT_DIR = REPO_ROOT / "outputs"
 CERT_DIR = OUT_DIR / "certs"
 CERT_DIR.mkdir(parents=True, exist_ok=True)
@@ -94,9 +96,10 @@ def emit_one_cert(
     cert_id = f"{tag}_{circuit}_{cert_kind}"
     smt_path = CERT_DIR / f"{cert_id}.smt2"
 
-    op = ">" if cert_kind == "working_lb" else ">"
-    # For working_lb: assert NOT (formula > τ); UNSAT means formula > τ always
-    # For failure_ub: assert (formula > τ); SAT means counterexample exists
+    # eml_tree_to_smt2_intervals asserts NOT (formula > τ) for SAFE certs:
+    # working_lb expects UNSAT (formula > τ always over the box);
+    # failure_ub expects SAT (counterexample with formula ≤ τ).
+    op = ">"
 
     try:
         smt = eml_tree_to_smt2_intervals(
@@ -178,10 +181,7 @@ def main() -> None:
                 )
                 continue
 
-            # Build feature ranges from probe metadata via fit_results' y_stats? No
-            # — we need feature ranges; load probes inline.
-            # We'll use a stable operating-box rule per circuit using the
-            # feature ranges from the underlying measurements file.
+            # Reconstruct feature arrays from measurements to compute IQR boxes.
             ms_path = OUT_DIR / f"measurements_{tag}.jsonl"
             if not ms_path.exists():
                 continue
@@ -189,34 +189,10 @@ def main() -> None:
             rows = [m for m in ms if m["circuit"] == circuit]
             if len(rows) == 0:
                 continue
-            T = np.array([r["T"] for r in rows], dtype=float)
-            L = np.array([r["L"] for r in rows], dtype=float)
-            n_rep = np.array([r["n_repeats"] for r in rows], dtype=float)
-            ent = np.array([r["entropy_top50"] for r in rows], dtype=float)
-            log_tok = np.log(np.array([r["target_token_id"] for r in rows]) + 1.0)
-            stacks = {
-                "T": T,
-                "L": L,
-                "n_rep": n_rep,
-                "entropy_top50": ent,
-                "log_tok_id": log_tok,
-            }
-
-            # Discover which feature names appear in the expression
-            feats_used = []
-            for fname in stacks:
-                # safe_eml expression uses raw column names from emltorch convention
-                if fname in best_expr:
-                    feats_used.append(fname)
-            # emltorch internal names are typically x1, x2... Check those too
-            for i in range(1, 6):
-                if f"x{i}" in best_expr:
-                    feats_used.append(f"x{i}")
-            # Fallback: use all features used by emltorch's default naming (x1..x5)
-            if not feats_used:
-                feats_used = [f"x{i}" for i in range(1, 6)]
-            feat_order = ["T", "L", "n_rep", "entropy_top50", "log_tok_id"]
-            xi_to_arr = {f"x{i+1}": stacks[name] for i, name in enumerate(feat_order)}
+            X, _ = build_features(rows)
+            # emltorch expressions reference x1..x5 in FEAT_ORDER position.
+            feats_used = [f"x{i+1}" for i in range(len(FEAT_ORDER))]
+            xi_to_arr = {f"x{i+1}": X[:, i] for i in range(len(FEAT_ORDER))}
 
             # Operating box = IQR (25–75 percentile) on each feature —
             # tight high-confidence region where probes were observed.
@@ -224,7 +200,7 @@ def main() -> None:
             var_ranges_working = {}
             var_ranges_failure = {}
             for v in feats_used:
-                arr = xi_to_arr.get(v, stacks.get(v))
+                arr = xi_to_arr.get(v)
                 if arr is None:
                     continue
                 lo_full, hi_full = float(arr.min()), float(arr.max())

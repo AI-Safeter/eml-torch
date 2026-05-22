@@ -26,21 +26,10 @@ for lib in ("transformer_lens", "sae_lens"):
 import torch  # noqa: E402
 from transformers import AutoModelForCausalLM, AutoTokenizer  # noqa: E402
 
-REPO_ROOT = Path(__file__).resolve().parent
-OUT_DIR = REPO_ROOT / "outputs"
+from _h31_common import OUT_DIR, assert_no_hooks  # noqa: E402
+
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 PROBES_PATH = OUT_DIR / "probes.jsonl"
-
-
-def assert_no_hooks(model: torch.nn.Module) -> None:
-    """Verify no hooks registered on any submodule."""
-    for name, mod in model.named_modules():
-        if len(mod._forward_hooks) > 0:
-            raise AssertionError(f"Hook found on {name} (forward)")
-        if len(mod._forward_pre_hooks) > 0:
-            raise AssertionError(f"Hook found on {name} (pre-forward)")
-        if len(mod._backward_hooks) > 0:
-            raise AssertionError(f"Hook found on {name} (backward)")
 
 
 def load_probes() -> list[dict]:

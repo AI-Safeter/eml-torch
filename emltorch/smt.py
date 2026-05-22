@@ -94,8 +94,8 @@ def eml_formula_to_z3(formula: str, z3_vars: dict[str, "_z3.ArithRef"]):
           (decidable via linear real arithmetic).
     """
     z3 = _lazy_import_z3()
-    from emltorch.gradient import _parse_inner, _strip_affine
-    from emltorch.gradient import (
+    from emltorch._ast import _parse_inner, _strip_affine
+    from emltorch._ast import (
         _Const,
         _Var,
         _Combo,
@@ -746,7 +746,7 @@ def eml_tree_to_smt2(
         )
         # → SMT-LIB2 text; UNSAT proves p_correct = exp(gap) < 0.5 ∀ gap ∈ [-4, -1].
     """
-    from emltorch.gradient import (
+    from emltorch._ast import (
         _parse_inner,
         _strip_affine,
         _Const,
@@ -878,7 +878,7 @@ def _interval_arithmetic(
     Returns the interval widened by ``eps`` on each side (default 1e-9
     suffices for double-precision soundness).
     """
-    from emltorch.gradient import (
+    from emltorch._ast import (
         _Const,
         _Var,
         _Combo,
@@ -1022,7 +1022,7 @@ def eml_tree_to_smt2_intervals(
         )
         # → portable QF_LRA cert; dual-UNSAT in 1ms / 3ms (z3 / cvc5).
     """
-    from emltorch.gradient import (
+    from emltorch._ast import (
         _parse_inner,
         _strip_affine,
         _Const,

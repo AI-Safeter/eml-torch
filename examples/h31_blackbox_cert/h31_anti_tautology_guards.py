@@ -32,57 +32,25 @@ from pathlib import Path
 import numpy as np
 import torch
 
-REPO_ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 import emltorch  # noqa: E402
 
-OUT_DIR = REPO_ROOT / "outputs"
-
-FEAT_ORDER = ["T", "L", "n_rep", "entropy_top50", "log_tok_id"]
-
-
-def load_measurements(tag: str) -> list[dict]:
-    out = []
-    with (OUT_DIR / f"measurements_{tag}.jsonl").open() as f:
-        for line in f:
-            out.append(json.loads(line))
-    return out
-
-
-def build_features(rows: list[dict]) -> tuple[np.ndarray, np.ndarray]:
-    T = np.array([r["T"] for r in rows], dtype=np.float64)
-    L = np.array([r["L"] for r in rows], dtype=np.float64)
-    n_rep = np.array([r["n_repeats"] for r in rows], dtype=np.float64)
-    ent = np.array([r["entropy_top50"] for r in rows], dtype=np.float64)
-    log_tok = np.log(np.array([r["target_token_id"] for r in rows]) + 1.0)
-    y = np.array([r["p_target"] for r in rows], dtype=np.float64)
-    X = np.stack([T, L, n_rep, ent, log_tok], axis=1)
-    return X, y
-
-
-def random_split(X, y, frac=0.25, seed=42):
-    rng = np.random.default_rng(seed)
-    n = X.shape[0]
-    idx = rng.permutation(n)
-    n_te = max(2, int(n * frac))
-    te = idx[:n_te]
-    tr = idx[n_te:]
-    return X[tr], y[tr], X[te], y[te]
-
-
-def r2_score(y_true: np.ndarray, y_pred: np.ndarray) -> float:
-    ss_res = float(np.sum((y_true - y_pred) ** 2))
-    ss_tot = float(np.sum((y_true - y_true.mean()) ** 2)) + 1e-12
-    return 1.0 - ss_res / ss_tot
+from _h31_common import (  # noqa: E402
+    OUT_DIR,
+    build_features,
+    load_measurements,
+    predict,
+    r2_score,
+    random_split,
+)
 
 
 def fit_qwen_factual_d4(seed: int = 0):
     """Re-fit the headline formula and return a FitResult."""
-    qwen = load_measurements("qwen36")
-    factual = [m for m in qwen if m["circuit"] == "factual"]
+    factual = [m for m in load_measurements("qwen36") if m["circuit"] == "factual"]
     X, y = build_features(factual)
-    X_tr, y_tr, X_te, y_te = random_split(X, y, frac=0.25, seed=42)
+    X_tr, y_tr, X_te, y_te = random_split(X, y)
 
     torch.manual_seed(seed)
     np.random.seed(seed)
@@ -95,23 +63,10 @@ def fit_qwen_factual_d4(seed: int = 0):
         polish=True,
         normalize_inputs=True,
     )
-    # Eval on held-out for verification
-    y_pred = r.predict(torch.tensor(X_te, dtype=torch.float32))
-    if hasattr(y_pred, "cpu"):
-        y_pred = y_pred.cpu().numpy()
-    else:
-        y_pred = np.asarray(y_pred)
-    holdout_r2 = r2_score(y_te, y_pred)
+    holdout_r2 = r2_score(y_te, predict(r, X_te))
     print(f"[refit-check] Qwen3.6 factual d=4 holdout R² = {holdout_r2:.4f}")
     print(f"[refit-check] expression: {r.expression}")
     return r, holdout_r2
-
-
-def predict(r, X: np.ndarray) -> np.ndarray:
-    yp = r.predict(torch.tensor(X, dtype=torch.float32))
-    if hasattr(yp, "cpu"):
-        yp = yp.cpu().numpy()
-    return np.asarray(yp)
 
 
 def guard_1_inter_circuit(r, holdout_r2: float) -> dict:

@@ -116,44 +116,35 @@ def _evaluate(
     tree: BatchedEMLTree,
     x: torch.Tensor,
     y: torch.Tensor,
-    affine: bool = True,
     range_penalty: float = 0.0,
 ) -> torch.Tensor:
-    """Per-tree MSE (B,). NaN trees get +inf.
+    """Per-tree MSE (B,) after closed-form best affine rescaling
+    y ≈ a + b·tree(x). NaN trees get +inf.
 
-    If affine=True, MSE is after the best per-tree affine rescaling
-    y ≈ a + b * tree(x). This lets evolutionary search select topologies
-    that are close up to linear rescaling — much more forgiving than raw MSE.
+    The affine wrapper lets evolutionary search select topologies that are
+    close up to linear rescaling — much more forgiving than raw MSE.
     """
     with torch.no_grad():
         pred = tree(x)  # (B, N)
-    if affine:
-        # Closed-form best affine fit per tree:
-        #   b = cov(pred, y) / var(pred);  a = mean(y) - b * mean(pred)
-        pred_mean = pred.mean(dim=-1, keepdim=True)
-        y_mean = y.mean(dim=-1, keepdim=True)
-        pred_c = pred - pred_mean
-        y_c = y - y_mean
-        var_pred = (pred_c * pred_c).mean(dim=-1, keepdim=True)
-        # Avoid div-by-zero for constant predictions
-        safe_var = torch.where(
-            var_pred > 1e-12, var_pred, torch.full_like(var_pred, 1e-12)
-        )
-        b = (pred_c * y_c).mean(dim=-1, keepdim=True) / safe_var
-        # If tree is ~constant (var<1e-12), force b=0 so affine fit = mean(y)
-        b = torch.where(var_pred > 1e-12, b, torch.zeros_like(b))
-        a = y_mean - b * pred_mean
-        fit = a + b * pred
-        diff = fit - y
-    else:
-        diff = pred - y
+    # Closed-form best affine fit per tree:
+    #   b = cov(pred, y) / var(pred);  a = mean(y) - b * mean(pred)
+    pred_mean = pred.mean(dim=-1, keepdim=True)
+    y_mean = y.mean(dim=-1, keepdim=True)
+    pred_c = pred - pred_mean
+    y_c = y - y_mean
+    var_pred = (pred_c * pred_c).mean(dim=-1, keepdim=True)
+    safe_var = torch.where(var_pred > 1e-12, var_pred, torch.full_like(var_pred, 1e-12))
+    b = (pred_c * y_c).mean(dim=-1, keepdim=True) / safe_var
+    # If tree is ~constant (var<1e-12), force b=0 so affine fit = mean(y)
+    b = torch.where(var_pred > 1e-12, b, torch.zeros_like(b))
+    a = y_mean - b * pred_mean
+    diff = (a + b * pred) - y
     mse = (
         diff.abs().pow(2).mean(dim=-1)
         if diff.is_complex()
         else diff.pow(2).mean(dim=-1)
     )
-    if range_penalty > 0.0 and affine:
-        # var_pred is (B, 1); std ratio vs target
+    if range_penalty > 0.0:
         y_std = y_c.pow(2).mean(dim=-1, keepdim=True).clamp(min=1e-12).sqrt()
         p_std = var_pred.clamp(min=1e-12).sqrt()
         log_ratio_sq = (p_std / y_std).log().pow(2).squeeze(-1)
@@ -317,8 +308,10 @@ def evolve(
     _snap_peaked(tree)
 
     if cfg.normalize_inputs:
-        x_mean = x_batch.mean(dim=-1, keepdim=True).unsqueeze(0) # (1, V, 1)
-        x_std = x_batch.std(dim=-1, keepdim=True).clamp(min=1e-8).unsqueeze(0) # (1, V, 1)
+        x_mean = x_batch.mean(dim=-1, keepdim=True).unsqueeze(0)  # (1, V, 1)
+        x_std = (
+            x_batch.std(dim=-1, keepdim=True).clamp(min=1e-8).unsqueeze(0)
+        )  # (1, V, 1)
         tree.set_normalization_stats(x_mean, x_std)
 
     # Warm-start: seed a fraction of the population with `seed_tree[seed_idx]`

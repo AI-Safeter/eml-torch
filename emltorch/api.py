@@ -77,14 +77,14 @@ class FitResult:
     r2: float  # coefficient of determination on x,y
     mse: float  # MSE after affine rescaling (if used)
     depth_used: int  # tree depth chosen by router
-    strategy: str  # "random" | "evolution" | "gradient"
-    a: float  # affine intercept (0 if strategy=gradient)
-    b: float  # affine scale (1 if strategy=gradient)
+    strategy: str  # "random" | "evolution"
+    a: float  # affine intercept
+    b: float  # affine scale
     time_s: float
     generations: list[float] | None = None  # R² per generation (evolution only)
-    # Internal handles for evaluation; set by fit() for evolution strategies.
-    _tree: object = None  # BatchedEMLTree, or None
-    _idx: int = -1  # index of best individual inside _tree
+    # Internal handles for evaluation; set by fit().
+    _tree: object = None
+    _idx: int = 0
     _device: str = "cpu"
 
     def predict(self, x) -> torch.Tensor:
@@ -93,15 +93,7 @@ class FitResult:
         Accepts the same x conventions as ``fit`` (numpy / list / torch;
         (N,), (N, V), or (V, N)). Returns a 1-D torch.Tensor of length N
         with the affine-wrapped prediction ``a + b * tree(x)``.
-
-        Raises NotImplementedError when the strategy is "gradient" (the
-        legacy gradient trainer doesn't expose a tree handle).
         """
-        if self._tree is None:
-            raise NotImplementedError(
-                "predict() not available for strategy="
-                f"{self.strategy!r}; use evolution / evolution+polish / random."
-            )
         # Coerce x to (V, N) shape matching training
         if not isinstance(x, torch.Tensor):
             x = torch.as_tensor(x)
@@ -140,7 +132,7 @@ def fit(
     y,
     depth: int = 3,
     *,
-    strategy: Literal["auto", "random", "evolution", "gradient"] = "auto",
+    strategy: Literal["auto", "random", "evolution"] = "auto",
     population: int | None = None,
     generations: int | None = None,
     device: str | None = None,
@@ -161,7 +153,6 @@ def fit(
         strategy: "auto" picks the best method for the given depth.
                   "random" = peaked init + evaluate only (fast, shallow only).
                   "evolution" = population-based search with affine wrapper.
-                  "gradient" = original Adam + hardening (usually worse).
         population: for evolution/random, number of candidate trees in
                     parallel. Defaults: depth≤3 → 1024, depth 4 → 2048,
                     depth 5+ → 4096.
@@ -282,12 +273,6 @@ def fit(
             _tree=res.best_tree,
             _idx=res.best_idx,
             _device=device,
-        )
-
-    if strategy == "gradient":
-        raise ValueError(
-            "strategy='gradient' was removed in v0.3.0. Use 'auto', 'evolution', "
-            "or 'random' instead."
         )
 
     raise ValueError(f"Unknown strategy: {strategy}")

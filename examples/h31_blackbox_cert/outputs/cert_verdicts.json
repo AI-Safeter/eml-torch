@@ -11,13 +11,25 @@
     "smt_path": "outputs/certs/qwen36_factual_working_lb.smt2",
     "formula": "+0.5954 + (-0.1353) * [eml(x2, eml((x2 - x4), 1))]",
     "var_ranges": {
+      "x1": [
+        5.0,
+        6.0
+      ],
       "x2": [
+        -0.1,
+        0.1
+      ],
+      "x3": [
         -0.1,
         0.1
       ],
       "x4": [
         1.9390155673027039,
         2.3998414278030396
+      ],
+      "x5": [
+        9.596486735697948,
+        10.833047442591619
       ]
     },
     "target_op": ">",
@@ -25,11 +37,11 @@
     "cert_kind": "working_lb",
     "z3": {
       "verdict": "unsat",
-      "wall_s": 0.00951838493347168
+      "wall_s": 0.009055137634277344
     },
     "cvc5": {
       "verdict": "unsat",
-      "wall_s": 0.0041615962982177734
+      "wall_s": 0.004018545150756836
     },
     "dual_unsat": true,
     "dual_sat": false
@@ -39,13 +51,25 @@
     "smt_path": "outputs/certs/qwen36_factual_failure_ub.smt2",
     "formula": "+0.5954 + (-0.1353) * [eml(x2, eml((x2 - x4), 1))]",
     "var_ranges": {
+      "x1": [
+        6.1,
+        6.5
+      ],
       "x2": [
+        0.05,
+        0.25
+      ],
+      "x3": [
         0.05,
         0.25
       ],
       "x4": [
         3.522344970703125,
         4.355861663818359
+      ],
+      "x5": [
+        11.715104410614499,
+        13.743241631170232
       ]
     },
     "target_op": ">",
@@ -53,11 +77,11 @@
     "cert_kind": "failure_ub",
     "z3": {
       "verdict": "sat",
-      "wall_s": 0.0016341209411621094
+      "wall_s": 0.0015797615051269531
     },
     "cvc5": {
       "verdict": "sat",
-      "wall_s": 0.002656698226928711
+      "wall_s": 0.002630472183227539
     },
     "dual_unsat": false,
     "dual_sat": true

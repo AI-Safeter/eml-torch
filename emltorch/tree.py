@@ -22,7 +22,6 @@ which otherwise require an external linear stage before the EML tree.
 
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 from .operator import safe_eml
 
 
@@ -212,61 +211,35 @@ class BatchedEMLTree(nn.Module):
                 )
             )
 
-        # Temperature inverse — increased during hardening to sharpen softmax
+        # Temperature inverse, increased during hardening to sharpen softmax
         self.register_buffer("temp_inv", torch.tensor(1.0, device=device))
 
-        # Selection mode:
-        #   "softmax"      - plain softmax mixture (original)
-        #   "gumbel_soft"  - Gumbel-softmax with tau=1/temp_inv (breaks constant
-        #                    attractor via injected noise; paper Fix 1)
-        #   "gumbel_hard"  - Gumbel-softmax with straight-through; forward pass
-        #                    is one-hot, gradients flow continuously
-        self.selection_mode = "softmax"
-
         # Buffers for scale-invariant input normalization
-        self.register_buffer("x_mean", torch.zeros(1, num_vars, 1, dtype=dtype, device=device))
-        self.register_buffer("x_std", torch.ones(1, num_vars, 1, dtype=dtype, device=device))
-        self.register_buffer("normalize_inputs", torch.tensor(False, dtype=torch.bool, device=device))
+        self.register_buffer(
+            "x_mean", torch.zeros(1, num_vars, 1, dtype=dtype, device=device)
+        )
+        self.register_buffer(
+            "x_std", torch.ones(1, num_vars, 1, dtype=dtype, device=device)
+        )
+        self.register_buffer(
+            "normalize_inputs", torch.tensor(False, dtype=torch.bool, device=device)
+        )
 
     def set_normalization_stats(self, x_mean: torch.Tensor, x_std: torch.Tensor):
         """Set cached input normalization mean and standard deviation, and enable normalization."""
         self.x_mean.copy_(x_mean)
         self.x_std.copy_(x_std)
-        self.normalize_inputs.copy_(torch.tensor(True, dtype=torch.bool, device=self.normalize_inputs.device))
+        self.normalize_inputs.copy_(
+            torch.tensor(True, dtype=torch.bool, device=self.normalize_inputs.device)
+        )
 
     # ------------------------------------------------------------------
     # Selection weights
     # ------------------------------------------------------------------
 
     def _weights(self, logits: torch.Tensor) -> torch.Tensor:
-        """Compute selection weights according to self.selection_mode.
-
-        Shape in/out: (..., C). The last dim contains per-choice scores.
-        """
-        scaled = logits * self.temp_inv
-        if self.selection_mode == "softmax":
-            return torch.softmax(scaled, dim=-1)
-        # Gumbel variants — tau is the temperature (1.0 default; decays during
-        # hardening). Equivalent shape, but adds Gumbel noise so Adam can move
-        # restarts *between* basins instead of averaging them.
-        tau = 1.0 / (
-            self.temp_inv.item()
-            if self.temp_inv.numel() == 1
-            else self.temp_inv.mean().item()
-        )
-        tau = max(tau, 1e-3)
-        hard = self.selection_mode == "gumbel_hard"
-        if self.training:
-            return F.gumbel_softmax(logits, tau=tau, hard=hard, dim=-1)
-        # At eval time, fall back to deterministic softmax so results are
-        # reproducible — equivalent to (sampling without noise) + argmax.
-        return (
-            torch.softmax(scaled, dim=-1)
-            if not hard
-            else F.one_hot(scaled.argmax(dim=-1), num_classes=scaled.shape[-1]).to(
-                scaled.dtype
-            )
-        )
+        """Softmax selection weights over the last dim, temperature-scaled."""
+        return torch.softmax(logits * self.temp_inv, dim=-1)
 
     # ------------------------------------------------------------------
     # Forward pass
@@ -346,23 +319,6 @@ class BatchedEMLTree(nn.Module):
     # Auxiliary methods
     # ------------------------------------------------------------------
 
-    def entropy(self) -> torch.Tensor:
-        """Mean entropy across all softmax distributions (scalar).
-
-        Low entropy = peaked distributions (close to one-hot).
-        Used as a penalty term during the hardening phase.
-        """
-        total = torch.tensor(0.0, device=self.leaf_logits.device)
-        count = 0
-
-        for logits in [self.leaf_logits] + list(self.internal_logits):
-            w = torch.softmax(logits * self.temp_inv, dim=-1)
-            ent = -(w * torch.log(w + 1e-10)).sum(dim=-1)  # (B, nodes, 2)
-            total = total + ent.sum()
-            count += ent.numel()
-
-        return total / max(count, 1)
-
     @torch.no_grad()
     def snap(self):
         """Snap all logits to one-hot (argmax). Call after hardening."""
@@ -381,11 +337,3 @@ class BatchedEMLTree(nn.Module):
         leaf_idx = self.leaf_logits.argmax(dim=-1)
         internal_idx = [lg.argmax(dim=-1) for lg in self.internal_logits]
         return leaf_idx, internal_idx
-
-    @property
-    def total_params_per_tree(self) -> int:
-        """Number of learnable logit values per tree."""
-        n = self.leaf_logits[0].numel()
-        for lg in self.internal_logits:
-            n += lg[0].numel()
-        return n
