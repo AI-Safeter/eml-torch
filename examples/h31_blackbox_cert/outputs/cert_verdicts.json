@@ -37,11 +37,11 @@
     "cert_kind": "working_lb",
     "z3": {
       "verdict": "unsat",
-      "wall_s": 0.009055137634277344
+      "wall_s": 0.009600162506103516
     },
     "cvc5": {
       "verdict": "unsat",
-      "wall_s": 0.004018545150756836
+      "wall_s": 0.004252910614013672
     },
     "dual_unsat": true,
     "dual_sat": false
@@ -77,11 +77,11 @@
     "cert_kind": "failure_ub",
     "z3": {
       "verdict": "sat",
-      "wall_s": 0.0015797615051269531
+      "wall_s": 0.0016274452209472656
     },
     "cvc5": {
       "verdict": "sat",
-      "wall_s": 0.002630472183227539
+      "wall_s": 0.002604961395263672
     },
     "dual_unsat": false,
     "dual_sat": true
@@ -102,27 +102,6 @@
   },
   {
     "tag": "qwen36",
-    "circuit": "syntactic",
-    "status": "skipped_low_r2",
-    "best_score": null,
-    "median_seed_r2": null
-  },
-  {
-    "tag": "gemma4",
-    "circuit": "copy_oneshot",
-    "status": "skipped_low_r2",
-    "best_score": -0.24537151420352288,
-    "median_seed_r2": -0.24991125607650777
-  },
-  {
-    "tag": "gemma4",
-    "circuit": "induction",
-    "status": "skipped_low_r2",
-    "best_score": 0.0327723154937517,
-    "median_seed_r2": 0.01852031761077011
-  },
-  {
-    "tag": "gemma4",
     "circuit": "syntactic",
     "status": "skipped_low_r2",
     "best_score": null,

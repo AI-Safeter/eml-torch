@@ -44,21 +44,15 @@
     "protocol": "random_target_measurement",
     "note": "h31_random_target_runner.py re-ran Qwen3.6 on the 50 factual prompts with target replaced by a random non-self capital. The measured P(random_target) is the TRUE model output, not a proxy.",
     "reference_holdout_r2": 0.8876292917512557,
-    "r2_on_random_target": -10987215168045.396,
-    "y_rand_mean": 0.0,
-    "y_rand_std": 0.0,
+    "r2_on_random_target": -374332.3368678915,
+    "y_rand_mean": 0.00010943382047116756,
+    "y_rand_std": 0.0007660367432981729,
     "pred_mean_on_factual_features": 0.443522185087204,
     "pred_std": 0.15176425874233246,
     "interpretation": "R\u00b2 \u226a 0 \u2192 formula predicts high while truth ~0 \u2192 target-specific. R\u00b2 > 0.3 \u2192 formula matches random-target P \u2192 BAD (prompt-statistic)."
   },
   "guard_3_vendor_cross_fit": {
     "protocol": "vendor_cross_fit",
-    "reference_holdout_r2": 0.8876292917512557,
-    "r2_qwen_formula_on_gemma_factual": -65.1415748724048,
-    "gemma_y_mean": 0.019873546248482084,
-    "gemma_y_std": 0.1387877586292205,
-    "qwen_formula_pred_mean": 1.136175274848938,
-    "qwen_formula_pred_std": 0.1069474071264267,
-    "interpretation": "R\u00b2 > 0.5 \u2192 vendor-generic behavior (formula transfers). R\u00b2 \u2208 [0.0, 0.5] \u2192 partial vendor-specificity. R\u00b2 < 0.0 \u2192 vendor-specific signature (Qwen formula does not predict Gemma's near-degenerate target distribution)."
+    "status": "skipped \u2014 measurements_gemma4.jsonl not present"
   }
 }

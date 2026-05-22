@@ -151,6 +151,11 @@ def guard_2_random_token(r, holdout_r2: float) -> dict:
 
 def guard_3_vendor_crossfit(r, holdout_r2: float) -> dict:
     """Evaluate Qwen3.6-factual formula on Gemma-4 factual data."""
+    if not (OUT_DIR / "measurements_gemma4.jsonl").exists():
+        return {
+            "protocol": "vendor_cross_fit",
+            "status": "skipped — measurements_gemma4.jsonl not present",
+        }
     gemma = load_measurements("gemma4")
     factual = [m for m in gemma if m["circuit"] == "factual"]
     X, y = build_features(factual)
@@ -212,6 +217,9 @@ def main() -> None:
     )
 
     g3 = results["guard_3_vendor_cross_fit"]
+    if "status" in g3:
+        print(f"Guard 3 (vendor cross-fit): {g3['status']}")
+        return
     r2_v = g3["r2_qwen_formula_on_gemma_factual"]
     print(f"Guard 3 (vendor cross-fit): R² = {r2_v:.4f}")
     if r2_v < 0:
