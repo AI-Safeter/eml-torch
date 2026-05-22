@@ -64,9 +64,7 @@ def main() -> None:
     )
     ax1.set_xlabel(r"$H$ = entropy of top-50 logprobs", fontsize=11)
     ax1.set_ylabel(r"$P(\mathrm{target} \mid \mathrm{prompt})$", fontsize=11)
-    ax1.set_title(
-        "H31 — black-box derivation on Qwen3.6-27B factual recall", fontsize=12
-    )
+    ax1.set_title("Black-box derivation on Qwen3.6-27B factual recall", fontsize=12)
     ax1.legend(loc="upper right", fontsize=10)
     ax1.grid(alpha=0.3)
     ax1.set_ylim(-0.05, 0.85)

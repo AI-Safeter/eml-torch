@@ -4,7 +4,7 @@ GPU-batched symbolic regression via the EML operator `eml(x, y) = exp(x) − ln(
 
 ![H31 figure](examples/h31_blackbox_cert/outputs/headline_figure.png)
 
-## H31: a closed-form formula for Qwen3.6-27B factual recall, found black-box
+## A closed-form formula for Qwen3.6-27B factual recall, found black-box
 
 ```
 P_target ≈ 0.5954 + (−0.1353) · eml(L, eml(L − H, 1))
