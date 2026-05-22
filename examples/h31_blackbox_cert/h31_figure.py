@@ -27,9 +27,19 @@ def main() -> None:
     H = np.array([r["entropy_top50"] for r in rows])
     y = np.array([r["p_target"] for r in rows])
 
-    # The EML formula evaluated at L=0: P = 0.4601 - 0.1353·H
+    # The EML formula was fit with normalize_inputs=True, so x2, x4 inside
+    # the symbolic expression are (L, H) standardized by the training
+    # column means and stds. On the factual training slice L=0 is constant,
+    # so the formula's algebraic value collapses to a + b·H_norm, which on
+    # raw H is a linear function P = a' + b'·H. We recover (a', b') by the
+    # closed-form OLS fit that the formula reduces to on this data
+    # (verified Δ R² = 0.0000 vs EML in h_only_refit_results.json).
+    A = np.stack([np.ones(len(H)), H], axis=1)
+    coef, *_ = np.linalg.lstsq(A, y, rcond=None)
+    a_lin, b_lin = float(coef[0]), float(coef[1])
+
     H_grid = np.linspace(H.min() - 0.1, H.max() + 0.1, 200)
-    eml_pred = 0.4601 - 0.1353 * H_grid
+    eml_pred = a_lin + b_lin * H_grid
 
     fig, (ax1, ax2) = plt.subplots(
         1, 2, figsize=(12, 4.5), gridspec_kw={"width_ratios": [3, 2]}
@@ -50,7 +60,7 @@ def main() -> None:
         eml_pred,
         color="#d94d4d",
         linewidth=2.2,
-        label=r"EML: $P \approx 0.4601 - 0.1353 \cdot H$",
+        label=rf"EML formula evaluated: $P \approx {a_lin:.2f}{b_lin:+.2f} \cdot H$",
     )
     ax1.set_xlabel(r"$H$ = entropy of top-50 logprobs", fontsize=11)
     ax1.set_ylabel(r"$P(\mathrm{target} \mid \mathrm{prompt})$", fontsize=11)
