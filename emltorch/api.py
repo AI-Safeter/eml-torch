@@ -1,12 +1,11 @@
 """
-Stable public API for emltorch — a single `fit()` function that dispatches
+Stable public API for emltorch: a single `fit()` function that dispatches
 to the best search strategy for the given depth.
 
-The routing logic (as of v0.1.0):
+Routing:
     depth 1-2       → random search (peaked init, 256 restarts)
     depth 3-4       → evolution + affine wrapper
     depth 5+        → evolution + affine + more generations
-    (any)           → fall back to gradient trainer if user asks
 """
 
 import warnings
@@ -16,7 +15,6 @@ from typing import Literal
 import torch
 
 from .evolution import EvolutionConfig, evolve
-from .trainer import EMLConfig, EMLTrainer
 from .symbolic import annotate
 from .polish import polish as polish_tree
 
@@ -287,28 +285,9 @@ def fit(
         )
 
     if strategy == "gradient":
-        x_b = x.unsqueeze(0)  # (1, V, N)
-        y_b = y.unsqueeze(0)  # (1, N)
-        cfg = EMLConfig(
-            depth=depth,
-            num_restarts=population or 32,
-            num_vars=V,
-            device=device,
-            snap_mse_threshold=1e-3,
-        )
-        res = EMLTrainer(cfg).fit(x_b, y_b)
-        mse = res.mse_values[0].item()
-        ss_tot = ((y - y.mean()) ** 2).sum().item()
-        r2 = 1 - mse * N / max(ss_tot, 1e-12)
-        return FitResult(
-            expression=annotate(res.expressions[0]),
-            r2=r2,
-            mse=mse,
-            depth_used=depth,
-            strategy="gradient",
-            a=0.0,
-            b=1.0,
-            time_s=time.time() - t0,
+        raise ValueError(
+            "strategy='gradient' was removed in v0.3.0. Use 'auto', 'evolution', "
+            "or 'random' instead."
         )
 
     raise ValueError(f"Unknown strategy: {strategy}")

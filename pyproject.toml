@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "emltorch"
-version = "0.2.0"
+version = "0.3.0"
 description = "GPU-batched symbolic regression via the EML operator (exp(x) - ln(y))"
 readme = "README.md"
 license = { text = "MIT" }
@@ -53,11 +53,16 @@ dependencies = [
 dev = [
     "pytest>=7",
     "ruff",
-    "mkdocs-material",
 ]
-interp = [
+smt = [
+    "z3-solver",
+    "cvc5",
+]
+h31 = [
     "transformers>=4.40",
-    "safetensors>=0.4",
+    "z3-solver",
+    "cvc5",
+    "matplotlib",
 ]
 
 [project.urls]

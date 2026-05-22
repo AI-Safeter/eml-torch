@@ -1,8 +1,7 @@
-"""
-emltorch — GPU-batched symbolic regression via the EML operator.
+"""emltorch — GPU-batched symbolic regression via the EML operator.
 
 The EML operator `eml(x, y) = exp(x) - ln(y)`, combined with the constant 1,
-can represent every elementary function as a uniform binary tree.
+represents every elementary function as a uniform binary tree.
 
 Reference: Andrzej Odrzywolek, "All elementary functions from a single binary
 operator", arXiv:2603.21852 (2026).
@@ -16,36 +15,18 @@ Quick start:
     y = torch.log(x)
 
     result = eml.fit(x, y, depth=3, population=1024)
-    print(result.expression)    # '+0.0000 + (+1.0000) * [eml(1, eml(eml(1, x), 1))]'
-    print(result.r2)            # 1.0
+    print(result.expression)
+    print(result.r2)
 """
 
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 
 from .operator import safe_eml, safe_eml_param
 from .tree import BatchedEMLTree
 from .symbolic import extract_expressions, annotate
 from .evolution import EvolutionConfig, EvolutionResult, evolve
 from .polish import polish
-
 from .api import fit, FitResult
-from . import interp  # noqa: F401
-from .interp import AutoCertifier
-from .gradient import diff_formula, gradient_at, sensitivity_vector, torch_gradient_fn
-from .hybrid_mul import (
-    BatchedEMLMulTree,
-    HybridMulConfig,
-    HybridMulResult,
-    HybridMulPolishResult,
-    evolve_hybrid_mul,
-    polish_hybrid_mul,
-    safe_mul,
-)
-from .gated_attn import (
-    extract_gated_effective_weights,
-    compute_delta_rule_deltas,
-    extract_gated_contribution_log_magnitudes,
-)
 from .smt import (
     SafetyCertificate,
     eml_formula_to_z3,
@@ -66,22 +47,12 @@ from .smt import (
     emit_attention_lipschitz_smt2_block,
 )
 
-# ---------------------------------------------------------------------------
-# Legacy gradient-based trainer API (pre-evolution).
-# Importable but NOT in the primary `__all__`.
-# Deprecated, will be removed in 1.0 — use `fit` / `evolve` / `polish` instead.
-# ---------------------------------------------------------------------------
-from .trainer import EMLTrainer, EMLConfig, EMLResult  # noqa: F401
-from .hybrid import HybridEMLTrainer, HybridConfig, HybridResult  # noqa: F401
-
 __all__ = [
     "__version__",
-    # ---- Core fit API ----
+    # Core fit API
     "fit",
     "FitResult",
-    "interp",
-    "AutoCertifier",
-    # ---- Building blocks ----
+    # Building blocks
     "safe_eml",
     "safe_eml_param",
     "BatchedEMLTree",
@@ -91,20 +62,7 @@ __all__ = [
     "polish",
     "extract_expressions",
     "annotate",
-    # ---- Hybrid EML+MUL (2nd binary operator at internal nodes) ----
-    "BatchedEMLMulTree",
-    "HybridMulConfig",
-    "HybridMulResult",
-    "HybridMulPolishResult",
-    "evolve_hybrid_mul",
-    "polish_hybrid_mul",
-    "safe_mul",
-    # ---- Symbolic differentiation ----
-    "diff_formula",
-    "gradient_at",
-    "sensitivity_vector",
-    "torch_gradient_fn",
-    # ---- SMT / formal verification bridge (load-bearing public API) ----
+    # SMT / formal verification bridge
     "SafetyCertificate",
     "eml_formula_to_z3",
     "certify_linear_threshold_safe",
@@ -117,14 +75,10 @@ __all__ = [
     "EML_AXIOMS_SMT2",
     "EML_LEMMAS",
     "with_lemmas",
-    # ---- Attention-block Lipschitz primitives ----
+    # Attention-block Lipschitz primitives
     "softmax_jacobian_g1",
     "softmax_jacobian_g1_max",
     "attention_block_lipschitz_clean",
     "attention_block_lipschitz_interval",
     "emit_attention_lipschitz_smt2_block",
-    # ---- Gated DeltaNet effective-weight extractor ----
-    "extract_gated_effective_weights",
-    "compute_delta_rule_deltas",
-    "extract_gated_contribution_log_magnitudes",
 ]
