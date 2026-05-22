@@ -16,7 +16,9 @@ class DummyModel(nn.Module):
         self.layer = nn.Linear(10, 8)
         self.output_head = nn.Linear(8, 2)
 
-    def forward(self, x):
+    def forward(self, x=None, input_ids=None, **kwargs):
+        if x is None:
+            x = input_ids
         h = self.layer(x)
 
         class Outputs:

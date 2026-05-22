@@ -152,10 +152,12 @@ def from_transformer_hook(
                         f"Forward hook on {layer!r} did not fire - is the "
                         f"module actually on the forward path?"
                     )
-                act = cache[-1]  # (1, T, D) or (B, T, D)
+                act = cache[-1]  # (1, T, D) or (B, T, D) or (B, D)
 
                 # Select token position(s).
-                if isinstance(position, slice):
+                if act.dim() == 2:
+                    feat = act
+                elif isinstance(position, slice):
                     act_slice = act[:, position, :]
                     # Flatten selected positions into the batch dim.
                     feat = act_slice.reshape(-1, act_slice.shape[-1])
@@ -164,14 +166,22 @@ def from_transformer_hook(
 
                 # --- Compute target ---
                 logits = getattr(output, "logits", None)
+                if logits is None:
+                    logits = output if torch.is_tensor(output) else None
+
+                if logits is not None and logits.dim() == 2:
+                    lg_with_pos = logits
+                elif logits is not None:
+                    lg_with_pos = logits[:, position, :]
+                else:
+                    lg_with_pos = torch.zeros(feat.shape[0], 1, device=device)
+
                 if callable(target) and not isinstance(target, str):
                     tgt = target(feat, logits)
                 elif target == "logits":
-                    lg = logits[:, position, :]
-                    tgt = lg.max(dim=-1).values
+                    tgt = lg_with_pos.max(dim=-1).values
                 elif target == "probs":
-                    lg = logits[:, position, :]
-                    tgt = torch.softmax(lg, dim=-1).max(dim=-1).values
+                    tgt = torch.softmax(lg_with_pos, dim=-1).max(dim=-1).values
                 else:
                     raise ValueError(
                         f"target must be 'logits', 'probs', or callable; got {target!r}"
@@ -339,6 +349,7 @@ class AutoCertifier:
                 target_value=safety_threshold,
                 title="logit safety bounds cert",
                 eps=eps,
+                clamp_log_eps=1e-5,
             )
             file_name = out_path / "safety_bounds.smt2"
             with open(file_name, "w") as f:
@@ -354,6 +365,7 @@ class AutoCertifier:
                 target_value=-1000.0,
                 title="monotonicity lower limit cert",
                 eps=eps,
+                clamp_log_eps=1e-5,
             )
             file_name = out_path / "monotonicity.smt2"
             with open(file_name, "w") as f:
@@ -369,6 +381,7 @@ class AutoCertifier:
                 target_value=safety_threshold + 5.0,
                 title="lipschitz local stability bounds cert",
                 eps=eps,
+                clamp_log_eps=1e-5,
             )
             file_name = out_path / "lipschitz.smt2"
             with open(file_name, "w") as f:

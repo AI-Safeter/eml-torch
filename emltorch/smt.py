@@ -862,7 +862,7 @@ import math as _math
 
 
 def _interval_arithmetic(
-    node, var_ranges: dict[str, tuple[float, float]], eps: float = 1e-9
+    node, var_ranges: dict[str, tuple[float, float]], eps: float = 1e-9, clamp_log_eps: float = 0.0
 ) -> tuple[float, float]:
     """Propagate value intervals through the EML formula tree.
 
@@ -923,7 +923,10 @@ def _interval_arithmetic(
         if isinstance(n, _EML):
             L_lo, L_hi = itv(n.left)
             R_lo, R_hi = itv(n.right)
-            if R_lo <= 0:
+            if clamp_log_eps > 0.0:
+                R_lo = max(R_lo, clamp_log_eps)
+                R_hi = max(R_hi, clamp_log_eps)
+            elif R_lo <= 0:
                 raise ValueError(
                     f"Ln of non-positive interval in eml(L, R): R ∈ "
                     f"[{R_lo}, {R_hi}].  EML formula domain violated; the "
@@ -967,6 +970,7 @@ def eml_tree_to_smt2_intervals(
     target_value: float,
     title: str = "EML-tree interval-propagation cert",
     eps: float = 1e-9,
+    clamp_log_eps: float = 0.0,
 ) -> str:
     """Translate an EML formula into a portable QF_LRA cert via interval
     propagation — the saturation-resolution paradigm from Headline 11.
@@ -1072,9 +1076,12 @@ def eml_tree_to_smt2_intervals(
         if isinstance(n, _EML):
             L_expr = emit(n.left)
             R_expr = emit(n.right)
-            L_lo, L_hi = _interval_arithmetic(n.left, var_ranges, eps=eps)
-            R_lo, R_hi = _interval_arithmetic(n.right, var_ranges, eps=eps)
-            if R_lo <= 0:
+            L_lo, L_hi = _interval_arithmetic(n.left, var_ranges, eps=eps, clamp_log_eps=clamp_log_eps)
+            R_lo, R_hi = _interval_arithmetic(n.right, var_ranges, eps=eps, clamp_log_eps=clamp_log_eps)
+            if clamp_log_eps > 0.0:
+                R_lo = max(R_lo, clamp_log_eps)
+                R_hi = max(R_hi, clamp_log_eps)
+            elif R_lo <= 0:
                 raise ValueError(
                     f"Ln of non-positive interval in eml(L, R): R ∈ "
                     f"[{R_lo}, {R_hi}]"
@@ -1109,7 +1116,7 @@ def eml_tree_to_smt2_intervals(
         if isinstance(n, _Div):
             return f"(/ {emit(n.left)} {emit(n.right)})"
         if isinstance(n, _Exp):
-            a_lo, a_hi = _interval_arithmetic(n.arg, var_ranges, eps=eps)
+            a_lo, a_hi = _interval_arithmetic(n.arg, var_ranges, eps=eps, clamp_log_eps=clamp_log_eps)
             arg_expr = emit(n.arg)
             exp_v = fresh("exp_arg")
             declare_var(
@@ -1139,7 +1146,7 @@ def eml_tree_to_smt2_intervals(
         var_lines.append(f"(assert (>= {v} {_num(lo)}))")
         var_lines.append(f"(assert (<= {v} {_num(hi)}))")
 
-    out_lo, out_hi = _interval_arithmetic(node, var_ranges, eps=eps)
+    out_lo, out_hi = _interval_arithmetic(node, var_ranges, eps=eps, clamp_log_eps=clamp_log_eps)
     final_lo = a + b * (out_lo if b > 0 else out_hi)
     final_hi = a + b * (out_hi if b > 0 else out_lo)
 
