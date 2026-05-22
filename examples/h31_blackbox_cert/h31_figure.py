@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""H31 headline figure v2 — focused on the discovered formula.
+"""Headline figure: discovered EML formula vs Qwen3.6-27B factual-recall data.
 
-Left: scatter of (H, P_target) on Qwen3.6-27B factual, EML formula line overlay.
-Right: cert pair summary text box.
+Left: scatter of (entropy_top50, P_target) on Qwen3.6-27B factual, with the
+EML formula line overlay. Right: formula + cert verdict summary.
 """
 from __future__ import annotations
 
@@ -71,34 +71,20 @@ def main() -> None:
 
     ax2.axis("off")
     txt = [
-        r"$\mathbf{Formula \; (depth\!-\!4 \; EML)}$",
+        r"$P \approx 0.5954 - 0.1353 \cdot \mathrm{eml}(L,\, \mathrm{eml}(L{-}H,\, 1))$",
+        r"$\mathrm{eml}(x, y) = e^x - \ln y$,  HELDOUT $R^2 = 0.89$",
         "",
-        r"$P_{\mathrm{target}} \approx 0.5954 - 0.1353 \cdot $",
-        r"$\quad \mathrm{eml}(L,\, \mathrm{eml}(L\!-\!H,\, 1))$",
-        "",
-        r"with $\mathrm{eml}(x, y) = e^x - \ln y$",
-        r"HELDOUT $R^2 = 0.89$",
-        "",
-        r"$\mathbf{Cert \; pair \;\; (dual\!-\!verified)}$",
-        "",
-        r"$P > 0.10$ over working box:",
-        r"   z3: $\mathbf{unsat}$ (12 ms)",
-        r"   cvc5: $\mathbf{unsat}$ (4 ms)",
-        "",
-        r"$P > 0.10$ over failure box:",
-        r"   z3: $\mathbf{sat}$ + counterexample",
-        r"   cvc5: $\mathbf{sat}$ + counterexample",
-        "",
-        r"$\mathbf{Black\!-\!box}$: no hooks, no",
-        r"$\mathrm{output\_attentions}$, top-K only",
+        r"$\mathbf{.smt2\;\;cert}$  (z3 + cvc5):",
+        r"  working box  $\rightarrow$  $\mathbf{unsat}$",
+        r"  failure box  $\rightarrow$  $\mathbf{sat}$ + counterexample",
     ]
     ax2.text(
         0.0,
-        0.97,
+        0.85,
         "\n".join(txt),
         va="top",
         ha="left",
-        fontsize=10.5,
+        fontsize=11,
         family="monospace",
     )
 

@@ -2,7 +2,7 @@
 
 GPU-batched symbolic regression via the EML operator `eml(x, y) = exp(x) − ln(y)`. Built on Andrzej Odrzywolek, [arXiv:2603.21852](https://arxiv.org/abs/2603.21852) (March 2026), which proves EML is universal for elementary functions.
 
-![H31 figure](examples/h31_blackbox_cert/outputs/headline_figure.png)
+![EML formula vs Qwen3.6-27B factual-recall data](examples/h31_blackbox_cert/outputs/headline_figure.png)
 
 ## A closed-form formula for Qwen3.6-27B factual recall, found black-box
 
