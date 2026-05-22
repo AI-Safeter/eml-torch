@@ -30,6 +30,7 @@ from .polish import polish
 
 from .api import fit, FitResult
 from . import interp  # noqa: F401
+from .interp import AutoCertifier
 from .gradient import diff_formula, gradient_at, sensitivity_vector, torch_gradient_fn
 from .hybrid_mul import (
     BatchedEMLMulTree,
@@ -79,6 +80,7 @@ __all__ = [
     "fit",
     "FitResult",
     "interp",
+    "AutoCertifier",
     # ---- Building blocks ----
     "safe_eml",
     "safe_eml_param",

@@ -60,9 +60,10 @@ def safe_eml(
     left: torch.Tensor, right: torch.Tensor, clamp: float = 60.0, log_eps: float = 1e-6
 ) -> torch.Tensor:
     """EML operator `exp(L) - ln(R)` with clamp guards."""
-    left_s = left.clamp(-clamp, clamp)
-    right_s = right.clamp(min=log_eps)
-    return torch.exp(left_s) - torch.log(right_s)
+    left_s = torch.nan_to_num(left, nan=0.0, posinf=clamp, neginf=-clamp).clamp(-clamp, clamp)
+    right_s = torch.nan_to_num(right, nan=1.0, posinf=1e30, neginf=-1e30).clamp(min=log_eps, max=1e30)
+    out = torch.exp(left_s) - torch.log(right_s)
+    return torch.nan_to_num(out, nan=0.0, posinf=1e30, neginf=-1e30)
 
 
 def safe_mul(
@@ -72,9 +73,11 @@ def safe_mul(
     that nested `mul` or `mul` feeding into `eml`'s log argument doesn't
     overflow.
     """
-    left_s = left.clamp(-clamp, clamp)
-    right_s = right.clamp(-clamp, clamp)
-    return (left_s * right_s).clamp(-clamp, clamp)
+    left_s = torch.nan_to_num(left, nan=0.0, posinf=clamp, neginf=-clamp).clamp(-clamp, clamp)
+    right_s = torch.nan_to_num(right, nan=0.0, posinf=clamp, neginf=-clamp).clamp(-clamp, clamp)
+    out = left_s * right_s
+    out = torch.nan_to_num(out, nan=0.0, posinf=clamp, neginf=-clamp)
+    return out.clamp(-clamp, clamp)
 
 
 def build_base(
@@ -174,6 +177,17 @@ class BatchedEMLMulTree(nn.Module):
                 )
             )
 
+        # Buffers for scale-invariant input normalization
+        self.register_buffer("x_mean", torch.zeros(1, num_vars, 1, dtype=dtype, device=device))
+        self.register_buffer("x_std", torch.ones(1, num_vars, 1, dtype=dtype, device=device))
+        self.register_buffer("normalize_inputs", torch.tensor(False, dtype=torch.bool, device=device))
+
+    def set_normalization_stats(self, x_mean: torch.Tensor, x_std: torch.Tensor):
+        """Set cached input normalization mean and standard deviation, and enable normalization."""
+        self.x_mean.copy_(x_mean)
+        self.x_std.copy_(x_std)
+        self.normalize_inputs.copy_(torch.tensor(True, dtype=torch.bool, device=self.normalize_inputs.device))
+
     @torch.no_grad()
     def snap(self) -> None:
         """Collapse all logits to argmax one-hot (irreversible hardening)."""
@@ -199,6 +213,12 @@ class BatchedEMLMulTree(nn.Module):
         if x.dim() == 2:
             x = x.unsqueeze(1)
         B, V, N = x.shape
+
+        if self.normalize_inputs:
+            mean = self.x_mean.to(device=x.device, dtype=x.dtype)
+            std = self.x_std.to(device=x.device, dtype=x.dtype)
+            x = (x - mean) / std
+
         if x.dtype != self.dtype:
             x = x.to(self.dtype)
         base = build_base(x, self.num_vars, self.dtype, use_mul=self.use_mul)
@@ -253,6 +273,8 @@ class HybridMulConfig:
     # Normalize target to unit std before evolution; denormalize in result.
     # Avoids exp() overflow on large-magnitude targets (e.g. Chinchilla L~100).
     normalize_target: bool = True
+    # Normalize input features to zero mean and unit std before evolution.
+    normalize_inputs: bool = False
 
 
 @dataclass
@@ -308,6 +330,11 @@ def evolve_hybrid_mul(
         use_mul=cfg.use_mul,
     )
     tree.snap()
+
+    if cfg.normalize_inputs:
+        x_mean = x_t.mean(dim=-1, keepdim=True).unsqueeze(0) # (1, V, 1)
+        x_std = x_t.std(dim=-1, keepdim=True).clamp(min=1e-8).unsqueeze(0) # (1, V, 1)
+        tree.set_normalization_stats(x_mean, x_std)
 
     ss_tot = ((y_work - y_work.mean()) ** 2).sum().clamp(min=1e-12)
     # Default to a valid state so callers never see tree=None.

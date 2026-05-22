@@ -149,6 +149,7 @@ def fit(
     r2_target: float = 0.99,
     polish: bool = False,
     polish_iters: int = 2000,
+    normalize_inputs: bool = False,
 ) -> FitResult:
     """
     Discover a closed-form EML expression fitting y ≈ f(x).
@@ -205,6 +206,7 @@ def fit(
             mutations_per_child=0,
             device=device,
             r2_target=r2_target,
+            normalize_inputs=normalize_inputs,
         )
         res = evolve(x, y, cfg)
         return FitResult(
@@ -233,6 +235,7 @@ def fit(
             crossover_fraction=0.3,
             device=device,
             r2_target=r2_target,
+            normalize_inputs=normalize_inputs,
         )
         res = evolve(x, y, cfg)
 

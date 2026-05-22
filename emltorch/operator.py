@@ -40,21 +40,23 @@ def safe_eml(
     # Clamp exp argument
     if left.is_complex():
         left_safe = torch.complex(
-            left.real.clamp(-clamp_val, clamp_val),
-            left.imag,
+            torch.nan_to_num(left.real, nan=0.0, posinf=clamp_val, neginf=-clamp_val).clamp(-clamp_val, clamp_val),
+            torch.nan_to_num(left.imag, nan=0.0, posinf=clamp_val, neginf=-clamp_val),
         )
     else:
-        left_safe = left.clamp(-clamp_val, clamp_val)
+        left_safe = torch.nan_to_num(left, nan=0.0, posinf=clamp_val, neginf=-clamp_val).clamp(-clamp_val, clamp_val)
 
-    # Clamp log argument magnitude away from zero
+    # Clamp log argument magnitude away from zero and protect upper bound
     if right.is_complex():
-        mag = right.abs().clamp(min=log_eps)
-        phase = right / (right.abs() + 1e-30)  # unit phasor, avoid div-by-zero
+        right_num = torch.nan_to_num(right, nan=1.0, posinf=1e30, neginf=-1e30)
+        mag = right_num.abs().clamp(min=log_eps, max=1e30)
+        phase = right_num / (right_num.abs() + 1e-30)  # unit phasor, avoid div-by-zero
         right_safe = mag * phase
     else:
-        right_safe = right.clamp(min=log_eps)
+        right_safe = torch.nan_to_num(right, nan=1.0, posinf=1e30, neginf=-1e30).clamp(min=log_eps, max=1e30)
 
-    return torch.exp(left_safe) - torch.log(right_safe)
+    out = torch.exp(left_safe) - torch.log(right_safe)
+    return torch.nan_to_num(out, nan=0.0, posinf=1e30, neginf=-1e30)
 
 
 def safe_eml_param(
@@ -86,17 +88,19 @@ def safe_eml_param(
     """
     if left.is_complex():
         left_safe = torch.complex(
-            left.real.clamp(-clamp_val, clamp_val),
-            left.imag,
+            torch.nan_to_num(left.real, nan=0.0, posinf=clamp_val, neginf=-clamp_val).clamp(-clamp_val, clamp_val),
+            torch.nan_to_num(left.imag, nan=0.0, posinf=clamp_val, neginf=-clamp_val),
         )
     else:
-        left_safe = left.clamp(-clamp_val, clamp_val)
+        left_safe = torch.nan_to_num(left, nan=0.0, posinf=clamp_val, neginf=-clamp_val).clamp(-clamp_val, clamp_val)
 
     if right.is_complex():
-        mag = right.abs().clamp(min=log_eps)
-        phase = right / (right.abs() + 1e-30)
+        right_num = torch.nan_to_num(right, nan=1.0, posinf=1e30, neginf=-1e30)
+        mag = right_num.abs().clamp(min=log_eps, max=1e30)
+        phase = right_num / (right_num.abs() + 1e-30)
         right_safe = mag * phase
     else:
-        right_safe = right.clamp(min=log_eps)
+        right_safe = torch.nan_to_num(right, nan=1.0, posinf=1e30, neginf=-1e30).clamp(min=log_eps, max=1e30)
 
-    return alpha * torch.exp(left_safe) - beta * torch.log(right_safe)
+    out = alpha * torch.exp(left_safe) - beta * torch.log(right_safe)
+    return torch.nan_to_num(out, nan=0.0, posinf=1e30, neginf=-1e30)

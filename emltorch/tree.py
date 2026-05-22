@@ -223,6 +223,17 @@ class BatchedEMLTree(nn.Module):
         #                    is one-hot, gradients flow continuously
         self.selection_mode = "softmax"
 
+        # Buffers for scale-invariant input normalization
+        self.register_buffer("x_mean", torch.zeros(1, num_vars, 1, dtype=dtype, device=device))
+        self.register_buffer("x_std", torch.ones(1, num_vars, 1, dtype=dtype, device=device))
+        self.register_buffer("normalize_inputs", torch.tensor(False, dtype=torch.bool, device=device))
+
+    def set_normalization_stats(self, x_mean: torch.Tensor, x_std: torch.Tensor):
+        """Set cached input normalization mean and standard deviation, and enable normalization."""
+        self.x_mean.copy_(x_mean)
+        self.x_std.copy_(x_std)
+        self.normalize_inputs.copy_(torch.tensor(True, dtype=torch.bool, device=self.normalize_inputs.device))
+
     # ------------------------------------------------------------------
     # Selection weights
     # ------------------------------------------------------------------
@@ -276,6 +287,11 @@ class BatchedEMLTree(nn.Module):
         if x.dim() == 2:
             x = x.unsqueeze(1)  # (B, 1, N)
         B, V, N = x.shape
+
+        if self.normalize_inputs:
+            mean = self.x_mean.to(device=x.device, dtype=x.dtype)
+            std = self.x_std.to(device=x.device, dtype=x.dtype)
+            x = (x - mean) / std
 
         device = x.device
         num_leaves = self.leaf_logits.shape[1]

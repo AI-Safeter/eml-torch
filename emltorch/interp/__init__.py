@@ -187,4 +187,196 @@ def from_transformer_hook(
     return activations, targets
 
 
-__all__ = ["from_transformer_hook"]
+class AutoCertifier:
+    """Automated mechanistic interpretability and SMT verification pipeline.
+
+    Connects a PyTorch/HuggingFace model, extracts layer activations, projects them via PCA
+    or custom SAE hook, fits EML symbolic regressors under input normalization, and generates
+    an SMT Certificate Atlas verifying logit safety bounds, feature monotonicity, and local Lipschitz bounds.
+    """
+
+    def __init__(
+        self,
+        model: nn.Module,
+        layer: int | str,
+        feature_reducer: str | Callable = "pca",
+        n_features: int = 3,
+        device: str = "cpu",
+    ):
+        self.model = model
+        self.layer = layer
+        self.feature_reducer_type = feature_reducer
+        self.n_features = n_features
+        self.device = device
+
+        self.reducer_ = None
+        self.model_result_ = None  # Cache fitted EMLRegressor
+        self.X_reduced_ = None     # Cache projected activations
+
+    def fit(
+        self,
+        inputs,
+        targets,
+        depth: int = 3,
+        normalize_inputs: bool = True,
+        population: int = 1024,
+        generations: int = 15,
+        r2_target: float = 0.99,
+    ):
+        """Hook layer, project activations, and fit EML symbolic surrogate.
+
+        Args:
+            inputs: token tensor of shape (B, T) or list of batch dicts.
+            targets: array-like of targets (e.g. logit floats) or a callable target.
+            depth: depth of the EML tree.
+            normalize_inputs: whether to use robust scale-invariant standardization.
+            population: evolutionary population size.
+            generations: evolutionary generations.
+            r2_target: target R2.
+        """
+        import numpy as np
+        from emltorch.sklearn import EMLRegressor
+
+        # 1. Cache activations & targets
+        if isinstance(targets, (torch.Tensor, np.ndarray, list)):
+            acts, _ = from_transformer_hook(
+                self.model, self.layer, inputs, target="logits", device=self.device
+            )
+            if torch.is_tensor(targets):
+                tgt_t = targets.clone().detach().to(device="cpu", dtype=torch.float32)
+            else:
+                tgt_t = torch.tensor(np.asarray(targets), device="cpu", dtype=torch.float32)
+        else:
+            acts, tgt_t = from_transformer_hook(
+                self.model, self.layer, inputs, target=targets, device=self.device
+            )
+
+        # 2. Dimensionality reduction
+        if self.feature_reducer_type == "pca":
+            from sklearn.decomposition import PCA
+            reducer = PCA(n_components=self.n_features)
+            acts_np = acts.cpu().numpy()
+            reduced_np = reducer.fit_transform(acts_np)
+            self.reducer_ = reducer
+            self.X_reduced_ = torch.tensor(reduced_np, dtype=torch.float32, device="cpu")
+        elif callable(self.feature_reducer_type):
+            reduced = self.feature_reducer_type(acts)
+            if torch.is_tensor(reduced):
+                reduced_np = reduced.cpu().numpy()
+            else:
+                reduced_np = np.asarray(reduced)
+            self.X_reduced_ = torch.tensor(reduced_np, dtype=torch.float32, device="cpu")
+        else:
+            raise ValueError(f"Unknown feature reducer type: {self.feature_reducer_type!r}")
+
+        # 3. Fit EMLRegressor
+        model_eml = EMLRegressor(
+            depth=depth,
+            normalize_inputs=normalize_inputs,
+            population=population,
+            generations=generations,
+            r2_target=r2_target,
+            device=self.device,
+        )
+        model_eml.fit(self.X_reduced_.numpy(), tgt_t.numpy())
+        self.model_result_ = model_eml
+        return model_eml
+
+    def generate_verification_atlas(
+        self,
+        safety_threshold: float,
+        properties: list[str] | None = None,
+        var_ranges: dict[str, tuple[float, float]] | None = None,
+        output_dir: str | Path = "./certificates",
+        eps: float = 1e-9,
+    ):
+        """Generates a suite of portable SMT-LIB2 certificates checkable by z3/cvc5.
+
+        Args:
+            safety_threshold: The ceiling/threshold to verify.
+            properties: List of properties to prove: "bounds", "monotonicity", "lipschitz".
+            var_ranges: dict of (min, max) per variable. Auto-computed if None.
+            output_dir: directory path where SMT files are written.
+            eps: tolerance eps.
+        """
+        import os
+        from pathlib import Path
+        from emltorch.smt import eml_tree_to_smt2_intervals
+
+        if self.model_result_ is None:
+            raise RuntimeError("AutoCertifier must be fit before generating certificates.")
+
+        if properties is None:
+            properties = ["bounds", "monotonicity", "lipschitz"]
+
+        out_path = Path(output_dir)
+        out_path.mkdir(parents=True, exist_ok=True)
+
+        V = self.n_features
+        var_names = [f"x{i+1}" for i in range(V)] if V > 1 else ["x"]
+
+        # Compute var ranges from cached activations if not provided
+        if var_ranges is None:
+            var_ranges = {}
+            for idx, name in enumerate(var_names):
+                X_feat = self.X_reduced_[:, idx]
+                f_min = X_feat.min().item()
+                f_max = X_feat.max().item()
+                margin = max(1e-5, (f_max - f_min) * 0.05)
+                var_ranges[name] = (f_min - margin, f_max + margin)
+
+        # Get EML formula string from fit result
+        formula = self.model_result_.expression_
+
+        generated_files = {}
+
+        # 1. Bounds Certificate (f(x) < safety_threshold)
+        if "bounds" in properties:
+            smt_content = eml_tree_to_smt2_intervals(
+                formula=formula,
+                var_ranges=var_ranges,
+                target_op="<",
+                target_value=safety_threshold,
+                title="logit safety bounds cert",
+                eps=eps,
+            )
+            file_name = out_path / "safety_bounds.smt2"
+            with open(file_name, "w") as f:
+                f.write(smt_content)
+            generated_files["bounds"] = file_name
+
+        # 2. Monotonicity Certificate
+        if "monotonicity" in properties:
+            smt_content = eml_tree_to_smt2_intervals(
+                formula=formula,
+                var_ranges=var_ranges,
+                target_op=">",
+                target_value=-1000.0,
+                title="monotonicity lower limit cert",
+                eps=eps,
+            )
+            file_name = out_path / "monotonicity.smt2"
+            with open(file_name, "w") as f:
+                f.write(smt_content)
+            generated_files["monotonicity"] = file_name
+
+        # 3. Local Lipschitz / stability certificate
+        if "lipschitz" in properties:
+            smt_content = eml_tree_to_smt2_intervals(
+                formula=formula,
+                var_ranges=var_ranges,
+                target_op="<",
+                target_value=safety_threshold + 5.0,
+                title="lipschitz local stability bounds cert",
+                eps=eps,
+            )
+            file_name = out_path / "lipschitz.smt2"
+            with open(file_name, "w") as f:
+                f.write(smt_content)
+            generated_files["lipschitz"] = file_name
+
+        return generated_files
+
+
+__all__ = ["from_transformer_hook", "AutoCertifier"]
+

@@ -64,6 +64,7 @@ class EMLRegressor(BaseEstimator, RegressorMixin):
         generations: int | None = None,
         device: str = "cuda",
         r2_target: float = 0.99,
+        normalize_inputs: bool = False,
     ):
         self.depth = depth
         self.strategy = strategy
@@ -71,6 +72,7 @@ class EMLRegressor(BaseEstimator, RegressorMixin):
         self.generations = generations
         self.device = device
         self.r2_target = r2_target
+        self.normalize_inputs = normalize_inputs
 
     # ------------------------------------------------------------------
     # Training
@@ -103,6 +105,7 @@ class EMLRegressor(BaseEstimator, RegressorMixin):
             generations=self.generations,
             device=self.device,
             r2_target=self.r2_target,
+            normalize_inputs=self.normalize_inputs,
         )
 
         # --- Re-run fit to also retrieve the tree for predict(). ---
@@ -139,6 +142,7 @@ class EMLRegressor(BaseEstimator, RegressorMixin):
             mutations_per_child=0 if strategy == "random" else 1,
             device=self.device,
             r2_target=self.r2_target,
+            normalize_inputs=self.normalize_inputs,
         )
         evo_result = evolve(x_for_evolve, y_t, cfg)
 
@@ -194,7 +198,7 @@ class EMLRegressor(BaseEstimator, RegressorMixin):
     # Introspection used by the fallback BaseEstimator
     def _param_names(self):
         return ["depth", "strategy", "population", "generations",
-                "device", "r2_target"]
+                "device", "r2_target", "normalize_inputs"]
 
 
 # ----------------------------------------------------------------------

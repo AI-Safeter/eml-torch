@@ -63,6 +63,8 @@ class EvolutionConfig:
     # and `eml(1, R) = e − ln(R)` are the canonical EML reduction patterns.
     # Typical value: 1e-3 (small).  0.0 disables (default).
     cert_friendly_const_bonus: float = 0.0
+    # Normalize input features to zero mean and unit std before evolution.
+    normalize_inputs: bool = False
 
     @property
     def torch_dtype(self):
@@ -313,6 +315,11 @@ def evolve(
         use_mul3=cfg.use_mul3,
     )
     _snap_peaked(tree)
+
+    if cfg.normalize_inputs:
+        x_mean = x_batch.mean(dim=-1, keepdim=True).unsqueeze(0) # (1, V, 1)
+        x_std = x_batch.std(dim=-1, keepdim=True).clamp(min=1e-8).unsqueeze(0) # (1, V, 1)
+        tree.set_normalization_stats(x_mean, x_std)
 
     # Warm-start: seed a fraction of the population with `seed_tree[seed_idx]`
     # placed in the left-subtree slot (depth d-1 embedded into depth d).
