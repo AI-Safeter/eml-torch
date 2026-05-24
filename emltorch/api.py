@@ -276,3 +276,139 @@ def fit(
         )
 
     raise ValueError(f"Unknown strategy: {strategy}")
+
+
+# ---------------------------------------------------------------------------
+# Multi-seed fit: operationalize the topology-stability discipline.
+# ---------------------------------------------------------------------------
+
+
+@dataclass
+class MultiSeedResult:
+    """Result of `emltorch.fit_multi_seed(x, y, n_seeds=N, ...)`.
+
+    Aggregates `N` independent runs of `fit()` with different RNG seeds.
+    Useful for honest reporting of whether the discovered closed-form is
+    a stable property of the data (same expression on most seeds) or a
+    noise artifact (different expression every seed).
+    """
+
+    n_seeds: int
+    all_results: list  # list[FitResult]
+    best_fit: object  # FitResult with highest R² (also the .predict() target)
+    best_r2: float
+    median_r2: float
+    mean_r2: float
+    std_r2: float
+    topology_counts: dict  # {expression_str: count}
+    top_topology: str  # most-common expression string
+    top_topology_count: int  # how many seeds produced top_topology
+    topology_stability: float  # top_topology_count / n_seeds  ∈ [0, 1]
+    n_unique_topologies: int
+
+    def predict(self, x):
+        """Evaluate the *best-R² seed's* formula on new data."""
+        return self.best_fit.predict(x)
+
+    @property
+    def expression(self) -> str:
+        """The best-R² seed's expression string. For the most-common-across-seeds
+        expression, use `self.top_topology` instead."""
+        return self.best_fit.expression
+
+    def summary(self) -> str:
+        """Human-readable single-line summary."""
+        return (
+            f"MultiSeedResult(n_seeds={self.n_seeds}, "
+            f"best_r2={self.best_r2:.4f}, median_r2={self.median_r2:.4f}, "
+            f"topology_stability={self.top_topology_count}/{self.n_seeds} "
+            f"= {self.topology_stability:.2f}, "
+            f"unique_topologies={self.n_unique_topologies})"
+        )
+
+    def __repr__(self) -> str:
+        return self.summary()
+
+
+def fit_multi_seed(
+    x,
+    y,
+    *,
+    n_seeds: int = 10,
+    depth: int = 3,
+    strategy: Literal["auto", "random", "evolution"] = "auto",
+    population: int | None = None,
+    generations: int | None = None,
+    device: str | None = None,
+    r2_target: float = 0.99,
+    polish: bool = False,
+    polish_iters: int = 2000,
+    normalize_inputs: bool = False,
+    seed_start: int = 0,
+) -> MultiSeedResult:
+    """Run `fit()` independently with `n_seeds` different RNG seeds and aggregate.
+
+    Each seed sets `torch.manual_seed(s)` and `np.random.seed(s)` before
+    calling `fit()`, so the search is reproducibly varied. The returned
+    `MultiSeedResult` reports per-seed R² and the byte-equality topology
+    distribution across seeds — useful for the honest stability check
+    ("does the same closed-form keep emerging, or am I overfitting?").
+
+    Args mirror `fit()`. Additional:
+        n_seeds: number of independent seeds. Default 10.
+        seed_start: first RNG seed; subsequent seeds are seed_start..seed_start+n_seeds-1.
+
+    Returns:
+        MultiSeedResult with `best_fit` (FitResult), per-seed list,
+        and aggregate stability metrics.
+    """
+    import numpy as np
+
+    if n_seeds < 1:
+        raise ValueError(f"n_seeds must be ≥ 1; got {n_seeds}")
+
+    results: list[FitResult] = []
+    for s in range(seed_start, seed_start + n_seeds):
+        torch.manual_seed(s)
+        np.random.seed(s)
+        r = fit(
+            x,
+            y,
+            depth=depth,
+            strategy=strategy,
+            population=population,
+            generations=generations,
+            device=device,
+            r2_target=r2_target,
+            polish=polish,
+            polish_iters=polish_iters,
+            normalize_inputs=normalize_inputs,
+        )
+        results.append(r)
+
+    r2s = [r.r2 for r in results]
+    best_idx = int(np.argmax(r2s))
+    exprs = [r.expression for r in results]
+
+    # Byte-equality topology counting (advisor-recommended precision)
+    from collections import Counter
+
+    topology_counts = dict(Counter(exprs))
+    top_topology, top_topology_count = max(
+        topology_counts.items(), key=lambda kv: kv[1]
+    )
+
+    return MultiSeedResult(
+        n_seeds=n_seeds,
+        all_results=results,
+        best_fit=results[best_idx],
+        best_r2=float(max(r2s)),
+        median_r2=float(np.median(r2s)),
+        mean_r2=float(np.mean(r2s)),
+        std_r2=float(np.std(r2s)),
+        topology_counts=topology_counts,
+        top_topology=top_topology,
+        top_topology_count=top_topology_count,
+        topology_stability=top_topology_count / n_seeds,
+        n_unique_topologies=len(topology_counts),
+    )
