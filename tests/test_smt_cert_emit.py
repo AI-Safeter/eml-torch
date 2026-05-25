@@ -46,3 +46,41 @@ def test_eml_tree_to_smt2_axiomatized_emits_exp_ln():
     assert "Exp" in out
     assert "Ln" in out
     assert "(check-sat)" in out
+
+
+def test_interval_emitter_handles_negative_ln_arg_via_safe_clipping():
+    """When eml(L, R)'s R interval includes ≤ 0, the default `clamp_log_eps`
+    matches `safe_eml`'s runtime clipping so the emitter does NOT raise.
+    Previously: emit_error 'Ln of non-positive interval'. Now: returns a
+    cert that verifies the safe_eml-clipped semantics."""
+    # Formula where inner R = (x3 - x2) can go negative inside the box.
+    # Without clamp_log_eps, this would raise. With the new 1e-6 default,
+    # the emitter clips R to max(R, 1e-6) — matching the forward pass.
+    out = eml_tree_to_smt2_intervals(
+        formula="+0.0697 + (+0.0554) * [eml(x2, (x3 - x2))]",
+        var_ranges={"x2": (-1.19, 1.28), "x3": (-0.58, 0.12)},
+        target_op=">",
+        target_value=0.05,
+        title="negative-R-interval safe-eml cert",
+    )
+    assert "QF_LRA" in out
+    assert "(check-sat)" in out
+    # The interval header should still appear (numeric evaluator succeeded
+    # because of clipping)
+    assert "Interval-propagation analytic bound" in out
+
+
+def test_interval_emitter_strict_mode_raises_on_negative_ln_arg():
+    """Opt-out: `clamp_log_eps=0` restores the strict-mathematical behavior
+    where eml(L, R) with R ≤ 0 raises (formula domain violated)."""
+    import pytest
+
+    with pytest.raises(ValueError, match="Ln of non-positive interval"):
+        eml_tree_to_smt2_intervals(
+            formula="+0.0697 + (+0.0554) * [eml(x2, (x3 - x2))]",
+            var_ranges={"x2": (-1.19, 1.28), "x3": (-0.58, 0.12)},
+            target_op=">",
+            target_value=0.05,
+            title="strict mode",
+            clamp_log_eps=0.0,
+        )

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "emltorch"
-version = "0.4.0"
+version = "0.5.0"
 description = "GPU-batched symbolic regression via the EML operator (exp(x) - ln(y))"
 readme = "README.md"
 license = { text = "MIT" }

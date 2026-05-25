@@ -17,16 +17,17 @@ P_target ≈ 0.5954 + (−0.1353) · eml(L, eml(L − H, 1))
 
 ## EML vs polynomial and PySR baselines
 
-On a separate Gemma-4-31B-it induction probe (n = 432, identical 75-25 split, 5 random seeds for EML and PySR alike):
+On a separate Gemma-4-31B-it induction probe (n = 432, identical 75-25 split, 10 random seeds for EML and PySR alike):
 
 | | EML d=3 | PySR | poly K=2 | poly K=5 |
 |---|---:|---:|---:|---:|
-| Best HELDOUT R² | 0.937 | **0.951** | 0.931 | 0.950 |
-| Nodes / coefficients | **5** | 9 | 21 | 252 |
-| Seeds → identical expression | **5 / 5** | 0 / 5 | n/a | n/a |
+| Best HELDOUT R² | 0.937 | **0.953** | 0.933 | 0.878 |
+| Median HELDOUT R² | 0.937 | 0.934 | — | — |
+| Nodes / coefficients | **5** | 10 | 21 | 252 |
+| Seeds → identical expression | **9 / 10** | 1 / 10 | n/a | n/a |
 | SMT-LIB2 cert | direct (`eml_tree_to_smt2_intervals`) | per-operator axioms | QF_NRA solver | QF_NRA solver |
 
-PySR matches the R² tier with about 2× longer expressions and a different form on every seed. EML loses ≈ 0.015 R² but stays compact, stable across seeds, and translates to portable SMT-LIB2 in one library call — the combination is what the cert pipeline turns on, not the R² alone.
+PySR matches the R² tier with about 2× longer expressions and a different form on every seed. EML loses ≈ 0.016 R² (best-of-10) but stays compact, stable across seeds, and translates to portable SMT-LIB2 in one library call. The `emltorch.fit_multi_seed(x, y, n_seeds=10)` API operationalizes this: it runs N seeds, byte-equality-counts the resulting expressions, and reports a `topology_stability` fraction — the empirical axis on which EML separates from polynomial-degree symbolic regression.
 
 ## Limitations
 
