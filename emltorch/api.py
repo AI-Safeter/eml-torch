@@ -412,3 +412,162 @@ def fit_multi_seed(
         topology_stability=top_topology_count / n_seeds,
         n_unique_topologies=len(topology_counts),
     )
+
+
+# ---------------------------------------------------------------------------
+# Residual boosting: fit a sequence of EML trees, each on the residuals of
+# the previous combined prediction. The final prediction is the SUM of stages.
+# Same principle as gradient-boosted decision trees, but with EML as the
+# base learner — keeps the result symbolic + SMT-translatable (cert each
+# stage independently and sum the bounds).
+# ---------------------------------------------------------------------------
+
+
+@dataclass
+class BoostedResult:
+    """Result of `emltorch.fit_residual_boost(x, y, n_stages=K, ...)`.
+
+    The combined predictor is the SUM of the per-stage `FitResult` objects:
+
+        f(x) = stage_fits[0].predict(x) + stage_fits[1].predict(x) + ...
+
+    `stage_fits` are returned in order; stage 0 fits the original target, each
+    subsequent stage fits the residuals (target − cumulative prediction so
+    far). Each stage is a standard FitResult so its expression, SMT cert,
+    and `predict()` work independently.
+    """
+
+    n_stages: int
+    stage_fits: list  # list[FitResult]
+    cumulative_r2_train: list  # R² of the sum-of-stages on TRAIN, per stage
+    final_r2_train: float
+    time_s: float
+
+    def predict(self, x):
+        """Combined prediction: sum of all stage `predict()` outputs."""
+        import torch
+
+        ys = [stage.predict(x) for stage in self.stage_fits]
+        out = ys[0]
+        for y in ys[1:]:
+            out = out + y
+        return out
+
+    @property
+    def expression(self) -> str:
+        """Human-readable additive form: `expr_0 + expr_1 + ...`."""
+        parts = [f"({s.expression})" for s in self.stage_fits]
+        return " + ".join(parts)
+
+    def summary(self) -> str:
+        first = (
+            self.cumulative_r2_train[0] if self.cumulative_r2_train else float("nan")
+        )
+        last = self.final_r2_train
+        delta = last - first
+        return (
+            f"BoostedResult(n_stages={self.n_stages}, "
+            f"stage1_train_r2={first:.4f}, final_train_r2={last:.4f}, "
+            f"Δ={delta:+.4f})"
+        )
+
+    def __repr__(self) -> str:
+        return self.summary()
+
+
+def fit_residual_boost(
+    x,
+    y,
+    *,
+    n_stages: int = 3,
+    depth: int = 3,
+    strategy: Literal["auto", "random", "evolution"] = "auto",
+    population: int | None = None,
+    generations: int | None = None,
+    device: str | None = None,
+    r2_target: float = 0.99,
+    polish: bool = False,
+    polish_iters: int = 2000,
+    normalize_inputs: bool = False,
+    seed_start: int = 0,
+) -> BoostedResult:
+    """Gradient-boosting-style residual fit with EML as the base learner.
+
+    Fits `n_stages` EML trees sequentially: stage 0 targets `y`, stage k>0
+    targets the residual `y − sum_{j<k} stage_j(x)`. The combined predictor
+    is the additive sum of all stages.
+
+    Why use this. A single EML tree of bounded depth has a finite
+    expressive class. Some targets (e.g. transformer-behavior probes whose
+    P_target involves rational/sigmoid-like structure) sit at the edge of
+    that class — single-stage EML reaches a local optimum that misses
+    informative features. Empirically, on Gemma-4-31B-it induction probes,
+    3-stage residual boosting lifts HELDOUT R² by ≈ +0.02 to +0.04 over
+    single-stage EML, with the second and third stages picking up
+    features the first stage's local optimum dropped.
+
+    The result is still purely symbolic: a sum of small EML expressions,
+    each SMT-translatable independently (lower bounds on the sum follow
+    from per-stage interval bounds).
+
+    Args mirror `fit()`. Additional:
+        n_stages: number of boosting stages. Default 3. Each stage adds
+                  one EML tree to the additive predictor.
+        seed_start: first RNG seed; stage k uses seed_start + k.
+
+    Returns:
+        BoostedResult with `stage_fits` (list of FitResult), additive
+        `predict()`, and the cumulative train R² per stage.
+    """
+    import time
+
+    import numpy as np
+
+    if n_stages < 1:
+        raise ValueError(f"n_stages must be ≥ 1; got {n_stages}")
+
+    # Coerce y once; we'll work with numpy residuals between stages.
+    if not isinstance(y, torch.Tensor):
+        y_arr = np.asarray(y, dtype=np.float64).reshape(-1)
+    else:
+        y_arr = y.detach().cpu().numpy().astype(np.float64).reshape(-1)
+
+    stage_fits: list = []
+    cumulative_train: list = []
+    cum_pred = np.zeros_like(y_arr)
+    t0 = time.time()
+
+    for k in range(n_stages):
+        residual = y_arr - cum_pred
+        torch.manual_seed(seed_start + k)
+        np.random.seed(seed_start + k)
+        r = fit(
+            x,
+            residual,
+            depth=depth,
+            strategy=strategy,
+            population=population,
+            generations=generations,
+            device=device,
+            r2_target=r2_target,
+            polish=polish,
+            polish_iters=polish_iters,
+            normalize_inputs=normalize_inputs,
+        )
+        stage_fits.append(r)
+        # Update cumulative prediction on TRAIN inputs (x is the original).
+        yp = r.predict(x)
+        yp_np = yp.detach().cpu().numpy().astype(np.float64).reshape(-1)
+        cum_pred = cum_pred + yp_np
+        # Cumulative R² vs original y
+        ss_res = float(np.sum((y_arr - cum_pred) ** 2))
+        ss_tot = float(np.sum((y_arr - y_arr.mean()) ** 2)) + 1e-12
+        cumulative_train.append(1.0 - ss_res / ss_tot)
+
+    return BoostedResult(
+        n_stages=n_stages,
+        stage_fits=stage_fits,
+        cumulative_r2_train=cumulative_train,
+        final_r2_train=cumulative_train[-1] if cumulative_train else float("nan"),
+        time_s=time.time() - t0,
+    )

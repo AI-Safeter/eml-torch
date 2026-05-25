@@ -19,14 +19,21 @@ Quick start:
     print(result.r2)
 """
 
-__version__ = "0.5.0"
+__version__ = "0.6.0"
 
 from .operator import safe_eml
 from .tree import BatchedEMLTree
 from .symbolic import extract_expressions, annotate
 from .evolution import EvolutionConfig, EvolutionResult, evolve
 from .polish import polish
-from .api import fit, fit_multi_seed, FitResult, MultiSeedResult
+from .api import (
+    fit,
+    fit_multi_seed,
+    fit_residual_boost,
+    FitResult,
+    MultiSeedResult,
+    BoostedResult,
+)
 from .smt import (
     SafetyCertificate,
     eml_formula_to_z3,
@@ -52,8 +59,10 @@ __all__ = [
     # Core fit API
     "fit",
     "fit_multi_seed",
+    "fit_residual_boost",
     "FitResult",
     "MultiSeedResult",
+    "BoostedResult",
     # Building blocks
     "safe_eml",
     "BatchedEMLTree",

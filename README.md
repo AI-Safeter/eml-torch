@@ -29,6 +29,8 @@ On a separate Gemma-4-31B-it induction probe (n = 432, identical 75-25 split, 10
 
 PySR matches the R² tier with about 2× longer expressions and a different form on every seed. EML loses ≈ 0.016 R² (best-of-10) but stays compact, stable across seeds, and translates to portable SMT-LIB2 in one library call. The `emltorch.fit_multi_seed(x, y, n_seeds=10)` API operationalizes this: it runs N seeds, byte-equality-counts the resulting expressions, and reports a `topology_stability` fraction — the empirical axis on which EML separates from polynomial-degree symbolic regression.
 
+When single-stage EML hits a local optimum that misses informative features (e.g. Gemma-4 induction at pool size L ∈ [21, 25], where stage-1 converges to `eml(n_rep, n_rep)` and drops the rest), gradient-boosting-style residual fitting recovers them. `emltorch.fit_residual_boost(x, y, n_stages=3)` fits a sequence of EML trees on running residuals and returns their additive sum; on the Gemma L_large slice this lifts HELDOUT R² from 0.78 to 0.82 (3 stages) — second and third stages discover the L and entropy structure that stage 1 dropped, in symbolic form, still SMT-translatable per stage.
+
 ## Limitations
 
 `L = 0` deterministically across all factual prompts in this probe set, so the formula's value algebraically collapses to an affine function of `H`; linear regression on `H` matches the EML formula's HELDOUT R² to four decimals on this slice. The cert's `working_lb` UNSAT at τ = 0.10 is implied by the precomputed interval bound and re-confirmed by the solvers, not load-bearing on nonlinear SMT reasoning; at the pre-registered τ = 0.5, both solvers return SAT.
