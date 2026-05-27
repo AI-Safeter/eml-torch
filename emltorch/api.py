@@ -490,6 +490,7 @@ def fit_residual_boost(
     polish_iters: int = 2000,
     normalize_inputs: bool = False,
     seed_start: int = 0,
+    seeds_per_stage: int = 1,
 ) -> BoostedResult:
     """Gradient-boosting-style residual fit with EML as the base learner.
 
@@ -513,7 +514,15 @@ def fit_residual_boost(
     Args mirror `fit()`. Additional:
         n_stages: number of boosting stages. Default 3. Each stage adds
                   one EML tree to the additive predictor.
-        seed_start: first RNG seed; stage k uses seed_start + k.
+        seed_start: first RNG seed. Stage k, seed-candidate s uses
+                    `seed_start + 100*k + s`.
+        seeds_per_stage: candidate fits per stage; the candidate with the
+                    best fit on that stage's residual target is kept
+                    (default 1 = single fit). Higher values help on the
+                    harder slices where a single seed lands in a weak
+                    basin — e.g. Gemma L_large stage-3 lifts ≈ +0.01
+                    going from 1 to 5 seeds-per-stage (compounds the
+                    `fit_multi_seed` discipline into each boosting stage).
 
     Returns:
         BoostedResult with `stage_fits` (list of FitResult), additive
@@ -525,6 +534,8 @@ def fit_residual_boost(
 
     if n_stages < 1:
         raise ValueError(f"n_stages must be ≥ 1; got {n_stages}")
+    if seeds_per_stage < 1:
+        raise ValueError(f"seeds_per_stage must be ≥ 1; got {seeds_per_stage}")
 
     # Coerce y once; we'll work with numpy residuals between stages.
     if not isinstance(y, torch.Tensor):
@@ -537,23 +548,42 @@ def fit_residual_boost(
     cum_pred = np.zeros_like(y_arr)
     t0 = time.time()
 
+    def _residual_r2(fit_result, residual_arr) -> float:
+        yp_np = (
+            fit_result.predict(x).detach().cpu().numpy().astype(np.float64).reshape(-1)
+        )
+        ss_res = float(np.sum((residual_arr - yp_np) ** 2))
+        ss_tot = float(np.sum((residual_arr - residual_arr.mean()) ** 2)) + 1e-12
+        return 1.0 - ss_res / ss_tot
+
     for k in range(n_stages):
         residual = y_arr - cum_pred
-        torch.manual_seed(seed_start + k)
-        np.random.seed(seed_start + k)
-        r = fit(
-            x,
-            residual,
-            depth=depth,
-            strategy=strategy,
-            population=population,
-            generations=generations,
-            device=device,
-            r2_target=r2_target,
-            polish=polish,
-            polish_iters=polish_iters,
-            normalize_inputs=normalize_inputs,
-        )
+        # Run `seeds_per_stage` candidate fits on this stage's residual; keep
+        # the one that best explains the residual target.
+        best_r = None
+        best_stage_r2 = -float("inf")
+        for s in range(seeds_per_stage):
+            seed = seed_start + 100 * k + s
+            torch.manual_seed(seed)
+            np.random.seed(seed)
+            candidate = fit(
+                x,
+                residual,
+                depth=depth,
+                strategy=strategy,
+                population=population,
+                generations=generations,
+                device=device,
+                r2_target=r2_target,
+                polish=polish,
+                polish_iters=polish_iters,
+                normalize_inputs=normalize_inputs,
+            )
+            cand_r2 = _residual_r2(candidate, residual)
+            if cand_r2 > best_stage_r2:
+                best_stage_r2 = cand_r2
+                best_r = candidate
+        r = best_r
         stage_fits.append(r)
         # Update cumulative prediction on TRAIN inputs (x is the original).
         yp = r.predict(x)

@@ -148,6 +148,35 @@ def test_boost_invalid_n_stages_raises():
         eml.fit_residual_boost(x, y, n_stages=0, depth=3, device=DEVICE)
 
 
+def test_boost_invalid_seeds_per_stage_raises():
+    """seeds_per_stage < 1 raises ValueError."""
+    x = torch.linspace(0.5, 5.0, 64)
+    y = torch.log(x)
+    with pytest.raises(ValueError, match="seeds_per_stage"):
+        eml.fit_residual_boost(
+            x, y, n_stages=2, seeds_per_stage=0, depth=3, device=DEVICE
+        )
+
+
+def test_boost_seeds_per_stage_runs_and_shapes():
+    """seeds_per_stage > 1 still produces n_stages FitResults with a valid
+    additive predictor (best-of-seeds selection per stage)."""
+    torch.manual_seed(0)
+    x = torch.linspace(0.1, 3.0, 200)
+    y = torch.exp(x) + 0.4 * torch.log(x)
+
+    result = eml.fit_residual_boost(
+        x, y, n_stages=2, seeds_per_stage=3, depth=3, device=DEVICE
+    )
+    assert result.n_stages == 2
+    assert len(result.stage_fits) == 2
+    # best-of-seeds selection can only match-or-beat single-seed train fit
+    single = eml.fit_residual_boost(
+        x, y, n_stages=2, seeds_per_stage=1, depth=3, device=DEVICE
+    )
+    assert result.final_r2_train >= single.final_r2_train - 1e-3
+
+
 def test_boost_diminishing_returns_on_pure_signal():
     """If the target is exactly recoverable by a single EML (e.g. log(x)),
     stage 2 has nothing to fit — its R² contribution to the train residual

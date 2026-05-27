@@ -19,7 +19,7 @@ Quick start:
     print(result.r2)
 """
 
-__version__ = "0.6.0"
+__version__ = "0.6.1"
 
 from .operator import safe_eml
 from .tree import BatchedEMLTree
