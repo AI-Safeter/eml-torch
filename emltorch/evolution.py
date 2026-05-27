@@ -65,6 +65,27 @@ class EvolutionConfig:
     cert_friendly_const_bonus: float = 0.0
     # Normalize input features to zero mean and unit std before evolution.
     normalize_inputs: bool = False
+    # ─── Island model (multi-population) ─────────────────────────────────
+    # Partition the population into `n_islands` equal sub-populations that
+    # evolve independently (selection + reproduction confined within each
+    # island), with periodic ring migration of each island's best
+    # individual into its neighbour. This preserves diversity and lets the
+    # search explore multiple basins in parallel — the targeted fix for the
+    # basin-trap failure mode where every seed of a single panmictic
+    # population converges to the same local optimum (e.g. Gemma L_large,
+    # where 10/10 seeds collapsed to `eml(x2, x2)`).
+    #
+    # n_islands=1 (default) is byte-identical to the original panmictic
+    # evolution — the island code path is only taken when n_islands > 1.
+    # The population is split into contiguous blocks of size
+    # `population // n_islands`; any remainder slots form a final ragged
+    # block that participates normally.
+    n_islands: int = 1
+    # Migrate every `migration_interval` generations (ignored if n_islands=1).
+    migration_interval: int = 5
+    # Number of top individuals copied from each island into its ring
+    # neighbour at each migration event.
+    migration_size: int = 1
 
     @property
     def torch_dtype(self):
@@ -281,6 +302,14 @@ def evolve(
     t0 = time.time()
     device = cfg.device
 
+    if cfg.n_islands > 1 and cfg.population % cfg.n_islands != 0:
+        raise ValueError(
+            f"population ({cfg.population}) must be divisible by n_islands "
+            f"({cfg.n_islands}) for the island model. The top-level "
+            "`emltorch.fit` rounds population up automatically; if you build "
+            "EvolutionConfig directly, choose a divisible population."
+        )
+
     # Shape to (pop, V, N)
     if x.dim() == 1:
         x = x.unsqueeze(0)
@@ -380,35 +409,96 @@ def evolve(
                 print(f"[evo] r2_target reached at gen {gen}")
             break
 
-        # Selection: top-k by fitness (MSE + range penalty)
-        _, elite_idx = fitness.topk(n_elite, largest=False)
+        if cfg.n_islands <= 1:
+            # ---- Panmictic path (original; unchanged) ----------------------
+            # Selection: top-k by fitness (MSE + range penalty)
+            _, elite_idx = fitness.topk(n_elite, largest=False)
 
-        # Offspring slots = all slots except elites
-        n_offspring = cfg.population - n_elite
-        offspring_slots = torch.arange(cfg.population, device=device)
-        non_elite_mask = torch.ones(cfg.population, dtype=torch.bool, device=device)
-        non_elite_mask[elite_idx] = False
-        non_elite_slots = offspring_slots[non_elite_mask]
+            # Offspring slots = all slots except elites
+            n_offspring = cfg.population - n_elite
+            offspring_slots = torch.arange(cfg.population, device=device)
+            non_elite_mask = torch.ones(cfg.population, dtype=torch.bool, device=device)
+            non_elite_mask[elite_idx] = False
+            non_elite_slots = offspring_slots[non_elite_mask]
 
-        # Split offspring between mutation and crossover
-        n_cross = int(n_offspring * cfg.crossover_fraction)
-        n_mut = n_offspring - n_cross
-        mut_slots = non_elite_slots[:n_mut]
-        cross_slots = non_elite_slots[n_mut:]
+            # Split offspring between mutation and crossover
+            n_cross = int(n_offspring * cfg.crossover_fraction)
+            n_mut = n_offspring - n_cross
+            mut_slots = non_elite_slots[:n_mut]
+            cross_slots = non_elite_slots[n_mut:]
 
-        # Mutation branch: pick a random elite parent, clone, mutate
-        if n_mut > 0:
-            parent_idx = elite_idx[torch.randint(0, n_elite, (n_mut,), device=device)]
-            _clone_(tree, mut_slots, parent_idx)
-            _mutate_(tree, mut_slots, n_mutations=cfg.mutations_per_child)
+            # Mutation branch: pick a random elite parent, clone, mutate
+            if n_mut > 0:
+                parent_idx = elite_idx[
+                    torch.randint(0, n_elite, (n_mut,), device=device)
+                ]
+                _clone_(tree, mut_slots, parent_idx)
+                _mutate_(tree, mut_slots, n_mutations=cfg.mutations_per_child)
 
-        # Crossover branch: pick two random elites, uniform crossover
-        if n_cross > 0:
-            p1 = elite_idx[torch.randint(0, n_elite, (n_cross,), device=device)]
-            p2 = elite_idx[torch.randint(0, n_elite, (n_cross,), device=device)]
-            _crossover_(tree, cross_slots, p1, p2)
-            # Small mutation on crossover children for diversity
-            _mutate_(tree, cross_slots, n_mutations=1)
+            # Crossover branch: pick two random elites, uniform crossover
+            if n_cross > 0:
+                p1 = elite_idx[torch.randint(0, n_elite, (n_cross,), device=device)]
+                p2 = elite_idx[torch.randint(0, n_elite, (n_cross,), device=device)]
+                _crossover_(tree, cross_slots, p1, p2)
+                # Small mutation on crossover children for diversity
+                _mutate_(tree, cross_slots, n_mutations=1)
+        else:
+            # ---- Island path (block-structured selection + ring migration) -
+            # Selection and reproduction are confined within each island, so
+            # distinct islands can settle into distinct basins. Every
+            # `migration_interval` generations the best `migration_size`
+            # individuals of each island replace the WORST of its ring
+            # successor, sharing good genes without collapsing diversity.
+            M = cfg.n_islands
+            S = cfg.population // M  # population guaranteed divisible (api/assert)
+            n_elite_isl = max(1, int(S * cfg.elite_fraction))
+            island_base = (torch.arange(M, device=device) * S).unsqueeze(1)  # (M,1)
+
+            fit_blk = fitness.view(M, S)
+            # Best (lowest-fitness) n_elite_isl within each island.
+            elite_local = fit_blk.topk(n_elite_isl, dim=1, largest=False).indices
+            elite_global = elite_local + island_base  # (M, n_elite_isl)
+            elite_flat = elite_global.reshape(-1)
+
+            non_elite_mask = torch.ones(cfg.population, dtype=torch.bool, device=device)
+            non_elite_mask[elite_flat] = False
+            non_elite_slots = torch.arange(cfg.population, device=device)[
+                non_elite_mask
+            ]
+            slot_island = non_elite_slots // S  # island id per offspring slot
+
+            n_offspring = non_elite_slots.numel()
+            n_cross = int(n_offspring * cfg.crossover_fraction)
+            n_mut = n_offspring - n_cross
+            mut_slots, mut_isl = non_elite_slots[:n_mut], slot_island[:n_mut]
+            cross_slots, cross_isl = non_elite_slots[n_mut:], slot_island[n_mut:]
+
+            # Mutation: parent is a random elite from the SAME island.
+            if n_mut > 0:
+                rc = torch.randint(0, n_elite_isl, (n_mut,), device=device)
+                _clone_(tree, mut_slots, elite_global[mut_isl, rc])
+                _mutate_(tree, mut_slots, n_mutations=cfg.mutations_per_child)
+
+            # Crossover: both parents random elites from the SAME island.
+            if n_cross > 0:
+                rc1 = torch.randint(0, n_elite_isl, (n_cross,), device=device)
+                rc2 = torch.randint(0, n_elite_isl, (n_cross,), device=device)
+                _crossover_(
+                    tree,
+                    cross_slots,
+                    elite_global[cross_isl, rc1],
+                    elite_global[cross_isl, rc2],
+                )
+                _mutate_(tree, cross_slots, n_mutations=1)
+
+            # Ring migration: island d's worst-k <- island (d-1)%M's best-k.
+            if (gen + 1) % max(1, cfg.migration_interval) == 0:
+                k = min(cfg.migration_size, n_elite_isl, S)
+                src_best = elite_global[:, :k]  # (M, k) best-k per island
+                src_ring = torch.roll(src_best, shifts=1, dims=0)  # from predecessor
+                worst_local = fit_blk.topk(k, dim=1, largest=True).indices  # (M,k)
+                dest_global = (worst_local + island_base).reshape(-1)
+                _clone_(tree, dest_global, src_ring.reshape(-1))
 
     # Restore best-ever tree at slot `best_ever_idx`
     if best_ever_logits is not None:

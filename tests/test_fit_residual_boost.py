@@ -86,8 +86,12 @@ def test_boost_beats_single_stage_on_mixed_target():
     # well but residuals show pattern of the other.
     y = torch.exp(x) + 0.5 * torch.log(x)
 
+    # Isolate the boosting mechanism: match fit()'s normalize_inputs=False so
+    # the comparison is like-for-like (boost defaults to True for safety).
     single = eml.fit(x, y, depth=2, device=DEVICE)
-    boosted = eml.fit_residual_boost(x, y, n_stages=3, depth=2, device=DEVICE)
+    boosted = eml.fit_residual_boost(
+        x, y, n_stages=3, depth=2, device=DEVICE, normalize_inputs=False
+    )
     # Boosted final train R² should be ≥ single (with small slack).
     assert boosted.final_r2_train >= single.r2 - 1e-3
 
@@ -98,8 +102,12 @@ def test_boost_n_stages_one_matches_single_fit():
     x = torch.linspace(0.5, 5.0, 128)
     y = torch.log(x)
 
-    # fit_residual_boost uses seed_start (default 0) for stage 0
-    boosted = eml.fit_residual_boost(x, y, n_stages=1, depth=3, device=DEVICE)
+    # fit_residual_boost uses seed_start (default 0) for stage 0. Pass
+    # normalize_inputs=False to match fit()'s default (boost now defaults
+    # to True for numerical safety).
+    boosted = eml.fit_residual_boost(
+        x, y, n_stages=1, depth=3, device=DEVICE, normalize_inputs=False
+    )
     # Mirror its seeding manually
     torch.manual_seed(0)
     np.random.seed(0)
@@ -175,6 +183,61 @@ def test_boost_seeds_per_stage_runs_and_shapes():
         x, y, n_stages=2, seeds_per_stage=1, depth=3, device=DEVICE
     )
     assert result.final_r2_train >= single.final_r2_train - 1e-3
+
+
+def test_boost_default_normalizes_and_bounds_heldout_predictions():
+    """The additive predictor is unbounded; on raw wide-range features an
+    exp(.) leaf can extrapolate to ±1e6+ even on IN-DISTRIBUTION held-out
+    points (the original bug: a random 75-25 split blew up to R² ≈ -5.6e7
+    because the raw feature differences were large). The default
+    normalize_inputs=True keeps leaf args at unit scale so in-distribution
+    held-out predictions stay bounded by ~3 orders of magnitude.
+
+    Uses the actual bug scenario: a random split of wide-range features,
+    held-out points drawn from the SAME distribution as training (not pushed
+    beyond the manifold, where exp(.) growth is expected and unavoidable)."""
+    torch.manual_seed(0)
+    np.random.seed(0)
+    # Wide-range, unstandardized features (per-feature std >> 1), target [0,1].
+    n = 240
+    grid0 = torch.linspace(0.0, 60.0, n)
+    grid1 = torch.linspace(-30.0, 30.0, n)
+    perm = torch.randperm(n)
+    X = torch.stack([grid0, grid1[perm]], dim=1)
+    y = torch.sigmoid(0.1 * X[:, 0] - 0.05 * X[:, 1])  # bounded [0, 1]
+    # Random in-distribution 75-25 split (the scenario that blew up).
+    idx = torch.randperm(n)
+    cut = int(0.75 * n)
+    tr, te = idx[:cut], idx[cut:]
+    X_tr, X_te = X[tr], X[te]
+    y_tr = y[tr]
+
+    # Small population keeps the test fast (~seconds).
+    result = eml.fit_residual_boost(
+        X_tr, y_tr, n_stages=2, depth=3, device=DEVICE, population=128
+    )
+    pred = result.predict(X_te).detach().cpu()
+    assert torch.isfinite(pred).all()
+    # Bug produced |pred| ~ 1e6-1e7 on in-distribution test points; the
+    # normalized default keeps them tiny (target is in [0,1]). 1e3 cleanly
+    # separates "fixed" from "broken".
+    assert float(pred.abs().max()) < 1e3
+
+
+def test_boost_warns_on_unstandardized_wide_features():
+    """Opting out of normalization on wide-range raw features emits a
+    UserWarning pointing at the unbounded-extrapolation risk."""
+    torch.manual_seed(0)
+    np.random.seed(0)
+    x0 = torch.linspace(0.0, 60.0, 200)  # std ~ 17 >> 5 threshold
+    x1 = torch.linspace(-30.0, 30.0, 200)
+    X = torch.stack([x0, x1], dim=1)
+    y = torch.sigmoid(0.1 * x0 - 0.05 * x1)
+
+    with pytest.warns(UserWarning, match="normalize_inputs"):
+        eml.fit_residual_boost(
+            X, y, n_stages=2, depth=3, device=DEVICE, normalize_inputs=False
+        )
 
 
 def test_boost_diminishing_returns_on_pure_signal():

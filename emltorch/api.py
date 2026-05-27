@@ -140,6 +140,8 @@ def fit(
     polish: bool = False,
     polish_iters: int = 2000,
     normalize_inputs: bool = False,
+    n_islands: int = 1,
+    migration_interval: int = 5,
 ) -> FitResult:
     """
     Discover a closed-form EML expression fitting y ≈ f(x).
@@ -160,6 +162,18 @@ def fit(
         device: torch device string (e.g. "cuda", "cuda:0", or "cpu"). If
                 None, auto-resolves to "cuda" when available, else "cpu".
         r2_target: early-exit threshold.
+        n_islands: number of independent sub-populations (islands) the
+                   population is split into. Islands evolve in isolation
+                   with periodic ring migration of their best individuals,
+                   which preserves diversity and explores multiple basins —
+                   the targeted fix for the basin-trap failure mode where a
+                   single panmictic population (and every seed of it)
+                   collapses to one local optimum. Default 1 = original
+                   panmictic evolution (byte-identical behaviour). When > 1,
+                   ``population`` is rounded up to the nearest multiple of
+                   ``n_islands``. Only affects the "evolution" strategy.
+        migration_interval: migrate every this-many generations (ignored
+                   when n_islands == 1).
 
     Returns:
         FitResult with the discovered expression, R², and metadata.
@@ -168,6 +182,9 @@ def fit(
 
     if device is None:
         device = "cuda" if torch.cuda.is_available() else "cpu"
+
+    if n_islands < 1:
+        raise ValueError(f"n_islands must be ≥ 1; got {n_islands}")
 
     # --- Input coercion (accepts numpy / list / torch; (N,), (N,V), or (V,N)) ---
     x, y = _coerce_inputs(x, y, device)
@@ -182,6 +199,12 @@ def fit(
         population = {1: 256, 2: 256, 3: 1024, 4: 2048}.get(depth, 4096)
     if generations is None:
         generations = 20
+
+    # Island model needs an evenly divisible population; round up so each
+    # island gets the same number of slots (the block-structured selection
+    # in evolve() reshapes population into (n_islands, island_size)).
+    if n_islands > 1 and population % n_islands != 0:
+        population += n_islands - (population % n_islands)
 
     t0 = time.time()
 
@@ -225,6 +248,8 @@ def fit(
             device=device,
             r2_target=r2_target,
             normalize_inputs=normalize_inputs,
+            n_islands=n_islands,
+            migration_interval=migration_interval,
         )
         res = evolve(x, y, cfg)
 
@@ -488,7 +513,7 @@ def fit_residual_boost(
     r2_target: float = 0.99,
     polish: bool = False,
     polish_iters: int = 2000,
-    normalize_inputs: bool = False,
+    normalize_inputs: bool = True,
     seed_start: int = 0,
     seeds_per_stage: int = 1,
 ) -> BoostedResult:
@@ -510,6 +535,28 @@ def fit_residual_boost(
     The result is still purely symbolic: a sum of small EML expressions,
     each SMT-translatable independently (lower bounds on the sum follow
     from per-stage interval bounds).
+
+    Numerical safety. ``normalize_inputs`` defaults to ``True`` here (unlike
+    ``fit()``, which defaults to ``False``). The additive predictor sums
+    ``n_stages`` affine-wrapped trees ``a_k + b_k * tree_k(x)``; the EML leaf
+    ``exp`` is clamped per-node, but a single leaf can still reach
+    ``exp(80) ≈ 5.5e34``, and neither the affine ``b_k`` nor the stage sum is
+    bounded. On *unstandardized*, large-range features a leaf such as
+    ``eml(x_i - x_j, exp(x_k))`` evaluated at an *in-distribution* held-out
+    point can already extrapolate to ``±1e6..1e7`` — the raw feature
+    differences are large — which dominates the sum and destroys held-out R²
+    (observed: a random-split blow-up to R² ~= -5.6e7 on in-distribution test
+    points). Normalizing inputs to train mean-0/std-1 keeps the leaf
+    arguments at unit scale, so in-distribution held-out predictions stay
+    bounded (the -5.6e7 case drops by ~3 orders of magnitude). This is a
+    mitigation, not a hard bound: a point pushed several std beyond the
+    training range still grows through ``exp(.)`` — symbolic regressors do not
+    promise safe extrapolation outside the data manifold. The normalization is
+    a *linear* pre-transform on the inputs, so the per-stage SMT-LIB2
+    translation is preserved (it composes with the affine input map under
+    QF_LRA). If you pass ``normalize_inputs=False`` on raw, wide-range
+    features, a warning is emitted because the additive predictor can then
+    extrapolate without bound.
 
     Args mirror `fit()`. Additional:
         n_stages: number of boosting stages. Default 3. Each stage adds
@@ -542,6 +589,31 @@ def fit_residual_boost(
         y_arr = np.asarray(y, dtype=np.float64).reshape(-1)
     else:
         y_arr = y.detach().cpu().numpy().astype(np.float64).reshape(-1)
+
+    # Safety: the additive predictor is unbounded; on raw wide-range features
+    # an EML leaf exp(.) can extrapolate to ±1e6+ on held-out points and
+    # dominate the sum. Warn if the caller opted out of normalization with
+    # features whose spread makes this likely.
+    if not normalize_inputs:
+        try:
+            x_np = (
+                x.detach().cpu().numpy()
+                if isinstance(x, torch.Tensor)
+                else np.asarray(x, dtype=np.float64)
+            )
+            col_std = float(np.nanmax(np.std(np.atleast_2d(x_np), axis=-1)))
+            if col_std > 5.0:
+                warnings.warn(
+                    "fit_residual_boost called with normalize_inputs=False on "
+                    f"features whose max per-feature std is {col_std:.1f}. The "
+                    "additive EML predictor is unbounded; on out-of-range "
+                    "held-out points an exp(.) leaf can extrapolate to ±1e6+ "
+                    "and destroy held-out R². Pass normalize_inputs=True "
+                    "(the default) or standardize inputs first.",
+                    stacklevel=2,
+                )
+        except Exception:
+            pass
 
     stage_fits: list = []
     cumulative_train: list = []
