@@ -30,9 +30,12 @@ from .api import (
     fit,
     fit_multi_seed,
     fit_residual_boost,
+    fit_pareto,
     FitResult,
     MultiSeedResult,
     BoostedResult,
+    ParetoResult,
+    _expression_complexity,
 )
 from .smt import (
     SafetyCertificate,
@@ -60,9 +63,12 @@ __all__ = [
     "fit",
     "fit_multi_seed",
     "fit_residual_boost",
+    "fit_pareto",
     "FitResult",
     "MultiSeedResult",
     "BoostedResult",
+    "ParetoResult",
+    "_expression_complexity",
     # Building blocks
     "safe_eml",
     "BatchedEMLTree",

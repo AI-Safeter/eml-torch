@@ -673,3 +673,195 @@ def fit_residual_boost(
         final_r2_train=cumulative_train[-1] if cumulative_train else float("nan"),
         time_s=time.time() - t0,
     )
+
+
+# ---------------------------------------------------------------------------
+# Pareto-front fit: accuracy vs. complexity trade-off.
+# Returns the non-dominated subset of (complexity, R², FitResult) across depths.
+# ---------------------------------------------------------------------------
+
+
+def _expression_complexity(expr: str) -> int:
+    """Return the number of EML operators in a formula string.
+
+    Complexity is defined as ``expr.count("eml(")``.  This is deterministic,
+    depth-agnostic, and matches the "expression size (nodes)" notion used in
+    the project README.  A pure-constant or single-variable result has
+    complexity 0; each nested ``eml(...)`` node adds 1.
+
+    Examples::
+
+        _expression_complexity("eml(1, x)")           # → 1
+        _expression_complexity("eml(eml(1, x), 1)")   # → 2
+        _expression_complexity("x")                   # → 0
+    """
+    return expr.count("eml(")
+
+
+@dataclass
+class ParetoResult:
+    """Result of `emltorch.fit_pareto(x, y, ...)`.
+
+    Holds the non-dominated Pareto front of (complexity, R²) pairs discovered
+    by sweeping over EML tree depths.  Lets callers choose their own accuracy
+    vs. complexity trade-off instead of receiving only the single highest-R²
+    result.
+
+    Attributes:
+        front: list of ``(complexity: int, r2: float, fit: FitResult)`` tuples,
+            NON-DOMINATED and sorted by complexity ASCENDING.  Along the front,
+            both complexity and r2 are STRICTLY INCREASING — every step to higher
+            complexity buys strictly better R².
+        all_evaluated: list of ``(complexity, r2, fit)`` for every depth tried,
+            including dominated points.
+    """
+
+    front: list  # list[(complexity:int, r2:float, fit:FitResult)], asc complexity
+    all_evaluated: list  # list[(complexity, r2, fit)] — every depth tried
+
+    def best(self) -> "FitResult":
+        """Return the FitResult with the highest R² on the Pareto front."""
+        return max(self.front, key=lambda t: t[1])[2]
+
+    def select(self, max_complexity: int):
+        """Return the best-R² FitResult whose complexity <= *max_complexity*.
+
+        Returns ``None`` if no front point satisfies the budget.
+        """
+        candidates = [(r2, fit) for c, r2, fit in self.front if c <= max_complexity]
+        if not candidates:
+            return None
+        return max(candidates, key=lambda t: t[0])[1]
+
+    def predict(self, x) -> "torch.Tensor":
+        """Evaluate the best (highest-R²) front formula on new data."""
+        return self.best().predict(x)
+
+    def summary(self) -> str:
+        """One-line string listing the front as ``complexity->r2`` pairs."""
+        pairs = " | ".join(f"{c}->{r2:.4f}" for c, r2, _ in self.front)
+        return f"ParetoResult(front=[{pairs}], n_evaluated={len(self.all_evaluated)})"
+
+    def __repr__(self) -> str:
+        return self.summary()
+
+
+def fit_pareto(
+    x,
+    y,
+    *,
+    depths=(1, 2, 3, 4, 5),
+    seeds_per_depth: int = 1,
+    population: int | None = None,
+    generations: int | None = None,
+    device: str | None = None,
+    r2_target: float = 0.99,
+    normalize_inputs: bool = False,
+) -> "ParetoResult":
+    """Discover a Pareto-optimal front of EML expressions (accuracy vs. complexity).
+
+    Sweeps over each depth in *depths*, running ``fit()`` (or
+    ``fit_multi_seed()`` when ``seeds_per_depth > 1``), and returns the
+    non-dominated subset — every step to higher complexity on the front buys
+    strictly better R².
+
+    This mirrors PySR's Pareto-front output, letting callers choose their own
+    accuracy vs. interpretability trade-off instead of receiving only the
+    single highest-R² result.
+
+    Args:
+        x: features (same conventions as ``fit``).
+        y: target, length N.
+        depths: iterable of integer depths to try. Default ``(1, 2, 3, 4, 5)``.
+        seeds_per_depth: number of random seeds per depth.  ``1`` → single
+            ``fit()`` call; ``> 1`` → ``fit_multi_seed()`` and best seed kept.
+        population: passed to ``fit()`` / ``fit_multi_seed()``. Defaults to
+            the per-depth heuristic in ``fit()``.
+        generations: passed to ``fit()`` / ``fit_multi_seed()``.
+        device: torch device. Auto-resolves when ``None``.
+        r2_target: early-exit threshold per depth.
+        normalize_inputs: passed to ``fit()``.
+
+    Returns:
+        ParetoResult with ``.front`` (non-dominated, complexity-sorted) and
+        ``.all_evaluated`` (every depth tried).
+    """
+    import numpy as np
+
+    all_evaluated: list = []
+
+    for depth_idx, d in enumerate(depths):
+        # Set reproducible seeds for each depth so repeated calls are stable.
+        seed = 20260528 + d
+        torch.manual_seed(seed)
+        np.random.seed(seed)
+
+        if seeds_per_depth == 1:
+            fit_result = fit(
+                x,
+                y,
+                depth=d,
+                population=population,
+                generations=generations,
+                device=device,
+                r2_target=r2_target,
+                normalize_inputs=normalize_inputs,
+            )
+        else:
+            ms = fit_multi_seed(
+                x,
+                y,
+                n_seeds=seeds_per_depth,
+                depth=d,
+                population=population,
+                generations=generations,
+                device=device,
+                r2_target=r2_target,
+                normalize_inputs=normalize_inputs,
+                seed_start=seed,
+            )
+            fit_result = ms.best_fit
+
+        complexity = _expression_complexity(fit_result.expression)
+        all_evaluated.append((complexity, float(fit_result.r2), fit_result))
+
+    # --- Build Pareto front ---
+    # Step 1: collapse exact (complexity, r2) ties, keeping the entry that
+    # appeared first (lowest depth index — deterministic when depths is ordered).
+    seen: dict = {}  # (c, r2) -> index in all_evaluated
+    for idx, (c, r2, fit_r) in enumerate(all_evaluated):
+        key = (c, round(r2, 10))
+        if key not in seen:
+            seen[key] = idx
+    deduped = [all_evaluated[i] for i in sorted(seen.values())]
+
+    # Step 2: domination filter.
+    # Point P_i is dominated if there exists P_j with
+    #   c_j <= c_i  AND  r2_j >= r2_i  AND  (c_j < c_i OR r2_j > r2_i)
+    front = []
+    for i, (ci, ri, fi) in enumerate(deduped):
+        dominated = False
+        for j, (cj, rj, _) in enumerate(deduped):
+            if i == j:
+                continue
+            if cj <= ci and rj >= ri and (cj < ci or rj > ri):
+                dominated = True
+                break
+        if not dominated:
+            front.append((ci, ri, fi))
+
+    # Step 3: sort by complexity ascending.
+    front.sort(key=lambda t: t[0])
+
+    # Sanity check: along the sorted front, r2 is strictly increasing.
+    # (By the domination definition this must hold; assert defensively.)
+    for k in range(len(front) - 1):
+        ck, rk, _ = front[k]
+        ck1, rk1, _ = front[k + 1]
+        assert ck < ck1, f"Front complexity not strictly increasing: {ck} -> {ck1}"
+        assert rk1 > rk, (
+            f"Front R² not strictly increasing at complexities {ck}->{ck1}: "
+            f"{rk:.6f} -> {rk1:.6f}"
+        )
+
+    return ParetoResult(front=front, all_evaluated=all_evaluated)
