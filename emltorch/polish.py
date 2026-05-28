@@ -19,6 +19,7 @@ Mathematically: turns our discrete search into a two-level optimizer:
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Literal
 
 import torch
 import torch.nn as nn
@@ -206,6 +207,7 @@ def polish(
     const_reg: float = 0.0,
     min_b_abs: float = 0.0,
     range_reg: float = 0.0,
+    optimizer: Literal["adam", "lbfgs", "adam+lbfgs"] = "adam",
 ) -> PolishResult:
     """
     Fit learnable numeric constants at the fixed topology of `tree[best_idx]`.
@@ -214,9 +216,18 @@ def polish(
     the evolution result to ensure polish starts from evolution's best R²
     (not worse).
 
+    `optimizer` selects the constant-optimization backend:
+      - "adam"       : original Adam loop (default; backward-compatible).
+      - "lbfgs"      : L-BFGS with strong-Wolfe line search (quasi-Newton,
+                       tighter constants on exp-native targets).
+      - "adam+lbfgs" : run Adam first, then refine with L-BFGS warm-started
+                       from Adam's best result.
+
     Result contains the learned constants, affine coefficients, and a
     formula string with all constants substituted in.
     """
+    import math as _math
+
     if device is None:
         device = "cuda" if torch.cuda.is_available() else "cpu"
     # Pull choice indices from the snapped tree
@@ -251,7 +262,6 @@ def polish(
         initial_fit = a + b * initial_pred
         initial_mse = (initial_fit - y_dev).pow(2).mean().item()
 
-    opt = torch.optim.Adam(list(fixed.parameters()) + [a, b], lr=lr)
     best_mse = initial_mse
     best_state = {
         "constants": fixed.constants.detach().clone(),
@@ -259,46 +269,111 @@ def polish(
         "b": warm_b,
     }
 
-    for step in range(n_iters):
-        opt.zero_grad()
-        pred = fixed(x_dev)
-        fit = a + b * pred
-        mse_loss = (fit - y_dev).pow(2).mean()
-        loss = mse_loss
-        if const_reg > 0.0:
-            loss = loss + const_reg * (fixed.constants - 1.0).pow(2).sum()
-        if range_reg > 0.0 and min_b_abs > 0.0:
-            # Penalize |b| dropping below min_b_abs — forces the tree to
-            # carry the signal's dynamic range instead of the affine wrapper.
-            b_shortfall = torch.relu(min_b_abs - b.abs())
-            loss = loss + range_reg * b_shortfall.pow(2).sum()
-        if not torch.isfinite(loss):
-            # Perturb constants slightly and continue
-            with torch.no_grad():
-                fixed.constants.mul_(0.9)
-                fixed.constants.add_(torch.randn_like(fixed.constants) * 0.01)
-            continue
-        loss.backward()
-        nn.utils.clip_grad_norm_(list(fixed.parameters()) + [a, b], 1.0)
-        opt.step()
+    # ------------------------------------------------------------------
+    # Adam phase (runs for optimizer in {"adam", "adam+lbfgs"})
+    # ------------------------------------------------------------------
+    if optimizer in ("adam", "adam+lbfgs"):
+        opt = torch.optim.Adam(list(fixed.parameters()) + [a, b], lr=lr)
 
-        if mse_loss.item() < best_mse:
-            best_mse = mse_loss.item()
-            best_state = {
-                "constants": fixed.constants.detach().clone(),
-                "a": float(a.detach().item()),
-                "b": float(b.detach().item()),
-            }
+        for step in range(n_iters):
+            opt.zero_grad()
+            pred = fixed(x_dev)
+            fit = a + b * pred
+            mse_loss = (fit - y_dev).pow(2).mean()
+            loss = mse_loss
+            if const_reg > 0.0:
+                loss = loss + const_reg * (fixed.constants - 1.0).pow(2).sum()
+            if range_reg > 0.0 and min_b_abs > 0.0:
+                # Penalize |b| dropping below min_b_abs — forces the tree to
+                # carry the signal's dynamic range instead of the affine wrapper.
+                b_shortfall = torch.relu(min_b_abs - b.abs())
+                loss = loss + range_reg * b_shortfall.pow(2).sum()
+            if not torch.isfinite(loss):
+                # Perturb constants slightly and continue
+                with torch.no_grad():
+                    fixed.constants.mul_(0.9)
+                    fixed.constants.add_(torch.randn_like(fixed.constants) * 0.01)
+                continue
+            loss.backward()
+            nn.utils.clip_grad_norm_(list(fixed.parameters()) + [a, b], 1.0)
+            opt.step()
 
-    # Restore best state
-    if best_state is not None:
+            if mse_loss.item() < best_mse:
+                best_mse = mse_loss.item()
+                best_state = {
+                    "constants": fixed.constants.detach().clone(),
+                    "a": float(a.detach().item()),
+                    "b": float(b.detach().item()),
+                }
+
+    # ------------------------------------------------------------------
+    # L-BFGS phase (runs for optimizer in {"lbfgs", "adam+lbfgs"})
+    # For "adam+lbfgs": warm-start from Adam's best state before running.
+    # ------------------------------------------------------------------
+    if optimizer in ("lbfgs", "adam+lbfgs"):
+        # Restore best-so-far state into parameters before LBFGS starts
         with torch.no_grad():
             fixed.constants.copy_(best_state["constants"])
+            a.data.fill_(best_state["a"])
+            b.data.fill_(best_state["b"])
+
+        lbfgs_params = list(fixed.parameters()) + [a, b]
+        lbfgs_opt = torch.optim.LBFGS(
+            lbfgs_params,
+            lr=1.0,
+            max_iter=20,
+            line_search_fn="strong_wolfe",
+        )
+        # Run up to n_lbfgs_steps outer steps (each calls closure multiple times)
+        n_lbfgs_steps = max(1, n_iters // 20)
+
+        def _lbfgs_closure():
+            lbfgs_opt.zero_grad()
+            pred = fixed(x_dev)
+            fit = a + b * pred
+            mse_loss = (fit - y_dev).pow(2).mean()
+            loss = mse_loss
+            if const_reg > 0.0:
+                loss = loss + const_reg * (fixed.constants - 1.0).pow(2).sum()
+            if range_reg > 0.0 and min_b_abs > 0.0:
+                b_shortfall = torch.relu(min_b_abs - b.abs())
+                loss = loss + range_reg * b_shortfall.pow(2).sum()
+            if torch.isfinite(loss):
+                loss.backward()
+            return loss
+
+        for _step in range(n_lbfgs_steps):
+            try:
+                loss_val = lbfgs_opt.step(_lbfgs_closure)
+            except Exception:
+                # LBFGS can raise on degenerate line searches; stop gracefully
+                break
+
+            if loss_val is None or not torch.isfinite(loss_val):
+                break
+
+            # Evaluate clean MSE (without regularisation) for best-state tracking
+            with torch.no_grad():
+                pred = fixed(x_dev)
+                fit = a + b * pred
+                cur_mse = (fit - y_dev).pow(2).mean().item()
+
+            if _math.isfinite(cur_mse) and cur_mse < best_mse:
+                best_mse = cur_mse
+                best_state = {
+                    "constants": fixed.constants.detach().clone(),
+                    "a": float(a.detach().item()),
+                    "b": float(b.detach().item()),
+                }
+
+    # ------------------------------------------------------------------
+    # Restore best state
+    # ------------------------------------------------------------------
+    with torch.no_grad():
+        fixed.constants.copy_(best_state["constants"])
 
     # Safeguard: never return a polish that made things worse than warm-start.
     # If best_mse tracking got polluted (NaN/inf interference), revert.
-    import math as _math
-
     if not _math.isfinite(best_mse) or best_mse > initial_mse:
         with torch.no_grad():
             fixed.constants.fill_(1.0)
@@ -421,5 +496,3 @@ def _format_with_constants(
         level_exprs = new_exprs
 
     return level_exprs[0]
-
-
