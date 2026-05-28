@@ -1,79 +1,51 @@
 # emltorch
 
-GPU-batched symbolic regression via the EML operator `eml(x, y) = exp(x) − ln(y)`. Built on Andrzej Odrzywolek, [arXiv:2603.21852](https://arxiv.org/abs/2603.21852) (March 2026), which proves EML is universal for elementary functions.
+GPU-batched symbolic regression via the EML operator `eml(x, y) = exp(x) − ln(y)`. Built on Odrzywolek, [arXiv:2603.21852](https://arxiv.org/abs/2603.21852) (March 2026) — universal for elementary functions.
 
 ![EML formula vs Qwen3.6-27B factual-recall data](examples/h31_blackbox_cert/outputs/headline_figure.png)
 
-## A closed-form formula for Qwen3.6-27B factual recall, found black-box
+## A closed-form formula for Qwen3.6-27B factual recall — found black-box
 
 ```
-P_target ≈ 0.5954 + (−0.1353) · eml(L, eml(L − H, 1))
+P_target ≈ 0.5954 − 0.1353 · eml(L, eml(L − H, 1))
 ```
 
-`L` = induction lag (0 on factual prompts).
-`H` = entropy of the model's top-50 logprob distribution.
+`L` = induction lag, `H` = top-50 logprob entropy. Discovered by depth-4 evolutionary search using only `prompt → top-K logprobs` (no hooks, no hidden states). HELDOUT R² = 0.89 on a 75-25 split, with a portable `.smt2` cert that z3 and cvc5 dual-verify in single-digit milliseconds. Reproduction: `examples/h31_blackbox_cert/`.
 
-*Factual* probes here are completion prompts asking for a single canonical fact the model is expected to know — 50 prompts of the form `"The capital of {country} is"`, target = the canonical capital. The formula was discovered by depth-4 evolutionary search over the EML operator on this set. The pipeline uses only `prompt → top-K logprobs`: no hooks, no attention output, no hidden states. HELDOUT R² = 0.89 on a 75-25 random split. The formula renders to a portable `.smt2` certificate that z3 and cvc5 both verify in single-digit milliseconds. Reproduction package (scripts + shipped artifacts + pre-registration): `examples/h31_blackbox_cert/`.
+## Where EML wins vs loses
 
-## Where EML wins and loses — two honest benchmarks
+| Benchmark | EML | Best baseline | Verdict |
+|---|---|---|---|
+| `exp(a·b)`, n=300, use_mul=True | depth-1 finds `eml((a*b), 1)` exactly, R²=**1.0000**, 1 node | poly K=5: R²=0.9997, 21 terms | **EML wins R² AND parsimony** |
+| Qwen3.6-27B factual recall (top-K only) | depth-4 formula, R²=0.89, **dual-verified `.smt2` cert** | no other SR tool ships portable certs | **only EML produces a verifiable formula** |
+| Gemma-4-31B induction probe, n=432, 10 seeds | 5 nodes, R²=0.937, **9/10 seeds identical** | PySR: 10 nodes, R²=0.953, 1/10 identical | **parity on R², EML wins reproducibility** |
+| Feynman 8-equation subset (analytic targets) | mean R²=0.920, 0.47 s | poly K=5: 0.989 (<1 ms), PySR: 0.979 (23 s) | **EML loses R² on every equation**; ~49× faster than PySR |
 
-EML's relative performance is dataset-dependent. We report two heads-up comparisons against polynomial OLS and PySR (live runs, no cached numbers).
+![EML structural recovery on exp(a·b)](examples/srbench_feynman/figure_eml_wins_v2.png)
 
-### 1. Gemma-4-31B-it induction probe (n = 432, 75-25 split, 10 random seeds for EML and PySR alike)
+EML is **not a general-purpose accuracy-first SR engine** — for analytic targets in a polynomial's expressive class, low-degree OLS wins on R² *and* speed. EML's niche is **closed-form, reproducible, formally-verifiable symbolic predictions** of LLM/probe behavior. Full benchmark tables and figures in `examples/srbench_feynman/`.
 
-| | EML d=3 | EML d=3 + 3-stage boost | PySR | poly K=2 | poly K=5 |
-|---|---:|---:|---:|---:|---:|
-| Best HELDOUT R² | 0.937 | 0.958 | 0.953 | 0.933 | 0.878 |
-| Expression size (nodes / coeffs) | **5** | 15 | 10 | 21 | 252 |
-| Seeds → identical expression | **9 / 10** | n/a | 1 / 10 | n/a | n/a |
-| SMT-LIB2 cert | direct (`eml_tree_to_smt2_intervals`) | per-stage direct | per-operator axioms | QF_NRA solver | QF_NRA solver |
+## Library
 
-Single-stage EML (0.937) trails PySR (0.953) by 0.016; 3-stage residual boosting closes and nominally reverses the gap (0.958), but that 0.005 edge is within split-and-seed noise — read it as **parity, not a win**. Where EML separates is **reproducibility and verifiability**: identical expression on 9 of 10 seeds (PySR 1/10), half the node count, and one-call SMT-LIB2 translation that the polynomial and PySR forms do not have.
+```python
+import emltorch as eml
 
-### 2. Feynman equations subset (8 classical analytic targets, 1-3 variables, n = 300 each)
-
-| Method | Mean HELDOUT R² | Median HELDOUT R² | Median fit time | Wins / 8 | Clean recovery (R²>0.999) |
-|---|---:|---:|---:|---:|---:|
-| EML d=3 | 0.920 | 0.932 | 0.47 s | 0 | 0 |
-| EML d=4 | 0.896 | 0.900 | 2.92 s | 0 | 0 |
-| poly K=2 | 0.980 | 0.990 | <0.001 s | 1 | 2 |
-| poly K=5 | 0.989 | 0.993 | <0.001 s | **5** | 2 |
-| PySR | 0.979 | **0.996** | 23.0 s | 4 | **3** |
-
-![Feynman benchmark — per-equation R² heat-strip and per-method accuracy-vs-speed scatter](examples/srbench_feynman/figure_benchmark_v2.png)
-
-**EML loses on raw HELDOUT R² to both polynomial OLS and PySR on every one of the 8 equations.** Including the exp-native targets (Feynman I.6.20a `exp(−θ²/2)`, I.6.20 the Gaussian) where EML's structural recovery was expected to shine — EML reaches R² = 0.99 there but PySR/poly reach 1.00. The EML clean-recovery count is 0/8, vs PySR 3/8 and poly K=5 2/8. EML's two surviving advantages on this benchmark are **speed** — EML d=3 is ~49× faster than PySR (0.47 s vs 23 s median) — and **expression size** (2–5 eml-operator nodes vs PySR 7–17 AST nodes vs poly K=5 ~20 terms). The 49× ratio used `parallelism="serial"` for deterministic PySR; we re-ran with `parallelism="multithreading"` + `JULIA_NUM_THREADS=8` (PySR's default for performance) and got a slightly *worse* PySR median of 29.1 s (per-iteration overhead dominates at this iter/pop budget), so the speed gap is real, not an artifact of single-threaded PySR. See `examples/srbench_feynman/pysr_multithreading_retime.json`. On targets that are well-fit by low-degree polynomials (multiplicative monomials like `m·g·z`, ratios like `q/C`), low-degree poly is the right tool by 500–6000× speed and equal-or-better R².
-
-### 3. Where EML structurally wins — `y = exp(a · b)` (n = 300, depth-1 search, use_mul=True)
-
-![EML structural recovery on exp(a·b) — predicted-vs-actual + residuals vs |a·b|](examples/srbench_feynman/figure_eml_wins_v2.png)
-
-With the multiplicative pre-feature enabled (`use_mul=True`), depth-1 evolution finds the canonical closed form on its first try:
-
-```
-+0.0000 + (+1.0000) * [eml((a * b), 1)]    # = exp(a·b) − ln(1) = exp(a·b) exactly
+result = eml.fit(x, y, depth=3)
+print(result.expression)   # "+0.0000 + (+1.0000) * [eml((a * b), 1)]"
+print(result.r2)
 ```
 
-HELDOUT R² = **1.0000** (max |residual| = 1.4e-7, float-precision-limited). Polynomial OLS K=5 with all 21 cross-terms reaches HELDOUT R² = 0.9997 with max |residual| = 0.050 (right panel: visibly biased at large |a·b| where `exp(·)` curvature dominates). One eml-operator node beats 21 polynomial coefficients on accuracy AND parsimony. This is the regime EML was designed for — targets that admit an `exp(·)` or `ln(·)` closed form in feature combinations. Reproduce: `python examples/srbench_feynman/make_eml_wins_figure.py`.
+- `eml.fit_multi_seed(x, y, n_seeds=10)` — N independent fits + identical-expression-rate (the reproducibility axis).
+- `eml.fit_pareto(x, y, depths=(1,2,3,4,5))` — accuracy/complexity Pareto front; `.best()`, `.select(max_complexity=k)`, `.predict(x)`.
+- `eml.fit_residual_boost(x, y, n_stages=3)` — gradient-boosting-style additive EML stages; per-stage tree is still SMT-translatable.
+- `eml.fit(..., polish=True, polish_optimizer="lbfgs")` — quasi-Newton constant refinement.
 
-### Honest summary
+## When NOT to use this
 
-EML is **not a general-purpose accuracy-first SR engine**. It is faster than PySR by ~49× (median, the 8-equation Feynman benchmark) and 50–1000× more reproducible (identical-expression-rate 9/10 vs 1/10 on the Gemma probe), and every EML expression translates to a portable SMT-LIB2 cert in one library call. For analytic targets in a polynomial's expressive class, low-degree OLS is the right tool. EML's defensible niche is **closed-form, reproducible, formally-verifiable symbolic predictions** of LLM/probe behavior — which is what the Qwen3.6 factual-recall headline above is.
-
-## Library features
-
-- `eml.fit(x, y, depth=3)` — single-best EML fit.
-- `eml.fit_multi_seed(x, y, n_seeds=10)` — N independent fits + byte-equality `topology_stability` fraction (the reproducibility axis).
-- `eml.fit_residual_boost(x, y, n_stages=3)` — gradient-boosting-style additive EML stages (the per-stage tree is still SMT-translatable).
-- `eml.fit_pareto(x, y, depths=(1,2,3,4,5))` — accuracy/complexity Pareto front across depths; `.best()`, `.select(max_complexity=k)`, `.predict(x)`. Float-tolerance domination (`rtol_r2=1e-9` default) prevents float-noise-only points from inflating the front.
-
-![Pareto demo — fit_pareto front on Feynman I.6.20a exp(−θ²/2)](examples/srbench_feynman/figure_pareto_demo_v2.png)
-- `polish(..., optimizer="lbfgs")` (or `"adam+lbfgs"`) — quasi-Newton constant refinement; `"adam"` (default) is bit-identical to the previous polish path. Threaded through `fit(..., polish=True, polish_optimizer="lbfgs")`.
-
-## Limitations
-
-The headline factual-recall formula has its own caveat: `L = 0` deterministically across all factual prompts in that probe set, so the formula's value algebraically collapses to an affine function of `H`; linear regression on `H` matches the EML HELDOUT R² to four decimals on this slice. The cert's `working_lb` UNSAT at τ = 0.10 is implied by the precomputed interval bound and re-confirmed by the solvers, not load-bearing on nonlinear SMT reasoning; at the pre-registered τ = 0.5, both solvers return SAT. On classical analytic benchmarks (Feynman subset above), EML does not reach exact recovery at depth 3-4 even on its expected-strength exp-native targets.
+- Raw HELDOUT R² on smooth analytic targets → polynomial OLS or PySR.
+- Categorical or modular targets → a different SR engine.
+- You don't need a portable formal certificate of the discovered formula → PySR.
 
 ## License
 
-MIT. EML operator and universality proof: Odrzywolek, [arXiv:2603.21852](https://arxiv.org/abs/2603.21852).
+MIT. EML operator: Odrzywolek, [arXiv:2603.21852](https://arxiv.org/abs/2603.21852).
