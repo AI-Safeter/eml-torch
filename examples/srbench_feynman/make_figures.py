@@ -1,10 +1,10 @@
 """Generate two minimal figures next to the SRBench-Feynman example:
 
-  figure_benchmark.png   2-panel summary of the 8-equation Feynman benchmark
-                         (per-equation HELDOUT R² heat-strip + per-method
-                         mean R² vs median fit time scatter)
-  figure_pareto_demo.png accuracy/complexity Pareto front discovered by
-                         emltorch.fit_pareto on Feynman I.6.20a exp(-theta^2/2)
+  figure_benchmark_v2.png    2-panel summary of the 8-equation Feynman benchmark
+                             (per-equation HELDOUT R² heat-strip + per-method
+                             mean R² vs median fit time scatter)
+  figure_pareto_demo_v2.png  accuracy/complexity Pareto front discovered by
+                             emltorch.fit_pareto on Feynman I.6.20a exp(-theta^2/2)
 
 Both figures read from this directory:
   - results.json (the live benchmark output shipped alongside)
@@ -143,7 +143,7 @@ def make_benchmark_figure():
         fontsize=11,
     )
     fig.tight_layout(rect=[0, 0, 1, 0.95])
-    out = os.path.join(SCRIPT_DIR, "figure_benchmark.png")
+    out = os.path.join(SCRIPT_DIR, "figure_benchmark_v2.png")
     fig.savefig(out, dpi=140, bbox_inches="tight")
     print(f"wrote {out}")
     plt.close(fig)
@@ -232,7 +232,7 @@ def make_pareto_demo_figure():
     ax.grid(True, alpha=0.3, linestyle=":")
     ax.legend(loc="lower right", fontsize=8, framealpha=0.95)
     fig.tight_layout()
-    out = os.path.join(SCRIPT_DIR, "figure_pareto_demo.png")
+    out = os.path.join(SCRIPT_DIR, "figure_pareto_demo_v2.png")
     fig.savefig(out, dpi=140, bbox_inches="tight")
     print(f"wrote {out}")
     plt.close(fig)
