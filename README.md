@@ -19,17 +19,16 @@ P_target ≈ 0.5954 + (−0.1353) · eml(L, eml(L − H, 1))
 
 On a separate Gemma-4-31B-it induction probe (n = 432, identical 75-25 split, 10 random seeds for EML and PySR alike):
 
-| | EML d=3 | PySR | poly K=2 | poly K=5 |
-|---|---:|---:|---:|---:|
-| Best HELDOUT R² | 0.937 | **0.953** | 0.933 | 0.878 |
-| Median HELDOUT R² | 0.937 | 0.934 | — | — |
-| Nodes / coefficients | **5** | 10 | 21 | 252 |
-| Seeds → identical expression | **9 / 10** | 1 / 10 | n/a | n/a |
-| SMT-LIB2 cert | direct (`eml_tree_to_smt2_intervals`) | per-operator axioms | QF_NRA solver | QF_NRA solver |
+| | EML d=3 | EML d=3 + 3-stage boost | PySR | poly K=2 | poly K=5 |
+|---|---:|---:|---:|---:|---:|
+| Best HELDOUT R² | 0.937 | **0.958** | 0.953 | 0.933 | 0.878 |
+| Expression size (nodes / coeffs) | **5** | 15 | 10 | 21 | 252 |
+| Seeds → identical expression | **9 / 10** | n/a | 1 / 10 | n/a | n/a |
+| SMT-LIB2 cert | direct (`eml_tree_to_smt2_intervals`) | per-stage direct | per-operator axioms | QF_NRA solver | QF_NRA solver |
 
-PySR matches the R² tier with about 2× longer expressions and a different form on every seed. EML loses ≈ 0.016 R² (best-of-10) but stays compact, stable across seeds, and translates to portable SMT-LIB2 in one library call. The `emltorch.fit_multi_seed(x, y, n_seeds=10)` API operationalizes this: it runs N seeds, byte-equality-counts the resulting expressions, and reports a `topology_stability` fraction — the empirical axis on which EML separates from polynomial-degree symbolic regression.
+Single-stage EML (0.937) already edges poly K=2 (0.933) at a quarter of the parameters, and trails PySR by 0.016 — while returning the *identical* expression on 9 of 10 seeds, where PySR's form changes every seed. With 3-stage residual boosting EML reaches **0.958, above both poly K=2 and PySR (0.953)** on this slice. `emltorch.fit_multi_seed(x, y, n_seeds=10)` operationalizes the stability axis: it runs N seeds, byte-equality-counts the expressions, and reports a `topology_stability` fraction. Every EML expression — single or boosted — translates to portable SMT-LIB2 in one library call; the polynomials and PySR forms do not.
 
-When single-stage EML hits a local optimum that misses informative features (e.g. Gemma-4 induction at pool size L ∈ [21, 25], where stage-1 converges to `eml(n_rep, n_rep)` and drops the rest), gradient-boosting-style residual fitting recovers them. `emltorch.fit_residual_boost(x, y, n_stages=3)` fits a sequence of EML trees on running residuals and returns their additive sum; on the Gemma L_large slice this lifts HELDOUT R² from 0.78 to 0.82 (3 stages) — second and third stages discover the L and entropy structure that stage 1 dropped, in symbolic form, still SMT-translatable per stage.
+`emltorch.fit_residual_boost(x, y, n_stages=3)` fits a sequence of EML trees on running residuals and returns their additive sum, for targets where one bounded-depth tree hits a local optimum that drops informative features (e.g. Gemma-4 induction at pool size L ∈ [21, 25], where single-stage collapses to `eml(n_rep, n_rep)`). On that L_large slice boosting lifts HELDOUT R² from 0.78 to 0.82; on L_mid from 0.94 to 0.96 (the boosted column above). Inputs are normalized by default — the additive predictor is otherwise unbounded and can extrapolate through its `exp(.)` leaves — and each stage stays SMT-translatable.
 
 ## Limitations
 
