@@ -139,6 +139,7 @@ def fit(
     r2_target: float = 0.99,
     polish: bool = False,
     polish_iters: int = 2000,
+    polish_optimizer: Literal["adam", "lbfgs", "adam+lbfgs"] = "adam",
     normalize_inputs: bool = False,
     n_islands: int = 1,
     migration_interval: int = 5,
@@ -267,6 +268,7 @@ def fit(
                 device=device,
                 warm_a=res.best_a,
                 warm_b=res.best_b,
+                optimizer=polish_optimizer,
             )
             # Accept polished result only if it strictly improved
             if pol.r2 > res.best_r2:
@@ -368,6 +370,7 @@ def fit_multi_seed(
     r2_target: float = 0.99,
     polish: bool = False,
     polish_iters: int = 2000,
+    polish_optimizer: Literal["adam", "lbfgs", "adam+lbfgs"] = "adam",
     normalize_inputs: bool = False,
     seed_start: int = 0,
 ) -> MultiSeedResult:
@@ -407,6 +410,7 @@ def fit_multi_seed(
             r2_target=r2_target,
             polish=polish,
             polish_iters=polish_iters,
+            polish_optimizer=polish_optimizer,
             normalize_inputs=normalize_inputs,
         )
         results.append(r)
@@ -513,6 +517,7 @@ def fit_residual_boost(
     r2_target: float = 0.99,
     polish: bool = False,
     polish_iters: int = 2000,
+    polish_optimizer: Literal["adam", "lbfgs", "adam+lbfgs"] = "adam",
     normalize_inputs: bool = True,
     seed_start: int = 0,
     seeds_per_stage: int = 1,
@@ -649,6 +654,7 @@ def fit_residual_boost(
                 r2_target=r2_target,
                 polish=polish,
                 polish_iters=polish_iters,
+                polish_optimizer=polish_optimizer,
                 normalize_inputs=normalize_inputs,
             )
             cand_r2 = _residual_r2(candidate, residual)

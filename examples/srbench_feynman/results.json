@@ -1,0 +1,372 @@
+{
+  "I.6.20a": {
+    "desc": "exp(-theta^2/2)",
+    "n_vars": 1,
+    "n_train": 225,
+    "n_test": 75,
+    "methods": {
+      "eml_d3": {
+        "heldout_r2": 0.9929932616739701,
+        "complexity": 2,
+        "complexity_unit": "eml_operator_count",
+        "fit_time_s": 0.05180621147155762,
+        "expression": "-0.0075 + (+0.0060) * [eml(eml(1, exp(x)), x)]"
+      },
+      "eml_d4": {
+        "heldout_r2": 0.9929932616739701,
+        "complexity": 2,
+        "complexity_unit": "eml_operator_count",
+        "fit_time_s": 0.1552886962890625,
+        "expression": "-0.0075 + (+0.0060) * [eml(eml(1, exp(x)), x)]"
+      },
+      "poly_K2": {
+        "heldout_r2": 0.9992035500351664,
+        "complexity": 3,
+        "complexity_unit": "ols_coefficient_count",
+        "fit_time_s": 0.0004699230194091797
+      },
+      "poly_K5": {
+        "heldout_r2": 0.9999999776737294,
+        "complexity": 6,
+        "complexity_unit": "ols_coefficient_count",
+        "fit_time_s": 0.00019931793212890625
+      },
+      "pysr": {
+        "heldout_r2": 0.9998411905787543,
+        "complexity": 15,
+        "complexity_unit": "pysr_node_count",
+        "fit_time_s": 28.265737295150757,
+        "source": "live_run_this_script"
+      }
+    }
+  },
+  "I.6.20": {
+    "desc": "exp(-(theta/sigma)^2/2)",
+    "n_vars": 2,
+    "n_train": 225,
+    "n_test": 75,
+    "methods": {
+      "eml_d3": {
+        "heldout_r2": 0.9659695396727919,
+        "complexity": 2,
+        "complexity_unit": "eml_operator_count",
+        "fit_time_s": 0.4204709529876709,
+        "expression": "+1.0124 + (-0.1652) * [eml(1, eml((x2 - x1), 1))]"
+      },
+      "eml_d4": {
+        "heldout_r2": 0.9659695396727919,
+        "complexity": 2,
+        "complexity_unit": "eml_operator_count",
+        "fit_time_s": 3.0991921424865723,
+        "expression": "+1.0124 + (-0.1652) * [eml(1, eml((x2 - x1), 1))]"
+      },
+      "poly_K2": {
+        "heldout_r2": 0.9944225289603822,
+        "complexity": 6,
+        "complexity_unit": "ols_coefficient_count",
+        "fit_time_s": 0.0003292560577392578
+      },
+      "poly_K5": {
+        "heldout_r2": 0.9946770474902417,
+        "complexity": 12,
+        "complexity_unit": "ols_coefficient_count",
+        "fit_time_s": 0.0003273487091064453
+      },
+      "pysr": {
+        "heldout_r2": 0.9970756381205539,
+        "complexity": 15,
+        "complexity_unit": "pysr_node_count",
+        "fit_time_s": 21.77968692779541,
+        "source": "live_run_this_script"
+      }
+    }
+  },
+  "I.12.5": {
+    "desc": "q2*Ef",
+    "n_vars": 2,
+    "n_train": 225,
+    "n_test": 75,
+    "methods": {
+      "eml_d3": {
+        "heldout_r2": 0.937033779252172,
+        "complexity": 2,
+        "complexity_unit": "eml_operator_count",
+        "fit_time_s": 0.5323293209075928,
+        "expression": "+62.5100 + (-3.4902) * [eml(exp(1), eml((x1 + x2), 1))]"
+      },
+      "eml_d4": {
+        "heldout_r2": 0.9066603636111739,
+        "complexity": 5,
+        "complexity_unit": "eml_operator_count",
+        "fit_time_s": 2.736769676208496,
+        "expression": "+13.2854 + (+0.5141) * [eml((x1 + x2), eml(eml(1, (x1 + x2)), eml((x1 + x2), eml((x1 - x2), x1))))]"
+      },
+      "poly_K2": {
+        "heldout_r2": 1.0,
+        "complexity": 6,
+        "complexity_unit": "ols_coefficient_count",
+        "fit_time_s": 0.0003256797790527344
+      },
+      "poly_K5": {
+        "heldout_r2": 1.0,
+        "complexity": 12,
+        "complexity_unit": "ols_coefficient_count",
+        "fit_time_s": 0.00037860870361328125
+      },
+      "pysr": {
+        "heldout_r2": 0.9999999999999978,
+        "complexity": 9,
+        "complexity_unit": "pysr_node_count",
+        "fit_time_s": 21.352062225341797,
+        "source": "live_run_this_script"
+      }
+    }
+  },
+  "I.25.13": {
+    "desc": "q/C",
+    "n_vars": 2,
+    "n_train": 225,
+    "n_test": 75,
+    "methods": {
+      "eml_d3": {
+        "heldout_r2": 0.9362835948476593,
+        "complexity": 2,
+        "complexity_unit": "eml_operator_count",
+        "fit_time_s": 0.47461700439453125,
+        "expression": "+1.0899 + (+0.1591) * [eml((x1 - x2), eml(x1, (x1 - x2)))]"
+      },
+      "eml_d4": {
+        "heldout_r2": 0.9362835948476593,
+        "complexity": 2,
+        "complexity_unit": "eml_operator_count",
+        "fit_time_s": 2.8226771354675293,
+        "expression": "+1.0899 + (+0.1591) * [eml((x1 - x2), eml(x1, (x1 - x2)))]"
+      },
+      "poly_K2": {
+        "heldout_r2": 0.9804848315380225,
+        "complexity": 6,
+        "complexity_unit": "ols_coefficient_count",
+        "fit_time_s": 0.0003066062927246094
+      },
+      "poly_K5": {
+        "heldout_r2": 0.9873512572254114,
+        "complexity": 12,
+        "complexity_unit": "ols_coefficient_count",
+        "fit_time_s": 0.0003287792205810547
+      },
+      "pysr": {
+        "heldout_r2": 0.9999999957401751,
+        "complexity": 17,
+        "complexity_unit": "pysr_node_count",
+        "fit_time_s": 22.627362728118896,
+        "source": "live_run_this_script"
+      }
+    }
+  },
+  "I.14.3": {
+    "desc": "m*g*z",
+    "n_vars": 3,
+    "n_train": 225,
+    "n_test": 75,
+    "methods": {
+      "eml_d3": {
+        "heldout_r2": 0.8141017696849375,
+        "complexity": 4,
+        "complexity_unit": "eml_operator_count",
+        "fit_time_s": 1.271092414855957,
+        "expression": "+37.3757 + (+1.6227) * [eml((x1 + x3), eml(eml((x1 - x2), (x1 + x3)), eml((x1 + x2), (x3 - x1))))]"
+      },
+      "eml_d4": {
+        "heldout_r2": 0.7983140390079203,
+        "complexity": 5,
+        "complexity_unit": "eml_operator_count",
+        "fit_time_s": 6.027974605560303,
+        "expression": "+38.8616 + (+1.6618) * [eml((x2 + x3), eml(eml((x3 - x1), (x2 + x3)), eml((x1 + x3), eml((x2 - x1), (x1 + x2)))))]"
+      },
+      "poly_K2": {
+        "heldout_r2": 0.9939991256271952,
+        "complexity": 10,
+        "complexity_unit": "ols_coefficient_count",
+        "fit_time_s": 0.0003504753112792969
+      },
+      "poly_K5": {
+        "heldout_r2": 0.9944160599923947,
+        "complexity": 19,
+        "complexity_unit": "ols_coefficient_count",
+        "fit_time_s": 0.0004425048828125
+      },
+      "pysr": {
+        "heldout_r2": 0.9941627762173795,
+        "complexity": 13,
+        "complexity_unit": "pysr_node_count",
+        "fit_time_s": 23.837473154067993,
+        "source": "live_run_this_script"
+      }
+    }
+  },
+  "II.3.24": {
+    "desc": "Pwr/(4*pi*r^2)",
+    "n_vars": 2,
+    "n_train": 225,
+    "n_test": 75,
+    "methods": {
+      "eml_d3": {
+        "heldout_r2": 0.9110009028498924,
+        "complexity": 2,
+        "complexity_unit": "eml_operator_count",
+        "fit_time_s": 0.4668152332305908,
+        "expression": "+0.0325 + (+0.0063) * [eml((x1 - x2), eml((x1 + x2), (x1 - x2)))]"
+      },
+      "eml_d4": {
+        "heldout_r2": 0.8925802495759754,
+        "complexity": 4,
+        "complexity_unit": "eml_operator_count",
+        "fit_time_s": 2.7680275440216064,
+        "expression": "+0.0331 + (+0.0067) * [eml((x1 - x2), eml((x1 + x2), eml(x1, eml(x1, (x1 - x2)))))]"
+      },
+      "poly_K2": {
+        "heldout_r2": 0.9254938433893227,
+        "complexity": 6,
+        "complexity_unit": "ols_coefficient_count",
+        "fit_time_s": 0.0002803802490234375
+      },
+      "poly_K5": {
+        "heldout_r2": 0.9599410224704396,
+        "complexity": 12,
+        "complexity_unit": "ols_coefficient_count",
+        "fit_time_s": 0.0003199577331542969
+      },
+      "pysr": {
+        "heldout_r2": 0.9691834341979588,
+        "complexity": 15,
+        "complexity_unit": "pysr_node_count",
+        "fit_time_s": 23.414611101150513,
+        "source": "live_run_this_script"
+      }
+    }
+  },
+  "I.27.6": {
+    "desc": "1/(1/d1 + n/d2)",
+    "n_vars": 3,
+    "n_train": 225,
+    "n_test": 75,
+    "methods": {
+      "eml_d3": {
+        "heldout_r2": 0.8746488451018114,
+        "complexity": 3,
+        "complexity_unit": "eml_operator_count",
+        "fit_time_s": 1.2631630897521973,
+        "expression": "+0.9685 + (+0.0253) * [eml((x2 - x3), eml(eml((x3 - x2), (x2 - x3)), (x1 - x3)))]"
+      },
+      "eml_d4": {
+        "heldout_r2": 0.8034748406930252,
+        "complexity": 2,
+        "complexity_unit": "eml_operator_count",
+        "fit_time_s": 6.987704277038574,
+        "expression": "+0.1750 + (+0.2288) * [eml(1, eml((x3 - x2), 1))]"
+      },
+      "poly_K2": {
+        "heldout_r2": 0.9860323131808367,
+        "complexity": 10,
+        "complexity_unit": "ols_coefficient_count",
+        "fit_time_s": 0.0003299713134765625
+      },
+      "poly_K5": {
+        "heldout_r2": 0.9912436244630876,
+        "complexity": 19,
+        "complexity_unit": "ols_coefficient_count",
+        "fit_time_s": 0.00045013427734375
+      },
+      "pysr": {
+        "heldout_r2": 0.9161743968675515,
+        "complexity": 11,
+        "complexity_unit": "pysr_node_count",
+        "fit_time_s": 22.636951446533203,
+        "source": "live_run_this_script"
+      }
+    }
+  },
+  "I.26.2": {
+    "desc": "arcsin(n*sin(theta2))",
+    "n_vars": 2,
+    "n_train": 225,
+    "n_test": 75,
+    "methods": {
+      "eml_d3": {
+        "heldout_r2": 0.9282346186727556,
+        "complexity": 3,
+        "complexity_unit": "eml_operator_count",
+        "fit_time_s": 0.456758975982666,
+        "expression": "-0.3282 + (-0.0465) * [eml((x1 + x2), eml(eml((x1 - x2), x2), x1))]"
+      },
+      "eml_d4": {
+        "heldout_r2": 0.8712973657228564,
+        "complexity": 4,
+        "complexity_unit": "eml_operator_count",
+        "fit_time_s": 3.020207643508911,
+        "expression": "-0.7249 + (+0.0593) * [eml((x1 - x2), eml(x1, eml(eml((x1 - x2), x2), (x1 + x2))))]"
+      },
+      "poly_K2": {
+        "heldout_r2": 0.9622002642136155,
+        "complexity": 6,
+        "complexity_unit": "ols_coefficient_count",
+        "fit_time_s": 0.00031113624572753906
+      },
+      "poly_K5": {
+        "heldout_r2": 0.9862409052213288,
+        "complexity": 12,
+        "complexity_unit": "ols_coefficient_count",
+        "fit_time_s": 0.0003266334533691406
+      },
+      "pysr": {
+        "heldout_r2": 0.954861488066739,
+        "complexity": 7,
+        "complexity_unit": "pysr_node_count",
+        "fit_time_s": 31.424627780914307,
+        "source": "live_run_this_script"
+      }
+    }
+  },
+  "aggregate": {
+    "eml_d3": {
+      "mean_heldout_r2": 0.9200332889694988,
+      "median_heldout_r2": 0.9322591067602075,
+      "median_fit_time_s": 0.47071611881256104,
+      "n_equations": 8,
+      "clean_recovery_count_r2gt0999": 0,
+      "win_count": 0
+    },
+    "eml_d4": {
+      "mean_heldout_r2": 0.8959466568506715,
+      "median_heldout_r2": 0.8996203065935746,
+      "median_fit_time_s": 2.92144238948822,
+      "n_equations": 8,
+      "clean_recovery_count_r2gt0999": 0,
+      "win_count": 0
+    },
+    "poly_K2": {
+      "mean_heldout_r2": 0.9802295571180677,
+      "median_heldout_r2": 0.990015719404016,
+      "median_fit_time_s": 0.0003274679183959961,
+      "n_equations": 8,
+      "clean_recovery_count_r2gt0999": 2,
+      "win_count": 1
+    },
+    "poly_K5": {
+      "mean_heldout_r2": 0.9892337368170792,
+      "median_heldout_r2": 0.9928298422277411,
+      "median_fit_time_s": 0.00032806396484375,
+      "n_equations": 8,
+      "clean_recovery_count_r2gt0999": 2,
+      "win_count": 5
+    },
+    "pysr": {
+      "mean_heldout_r2": 0.9789123649736386,
+      "median_heldout_r2": 0.9956192071689667,
+      "median_fit_time_s": 23.025781273841858,
+      "n_equations": 8,
+      "clean_recovery_count_r2gt0999": 3,
+      "win_count": 4
+    }
+  }
+}

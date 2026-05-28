@@ -19,7 +19,7 @@ Quick start:
     print(result.r2)
 """
 
-__version__ = "0.7.0"
+__version__ = "0.7.1"
 
 from .operator import safe_eml
 from .tree import BatchedEMLTree
@@ -68,7 +68,6 @@ __all__ = [
     "MultiSeedResult",
     "BoostedResult",
     "ParetoResult",
-    "_expression_complexity",
     # Building blocks
     "safe_eml",
     "BatchedEMLTree",
