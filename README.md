@@ -40,9 +40,30 @@ log|w| = −7.78 + 0.42 · eml(eml(eml(1, j − T/2), j), eml(T/2, eml(T/2 − l
 
 — a biphasic peak in attention magnitude centered on the sequence midpoint, written out as elementary operators. EML R² = 0.762 vs polynomial K=5 R² = 0.560.
 
-## Showcase 4 — Cross-model language-pivot direction (Qwen3-4B + Mistral-7B)
+## Showcase 4 — Steering an LLM's *output language* with a single residual-stream direction
 
-Project the residual stream of 10 Korean factual prompts onto the per-language pivot direction `v_KO − v_ZH`. A depth-5 EML fit lands at HELDOUT **R² = 0.9888 on Qwen3-4B** and **R² = 0.9805 on Mistral-7B** — same formula shape across two different model families, tying poly K=5 at much lower node count. The same direction extracted at L=18 is *causally* load-bearing: subtract `α = 0.7 · v_KO−ZH` from the residual at L=18 and the model emits coherent Chinese answers to Korean factual prompts — `독일의 수도는` becomes `'柏林吗？是的，德国的首都是柏林'`, content preserved, language flipped.
+![Cross-model geometric language steering — per-layer EML fit + causal Korean→Chinese/English flip](examples/h29_language_pivot/outputs/headline_figure_v3.png)
+
+**Find the direction.** Take 10 Korean factual prompts (`"한국의 수도는"`, `"독일의 수도는"`, …) and 10 Chinese translations. Extract the residual stream at every layer, average each set, and subtract: `v_KO − v_ZH`. That's one vector per layer, per model.
+
+**Fit it.** Project each layer's residuals onto its `v_KO − v_ZH` direction and fit the resulting per-layer scalar curve with a depth-5 EML tree.
+
+| Model | Training mix | EML fit (HELDOUT R²) |
+|---|---|---:|
+| **Qwen3-4B** | CN + EN | **0.9888** |
+| **Mistral-7B** | EN | **0.9805** |
+
+The same depth-5 EML shape fits both — across architectures, across training corpora, the per-layer pivot magnitude follows the same elementary-operator law.
+
+**Steer with it.** Take the layer-18 vector for Qwen3-4B and subtract `0.7 · v_KO−ZH` from the residual stream at exactly that layer. The Korean prompts get answered correctly — *in Chinese*:
+
+| Prompt (KO) | Clean output | After single-layer steer at L=18, α=0.7 |
+|---|---|---|
+| `한국의 수도는` | (KO) Seoul. | (ZH) `首尔，对吗？是的，韩国的首都确实是首尔` |
+| `독일의 수도는` | (KO) Berlin. | (ZH) `柏林吗？是的，德国的首都是柏林` |
+| `프랑스의 수도는` | (KO) Paris. | (ZH) `巴黎，对吗？是的，巴黎是法国的首都` |
+
+Repeat the protocol on Mistral-7B with `v_KO − v_EN` at L=16: 5/5 Korean prompts emit coherent English with the correct capital. **A single elementary-operator-fitted direction, extracted by EML at one layer, causally controls which language the model thinks and replies in.**
 
 ## Showcase 5 — Structural recovery: `eml((a·b), 1) ≡ exp(a·b)`
 
