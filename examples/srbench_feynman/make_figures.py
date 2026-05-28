@@ -61,11 +61,13 @@ def make_benchmark_figure():
     methods = ["eml_d3", "eml_d4", "poly_K2", "poly_K5", "pysr"]
     eq_names = [k for k in data.keys() if k != "aggregate"]
 
-    # Per-(equation, method) HELDOUT R² matrix
+    # Per-(equation, method) HELDOUT R² matrix.
+    # results.json shape: data[eq] = {"desc": ..., "methods": {method: {"heldout_r2": ...}}}
     r2_mat = np.full((len(methods), len(eq_names)), np.nan)
     for j, eq in enumerate(eq_names):
+        eq_methods = data[eq].get("methods", {}) if isinstance(data[eq], dict) else {}
         for i, m in enumerate(methods):
-            cell = data[eq].get(m, {})
+            cell = eq_methods.get(m, {})
             if isinstance(cell, dict) and isinstance(
                 cell.get("heldout_r2"), (int, float)
             ):
