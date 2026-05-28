@@ -763,6 +763,7 @@ def fit_pareto(
     device: str | None = None,
     r2_target: float = 0.99,
     normalize_inputs: bool = False,
+    rtol_r2: float = 1e-9,
 ) -> "ParetoResult":
     """Discover a Pareto-optimal front of EML expressions (accuracy vs. complexity).
 
@@ -841,16 +842,20 @@ def fit_pareto(
             seen[key] = idx
     deduped = [all_evaluated[i] for i in sorted(seen.values())]
 
-    # Step 2: domination filter.
+    # Step 2: domination filter with float tolerance on R².
     # Point P_i is dominated if there exists P_j with
-    #   c_j <= c_i  AND  r2_j >= r2_i  AND  (c_j < c_i OR r2_j > r2_i)
+    #   c_j <= c_i  AND  r2_j >= r2_i - rtol_r2  AND
+    #   (c_j < c_i  OR  r2_j > r2_i + rtol_r2)
+    # The tolerance prevents an R² difference of ~1e-15 (float noise) from
+    # spuriously placing both points on the front when they are effectively
+    # tied in accuracy and the higher-complexity one should be excluded.
     front = []
     for i, (ci, ri, fi) in enumerate(deduped):
         dominated = False
         for j, (cj, rj, _) in enumerate(deduped):
             if i == j:
                 continue
-            if cj <= ci and rj >= ri and (cj < ci or rj > ri):
+            if cj <= ci and rj >= ri - rtol_r2 and (cj < ci or rj > ri + rtol_r2):
                 dominated = True
                 break
         if not dominated:
@@ -859,15 +864,15 @@ def fit_pareto(
     # Step 3: sort by complexity ascending.
     front.sort(key=lambda t: t[0])
 
-    # Sanity check: along the sorted front, r2 is strictly increasing.
-    # (By the domination definition this must hold; assert defensively.)
+    # Sanity check: along the sorted front, r2 is strictly increasing
+    # (beyond the tolerance). (By the tolerant domination rule this must hold.)
     for k in range(len(front) - 1):
         ck, rk, _ = front[k]
         ck1, rk1, _ = front[k + 1]
         assert ck < ck1, f"Front complexity not strictly increasing: {ck} -> {ck1}"
-        assert rk1 > rk, (
-            f"Front R² not strictly increasing at complexities {ck}->{ck1}: "
-            f"{rk:.6f} -> {rk1:.6f}"
+        assert rk1 > rk + rtol_r2, (
+            f"Front R² not strictly increasing (beyond rtol={rtol_r2:g}) at "
+            f"complexities {ck}->{ck1}: {rk:.12f} -> {rk1:.12f}"
         )
 
     return ParetoResult(front=front, all_evaluated=all_evaluated)

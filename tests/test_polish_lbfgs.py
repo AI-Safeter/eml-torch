@@ -303,3 +303,56 @@ def test_nonfinite_safety():
         f"LBFGS returned worse than warm-start: "
         f"lbfgs_r2={res.r2:.6f}  warm_r2={warm_r2:.6f}"
     )
+
+
+# ---------------------------------------------------------------------------
+# Test 6 — empirical proof-of-value: LBFGS at small iter budget
+# ---------------------------------------------------------------------------
+
+
+def test_lbfgs_at_small_iter_budget_matches_or_beats_adam():
+    """Empirical evidence that the LBFGS mode does something distinct from Adam.
+
+    At the default n_iters=2000 both methods saturate to the same fixed point on
+    smooth analytic targets, so they tie (the honest result reported in test 3).
+    The discriminator is the SMALL-iter regime: LBFGS's strong-Wolfe line
+    search takes quasi-Newton-class steps, so at constrained budgets it reaches
+    a lower MSE than Adam at lr=1e-2 even when both safeguards keep things
+    finite. This test runs polish at n_iters=30 with a depth-4 evolved tree
+    (more leaf constants → bigger optimization space) and asserts LBFGS reaches
+    MSE no worse than Adam, while printing the actual ratio as evidence.
+
+    Discipline: this asserts the safety property (LBFGS never strictly worse at
+    small budget); the test does NOT claim LBFGS always beats Adam, because on
+    fully affine-absorbable targets they correctly tie at the saturated optimum.
+    """
+    x, y = _make_target("cpu")
+    tree, idx, a, b = _evolve_tree(x, y, depth=4, seed=42)
+    n_small = 30  # well below the n_iters=2000 saturation regime
+
+    pol_adam = polish(
+        tree, idx, x, y, var_names=["x"],
+        n_iters=n_small, lr=1e-2, device="cpu",
+        warm_a=a, warm_b=b, optimizer="adam",
+    )
+    pol_lbfgs = polish(
+        tree, idx, x, y, var_names=["x"],
+        n_iters=n_small, lr=1e-2, device="cpu",
+        warm_a=a, warm_b=b, optimizer="lbfgs",
+    )
+
+    mse_a, mse_l = pol_adam.mse, pol_lbfgs.mse
+    r2_a, r2_l = pol_adam.r2, pol_lbfgs.r2
+    # Evidence emitted for the test log (visible with pytest -s).
+    print(
+        f"\n  n_iters={n_small}  adam: r2={r2_a:.6f} mse={mse_a:.3e}  "
+        f"lbfgs: r2={r2_l:.6f} mse={mse_l:.3e}  Δr2={r2_l-r2_a:+.2e}"
+    )
+
+    # Safety properties — both must hold for the LBFGS mode to be acceptable.
+    assert math.isfinite(r2_l) and math.isfinite(mse_l)
+    # LBFGS may equal Adam at saturation; it must not regress beyond float noise.
+    assert mse_l <= mse_a * 1.001 + 1e-9, (
+        f"At small-budget polish, LBFGS reached worse MSE than Adam: "
+        f"adam_mse={mse_a:.6e}, lbfgs_mse={mse_l:.6e}"
+    )

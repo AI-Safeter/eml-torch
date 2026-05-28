@@ -109,46 +109,89 @@ def test_pareto_property():
 
 
 def test_dominated_depth_excluded():
-    """A dominated point (higher-or-equal complexity, lower-or-equal r2 vs another)
-    must NOT appear on the front, but MUST appear in all_evaluated."""
+    """A dominated point must NOT appear on the front but MUST appear in all_evaluated.
+
+    Construction. On ``y = log(x)``, depth 1 already finds the exact identity
+    ``eml(1, x) = e − log(x)`` (R² ≈ 1.0 − float-noise). Deeper depths re-find
+    the same identity wrapped in extra layers, yielding (complexity > 1, R² ≈ 1).
+    Under the float-tolerance domination rule (``rtol_r2=1e-9``), every deeper
+    point with R² within tolerance of depth-1's R² is dominated by depth-1
+    (strictly smaller complexity, equal-within-tol R²) and must be excluded
+    from the front.
+    """
     x = torch.linspace(0.5, 5.0, 256)
     y = torch.log(x)
 
     result = eml.fit_pareto(x, y, depths=(1, 2, 3, 4), seeds_per_depth=1, device=DEVICE)
 
-    # Find dominated points by definition
+    # Confirm at least one dominated point exists in this construction
+    # (depth-1 hits R²≈1 first; deeper depths re-find it at higher complexity).
     all_pts = [(c, r2) for c, r2, _ in result.all_evaluated]
+    rtol = 1e-9
+    dominated_pts = [
+        (ci, ri)
+        for ci, ri in all_pts
+        for cj, rj in all_pts
+        if (ci, ri) != (cj, rj)
+        and cj <= ci
+        and rj >= ri - rtol
+        and (cj < ci or rj > ri + rtol)
+    ]
+    assert dominated_pts, (
+        "Construction precondition: expected at least one dominated point on the "
+        "log(x) target under depths=(1,2,3,4). all_evaluated="
+        f"{[(c, round(r, 6)) for c, r, _ in result.all_evaluated]}"
+    )
+
+    # Every dominated point must be excluded from the front but kept in all_evaluated.
     front_set = set((c, round(r2, 10)) for c, r2, _ in result.front)
-
-    dominated_found = False
-    for ci, ri in all_pts:
-        for cj, rj in all_pts:
-            if (ci, ri) == (cj, rj):
-                continue
-            # cj dominates ci
-            if cj <= ci and rj >= ri and (cj < ci or rj > ri):
-                dominated_found = True
-                # ci is dominated — should NOT be on front
-                assert (ci, round(ri, 10)) not in front_set, (
-                    f"Dominated point (c={ci}, r2={ri:.6f}) should not be on front, "
-                    f"but it is. It is dominated by (c={cj}, r2={rj:.6f})."
-                )
-                # But MUST be in all_evaluated
-                all_eval_pts = set(
-                    (c, round(r2, 10)) for c, r2, _ in result.all_evaluated
-                )
-                assert (
-                    ci,
-                    round(ri, 10),
-                ) in all_eval_pts, (
-                    f"Dominated point (c={ci}, r2={ri:.6f}) should be in all_evaluated"
-                )
-
-    if not dominated_found:
-        pytest.skip(
-            "No dominated points found in this run — all depths produced distinct "
-            "Pareto-optimal points. This is valid; the test can't assert on absent data."
+    all_eval_set = set((c, round(r2, 10)) for c, r2, _ in result.all_evaluated)
+    for ci, ri in dominated_pts:
+        assert (
+            ci,
+            round(ri, 10),
+        ) not in front_set, (
+            f"Dominated point (c={ci}, r2={ri:.10f}) must NOT be on front."
         )
+        assert (
+            ci,
+            round(ri, 10),
+        ) in all_eval_set, (
+            f"Dominated point (c={ci}, r2={ri:.10f}) must remain in all_evaluated."
+        )
+
+
+def test_float_tolerance_collapses_near_tied_r2():
+    """A near-tied R² (within rtol_r2) should not place both points on the front.
+
+    Concrete case: on ``y = log(x)``, depth-1 R² and depth-≥2 R² typically differ
+    by ~1e-15 (float noise). With the default ``rtol_r2 = 1e-9`` the higher-
+    complexity point is dominated. With ``rtol_r2 = 0`` it would survive — that
+    is the degenerate behaviour we are explicitly guarding against here.
+    """
+    x = torch.linspace(0.5, 5.0, 256)
+    y = torch.log(x)
+
+    tol = eml.fit_pareto(x, y, depths=(1, 2, 3, 4), seeds_per_depth=1, device=DEVICE)
+    no_tol = eml.fit_pareto(
+        x, y, depths=(1, 2, 3, 4), seeds_per_depth=1, device=DEVICE, rtol_r2=0.0
+    )
+
+    # With tolerance, the front should be a SUBSET of the no-tolerance front
+    # (tolerance can only DROP points, never add).
+    tol_pts = set((c, round(r2, 10)) for c, r2, _ in tol.front)
+    no_tol_pts = set((c, round(r2, 10)) for c, r2, _ in no_tol.front)
+    assert tol_pts.issubset(no_tol_pts), (
+        f"Tolerant front must be a subset of zero-tolerance front. "
+        f"tol={tol_pts}, no_tol={no_tol_pts}"
+    )
+    # And on this construction the tolerance MUST actually drop at least one
+    # point (otherwise the tolerance fix has no observable effect on the
+    # advisor-flagged case).
+    assert len(tol_pts) < len(no_tol_pts) or len(no_tol_pts) == 1, (
+        f"Expected rtol_r2=1e-9 to collapse a near-tied front on log(x); "
+        f"got tol_front_size={len(tol_pts)} == no_tol_front_size={len(no_tol_pts)}"
+    )
 
 
 # ---------------------------------------------------------------------------

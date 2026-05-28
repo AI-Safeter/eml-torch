@@ -40,6 +40,8 @@ Single-stage EML (0.937) trails PySR (0.953) by 0.016; 3-stage residual boosting
 | poly K=5 | 0.989 | 0.993 | <0.001 s | **5** | 2 |
 | PySR | 0.979 | **0.996** | 23.0 s | 4 | **3** |
 
+![Feynman benchmark — per-equation R² heat-strip and per-method accuracy-vs-speed scatter](examples/srbench_feynman/figure_benchmark.png)
+
 **EML loses on raw HELDOUT R² to both polynomial OLS and PySR on every one of the 8 equations.** Including the exp-native targets (Feynman I.6.20a `exp(−θ²/2)`, I.6.20 the Gaussian) where EML's structural recovery was expected to shine — EML reaches R² = 0.99 there but PySR/poly reach 1.00. The EML clean-recovery count is 0/8, vs PySR 3/8 and poly K=5 2/8. EML's two surviving advantages on this benchmark are **speed** — EML d=3 is ~49× faster than PySR (0.47 s vs 23 s median) — and **expression size** (2–5 eml-operator nodes vs PySR 7–17 AST nodes vs poly K=5 ~20 terms). The 49× ratio used `parallelism="serial"` for deterministic PySR; we re-ran with `parallelism="multithreading"` + `JULIA_NUM_THREADS=8` (PySR's default for performance) and got a slightly *worse* PySR median of 29.1 s (per-iteration overhead dominates at this iter/pop budget), so the speed gap is real, not an artifact of single-threaded PySR. See `examples/srbench_feynman/pysr_multithreading_retime.json`. On targets that are well-fit by low-degree polynomials (multiplicative monomials like `m·g·z`, ratios like `q/C`), low-degree poly is the right tool by 500–6000× speed and equal-or-better R².
 
 ### Honest summary
@@ -51,7 +53,9 @@ EML is **not a general-purpose accuracy-first SR engine**. It is faster than PyS
 - `eml.fit(x, y, depth=3)` — single-best EML fit.
 - `eml.fit_multi_seed(x, y, n_seeds=10)` — N independent fits + byte-equality `topology_stability` fraction (the reproducibility axis).
 - `eml.fit_residual_boost(x, y, n_stages=3)` — gradient-boosting-style additive EML stages (the per-stage tree is still SMT-translatable).
-- `eml.fit_pareto(x, y, depths=(1,2,3,4,5))` — accuracy/complexity Pareto front across depths; `.best()`, `.select(max_complexity=k)`, `.predict(x)`.
+- `eml.fit_pareto(x, y, depths=(1,2,3,4,5))` — accuracy/complexity Pareto front across depths; `.best()`, `.select(max_complexity=k)`, `.predict(x)`. Float-tolerance domination (`rtol_r2=1e-9` default) prevents float-noise-only points from inflating the front.
+
+![Pareto demo — fit_pareto front on Feynman I.6.20a exp(−θ²/2)](examples/srbench_feynman/figure_pareto_demo.png)
 - `polish(..., optimizer="lbfgs")` (or `"adam+lbfgs"`) — quasi-Newton constant refinement; `"adam"` (default) is bit-identical to the previous polish path. Threaded through `fit(..., polish=True, polish_optimizer="lbfgs")`.
 
 ## Limitations
