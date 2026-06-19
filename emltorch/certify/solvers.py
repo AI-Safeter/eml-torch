@@ -28,14 +28,18 @@ class SolverResult:
     solver: str
 
 
+_DEFINITIVE = frozenset({"unsat", "sat"})
+
+
 @dataclass
 class DualResult:
     """Outcome of running both solvers on the same cert text."""
 
     z3: SolverResult
     cvc5: SolverResult
-    agree: bool
-    verdict: str  # agreed verdict, or "disagree"
+    agree: bool  # True ONLY when both solvers reach the SAME definitive verdict
+    verdict: str  # agreed definitive verdict, or "disagree"
+    both_definitive: bool = False  # both verdicts in {"unsat","sat"}
 
 
 class SolverBackend(ABC):
@@ -110,12 +114,19 @@ class CVC5Backend(SolverBackend):
                 path = fh.name
 
             solver = cvc5.Solver()
+            # tlimit-per is BEST-EFFORT: a failure to set it must not abort the
+            # run (different cvc5 builds name it differently). Kept in its own
+            # swallowing try so it can't mask the load-bearing option below.
             try:
                 solver.setOption("tlimit-per", str(int(timeout_ms)))
-                for key, val in self.QUANT_OPTIONS.items():
-                    solver.setOption(key, val)
             except Exception:
                 pass
+            # full-saturate-quant is LOAD-BEARING: without it cvc5 returns
+            # "unknown" on the quantified EML axioms and dual-verify silently
+            # degrades to z3-only. A failure to set it is therefore surfaced as
+            # an error result (NOT swallowed), so the degradation is visible.
+            for key, val in self.QUANT_OPTIONS.items():
+                solver.setOption(key, val)
 
             parser = cvc5.InputParser(solver)
             parser.setFileInput(cvc5.InputLanguage.SMT_LIB_2_6, path)
@@ -148,18 +159,24 @@ def dual_verify(
 ) -> DualResult:
     """Run z3 and cvc5 on the same cert; report both verdicts and agreement.
 
-    Disagreement is never swallowed — ``agree=False`` and ``verdict="disagree"``
-    make a solver mismatch a loud, inspectable outcome.
+    ``agree`` requires a DEFINITIVE shared verdict: both solvers must return the
+    SAME verdict AND that verdict must be in {"unsat","sat"}. Non-definitive
+    outcomes (unknown/unknown, error/error, timeout) do NOT count as agreement
+    — they leave the property undecided, which is not the same as a proof.
+    Disagreement and non-definiteness are never swallowed: ``agree=False`` and
+    ``verdict="disagree"`` make any mismatch or indecision a loud outcome.
     """
     if backends is None:
         backends = [Z3Backend(), CVC5Backend()]
     by_name = {b.name: b.verify(smt2_text, timeout_ms) for b in backends}
     z3_res = by_name.get("z3", SolverResult("error:NotRun", 0.0, "z3"))
     cvc5_res = by_name.get("cvc5", SolverResult("error:NotRun", 0.0, "cvc5"))
-    agree = z3_res.verdict == cvc5_res.verdict
+    both_definitive = z3_res.verdict in _DEFINITIVE and cvc5_res.verdict in _DEFINITIVE
+    agree = both_definitive and z3_res.verdict == cvc5_res.verdict
     return DualResult(
         z3=z3_res,
         cvc5=cvc5_res,
         agree=agree,
         verdict=z3_res.verdict if agree else "disagree",
+        both_definitive=both_definitive,
     )

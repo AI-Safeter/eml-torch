@@ -94,13 +94,31 @@ def test_interval_discharges_where_axiomatized_was_fragile():
 
 
 def test_interval_does_not_falsely_discharge_diffuse_head():
-    # A diffuse head (target barely ahead) must NOT prove >=0.95 concentration:
-    # soundness guard — interval relaxation stays SAT, never a false UNSAT.
+    # A diffuse head (target barely ahead) in RAW-LOGIT space must NOT prove
+    # >=0.95 concentration under the interval form's own (wrong) inequality here.
     cert = attention_concentration_cert(
         [0.1, 0.0, 0.0, 0.0], 0, tau=0.95, rho_box=0.1, form="interval"
     )
     dual = dual_verify(cert, timeout_ms=10000)
     assert dual.verdict == "sat"
+
+
+def test_interval_is_unsound_on_logprob_diffuse_head_documented():
+    # DOCUMENTS the interval form's unsoundness on LOG-PROB inputs (what
+    # extract.py produces): it certifies the WRONG inequality
+    # Exp(s_target) - Ln(sumE) > log(tau), so a NON-concentrated log-prob head
+    # (p=0.5 << tau=0.95) still falsely discharges. This is exactly why
+    # 'interval' is NOT in _SOUND_FORMS; the regression pins the limitation.
+    from emltorch.certify.concentration import _SOUND_FORMS
+
+    assert "interval" not in _SOUND_FORMS
+    logprob_diffuse = _logprob_head(0.5)  # p=0.5, far below tau=0.95
+    cert = attention_concentration_cert(
+        logprob_diffuse, 0, tau=0.95, rho_box=0.0, form="interval"
+    )
+    dual = dual_verify(cert, timeout_ms=10000)
+    # FALSE UNSAT: it "proves" concentration for a diffuse head -> unsound.
+    assert dual.z3.verdict == "unsat"
 
 
 def _logprob_head(p, n=4):
@@ -140,8 +158,11 @@ def test_v3_is_vacuous_on_logprobs_documented_regression():
     # Pins the finding: v3 on a NON-concentrated log-prob head (p=0.5) still
     # discharges -> vacuous. This regression guards the documented limitation so
     # the tool's docs and the non-vacuity guard can never silently drift.
+    # Assert the FULL dual verdict (both solvers definitively agree UNSAT), not
+    # just z3 -- the vacuity is real on both backends, NOT a z3-only artifact.
     cert = attention_concentration_cert(
         _logprob_head(0.5), 0, tau=0.95, rho_box=0.0, form="v3"
     )
     dual = dual_verify(cert, timeout_ms=8000)
-    assert dual.z3.verdict == "unsat"  # vacuous discharge -- NOT a real cert
+    assert dual.agree is True
+    assert dual.verdict == "unsat"  # vacuous discharge on BOTH solvers -- NOT real

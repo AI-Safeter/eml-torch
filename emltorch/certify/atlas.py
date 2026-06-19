@@ -13,7 +13,10 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Optional, Sequence
 
-from .concentration import attention_concentration_cert
+from .concentration import (
+    attention_concentration_cert,
+    _validate_inputs,
+)
 from .extract import extract_all_heads_logprob_scores
 from .solvers import dual_verify
 
@@ -26,6 +29,19 @@ class CertifiedRadius:
     tau: float
     target_idx: int
     verdicts: dict = field(default_factory=dict)  # rho -> "unsat"/"sat"/"disagree"
+    nonvacuous: bool = True  # matched non-concentrated control did NOT discharge
+
+
+def _uniform_control_scores(n: int) -> list:
+    """A maximally-diffuse (uniform) log-prob control row of length ``n``.
+
+    If THIS row discharges at the same tau, the discharge is vacuous (the cert
+    would pass even with no concentration at all). Used by the non-vacuity
+    self-check (H7-9 gold-standard discipline).
+    """
+    import math as _math
+
+    return [_math.log(1.0 / n)] * n
 
 
 def certified_radius(
@@ -34,9 +50,21 @@ def certified_radius(
     tau: float,
     rhos: Sequence[float] = _DEFAULT_RHOS,
     timeout_ms: int = 8000,
+    require_nonvacuous: bool = False,
 ) -> CertifiedRadius:
     """Largest rho (from ``rhos``, tried high->low) at which both solvers prove
-    ``softmax_target > tau`` over the L_inf(rho) box. Returns 0.0 if none."""
+    ``softmax_target > tau`` over the L_inf(rho) box. Returns 0.0 if none.
+
+    Because ``rhos`` is searched high->low and a smaller box is monotonically
+    easier to discharge, the search BREAKS EARLY at the first dual-UNSAT — that
+    rho is the maximum certifiable radius.
+
+    If ``require_nonvacuous`` is True, a matched maximally-diffuse (uniform)
+    control row is also certified at the same tau; if the control ALSO discharges
+    (at the best rho), the discharge is vacuous and the radius is forced to 0.0
+    with ``nonvacuous=False``. This is the H7-9 gold-standard non-vacuity guard.
+    """
+    _validate_inputs(scores, target_idx, tau)
     verdicts: dict = {}
     best = 0.0
     for rho in sorted(rhos, reverse=True):
@@ -45,10 +73,29 @@ def certified_radius(
         )
         dual = dual_verify(cert, timeout_ms=timeout_ms)
         verdicts[rho] = dual.verdict
-        if dual.verdict == "unsat" and dual.agree and best == 0.0:
+        if dual.verdict == "unsat" and dual.agree:
             best = rho
+            break  # high->low: first UNSAT is the max radius; smaller rho is easier
+
+    nonvacuous = True
+    if require_nonvacuous and best > 0.0:
+        control = _uniform_control_scores(len(scores))
+        ctrl_cert = attention_concentration_cert(
+            control, target_idx, tau=tau, rho_box=best, form="softmax_interval"
+        )
+        ctrl_dual = dual_verify(ctrl_cert, timeout_ms=timeout_ms)
+        # A genuinely concentrated head's control must NOT discharge. If it does,
+        # the discharge is vacuous -> reject.
+        if ctrl_dual.verdict == "unsat" and ctrl_dual.agree:
+            nonvacuous = False
+            best = 0.0
+
     return CertifiedRadius(
-        radius=best, tau=tau, target_idx=target_idx, verdicts=verdicts
+        radius=best,
+        tau=tau,
+        target_idx=target_idx,
+        verdicts=verdicts,
+        nonvacuous=nonvacuous,
     )
 
 

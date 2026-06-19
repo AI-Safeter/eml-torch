@@ -4,22 +4,39 @@ Absorbs the script-trapped ``_cert_v3.py`` and the 30x-duplicated ``_num`` into
 the library. Emits portable SMT-LIB2 proving that one attention key holds a
 ``tau`` share of the softmax mass, robust to an L_inf(rho) box on the scores.
 
-Two forms:
+SOUNDNESS NOTE
+==============
+Exactly ONE form is a soundness-guaranteed concentration certificate:
+``softmax_interval`` (the public DEFAULT). It is the only member of
+``_SOUND_FORMS``. The ``v3`` / ``v2`` / ``interval`` forms are kept for
+backward compatibility and as EML-in-body illustrations, but they are
+**diagnostic only — NOT soundness-guaranteed** and can produce vacuous or
+false UNSAT on log-prob inputs (what ``emltorch.certify.extract`` produces).
 
-- ``v3`` (default, load-bearing): ``eml(s_target, Sum_j Exp(s_j)) > log(tau)``
-  i.e. ``Exp(s_target) - Ln(sumE) > log(tau)``. The ``Ln`` is applied to a
-  non-trivial partition function, so the EML operator's log branch does real
-  work --- *provided the scores are raw pre-softmax logits*. If the scores are
-  ``log(prob)`` values (what ``output_attentions`` gives), then
+Forms:
+
+- ``softmax_interval`` (DEFAULT, SOUND): QF_LRA relaxation of the TRUE softmax
+  claim ``s_target - Ln(sumE) > log(tau)`` <=> ``softmax_target > tau``.
+  Shift-invariant, so a non-concentrated head is correctly refused (SAT). This
+  is the only form whose UNSAT is a non-vacuous concentration guarantee.
+
+- ``v3`` (diagnostic / EML-in-body illustration ONLY — NOT soundness-guaranteed):
+  ``eml(s_target, Sum_j Exp(s_j)) > log(tau)``. Two distinct false-UNSAT modes:
+  (a) the gap precondition ``s_target >= s_j + 1`` is jointly infeasible with the
+  box when the real gap < ~1 nat -> vacuously UNSAT; (b) on ``log(prob)`` inputs
   ``sumE = Sum exp(log prob) = 1`` and ``Ln(1) = 0`` collapses v3 to Exp-only,
-  decorative just like v2 (see ``emltorch.certify.extract`` ``domain`` switch).
+  so it discharges for nearly any head. Do NOT treat v3 UNSAT as a concentration
+  certificate.
 
-- ``v2`` (decorative): ``eml(s_target, 1) > tau * Sum_j eml(s_j, 1)``. Since
-  ``Ln(1) = 0``, ``eml(s, 1) = Exp(s)``, so this is Exp-only --- the EML
-  operator is not load-bearing here (H23 audit: v1 == v2).
+- ``v2`` (diagnostic ONLY — NOT soundness-guaranteed): ``eml(s_target, 1) > tau *
+  Sum_j eml(s_j, 1)``. Since ``Ln(1) = 0``, ``eml(s, 1) = Exp(s)``, this is
+  Exp-only (H23 audit: v1 == v2) and inherits the same gap-precondition
+  vacuity as v3.
 
-Both prove iff-equivalent concentration claims and both dual-discharge in
-single-digit ms on concentrated heads.
+- ``interval`` (diagnostic ONLY — NOT soundness-guaranteed): QF_LRA relaxation
+  of the WRONG inequality ``Exp(s_target) - Ln(sumE) > log(tau)`` (NOT
+  log-softmax). On log-prob inputs this discharges for nearly any head; it is
+  NOT a concentration certificate. Use ``softmax_interval`` for soundness.
 """
 
 from __future__ import annotations
@@ -28,6 +45,11 @@ import math
 from typing import Sequence
 
 from emltorch.smt import EML_AXIOMS_SMT2, with_lemmas
+
+# The ONLY soundness-guaranteed concentration cert form. v3/v2/interval are
+# diagnostic / EML-in-body illustrations and can produce vacuous or false UNSAT
+# on log-prob inputs -- never treat their UNSAT as a concentration guarantee.
+_SOUND_FORMS = {"softmax_interval"}
 
 
 def num_to_smt(v: float) -> str:
@@ -56,6 +78,13 @@ def _gap_preconditions(target_idx: int, n: int) -> list[str]:
 
 
 def _build_v3(score_obs, target_idx, tau, rho_box, head_label) -> str:
+    """DIAGNOSTIC / EML-in-body illustration ONLY -- NOT a soundness-guaranteed
+    concentration certificate. Can produce vacuous or false UNSAT: (a) the gap
+    precondition ``s_target >= s_j + 1`` is infeasible with the box when the real
+    gap < ~1 nat -> vacuously UNSAT; (b) on log-prob inputs ``Ln(1)=0`` collapses
+    it to Exp-only and it discharges for nearly any head. Use ``softmax_interval``
+    for a sound cert.
+    """
     n = len(score_obs)
     decls = _box_decls(score_obs, rho_box)
     decls.append("(declare-const sumE Real)")
@@ -88,6 +117,11 @@ def _build_v3(score_obs, target_idx, tau, rho_box, head_label) -> str:
 
 
 def _build_v2(score_obs, target_idx, tau, rho_box, head_label) -> str:
+    """DIAGNOSTIC ONLY -- NOT a soundness-guaranteed concentration certificate.
+    ``eml(s,1)=Exp(s)`` (Ln(1)=0), so the EML operator is decorative (H23: v1==v2)
+    and it inherits the same gap-precondition vacuity as v3. Use
+    ``softmax_interval`` for a sound cert.
+    """
     n = len(score_obs)
     decls = _box_decls(score_obs, rho_box)
     eml_each = [f"(- (Exp s{j}) (Ln 1.0))" for j in range(n)]
@@ -154,17 +188,14 @@ def _build_softmax_interval(score_obs, target_idx, tau, rho_box, head_label) -> 
 
 
 def _build_interval(score_obs, target_idx, tau, rho_box, head_label) -> str:
-    """Robust QF_LRA form: precompute Exp/Ln of box endpoints in Python and
-    emit pure linear arithmetic.
+    """DIAGNOSTIC ONLY -- NOT a soundness-guaranteed concentration certificate.
 
-    Encodes the same v3 inequality ``Exp(s_target) - Ln(sumE) > log(tau)`` but
-    as a SOUND interval relaxation: ``Et in [exp(lo_t), exp(hi_t)]`` and
-    ``LsumE in [ln(sumE_min), ln(sumE_max)]`` treated independently. UNSAT of
-    the negation therefore implies the property holds for every point in the
-    box (sound). SAT means the relaxation is too loose to decide -> indeterminate,
-    NEVER reported as a violation. Decidable; z3 and cvc5 agree instantly. The
-    EML operator is no longer in the body here -- that is the trade for
-    robustness; use form="v3" for the EML-operator-in-body artifact.
+    Encodes the WRONG inequality ``Exp(s_target) - Ln(sumE) > log(tau)`` (this is
+    NOT log-softmax). The interval relaxation over the box is internally sound for
+    *that* inequality, but the inequality itself is not the concentration claim:
+    on log-prob inputs (what ``extract.py`` produces) it discharges for nearly any
+    head, i.e. false UNSAT for "concentration". Use ``softmax_interval`` for a
+    sound concentration cert.
     """
     los = [s - rho_box for s in score_obs]
     his = [s + rho_box for s in score_obs]
@@ -195,32 +226,59 @@ def _build_interval(score_obs, target_idx, tau, rho_box, head_label) -> str:
     )
 
 
+def _validate_inputs(scores: Sequence[float], target_idx: int, tau: float) -> None:
+    """Shared precondition checks for the concentration cert + radius search.
+
+    Guards the math.log domain (tau in (0,1)), rejects NaN/inf scores, and
+    bounds target_idx. Raised as ValueError so a bad call fails loudly rather
+    than emitting a meaningless or undefined-behavior cert.
+    """
+    if not (0.0 < tau < 1.0):
+        raise ValueError(
+            f"tau must be in the open interval (0, 1); got {tau!r}. "
+            "tau>=1 is meaningless (no single key can exceed the whole mass) and "
+            "tau<=0 is outside the log(tau) domain."
+        )
+    if not all(math.isfinite(s) for s in scores):
+        raise ValueError(f"scores must all be finite; got {list(scores)!r}")
+    n = len(scores)
+    if not (0 <= target_idx < n):
+        raise ValueError(
+            f"target_idx {target_idx} out of range for {n} scores (expected 0..{n - 1})"
+        )
+
+
 def attention_concentration_cert(
     scores: Sequence[float],
     target_idx: int,
     tau: float,
     rho_box: float = 0.10,
-    form: str = "v3",
+    form: str = "softmax_interval",
     head_label: str = "",
 ) -> str:
     """Emit a portable SMT-LIB2 attention-concentration certificate.
 
     Args:
-        scores: per-key attention scores at the query position. For v3 to be
-            load-bearing these must be RAW pre-softmax logits (not log-probs).
-        target_idx: index of the key the cert claims dominates.
-        tau: concentration threshold (e.g. 0.95).
+        scores: per-key attention scores at the query position. Must be finite.
+            For the sound default the scores may be log-probs (concentration is
+            shift-invariant).
+        target_idx: index of the key the cert claims dominates. Must be in range.
+        tau: concentration threshold (e.g. 0.95). Must be in the open (0, 1).
         rho_box: L_inf perturbation budget applied to every score.
-        form: "v3" (default, load-bearing EML-in-body logit form, axiomatized
-            Exp/Ln, can be solver-fragile), "v2" (Exp-only, EML decorative), or
-            "interval" (robust QF_LRA sound relaxation, both solvers instant,
-            no EML operator in body).
+        form: "softmax_interval" (DEFAULT, the ONLY soundness-guaranteed form;
+            QF_LRA, shift-invariant, non-vacuous). The remaining forms are
+            DIAGNOSTIC ONLY -- NOT soundness-guaranteed, can produce vacuous or
+            false UNSAT on log-prob inputs: "v3"/"v2" (EML-in-body illustrations,
+            gap-precondition vacuity) and "interval" (wrong inequality). See
+            ``_SOUND_FORMS`` and the module docstring.
         head_label: optional label embedded in the cert title.
 
     Returns:
-        SMT-LIB2 text (axioms + lemmas + box + gap precondition + negated SAFE).
-        Dual-UNSAT means the concentration property is proven over the box.
+        SMT-LIB2 text. For the sound default, dual-UNSAT means the concentration
+        property is proven over the box; for the diagnostic forms UNSAT is NOT a
+        soundness guarantee.
     """
+    _validate_inputs(scores, target_idx, tau)
     if form == "v3":
         return _build_v3(scores, target_idx, tau, rho_box, head_label)
     if form == "v2":
