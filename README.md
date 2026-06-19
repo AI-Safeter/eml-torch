@@ -26,11 +26,11 @@ Reproducibility is where symbolic regression usually breaks. On a 432-row induct
 | **emltorch** (3-stage residual boost) | 15 | 0.958 | — |
 | PySR | 10 | 0.953 | 1 / 10 |
 
-Same formula on nine of ten seeds; PySR matches itself on one of ten. If you've spent an afternoon chasing PySR runs that almost-but-not-quite agree, this is the headline.
+Same formula on nine of ten seeds; PySR matches itself on one of ten. If you've spent an afternoon chasing PySR runs that almost-but-not-quite agree, this is the headline. (Note the honest read: single-stage emltorch *trails* PySR on peak R² — 0.937 vs 0.953 — so the win here is **reproducibility**, not raw fit. The 3-stage 0.958 is one favourable split; the five-split boosted mean is 0.914 ± 0.03.)
 
 ## Showcase 3 — One formula across three model scales
 
-Fourteen cert-discovered INDUCTION-PURE attention heads, spread across **Qwen3-4B, Qwen3-8B, and Qwen3-32B** — 336 rows in total (8 induction prompts × 3 positions × 14 heads) — fit by a *single* pooled depth-4 EML expression at HELDOUT R² = 0.82. A polynomial K=5 baseline matches that R², but with an order of magnitude more parameters and no algebraic structure to inspect. **One closed form predicts induction-head behavior across three model scales in the same family.**
+Fourteen INDUCTION-PURE attention heads (identified by direct attention measurement), spread across **Qwen3-4B, Qwen3-8B, and Qwen3-32B** — 336 rows in total (8 induction prompts × 3 positions × 14 heads) — fit by a *single* pooled depth-4 EML expression at HELDOUT R² = 0.78. A polynomial K=5 baseline edges it on raw fit (R² = 0.82), so this is **not an accuracy win — it's a parsimony one**: one readable closed form, with roughly an order of magnitude fewer effective parameters and an inspectable algebraic structure, predicts induction-head behavior across three model scales in the same family.
 
 A bonus from the same family of heads: for the SEARCH-subtype, the closed-form attention decay is
 

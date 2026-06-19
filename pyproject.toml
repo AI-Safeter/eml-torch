@@ -65,6 +65,9 @@ h31 = [
     "matplotlib",
 ]
 
+[project.scripts]
+eml-certify = "emltorch.certify.cli:main"
+
 [project.urls]
 Homepage = "https://github.com/AI-Safeter/eml-torch"
 Repository = "https://github.com/AI-Safeter/eml-torch"
