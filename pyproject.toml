@@ -67,6 +67,7 @@ h31 = [
 
 [project.scripts]
 eml-certify = "emltorch.certify.cli:main"
+eml-vacuity-audit = "emltorch.certify.vacuity_cli:main"
 
 [project.urls]
 Homepage = "https://github.com/AI-Safeter/eml-torch"

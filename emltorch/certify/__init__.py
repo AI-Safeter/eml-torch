@@ -32,6 +32,17 @@ from .atlas import (
     AttentionCertAtlas,
     AtlasResult,
 )
+from .vacuity_audit import (
+    AuditReport,
+    CheckResult,
+    vacuity_audit,
+    audit_attention_atlas,
+    SOUND,
+    VACUOUS,
+    RELATIVE_ONLY,
+    UNDER_PRECISION,
+    NOT_CERTIFIED,
+)
 
 __all__ = [
     "SolverBackend",
@@ -49,4 +60,13 @@ __all__ = [
     "certified_radius",
     "AttentionCertAtlas",
     "AtlasResult",
+    "AuditReport",
+    "CheckResult",
+    "vacuity_audit",
+    "audit_attention_atlas",
+    "SOUND",
+    "VACUOUS",
+    "RELATIVE_ONLY",
+    "UNDER_PRECISION",
+    "NOT_CERTIFIED",
 ]
