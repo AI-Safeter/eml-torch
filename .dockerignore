@@ -1,0 +1,13 @@
+.git
+.gitignore
+**/__pycache__
+*.pyc
+build/
+dist/
+*.egg-info/
+examples/
+tests/
+lean/
+.pytest_cache/
+.ruff_cache/
+*.whl

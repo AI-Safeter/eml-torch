@@ -16,6 +16,15 @@ pip install "emltorch[smt] @ git+https://github.com/AI-Safeter/eml-torch.git"
 
 Requires Python ≥ 3.10 and PyTorch ≥ 2.3. The core fit API runs on CPU or GPU; the SMT layer is pure-CPU and portable.
 
+For a reproducible environment with no local PyTorch install, use the bundled `Dockerfile`:
+
+```bash
+docker build -t emltorch .
+docker run --rm -it emltorch        # python REPL with emltorch ready to import
+```
+
+The image is CPU-based and portable (about 1 GB). To run on GPU, switch the base image to a CUDA PyTorch image as noted in the `Dockerfile` header and run with `--gpus all`.
+
 ## Showcase 1: a black-box formula for Qwen3.6-27B factual recall
 
 Give the model 50 prompts of the form *"The capital of {country} is"* and record only the top-K logprobs. No hooks, no hidden states, nothing inside the box. From `(L, H)`, induction lag and top-50 entropy, `emltorch` returns a depth-4 expression:
