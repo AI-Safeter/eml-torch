@@ -1,9 +1,8 @@
-"""TDD tests for emltorch.certify.vacuity_audit -- the drop-in test-suite that
-tells ANYONE whether an attention-concentration / softmax-mass / routing cert
+"""TDD tests for emltorch.certify.vacuity_audit, the drop-in test-suite that
+tells you whether an attention-concentration, softmax-mass, or routing cert
 claim is SOUND or VACUOUS.
 
-Operationalizes the two 2026-06-19 audits (VACUITY_AUDIT, CERT_SOUNDNESS_SWEEP)
-into four tested checks:
+Turns four distinct cert-soundness failure modes into four tested checks:
 
   1. shift-invariance   (shift-variant body on log-probs -> collapses)
   2. non-vacuity control (uniform / low-mass control must NOT discharge)

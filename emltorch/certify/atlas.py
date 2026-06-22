@@ -56,7 +56,7 @@ def certified_radius(
     ``softmax_target > tau`` over the L_inf(rho) box. Returns 0.0 if none.
 
     Because ``rhos`` is searched high->low and a smaller box is monotonically
-    easier to discharge, the search BREAKS EARLY at the first dual-UNSAT — that
+    easier to discharge, the search BREAKS EARLY at the first dual-UNSAT, and that
     rho is the maximum certifiable radius.
 
     If ``require_nonvacuous`` is True, a matched maximally-diffuse (uniform)

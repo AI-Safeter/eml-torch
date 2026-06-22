@@ -161,8 +161,8 @@ def dual_verify(
 
     ``agree`` requires a DEFINITIVE shared verdict: both solvers must return the
     SAME verdict AND that verdict must be in {"unsat","sat"}. Non-definitive
-    outcomes (unknown/unknown, error/error, timeout) do NOT count as agreement
-    — they leave the property undecided, which is not the same as a proof.
+    outcomes (unknown/unknown, error/error, timeout) do NOT count as agreement;
+    they leave the property undecided, which is not the same as a proof.
     Disagreement and non-definiteness are never swallowed: ``agree=False`` and
     ``verdict="disagree"`` make any mismatch or indecision a loud outcome.
     """

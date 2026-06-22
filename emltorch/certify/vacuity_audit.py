@@ -1,15 +1,14 @@
-"""Vacuity audit -- a drop-in test-suite that tells ANYONE whether an
-attention-concentration / softmax-mass / routing cert claim is SOUND or merely
-VACUOUS / RELATIVE-ONLY / UNDER-PRECISION.
+"""Vacuity audit: a drop-in test-suite that tells you whether an
+attention-concentration, softmax-mass, or routing cert claim is SOUND or merely
+VACUOUS, RELATIVE-ONLY, or UNDER-PRECISION.
 
 Motivation
 ==========
-Two 2026-06-19 audits (``VACUITY_AUDIT_2026-06-19.md``,
-``CERT_SOUNDNESS_SWEEP_2026-06-19.md``) found that "dual-UNSAT @ tau=0.95
-concentration cert" verdicts can be decoupled from real concentration in four
-distinct ways. This module turns each failure mode into a single tested check so
-that a reviewer can run ONE function on a cert claim and get a structured,
-human-readable verdict -- the "drop-in test others run".
+Two soundness audits found that a "dual-UNSAT @ tau=0.95 concentration cert"
+verdict can be decoupled from real concentration in four distinct ways. This
+module turns each failure mode into a single tested check, so that a reviewer
+can run one function on a cert claim and get a structured, human-readable
+verdict, the test others can re-run on a published cert.
 
 The four checks
 ===============

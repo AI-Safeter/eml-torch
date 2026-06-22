@@ -1,4 +1,4 @@
-"""emltorch.certify — portable, dual-solver certificates of attention-head
+"""emltorch.certify: portable, dual-solver certificates of attention-head
 concentration for any HuggingFace causal LM.
 
 This subpackage promotes the previously script-trapped SMT cert machinery

@@ -1,53 +1,52 @@
-# `emltorch.certify.vacuity_audit` — does this concentration cert certify anything?
+# `emltorch.certify.vacuity_audit`: does this concentration cert certify anything?
 
-A drop-in, dual-solver test-suite that takes an attention-concentration /
-softmax-mass / routing-cert claim and tells you whether its `UNSAT` is a
+A drop-in, dual-solver test-suite that takes an attention-concentration,
+softmax-mass, or routing-cert claim and tells you whether its `UNSAT` is a
 genuine concentration guarantee (`SOUND`) or one of three failure modes:
-`VACUOUS`, `RELATIVE-ONLY`, or `UNDER-PRECISION` (plus the honest non-result
-`NOT-CERTIFIED` when the cert simply does not discharge).
+`VACUOUS`, `RELATIVE-ONLY`, or `UNDER-PRECISION`. There is also an honest
+non-result, `NOT-CERTIFIED`, for when the cert simply does not discharge.
 
-It operationalizes two 2026-06-19 audits
-(`VACUITY_AUDIT_2026-06-19.md`, `CERT_SOUNDNESS_SWEEP_2026-06-19.md`) into four
-tested checks so that **anyone** — not just the original authors — can re-run the
-soundness test on a published cert. Every check runs z3 **and** cvc5
-(`full-saturate-quant` baked in) and only trusts a definitive dual agreement.
+It turns four distinct failure modes into four tested checks, so anyone (not
+just the original authors) can re-run the soundness test on a published cert.
+Every check runs z3 and cvc5 (`full-saturate-quant` baked in) and only trusts a
+definitive dual agreement.
 
 ## The four checks
 
-1. **Shift-invariance.** A softmax-mass claim is invariant to adding a constant
+1. Shift-invariance. A softmax-mass claim is invariant to adding a constant
    to every score (softmax is shift-invariant). The sound claim is
-   `s_target − Ln(Σ exp s_j) > log τ` (⇔ `softmax_target > τ`). A
-   *shift-variant* body such as the `v3` form `Exp(s_target) − Ln(sumE) > log τ`
-   collapses on **log-prob** inputs: `sumE = Σ exp(log prob) = 1`, so
-   `Ln(1) = 0` and the body becomes `Exp(s_target) > log τ < 0` — true for
-   essentially any head. Detected structurally (form metadata) **and**
-   empirically (verdict on `scores` vs `scores + c`). Failure → **VACUOUS**.
+   `s_target − Ln(Σ exp s_j) > log τ` (equivalently `softmax_target > τ`). A
+   shift-variant body such as the `v3` form `Exp(s_target) − Ln(sumE) > log τ`
+   collapses on log-prob inputs: `sumE = Σ exp(log prob) = 1`, so `Ln(1) = 0`
+   and the body becomes `Exp(s_target) > log τ < 0`, true for essentially any
+   head. Detected structurally (form metadata) and empirically (verdict on
+   `scores` vs `scores + c`). Failure gives `VACUOUS`.
 
-2. **Non-vacuity control.** A *known* non-concentrated control row must NOT
+2. Non-vacuity control. A known non-concentrated control row must NOT
    discharge at the same τ. The audit runs the cert on (a) a uniform `1/T` row
-   and (b) a low-mass row (target holds 5% of the mass). If **either**
-   discharges, the cert would pass with no concentration. Failure → **VACUOUS**.
+   and (b) a low-mass row (target holds 5% of the mass). If either discharges,
+   the cert would pass with no concentration. Failure gives `VACUOUS`.
    (Generalizes the uniform-control guard already in `atlas.certified_radius`.)
 
-3. **Relative-vs-absolute / mass floor.** If the cert excludes keys (e.g. BOS,
-   self) from its denominator without an absolute floor, a target holding 9% —
-   or 1e-9 — of *total* mass can still discharge at τ=0.95 because the real mass
+3. Relative-vs-absolute, the mass floor. If the cert excludes keys (e.g. BOS,
+   self) from its denominator without an absolute floor, a target holding 9%,
+   or 1e-9, of total mass can still discharge at τ=0.95 because the real mass
    sits on the excluded keys (the H23 gated/SSM raw-weight defect). The audit
-   recomputes the target's share of **total** mass (excluded keys **in** the
-   denominator) and, when the cert discharges, requires it to meet τ. Failure →
-   **RELATIVE-ONLY**.
+   recomputes the target's share of total mass (excluded keys included in the
+   denominator) and, when the cert discharges, requires it to meet τ. Failure
+   gives `RELATIVE-ONLY`.
 
-4. **Numerical-precision floor.** A cert finer than the model's own numerical
+4. Numerical-precision floor. A cert finer than the model's own numerical
    noise certifies nothing physical. The audit finds the certified L∞ radius
    (via the sound `softmax_interval` ladder) and requires it to exceed
-   `precision_floor` (e.g. `2**-8 ≈ 0.0039` for bf16 round-off). Radius
-   at/below the floor → **UNDER-PRECISION**.
+   `precision_floor` (e.g. `2**-8 ≈ 0.0039` for bf16 round-off). A radius at or
+   below the floor gives `UNDER-PRECISION`.
 
-**Verdict precedence (worst wins):**
+Verdict precedence (worst wins):
 `VACUOUS` > `RELATIVE-ONLY` > `UNDER-PRECISION` > `SOUND`.
-A cert that does not discharge at all is `NOT-CERTIFIED` (an honest non-result,
-not a vacuous pass). A check that is not applicable (no `precision_floor`, no
-excluded keys, or a cert that did not discharge) is recorded as
+A cert that does not discharge at all is `NOT-CERTIFIED`, an honest non-result
+rather than a vacuous pass. A check that is not applicable (no `precision_floor`,
+no excluded keys, or a cert that did not discharge) is recorded as
 passed-and-skipped and never downgrades the verdict.
 
 ## Python API
@@ -84,8 +83,8 @@ rhos=..., timeout_ms=8000) -> AuditReport`. The `AuditReport` exposes one
 
 `audit_attention_atlas(rows, tau, ...)` audits a list of head dicts
 (`{"scores", "target_idx"[, "exclude_from_sum", "layer", "head"]}`) and returns
-one `AuditReport` per head, with `layer`/`head` provenance filled in — so you
-can tally how many heads in an atlas are `SOUND` vs `VACUOUS` / `RELATIVE-ONLY`.
+one `AuditReport` per head, with `layer`/`head` provenance filled in, so you can
+tally how many heads in an atlas are `SOUND` vs `VACUOUS` or `RELATIVE-ONLY`.
 
 ### Auditing a raw-weight (gated/SSM) cert
 
@@ -116,10 +115,10 @@ eml-vacuity-audit --model gpt2 --prompt "..." --layer 5 --head 5 \
 eml-vacuity-audit --scores-json atlas.json --tau 0.95 --json
 ```
 
-Exit code is `0` iff every audited head is `SOUND`, else nonzero (so it composes
-into CI).
+The exit code is `0` if every audited head is `SOUND`, else nonzero, so it
+composes into CI.
 
-### Worked example — our own H19-style log-prob cert → `VACUOUS`
+### Worked example: an H19-style log-prob cert returns `VACUOUS`
 
 ```
 $ eml-vacuity-audit --scores-json h19_head.json --tau 0.95 --form v3
@@ -145,8 +144,8 @@ non-concentrated control also passes). Do NOT treat its UNSAT as a concentration
 certificate.
 ```
 
-This is exactly the H19/H20/H21 atlas defect: a head with 10% target mass under
-the `v3` log-prob form returns dual-UNSAT at τ=0.95 yet certifies nothing. Switch
+This is the H19/H20/H21 atlas defect: a head with 10% target mass under the `v3`
+log-prob form returns dual-UNSAT at τ=0.95 yet certifies nothing. Switch to
 `--form softmax_interval` and the same head is honestly `NOT-CERTIFIED`.
 
 ## Tests
@@ -158,5 +157,3 @@ CUDA_VISIBLE_DEVICES="" python3 \
 ```
 
 21 tests (15 module + 6 CLI), all dual-solver, CPU-only.
-```
-```

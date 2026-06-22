@@ -10,7 +10,7 @@ Exactly ONE form is a soundness-guaranteed concentration certificate:
 ``softmax_interval`` (the public DEFAULT). It is the only member of
 ``_SOUND_FORMS``. The ``v3`` / ``v2`` / ``interval`` forms are kept for
 backward compatibility and as EML-in-body illustrations, but they are
-**diagnostic only — NOT soundness-guaranteed** and can produce vacuous or
+**diagnostic only, NOT soundness-guaranteed** and can produce vacuous or
 false UNSAT on log-prob inputs (what ``emltorch.certify.extract`` produces).
 
 Forms:
@@ -20,7 +20,7 @@ Forms:
   Shift-invariant, so a non-concentrated head is correctly refused (SAT). This
   is the only form whose UNSAT is a non-vacuous concentration guarantee.
 
-- ``v3`` (diagnostic / EML-in-body illustration ONLY — NOT soundness-guaranteed):
+- ``v3`` (diagnostic / EML-in-body illustration ONLY, NOT soundness-guaranteed):
   ``eml(s_target, Sum_j Exp(s_j)) > log(tau)``. Two distinct false-UNSAT modes:
   (a) the gap precondition ``s_target >= s_j + 1`` is jointly infeasible with the
   box when the real gap < ~1 nat -> vacuously UNSAT; (b) on ``log(prob)`` inputs
@@ -28,12 +28,12 @@ Forms:
   so it discharges for nearly any head. Do NOT treat v3 UNSAT as a concentration
   certificate.
 
-- ``v2`` (diagnostic ONLY — NOT soundness-guaranteed): ``eml(s_target, 1) > tau *
+- ``v2`` (diagnostic ONLY, NOT soundness-guaranteed): ``eml(s_target, 1) > tau *
   Sum_j eml(s_j, 1)``. Since ``Ln(1) = 0``, ``eml(s, 1) = Exp(s)``, this is
   Exp-only (H23 audit: v1 == v2) and inherits the same gap-precondition
   vacuity as v3.
 
-- ``interval`` (diagnostic ONLY — NOT soundness-guaranteed): QF_LRA relaxation
+- ``interval`` (diagnostic ONLY, NOT soundness-guaranteed): QF_LRA relaxation
   of the WRONG inequality ``Exp(s_target) - Ln(sumE) > log(tau)`` (NOT
   log-softmax). On log-prob inputs this discharges for nearly any head; it is
   NOT a concentration certificate. Use ``softmax_interval`` for soundness.
