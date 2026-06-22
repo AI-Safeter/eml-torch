@@ -1,5 +1,5 @@
 """
-Depth 5 stress tests — evolution + crossover + polish.
+Depth 5 stress tests, evolution + crossover + polish.
 
 Targets:
     x * y      (paper says depth 5)
@@ -54,7 +54,7 @@ def test_x_squared_d3():
 
 
 def test_cos_d5():
-    """cos(x) at depth 5 — paper says depth 8. With polish should pass 0.95."""
+    """cos(x) at depth 5, paper says depth 8. With polish should pass 0.95."""
     x_ = torch.linspace(-math.pi, math.pi, 512)
     y = torch.cos(x_)
     result = eml.fit(x_, y, depth=5, strategy="evolution",

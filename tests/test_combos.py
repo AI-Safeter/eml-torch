@@ -1,7 +1,7 @@
 """Tests for the pairwise-combo leaf extension (a+b, a-b, b-a).
 
 The combo extension enables 2-variable targets that require a linear
-pre-combination (sum or difference) of input variables — most notably
+pre-combination (sum or difference) of input variables, most notably
 softmax[0] = sigmoid(a - b), which is blocked at every depth without it.
 """
 
@@ -64,7 +64,7 @@ def test_exp_of_diff_depth1():
     """y = exp(x1 - x2) should recover near-perfectly at depth=1.
 
     Requires picking the `x1 - x2` combo at the leaf's left input and
-    the constant `1` at the right — then eml(x1-x2, 1) = exp(x1-x2).
+    the constant `1` at the right, then eml(x1-x2, 1) = exp(x1-x2).
     This wouldn't be reachable at depth 1 without the combo.
     """
     torch.manual_seed(0)

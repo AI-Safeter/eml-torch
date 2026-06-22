@@ -6,7 +6,7 @@ replaces every "1" leaf choice with a learnable real-valued parameter and
 optimizes those constants (plus an affine wrapper a + b * tree) with Adam.
 
 This is what oxieml does internally during search (relax `One` leaves to
-R-valued params) — but they then project the learned value back to `1` in
+R-valued params), but they then project the learned value back to `1` in
 the output, throwing away the continuous information. We keep it in the
 output, so the final formula may contain arbitrary constants like `-2.718`
 or `0.567` rather than just `1` and `e`.
@@ -156,7 +156,7 @@ class _FixedTopologyTree(nn.Module):
         ).squeeze(0)
         # base: (C_base, N) where C_base = 1 + V + num_combos(V, use_mul, use_mul3)
 
-        # Leaf level — evaluate all leaves
+        # Leaf level, evaluate all leaves
         leaf_outputs = []
         for node in range(self.num_leaves):
             left_choice = int(self.leaf_choices[node, 0].item())
@@ -212,7 +212,7 @@ def polish(
     """
     Fit learnable numeric constants at the fixed topology of `tree[best_idx]`.
 
-    `warm_a`/`warm_b` initialize the affine wrapper — pass the values from
+    `warm_a`/`warm_b` initialize the affine wrapper, pass the values from
     the evolution result to ensure polish starts from evolution's best R²
     (not worse).
 
@@ -284,7 +284,7 @@ def polish(
             if const_reg > 0.0:
                 loss = loss + const_reg * (fixed.constants - 1.0).pow(2).sum()
             if range_reg > 0.0 and min_b_abs > 0.0:
-                # Penalize |b| dropping below min_b_abs — forces the tree to
+                # Penalize |b| dropping below min_b_abs, forces the tree to
                 # carry the signal's dynamic range instead of the affine wrapper.
                 b_shortfall = torch.relu(min_b_abs - b.abs())
                 loss = loss + range_reg * b_shortfall.pow(2).sum()

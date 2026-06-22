@@ -331,8 +331,8 @@ class BatchedEMLTree(nn.Module):
         """Return integer choice indices (call after snap).
 
         Returns:
-            leaf_idx:     (B, num_leaves, 2) int — per-input choice at each leaf.
-            internal_idx: list of (B, M, 2) int — per-input choice at each level.
+            leaf_idx:     (B, num_leaves, 2) int, per-input choice at each leaf.
+            internal_idx: list of (B, M, 2) int, per-input choice at each level.
         """
         leaf_idx = self.leaf_logits.argmax(dim=-1)
         internal_idx = [lg.argmax(dim=-1) for lg in self.internal_logits]

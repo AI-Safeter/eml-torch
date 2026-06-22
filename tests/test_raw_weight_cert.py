@@ -105,13 +105,13 @@ def test_exclude_from_sum_recovers_target():
     abs_a_obs[19] = 1e-10
     abs_a_obs[20] = 1e-3  # self position dominates everything
 
-    # Without exclude — target loses (1e-10 vs ~1e-3)
+    # Without exclude, target loses (1e-10 vs ~1e-3)
     text_no_excl = emit_raw_weight_concentration_cert(
         abs_a_obs, target_idx=19, tau=0.95, rho_log=0.10, head_label="prev_tok"
     )
     assert _solve(text_no_excl) == "sat"  # cert FAILS (target doesn't dominate Σ)
 
-    # With exclude {0, 20} — target should dominate the rest by 1e10x
+    # With exclude {0, 20}, target should dominate the rest by 1e10x
     text_with_excl = emit_raw_weight_concentration_cert(
         abs_a_obs,
         target_idx=19,

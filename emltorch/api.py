@@ -166,7 +166,7 @@ def fit(
         n_islands: number of independent sub-populations (islands) the
                    population is split into. Islands evolve in isolation
                    with periodic ring migration of their best individuals,
-                   which preserves diversity and explores multiple basins —
+                   which preserves diversity and explores multiple basins,
                    the targeted fix for the basin-trap failure mode where a
                    single panmictic population (and every seed of it)
                    collapses to one local optimum. Default 1 = original
@@ -379,7 +379,7 @@ def fit_multi_seed(
     Each seed sets `torch.manual_seed(s)` and `np.random.seed(s)` before
     calling `fit()`, so the search is reproducibly varied. The returned
     `MultiSeedResult` reports per-seed R² and the byte-equality topology
-    distribution across seeds — useful for the honest stability check
+    distribution across seeds, useful for the honest stability check
     ("does the same closed-form keep emerging, or am I overfitting?").
 
     Args mirror `fit()`. Additional:
@@ -447,7 +447,7 @@ def fit_multi_seed(
 # Residual boosting: fit a sequence of EML trees, each on the residuals of
 # the previous combined prediction. The final prediction is the SUM of stages.
 # Same principle as gradient-boosted decision trees, but with EML as the
-# base learner — keeps the result symbolic + SMT-translatable (cert each
+# base learner, keeps the result symbolic + SMT-translatable (cert each
 # stage independently and sum the bounds).
 # ---------------------------------------------------------------------------
 
@@ -531,7 +531,7 @@ def fit_residual_boost(
     Why use this. A single EML tree of bounded depth has a finite
     expressive class. Some targets (e.g. transformer-behavior probes whose
     P_target involves rational/sigmoid-like structure) sit at the edge of
-    that class — single-stage EML reaches a local optimum that misses
+    that class, single-stage EML reaches a local optimum that misses
     informative features. Empirically, on Gemma-4-31B-it induction probes,
     3-stage residual boosting lifts HELDOUT R² by ≈ +0.02 to +0.04 over
     single-stage EML, with the second and third stages picking up
@@ -548,14 +548,14 @@ def fit_residual_boost(
     ``exp(80) ≈ 5.5e34``, and neither the affine ``b_k`` nor the stage sum is
     bounded. On *unstandardized*, large-range features a leaf such as
     ``eml(x_i - x_j, exp(x_k))`` evaluated at an *in-distribution* held-out
-    point can already extrapolate to ``±1e6..1e7`` — the raw feature
-    differences are large — which dominates the sum and destroys held-out R²
+    point can already extrapolate to ``±1e6..1e7``, the raw feature
+    differences are large, which dominates the sum and destroys held-out R²
     (observed: a random-split blow-up to R² ~= -5.6e7 on in-distribution test
     points). Normalizing inputs to train mean-0/std-1 keeps the leaf
     arguments at unit scale, so in-distribution held-out predictions stay
     bounded (the -5.6e7 case drops by ~3 orders of magnitude). This is a
     mitigation, not a hard bound: a point pushed several std beyond the
-    training range still grows through ``exp(.)`` — symbolic regressors do not
+    training range still grows through ``exp(.)``, symbolic regressors do not
     promise safe extrapolation outside the data manifold. The normalization is
     a *linear* pre-transform on the inputs, so the per-stage SMT-LIB2
     translation is preserved (it composes with the affine input map under
@@ -572,7 +572,7 @@ def fit_residual_boost(
                     best fit on that stage's residual target is kept
                     (default 1 = single fit). Higher values help on the
                     harder slices where a single seed lands in a weak
-                    basin — e.g. Gemma L_large stage-3 lifts ≈ +0.01
+                    basin, e.g. Gemma L_large stage-3 lifts ≈ +0.01
                     going from 1 to 5 seeds-per-stage (compounds the
                     `fit_multi_seed` discipline into each boosting stage).
 
@@ -716,14 +716,14 @@ class ParetoResult:
     Attributes:
         front: list of ``(complexity: int, r2: float, fit: FitResult)`` tuples,
             NON-DOMINATED and sorted by complexity ASCENDING.  Along the front,
-            both complexity and r2 are STRICTLY INCREASING — every step to higher
+            both complexity and r2 are STRICTLY INCREASING, every step to higher
             complexity buys strictly better R².
         all_evaluated: list of ``(complexity, r2, fit)`` for every depth tried,
             including dominated points.
     """
 
     front: list  # list[(complexity:int, r2:float, fit:FitResult)], asc complexity
-    all_evaluated: list  # list[(complexity, r2, fit)] — every depth tried
+    all_evaluated: list  # list[(complexity, r2, fit)], every depth tried
 
     def best(self) -> "FitResult":
         """Return the FitResult with the highest R² on the Pareto front."""
@@ -769,7 +769,7 @@ def fit_pareto(
 
     Sweeps over each depth in *depths*, running ``fit()`` (or
     ``fit_multi_seed()`` when ``seeds_per_depth > 1``), and returns the
-    non-dominated subset — every step to higher complexity on the front buys
+    non-dominated subset, every step to higher complexity on the front buys
     strictly better R².
 
     This mirrors PySR's Pareto-front output, letting callers choose their own
@@ -834,7 +834,7 @@ def fit_pareto(
 
     # --- Build Pareto front ---
     # Step 1: collapse exact (complexity, r2) ties, keeping the entry that
-    # appeared first (lowest depth index — deterministic when depths is ordered).
+    # appeared first (lowest depth index, deterministic when depths is ordered).
     seen: dict = {}  # (c, r2) -> index in all_evaluated
     for idx, (c, r2, fit_r) in enumerate(all_evaluated):
         key = (c, round(r2, 10))

@@ -128,7 +128,7 @@ def _toy_attention_jacobian_torch(W_Q, W_K, W_V, X, d_head):
 
 @pytest.mark.parametrize("seed", [0, 1, 2, 3, 4])
 def test_theorem3_bound_dominates_autograd_jacobian(seed):
-    """Theorem 3 ‖J_Attn‖_2 bound ≥ torch.autograd ‖J‖_2 — implementation
+    """Theorem 3 ‖J_Attn‖_2 bound ≥ torch.autograd ‖J‖_2, implementation
     soundness check.  This is the load-bearing test for the primitive.
 
     Tiny T=4, d_model=8, d_head=4 attention block; 5 random seeds.
@@ -158,7 +158,7 @@ def test_theorem3_bound_dominates_autograd_jacobian(seed):
     ratio = L_th3 / max(sigma_max, 1e-9)
     assert (
         1.0 <= ratio < 100.0
-    ), f"seed={seed}: bound is {ratio:.2f}× looser than autograd — sanity check"
+    ), f"seed={seed}: bound is {ratio:.2f}× looser than autograd, sanity check"
 
 
 # ─── T5: interval bound monotonicity + clean-limit ────────────────────────

@@ -62,7 +62,7 @@ def _combo_strings(
 ) -> list[str]:
     """Render each combo entry as a math string.
 
-    Order: pair combos (add, sub, [mul]) then triple combos (mul3) —
+    Order: pair combos (add, sub, [mul]) then triple combos (mul3),
     same order as `enumerate_combos` followed by `enumerate_triples`.
     """
     out = []
@@ -83,7 +83,7 @@ def _combo_strings(
 def annotate(expr: str) -> str:
     """Rewrite known EML sub-patterns into standard math notation.
 
-    This is cosmetic — the raw eml(...) string is always authoritative.
+    This is cosmetic, the raw eml(...) string is always authoritative.
     """
     out = expr
     prev = None

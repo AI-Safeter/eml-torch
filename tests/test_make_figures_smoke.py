@@ -5,7 +5,7 @@ test runs the figure-generation scripts end-to-end and asserts each
 produced PNG is larger than a minimum-realistic size, which is the
 sanity bound that catches silent-failure modes like the matplotlib
 all-NaN ``imshow`` bug we hit in commit 9eb4523 (the heat-strip panel
-rendered as an empty axes — file was ~30 kB instead of ~150 kB).
+rendered as an empty axes, file was ~30 kB instead of ~150 kB).
 
 Skips if matplotlib is not installed in the test environment.
 
@@ -40,7 +40,7 @@ def _run_script(script_name: str) -> None:
     """Invoke a figure-generation script as a subprocess.
 
     Subprocess isolation matters here: the scripts call matplotlib.use("Agg")
-    at import time, which is a process-global toggle — running them in-process
+    at import time, which is a process-global toggle, running them in-process
     after another test has set a different backend would either fail loudly
     or (worse) silently re-route the output to an interactive backend.
     """
@@ -89,7 +89,7 @@ def test_make_figures_produces_nonempty_pngs():
         assert p.exists(), f"{p.name} was not produced"
         size = p.stat().st_size
         assert size > 50_000, (
-            f"{p.name} is suspiciously small ({size} bytes) — possible "
+            f"{p.name} is suspiciously small ({size} bytes), possible "
             "silent-failure render (e.g. all-NaN imshow). Open the file to inspect."
         )
 
@@ -104,7 +104,7 @@ def test_make_eml_wins_figure_produces_nonempty_png():
 
     Same min-size guard. Also serves as a smoke test that depth-1
     ``use_mul=True`` evolution still finds ``eml((x1*x2), 1)`` on
-    ``exp(x1*x2)`` — if the structural recovery regresses, the figure
+    ``exp(x1*x2)``, if the structural recovery regresses, the figure
     would still be produced but downstream R² assertions could be
     tightened in a follow-up test.
     """
@@ -117,6 +117,6 @@ def test_make_eml_wins_figure_produces_nonempty_png():
     assert out.exists(), "figure_eml_wins_v2.png was not produced"
     size = out.stat().st_size
     assert size > 50_000, (
-        f"figure_eml_wins_v2.png is suspiciously small ({size} bytes) — "
+        f"figure_eml_wins_v2.png is suspiciously small ({size} bytes), "
         "possible silent-failure render."
     )

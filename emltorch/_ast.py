@@ -1,4 +1,4 @@
-"""emltorch/_ast.py — Private AST nodes + parser for EML formula strings.
+"""emltorch/_ast.py, Private AST nodes + parser for EML formula strings.
 
 Used internally by emltorch.smt to translate polished formulas to SMT-LIB2.
 Not part of the public API.

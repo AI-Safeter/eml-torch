@@ -1,4 +1,4 @@
-"""End-to-end tests for emltorch.fit() — the public API."""
+"""End-to-end tests for emltorch.fit(), the public API."""
 
 import math
 import sys

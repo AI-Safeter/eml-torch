@@ -1,4 +1,4 @@
-"""emltorch — GPU-batched symbolic regression via the EML operator.
+"""emltorch, GPU-batched symbolic regression via the EML operator.
 
 The EML operator `eml(x, y) = exp(x) - ln(y)`, combined with the constant 1,
 represents every elementary function as a uniform binary tree.

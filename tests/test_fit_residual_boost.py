@@ -1,4 +1,4 @@
-"""Tests for emltorch.fit_residual_boost() — gradient-boosting-style residual fit.
+"""Tests for emltorch.fit_residual_boost(), gradient-boosting-style residual fit.
 
 Verifies that:
   - n_stages stages are produced
@@ -43,7 +43,7 @@ def test_boost_basic_shape():
 
 
 def test_boost_cumulative_train_r2_nondecreasing():
-    """Each additional stage adds to cumulative train fit — R² monotone up."""
+    """Each additional stage adds to cumulative train fit, R² monotone up."""
     torch.manual_seed(0)
     x = torch.linspace(0.5, 5.0, 256)
     # exp(x) + 0.3 * log(x): two-family target where one EML can't capture
@@ -242,7 +242,7 @@ def test_boost_warns_on_unstandardized_wide_features():
 
 def test_boost_diminishing_returns_on_pure_signal():
     """If the target is exactly recoverable by a single EML (e.g. log(x)),
-    stage 2 has nothing to fit — its R² contribution to the train residual
+    stage 2 has nothing to fit, its R² contribution to the train residual
     should be near zero, and combined R² remains near 1.0."""
     x = torch.linspace(0.5, 5.0, 256)
     y = torch.log(x)
@@ -250,5 +250,5 @@ def test_boost_diminishing_returns_on_pure_signal():
     result = eml.fit_residual_boost(x, y, n_stages=3, depth=3, device=DEVICE)
     # Stage 1 should already nail this (R² > 0.95). Stage 2 has tiny gain.
     assert result.cumulative_r2_train[0] > 0.95
-    # Final should still be near 1.0 — boost doesn't degrade.
+    # Final should still be near 1.0, boost doesn't degrade.
     assert result.final_r2_train >= result.cumulative_r2_train[0] - 1e-3

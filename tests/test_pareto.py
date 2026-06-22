@@ -1,4 +1,4 @@
-"""Tests for emltorch.fit_pareto() — the Pareto-front accuracy/complexity API.
+"""Tests for emltorch.fit_pareto(), the Pareto-front accuracy/complexity API.
 
 Mirrors the discipline of test_fit_multi_seed.py: TDD-first, run red,
 then implement.
@@ -18,7 +18,7 @@ DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 
 # ---------------------------------------------------------------------------
-# Test 1 — basic shape and subset invariant
+# Test 1, basic shape and subset invariant
 # ---------------------------------------------------------------------------
 
 
@@ -56,7 +56,7 @@ def test_front_nonempty_and_subset():
 
 
 # ---------------------------------------------------------------------------
-# Test 2 — strict Pareto property
+# Test 2, strict Pareto property
 # ---------------------------------------------------------------------------
 
 
@@ -99,12 +99,12 @@ def test_pareto_property():
             dominates = (ci <= cj) and (ri >= rj) and (ci < cj or ri > rj)
             assert not dominates, (
                 f"Front point {i} (c={ci}, r2={ri:.6f}) dominates "
-                f"front point {j} (c={cj}, r2={rj:.6f}) — front is not Pareto-optimal"
+                f"front point {j} (c={cj}, r2={rj:.6f}), front is not Pareto-optimal"
             )
 
 
 # ---------------------------------------------------------------------------
-# Test 3 — dominated points are excluded from front, kept in all_evaluated
+# Test 3, dominated points are excluded from front, kept in all_evaluated
 # ---------------------------------------------------------------------------
 
 
@@ -166,7 +166,7 @@ def test_float_tolerance_collapses_near_tied_r2():
 
     Concrete case: on ``y = log(x)``, depth-1 R² and depth-≥2 R² typically differ
     by ~1e-15 (float noise). With the default ``rtol_r2 = 1e-9`` the higher-
-    complexity point is dominated. With ``rtol_r2 = 0`` it would survive — that
+    complexity point is dominated. With ``rtol_r2 = 0`` it would survive, that
     is the degenerate behaviour we are explicitly guarding against here.
     """
     x = torch.linspace(0.5, 5.0, 256)
@@ -195,7 +195,7 @@ def test_float_tolerance_collapses_near_tied_r2():
 
 
 # ---------------------------------------------------------------------------
-# Test 4 — select(), best(), predict()
+# Test 4, select(), best(), predict()
 # ---------------------------------------------------------------------------
 
 
@@ -223,7 +223,7 @@ def test_select_and_best():
     assert isinstance(yp, torch.Tensor)
     assert yp.shape == (64,), f"Expected shape (64,), got {yp.shape}"
 
-    # select(max_complexity) — choose a budget that should work (minimum complexity)
+    # select(max_complexity), choose a budget that should work (minimum complexity)
     min_complexity = result.front[0][0]
     selected = result.select(max_complexity=min_complexity)
     assert (
@@ -240,7 +240,7 @@ def test_select_and_best():
         none_result is None
     ), f"select({too_tight}) should return None when min front complexity={min_complexity}"
 
-    # select(large budget) returns max-r2 within budget — should match best()
+    # select(large budget) returns max-r2 within budget, should match best()
     large_budget = 1000
     selected_large = result.select(max_complexity=large_budget)
     assert selected_large is not None
@@ -248,7 +248,7 @@ def test_select_and_best():
 
 
 # ---------------------------------------------------------------------------
-# Test 5 — __repr__ delegates to summary()
+# Test 5, __repr__ delegates to summary()
 # ---------------------------------------------------------------------------
 
 

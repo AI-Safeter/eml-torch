@@ -1,12 +1,12 @@
 """
-emltorch/smt.py — Export EML formulas to Z3 / SMT-LIB for formal verification.
+emltorch/smt.py, Export EML formulas to Z3 / SMT-LIB for formal verification.
 
 The EML operator `eml(x, y) = exp(x) - ln(y)` and its compositions can be
 translated to SMT formulas over the theory of real arithmetic with
 transcendentals (using Z3's Python bindings). This enables:
 
   1. **Bounded safety proofs**: prove that for all r in a ball of radius rho,
-     a safety feature does NOT activate — no perturbation within budget
+     a safety feature does NOT activate, no perturbation within budget
      rho can bypass it. A machine-checkable certificate.
 
   2. **Exact adversarial witness search**: minimize ||d|| subject to the
@@ -14,7 +14,7 @@ transcendentals (using Z3's Python bindings). This enables:
      Z3 recovers the Cauchy-Schwarz optimum exactly.
 
   3. **SMT-LIB2 export**: produce a .smt2 file that any SMT solver
-     (Z3, CVC5, Yices) can verify — portable formal proof.
+     (Z3, CVC5, Yices) can verify, portable formal proof.
 
 Key identity for the safety audit:
     For a jbloom SAE ReLU-gated feature k, the activation condition
@@ -180,7 +180,7 @@ def certify_linear_threshold_safe(
     feature with weight W_enc[k] and threshold threshold_k does NOT activate".
 
     This IS the mathematical safety certificate demanded by EU AI Act 13 and
-    NIST AI RMF Measure.1.1 — a deterministic, court-testable statement.
+    NIST AI RMF Measure.1.1, a deterministic, court-testable statement.
 
     SAFE iff Z3 returns UNSAT on the negation
         (exists d : ||d||<=radius AND W.(r_center+d) > threshold_k).
@@ -346,7 +346,7 @@ def optimize_min_linf_witness(
 
     For linear threshold features, Z3 proves optimality (not just finds a
     witness). The closed-form optimum is t* = margin / ||W||_1 attained
-    at d_i = t* * sign(W_i) — Z3 recovers this exactly.
+    at d_i = t* * sign(W_i), Z3 recovers this exactly.
     """
     z3 = _lazy_import_z3()
     import time
@@ -526,7 +526,7 @@ _LEMMA_DEPTH3_LN = """\
 ; Provenance: gatekeeper T2 (already discharged by base axioms in 2-5ms).
 ; Bundled here as a *named* lemma for cert authors who want the named
 ; identity rather than the raw nested expression in their assertion.
-; Not a new axiom — derivable from base; included for ergonomics.
+; Not a new axiom, derivable from base; included for ergonomics.
 (assert true)  ; no-op; identity holds via base axioms
 """
 
@@ -534,7 +534,7 @@ _LEMMA_RELU_DEPTH4 = """\
 ; Lemma:  ∀ z > 0.  eml(eml(1, eml(eml(1, z), 1)), 1) = z
 ; Depth-4 EML identity for z > 0 branch.  Foundational for SAE feature
 ; cert via ReLU=EML.  Discharged by base axioms (Ln∘Exp inverse + Exp∘Ln
-; inverse) — provenance: gatekeeper T3 (2-5ms).  Bundled for ergonomic
+; inverse), provenance: gatekeeper T3 (2-5ms).  Bundled for ergonomic
 ; reuse.
 (assert true)
 """
@@ -582,7 +582,7 @@ EML_LEMMAS: dict[str, dict] = {
         "smt2": _LEMMA_LN_MULTIPLICATIVITY,
         "provenance": (
             "Symmetric counterpart of multiplicativity.  Useful when a cert "
-            "needs to factor a product inside Ln(·) — relevant to certs over "
+            "needs to factor a product inside Ln(·), relevant to certs over "
             "products of positive quantities (e.g. attention weights)."
         ),
         "load_bearing_for": (
@@ -651,7 +651,7 @@ EML_LEMMAS: dict[str, dict] = {
             "concrete Ln value."
         ),
         "load_bearing_for": (
-            "Certs needing a numeric upper bound on Ln(z) for z near e — "
+            "Certs needing a numeric upper bound on Ln(z) for z near e, "
             "the base axiom set has no Ln numeric anchor (only Exp)."
         ),
         "is_axiom": True,
@@ -724,7 +724,7 @@ def eml_tree_to_smt2(
 
     Args:
         formula:     EML formula string, e.g. ``"3.0 + 1.5 * eml(eml(1, x), 1)"``
-                     (or bare ``"eml(...)"`` — affine wrapper optional).
+                     (or bare ``"eml(...)"``, affine wrapper optional).
         var_ranges:  e.g. ``{"x": (-1.0, 2.0), "gap": (-4.0, -1.0)}``
         target_op:   one of ``">", ">=", "<", "<=", "==", "!="``.
         target_value: numeric RHS of the SAFE claim.
@@ -843,13 +843,13 @@ def eml_tree_to_smt2(
 # Alternative to ``eml_tree_to_smt2`` for poly-equivalent EML fits whose
 # arbitrary-float constants do NOT compose canonical reduction patterns
 # (`Ln∘Exp`, `Exp∘Ln`).  Instead of asking the SMT to reason about Exp/Ln
-# symbolically (which saturates — see Headline 11 d=5 curved-softmax),
+# symbolically (which saturates, see Headline 11 d=5 curved-softmax),
 # this emitter pre-computes per-node value RANGES via interval arithmetic
 # and emits a portable QF_LRA cert in which each Exp/Ln evaluation is a
 # fresh Real bounded numerically.
 #
 # The cert obligation reduces to LINEAR arithmetic over the propagated
-# intervals — decidable in polynomial time.  Empirically: 1 ms z3 / 3 ms
+# intervals, decidable in polynomial time.  Empirically: 1 ms z3 / 3 ms
 # cvc5 vs 60 s saturation under the axiomatized track for the same
 # polished EML formula.
 #
@@ -976,7 +976,7 @@ def eml_tree_to_smt2_intervals(
     clamp_log_eps: float = 1e-6,
 ) -> str:
     """Translate an EML formula into a portable QF_LRA cert via interval
-    propagation — the saturation-resolution paradigm from Headline 11.
+    propagation, the saturation-resolution paradigm from Headline 11.
 
     Use this emitter when:
     - The EML formula has arbitrary-float inner constants (poly-equivalent
@@ -999,7 +999,7 @@ def eml_tree_to_smt2_intervals(
        Add/Sub/Mul/Div.
     4. Asserts the negation of the SAFE claim.
 
-    Cert logic is QF_LRA — decidable in polynomial time.
+    Cert logic is QF_LRA, decidable in polynomial time.
 
     Soundness: each Exp/Ln interval is an analytic over-approximation of
     the transcendental value over the input range.  UNSAT proves
@@ -1080,7 +1080,7 @@ def eml_tree_to_smt2_intervals(
             seen_vars.add(n.left)
             seen_vars.add(n.right)
             sym = {"+": "+", "-": "-", "*": "*"}[n.op]
-            # No fresh var — combo of two variables / constants is a simple expression.
+            # No fresh var, combo of two variables / constants is a simple expression.
             return f"({sym} {n.left} {n.right})"
         if isinstance(n, _EML):
             L_expr = emit(n.left)
@@ -1174,7 +1174,7 @@ def eml_tree_to_smt2_intervals(
         f"; Claim (SAFE):  formula {target_op} {target_value}\n"
         f"; Interval-propagation analytic bound: formula ∈ [{final_lo:.6e}, {final_hi:.6e}]\n"
         f"; UNSAT below proves SAFE for all variable assignments in the ranges.\n"
-        f"; Logic: QF_LRA  (no transcendentals — interval arithmetic + linear "
+        f"; Logic: QF_LRA  (no transcendentals, interval arithmetic + linear "
         f"arith only)\n"
         f"(set-logic QF_LRA)\n"
     )
@@ -1208,7 +1208,7 @@ def eml_tree_to_smt2_intervals(
 #     ‖J_Attn(X)‖_2  ≤  ‖W^V‖_2 · (‖P‖_2 + 2·‖X‖_2² · ‖A‖_2 · max_i g_1(P_i))
 #
 # where ``A = (W^Q · (W^K)^T) / sqrt(d_head)`` and ``P`` is the row-stochastic
-# attention matrix at the operating point.  The bound is LOCAL — it depends
+# attention matrix at the operating point.  The bound is LOCAL, it depends
 # on the attention probabilities at the clean input, so a sound L_∞-ball
 # certificate must replace each operating-point quantity by an interval that
 # bounds the perturbed value (see ``attention_block_lipschitz_interval``).
@@ -1241,7 +1241,7 @@ def softmax_jacobian_g1(p) -> float:
 
 
 def softmax_jacobian_g1_max(P) -> float:
-    """``max_i g_1(P[i, :])`` — the worst-row softmax-Jacobian bound for a
+    """``max_i g_1(P[i, :])``, the worst-row softmax-Jacobian bound for a
     full attention probability matrix ``P`` of shape ``(T_q, T_k)``."""
     P_arr = np.asarray(P, dtype=np.float64)
     if P_arr.ndim == 1:
@@ -1268,7 +1268,7 @@ def attention_block_lipschitz_clean(
 
     ⚠ SCOPE WARNING ⚠  Theorem 3 is stated for the canonical attention block
     above.  Modern transformers may apply ADDITIONAL nonlinear transformations
-    BETWEEN projection and the QK dot-product — notably per-head RMSNorm
+    BETWEEN projection and the QK dot-product, notably per-head RMSNorm
     (``q_norm``, ``k_norm``) in Qwen3, Gemma2, etc.  These contribute
     multiplicative Lipschitz factors that this primitive does NOT capture.
     For a real attention block with q_norm/k_norm, the full per-head Jacobian
@@ -1278,7 +1278,7 @@ def attention_block_lipschitz_clean(
 
     where ``‖J_q_norm(q)‖_2 ≤ ‖γ_q‖_∞ / RMS(q)``.  Validate empirically via
     full-model PGD before using this primitive's output as a safety bound on
-    a model with q_norm/k_norm — see
+    a model with q_norm/k_norm, see
     ``sae-eml/scripts/qwen3_residual_input_pgd_full_forward.py`` for the
     Phase B' methodology.
 
@@ -1425,7 +1425,7 @@ def emit_attention_lipschitz_smt2_block(
     Headline-14-style ratio_corollary cert by using the perturbation norm
     to widen the score interval at the certified head.
 
-    Returns SMT-LIB2 text without a check-sat — splice into a larger cert.
+    Returns SMT-LIB2 text without a check-sat, splice into a larger cert.
     """
     bound = float(L_upper) * float(delta_l2_upper)
 
@@ -1465,7 +1465,7 @@ __all__ = [
 
 
 # ─────────────────────────────────────────────────────────────────────
-# H23a — Raw-weight concentration cert (QF_LRA, no axiomatized Exp/Ln)
+# H23a, Raw-weight concentration cert (QF_LRA, no axiomatized Exp/Ln)
 # Companion to V3 softmax cert (_cert_v3.build_cert_text_v3); used for
 # Gated DeltaNet / linear-attention layers where weights are signed and
 # NOT softmax-normalized.

@@ -1,10 +1,8 @@
 # emltorch
 
-**Closed-form formulas for LLM behavior: discovered, reproducible, and SMT-verifiable. Plus a portable auditor that flags when a certificate certifies nothing.**
+**Closed-form formulas for LLM behavior: discovered, reproducible, and SMT-verifiable.**
 
 GPU-batched symbolic regression around a single primitive, the EML operator `eml(x, y) = exp(x) − ln(y)`, which Odrzywolek ([arXiv:2603.21852](https://arxiv.org/abs/2603.21852), 2026) proved is universal for elementary functions. One operator, one tree topology, and the search lands on formulas you can read, audit, and discharge through an SMT solver.
-
-It also ships `emltorch.certify`, a dual-solver (z3 + cvc5) auditor for the other side of the problem. Given an attention-concentration, softmax-mass, or routing certificate, is it sound, or does it discharge vacuously? See [Showcase 5](#showcase-5-catch-a-certificate-that-certifies-nothing).
 
 ![EML formula vs Qwen3.6-27B factual-recall data](examples/h31_blackbox_cert/outputs/headline_figure.png)
 
@@ -12,11 +10,11 @@ It also ships `emltorch.certify`, a dual-solver (z3 + cvc5) auditor for the othe
 
 ```bash
 pip install "emltorch @ git+https://github.com/AI-Safeter/eml-torch.git"
-# for SMT certificates + the vacuity auditor (pulls z3 + cvc5, no transcendental build dep):
+# for .smt2 certificate emission and dual-solver verification (pulls z3 + cvc5, no transcendental build dep):
 pip install "emltorch[smt] @ git+https://github.com/AI-Safeter/eml-torch.git"
 ```
 
-Requires Python ≥ 3.10 and PyTorch ≥ 2.3. The core fit API runs on CPU or GPU; the SMT layer is pure-CPU and portable. After install you get two CLIs, `eml-certify` and `eml-vacuity-audit`.
+Requires Python ≥ 3.10 and PyTorch ≥ 2.3. The core fit API runs on CPU or GPU; the SMT layer is pure-CPU and portable.
 
 ## Showcase 1: a black-box formula for Qwen3.6-27B factual recall
 
@@ -58,31 +56,6 @@ This is a biphasic peak in attention magnitude centered on the sequence midpoint
 
 A depth-1 search with `use_mul=True` on 300 points of `exp(a·b)` returns exactly `eml((a*b), 1)`: one eml node, HELDOUT R² = 1.000000, max |residual| = 1.4e-7 (the float-precision floor). A polynomial OLS with K=5 and 21 cross-terms reaches R² = 0.9997 with max |residual| = 0.05, five orders of magnitude worse and structurally blind to the identity. When the underlying mechanism is exp, log, or multiplicative, EML recovers it; polynomials only approximate it.
 
-## Showcase 5: catch a certificate that certifies nothing
-
-Interpretability increasingly issues *certificates*: a head "puts τ% of its mass on token Y", a router "assigns this token to expert k". A certificate is only as good as the property it pins down, and a surprising number discharge vacuously, passing their formal check while certifying nothing. `emltorch.certify.vacuity_audit` returns a structured verdict for any concentration, mass, or routing claim:
-
-```python
-from emltorch.certify import vacuity_audit
-
-report = vacuity_audit(
-    scores=head_logits,        # raw attention scores for one head
-    target_idx=target_key,     # the key the cert claims mass on
-    tau=0.9,                   # the claimed concentration threshold
-    precision_floor=2**-8,     # the model's working dtype (e.g. bf16)
-)
-print(report.verdict)          # SOUND | VACUOUS | RELATIVE-ONLY | UNDER-PRECISION | NOT-CERTIFIED
-print(report.explanation)      # which of the four checks passed/failed, and why
-```
-
-It runs four checks, each catching a distinct failure mode. *Shift-collapse*: a score-variant body fed log-probs reduces to `prob > log τ`, almost always true. *Relative-vs-absolute*: mass measured with the dominant keys dropped from the denominator, a ranking rather than a mass. *No non-vacuity control*: a maximally-diffuse null also discharges. *Under-precision*: the certified margin sits below the model's own numerical noise. The auditor discriminates rather than debunks. It passes sound claims (true attention sinks on GPT-2 and Gemma-4 certify SOUND at τ=0.9) and flags vacuous ones. Same instrument, opposite verdicts. The CLI runs it end-to-end on a live model:
-
-```bash
-eml-vacuity-audit --model gpt2 --prompt "The cat sat on the" --layer 5 --head 1 --tau 0.9
-```
-
-Portable across z3 4.16 and cvc5 1.3 (no transcendental build dependency), dual-verified, 170 tests green.
-
 ## Library
 
 ```python
@@ -117,7 +90,6 @@ smt2 = eml.eml_tree_to_smt2(
 - `eml.fit_residual_boost`: multi-stage residual stacking; each per-stage tree is still SMT-translatable.
 - `polish_optimizer="lbfgs"`: quasi-Newton constant refinement, sharper than Adam on smooth targets.
 - `eml.eml_tree_to_smt2`: emit portable SMT-LIB2 with axiomatized `Exp` / `Ln`, no transcendental build dependency.
-- `emltorch.certify.vacuity_audit`: audit a concentration, mass, or routing certificate for the four vacuity failure modes; returns `SOUND`, `VACUOUS`, `RELATIVE-ONLY`, `UNDER-PRECISION`, or `NOT-CERTIFIED`. Companions: `dual_verify` (one-call z3 + cvc5), `attention_concentration_cert` (build the cert), `certified_radius` (largest L∞ box a head's concentration provably survives).
 
 ## When to use eml-torch
 
@@ -130,8 +102,6 @@ Your target is exp, log, softmax, or multiplicative-gate-like. EML's primitive m
 You want a portable certificate. Fitted trees compile to SMT-LIB2 and discharge through z3 + cvc5 in milliseconds, with no transcendental build dependency.
 
 You're doing interpretability on LLM internals or behavior. Every showcase above is a real frontier-scale model.
-
-You're issuing or reviewing a concentration, mass, or routing certificate. Run `vacuity_audit` first. A certificate that can't refuse a diffuse null, that measures a ranking instead of absolute mass, or whose margin sits below the model's dtype precision certifies nothing, and the auditor tells you which.
 
 ## License
 

@@ -1,7 +1,7 @@
 """End-to-end smoke test for the SMT cert emitter.
 
 Catches the failure mode where eml_tree_to_smt2_intervals depends on an
-internal parser module (currently emltorch._ast) — if that module is
+internal parser module (currently emltorch._ast), if that module is
 removed or renamed without updating the smt.py imports, this test fires.
 
 The test also exercises eml_tree_to_smt2 (the axiomatized-Exp emitter).
@@ -29,7 +29,7 @@ def test_eml_tree_to_smt2_intervals_emits_valid_qf_lra():
     assert "(declare-const L Real)" in out
     assert "(declare-const H Real)" in out
     assert "(check-sat)" in out
-    # Interval-propagation header line names the analytic bound — present
+    # Interval-propagation header line names the analytic bound, present
     # only when the parser + numeric evaluator both succeed.
     assert "Interval-propagation analytic bound" in out
 
@@ -55,7 +55,7 @@ def test_interval_emitter_handles_negative_ln_arg_via_safe_clipping():
     cert that verifies the safe_eml-clipped semantics."""
     # Formula where inner R = (x3 - x2) can go negative inside the box.
     # Without clamp_log_eps, this would raise. With the new 1e-6 default,
-    # the emitter clips R to max(R, 1e-6) — matching the forward pass.
+    # the emitter clips R to max(R, 1e-6), matching the forward pass.
     out = eml_tree_to_smt2_intervals(
         formula="+0.0697 + (+0.0554) * [eml(x2, (x3 - x2))]",
         var_ranges={"x2": (-1.19, 1.28), "x3": (-0.58, 0.12)},

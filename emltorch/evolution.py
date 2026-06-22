@@ -2,7 +2,7 @@
 Evolutionary search over EML tree topologies.
 
 Random search plateaus at depth 4+. This module keeps top-K restarts,
-mutates them via single-edge flips, and repeats — O(generations × population)
+mutates them via single-edge flips, and repeats, O(generations × population)
 instead of O(search_space).
 
 Combined with peaked one-hot init, each "tree" in the population is a
@@ -70,13 +70,13 @@ class EvolutionConfig:
     # evolve independently (selection + reproduction confined within each
     # island), with periodic ring migration of each island's best
     # individual into its neighbour. This preserves diversity and lets the
-    # search explore multiple basins in parallel — the targeted fix for the
+    # search explore multiple basins in parallel, the targeted fix for the
     # basin-trap failure mode where every seed of a single panmictic
     # population converges to the same local optimum (e.g. Gemma L_large,
     # where 10/10 seeds collapsed to `eml(x2, x2)`).
     #
     # n_islands=1 (default) is byte-identical to the original panmictic
-    # evolution — the island code path is only taken when n_islands > 1.
+    # evolution, the island code path is only taken when n_islands > 1.
     # The population is split into contiguous blocks of size
     # `population // n_islands`; any remainder slots form a final ragged
     # block that participates normally.
@@ -143,7 +143,7 @@ def _evaluate(
     y ≈ a + b·tree(x). NaN trees get +inf.
 
     The affine wrapper lets evolutionary search select topologies that are
-    close up to linear rescaling — much more forgiving than raw MSE.
+    close up to linear rescaling, much more forgiving than raw MSE.
     """
     with torch.no_grad():
         pred = tree(x)  # (B, N)
@@ -255,7 +255,7 @@ def _seed_from_shallower_(
     first 2^(d-1-l) nodes of internal level l (for l = 2 .. d-1).
     The root internal node + right subtree are left as their random init.
 
-    NOTE: this does not preserve the shallower tree's exact output — EML's
+    NOTE: this does not preserve the shallower tree's exact output, EML's
     primitive `eml(x, y) = exp(x) - ln(y)` has no identity, so any root node
     will transform the subtree's output. Seeding works by giving evolution a
     known-good building block to compose around, not by warm-starting with
@@ -374,7 +374,7 @@ def evolve(
         )
         # Cert-friendly bias (Track 5): reward leaf-constant-1 usage.
         # Fitness is the SELECTION criterion, so the bonus only changes which
-        # individuals are kept as elites — the MSE-based best_ever_idx tracker
+        # individuals are kept as elites, the MSE-based best_ever_idx tracker
         # is unaffected.
         if cfg.cert_friendly_const_bonus > 0.0:
             fitness = fitness + _cert_friendly_bonus(
@@ -383,7 +383,7 @@ def evolve(
         r2 = 1 - mse * N / ss_tot
 
         # Track global best by raw MSE (not fitness) so range_penalty doesn't
-        # bias which tree snapshot we return — selection elites still use fitness.
+        # bias which tree snapshot we return, selection elites still use fitness.
         min_mse_this_gen, argmin_mse_this_gen = mse.min(dim=0)
         if min_mse_this_gen < best_ever_mse:
             best_ever_mse = min_mse_this_gen

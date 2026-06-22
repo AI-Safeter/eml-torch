@@ -38,7 +38,7 @@ def test_fit_1d_x():
 
 
 def test_fit_sklearn_shape_NV():
-    """x shape (N, V) — the common sklearn convention."""
+    """x shape (N, V), the common sklearn convention."""
     x, y = _make_xy(N=80)
     res = emltorch.fit(
         torch.as_tensor(x), torch.as_tensor(y), depth=2, population=64, generations=2
@@ -47,7 +47,7 @@ def test_fit_sklearn_shape_NV():
 
 
 def test_fit_legacy_shape_VN():
-    """x shape (V, N) — original convention, still supported."""
+    """x shape (V, N), original convention, still supported."""
     x, y = _make_xy(N=80)
     x_vn = torch.as_tensor(x).t().contiguous()  # (1, 80)
     res = emltorch.fit(x_vn, torch.as_tensor(y), depth=2, population=64, generations=2)

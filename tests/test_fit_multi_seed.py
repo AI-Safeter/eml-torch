@@ -1,8 +1,8 @@
-"""Tests for emltorch.fit_multi_seed() — the topology-stability discipline API.
+"""Tests for emltorch.fit_multi_seed(), the topology-stability discipline API.
 
 Operationalizes the honest-stability check: run `fit()` with N independent
 RNG seeds and ask "does the same closed-form keep emerging?" Byte-equality
-topology counting (advisor-recommended precision — same string, not just
+topology counting (advisor-recommended precision, same string, not just
 structurally similar).
 """
 
@@ -88,7 +88,7 @@ def test_multi_seed_recovers_known_function():
 
 
 def test_multi_seed_seed_start():
-    """seed_start shifts the RNG sequence — different start gives different results."""
+    """seed_start shifts the RNG sequence, different start gives different results."""
     x = torch.linspace(0.5, 5.0, 256)
     y = torch.log(x)
     r0 = eml.fit_multi_seed(x, y, n_seeds=2, depth=3, seed_start=0, device=DEVICE)

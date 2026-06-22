@@ -50,7 +50,7 @@ def _evolve_tree(x, y, depth=3, seed=42):
 
 
 # ---------------------------------------------------------------------------
-# Test 1 — gating backward-compat test
+# Test 1, gating backward-compat test
 # ---------------------------------------------------------------------------
 
 
@@ -100,7 +100,7 @@ def test_adam_mode_is_unchanged_default():
 
 
 # ---------------------------------------------------------------------------
-# Test 2 — lbfgs runs and returns finite values
+# Test 2, lbfgs runs and returns finite values
 # ---------------------------------------------------------------------------
 
 
@@ -151,7 +151,7 @@ def test_lbfgs_runs_and_is_finite():
 
 
 # ---------------------------------------------------------------------------
-# Test 3 — lbfgs at least matches adam on constant-sensitive target
+# Test 3, lbfgs at least matches adam on constant-sensitive target
 # ---------------------------------------------------------------------------
 
 
@@ -200,7 +200,7 @@ def test_lbfgs_at_least_matches_adam_on_constant_sensitive_target():
 
 
 # ---------------------------------------------------------------------------
-# Test 4 — adam+lbfgs at least matches adam
+# Test 4, adam+lbfgs at least matches adam
 # ---------------------------------------------------------------------------
 
 
@@ -248,7 +248,7 @@ def test_adam_plus_lbfgs_at_least_matches_adam():
 
 
 # ---------------------------------------------------------------------------
-# Test 5 — non-finite safety: never-worse invariant under risky topology
+# Test 5, non-finite safety: never-worse invariant under risky topology
 # ---------------------------------------------------------------------------
 
 
@@ -261,7 +261,7 @@ def test_nonfinite_safety():
     # Use a target with very large dynamic range that stresses the optimizer
     torch.manual_seed(99)
     x = torch.linspace(0.1, 5.0, 128)
-    # exp(exp(x)) grows very fast — stresses any constant optimization
+    # exp(exp(x)) grows very fast, stresses any constant optimization
     y = torch.exp(torch.exp(x.clamp(max=2.0))) * 0.001 - 500.0
 
     tree, idx, warm_a, warm_b = _evolve_tree(x, y, depth=3, seed=99)
@@ -306,7 +306,7 @@ def test_nonfinite_safety():
 
 
 # ---------------------------------------------------------------------------
-# Test 6 — empirical proof-of-value: LBFGS at small iter budget
+# Test 6, empirical proof-of-value: LBFGS at small iter budget
 # ---------------------------------------------------------------------------
 
 
@@ -349,7 +349,7 @@ def test_lbfgs_at_small_iter_budget_matches_or_beats_adam():
         f"lbfgs: r2={r2_l:.6f} mse={mse_l:.3e}  Δr2={r2_l-r2_a:+.2e}"
     )
 
-    # Safety properties — both must hold for the LBFGS mode to be acceptable.
+    # Safety properties, both must hold for the LBFGS mode to be acceptable.
     assert math.isfinite(r2_l) and math.isfinite(mse_l)
     # LBFGS may equal Adam at saturation; it must not regress beyond float noise.
     assert mse_l <= mse_a * 1.001 + 1e-9, (
