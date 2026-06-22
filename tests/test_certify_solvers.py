@@ -1,7 +1,7 @@
 """TDD tests for emltorch.certify.solvers — the unified SMT backend that
 replaces 31 copy-pasted verify_z3/verify_cvc5 pairs across sae-eml scripts.
 
-Run (CPU, eval_venv): CUDA_VISIBLE_DEVICES="" pytest emltorch/tests/test_certify_solvers.py -q
+Run (CPU): CUDA_VISIBLE_DEVICES="" pytest emltorch/tests/test_certify_solvers.py -q
 """
 
 from __future__ import annotations

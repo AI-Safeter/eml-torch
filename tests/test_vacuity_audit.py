@@ -10,7 +10,7 @@ into four tested checks:
   3. relative-vs-absolute (excluded-key mass floor; 9%-with-BOS-excluded)
   4. numerical-precision  (certified radius below model round-off)
 
-Run (CPU, eval_venv, from emltorch/):
+Run (CPU, from emltorch/):
     CUDA_VISIBLE_DEVICES="" pytest tests/test_vacuity_audit.py -q
 """
 

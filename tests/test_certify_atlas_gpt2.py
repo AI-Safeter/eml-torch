@@ -7,7 +7,7 @@ above it. This is the non-vacuous behavior the vacuity audit (2026-06-19)
 demanded after the log-prob v3 certs were found vacuous.
 
 Loads GPT-2 (CPU). Run from emltorch/:
-    HF_HOME=/home/ubuntu/samuel/.cache/huggingface CUDA_VISIBLE_DEVICES="" \
+    HF_HOME=~/.cache/huggingface CUDA_VISIBLE_DEVICES="" \
         pytest tests/test_certify_atlas_gpt2.py -q
 """
 

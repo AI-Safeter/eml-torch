@@ -1,7 +1,7 @@
 """TDD tests for emltorch.certify.concentration — the attention-concentration
 cert builder absorbed from the script-trapped _cert_v3.py + 30x-duplicated _num.
 
-Run (CPU, eval_venv, from emltorch/):
+Run (CPU, from emltorch/):
     CUDA_VISIBLE_DEVICES="" pytest tests/test_certify_concentration.py -q
 """
 

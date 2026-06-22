@@ -2,7 +2,7 @@
 GPT-2 (CPU) without error, and sweep mode writes valid JSON to --out.
 
 Run from emltorch/:
-    HF_HOME=/home/ubuntu/samuel/.cache/huggingface CUDA_VISIBLE_DEVICES="" \
+    HF_HOME=~/.cache/huggingface CUDA_VISIBLE_DEVICES="" \
         pytest tests/test_certify_cli.py -q
 """
 

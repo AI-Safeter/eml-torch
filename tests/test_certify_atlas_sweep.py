@@ -4,7 +4,7 @@ form. The canonical induction head L5.H5 must certify (radius > 0 at tau=0.5)
 and attend to the induction target " drift".
 
 Loads GPT-2 (CPU). Run from emltorch/:
-    HF_HOME=/home/ubuntu/samuel/.cache/huggingface CUDA_VISIBLE_DEVICES="" \
+    HF_HOME=~/.cache/huggingface CUDA_VISIBLE_DEVICES="" \
         pytest tests/test_certify_atlas_sweep.py -q
 """
 

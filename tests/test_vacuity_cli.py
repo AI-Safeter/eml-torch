@@ -1,6 +1,6 @@
 """TDD tests for the eml-vacuity-audit CLI (no model load: scores-JSON mode).
 
-Run (CPU, eval_venv, from emltorch/):
+Run (CPU, from emltorch/):
     CUDA_VISIBLE_DEVICES="" pytest tests/test_vacuity_cli.py -q
 """
 

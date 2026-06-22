@@ -9,7 +9,7 @@
 6. weak-test upgrades (interval on log-probs; v3 full dual.verdict regression).
 7. certified_radius non-vacuity self-check (require_nonvacuous).
 
-Run (CPU, eval_venv, from emltorch/):
+Run (CPU, from emltorch/):
     CUDA_VISIBLE_DEVICES="" pytest tests/test_certify_hardening.py -q
 """
 

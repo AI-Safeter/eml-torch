@@ -153,7 +153,7 @@ the `v3` log-prob form returns dual-UNSAT at τ=0.95 yet certifies nothing. Swit
 
 ```bash
 cd emltorch/
-CUDA_VISIBLE_DEVICES="" /home/ubuntu/samuel/eval_venv/bin/python3 \
+CUDA_VISIBLE_DEVICES="" python3 \
     -m pytest tests/test_vacuity_audit.py tests/test_vacuity_cli.py -q
 ```
 
