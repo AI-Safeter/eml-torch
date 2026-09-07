@@ -23,6 +23,17 @@ residual fitting, Pareto selection, and formula export. Inputs accept NumPy
 arrays, lists, or tensors; predictions use raw input coordinates, including
 when fitting with normalization. CUDA is selected automatically when available.
 
+For a trainable neural head with learned affine arguments:
+
+```python
+head = eml.EMLHead(32, 16, out_features=1, device="cuda")
+prediction = head(torch.randn(64, 32, device="cuda"))
+```
+
+Each hidden unit uses `eml(left(x), 1 + right(x)**2)`, followed by a learned
+readout and an optional linear residual. The head supports ordinary PyTorch
+optimizers and `torch.compile`; it does not run symbolic tree discovery.
+
 Numerical EML clips exponential and logarithm arguments. SMT export describes
 real formula obligations; it does not bound floating-point or approximation
 error.

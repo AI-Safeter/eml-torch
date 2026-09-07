@@ -16,6 +16,7 @@ from .api import (
     _expression_complexity as _expression_complexity,
 )
 from .evolution import EvolutionConfig, EvolutionResult, evolve
+from .head import EMLHead
 from .operator import safe_eml
 from .polish import polish
 from .smt import (
@@ -40,6 +41,7 @@ __all__ = [
     "ParetoResult",
     # Building blocks
     "safe_eml",
+    "EMLHead",
     "BatchedEMLTree",
     "evolve",
     "EvolutionConfig",
