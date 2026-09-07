@@ -9,8 +9,9 @@ optionally rewrite known sub-expressions into standard notation.
 from __future__ import annotations
 
 import re
-import torch
 from typing import TYPE_CHECKING
+
+import torch
 
 from .tree import enumerate_combos, enumerate_triples
 
@@ -35,6 +36,7 @@ def extract_expressions(
         List of expression strings, one per index.
     """
     leaf_idx, internal_idx = tree.snapped_choices()
+    var_names = _formula_var_names(tree, var_names)
 
     use_mul = getattr(tree, "use_mul", False)
     use_mul3 = getattr(tree, "use_mul3", False)
@@ -55,6 +57,17 @@ def extract_expressions(
             )
         results.append(raw)
     return results
+
+
+def _formula_var_names(tree, var_names: list[str]) -> list[str]:
+    """Render normalization in raw input coordinates for exported formulas."""
+    if len(var_names) != tree.num_vars:
+        raise ValueError(f"Expected {tree.num_vars} variable names, got {len(var_names)}")
+    if not tree.normalize_inputs:
+        return list(var_names)
+    means = tree.x_mean.detach().cpu().reshape(-1).tolist()
+    stds = tree.x_std.detach().cpu().reshape(-1).tolist()
+    return [f"(({name} - {mean!r}) / {std!r})" for name, mean, std in zip(var_names, means, stds)]
 
 
 def _combo_strings(
@@ -134,18 +147,14 @@ def _internal_expr(
             b, level - 1, 2 * node + 1, leaf_idx, internal_idx, var_names, combo_strs
         )
 
-    left = _choice_str(
-        internal_idx[level][b, node, 0].item(), var_names, combo_strs, child=child_l
-    )
+    left = _choice_str(internal_idx[level][b, node, 0].item(), var_names, combo_strs, child=child_l)
     right = _choice_str(
         internal_idx[level][b, node, 1].item(), var_names, combo_strs, child=child_r
     )
     return f"eml({left}, {right})"
 
 
-def _choice_str(
-    idx: int, var_names: list[str], combo_strs: list[str], child: str | None
-) -> str:
+def _choice_str(idx: int, var_names: list[str], combo_strs: list[str], child: str | None) -> str:
     """Map integer choice index to string.
 
     Layout: 0='1', 1..V=vars, V+1..V+K=combos, V+K+1=f_child (only at internal).

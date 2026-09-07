@@ -1,35 +1,11 @@
 __pycache__/
 *.py[cod]
-.pytest_cache/
 *.egg-info/
 .venv/
-wandb/
-*.log
-.DS_Store
-
-# Build / dist
-dist/
 build/
-*.whl
-*.tar.gz
-
-# Coverage / type checking
-.coverage
-.coverage.*
-htmlcov/
-.mypy_cache/
+dist/
 .ruff_cache/
-
-# Editors
-.idea/
-.vscode/
-*.swp
-*.swo
-
-# Notebooks
-.ipynb_checkpoints/
-
-# Secrets
+.DS_Store
 .env
 .env.*
 *.pem

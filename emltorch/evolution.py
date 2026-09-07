@@ -17,8 +17,9 @@ from dataclasses import dataclass, field
 
 import torch
 
+from ._validation import positive_int
+from .symbolic import extract_expressions
 from .tree import BatchedEMLTree
-from .symbolic import extract_expressions, annotate
 
 
 @dataclass
@@ -32,9 +33,7 @@ class EvolutionConfig:
     # Crossover: fraction of offspring produced by mixing two elite parents
     # (0 → pure mutation, 0.5 → half crossover / half mutation).
     crossover_fraction: float = 0.3
-    device: str = field(
-        default_factory=lambda: "cuda" if torch.cuda.is_available() else "cpu"
-    )
+    device: str = field(default_factory=lambda: "cuda" if torch.cuda.is_available() else "cpu")
     dtype: str = "float32"
     r2_target: float = 0.99  # early-exit when any tree hits this
     log_every: int = 5
@@ -45,41 +44,14 @@ class EvolutionConfig:
     # the affine wrapper. 0.0 disables.
     range_penalty: float = 0.0
     # Enable multiplicative combos (x_i * x_j) in the leaf/internal choice set.
-    # Opt-in; breaks multiplicative ceilings (e.g. h·SiLU(z) Mamba gate).
     use_mul: bool = False
     # Enable triple-product combos (x_i * x_j * x_k) for V >= 3. Opt-in.
     use_mul3: bool = False
-    # ─── Cert-friendly evolution flags (Track 5, 2026-04-27) ─────────────
-    # When > 0, biases evolution toward formulas that compose more cleanly
-    # with the axiomatized Exp/Ln SMT track (Headlines 7-10).  The penalty
-    # is added to fitness; selection-elite still tracked by MSE so a final
-    # solution with cert_friendly_penalty > 0 may have slightly higher MSE
-    # than the unpenalized run.
-    #
-    # `cert_friendly_const_bonus`:  reward (negative penalty) per LEAF slot
-    # that snaps to the constant `1` choice (choice index 0).  Trees with
-    # more `1` leaves discharge more cleanly under the inverse axioms
-    # `Ln(Exp(x)) = x` and `Exp(Ln(v)) = v`, since `eml(L, 1) = exp(L)`
-    # and `eml(1, R) = e − ln(R)` are the canonical EML reduction patterns.
-    # Typical value: 1e-3 (small).  0.0 disables (default).
+    # Reward constant-one leaves during selection; final results use raw MSE.
     cert_friendly_const_bonus: float = 0.0
     # Normalize input features to zero mean and unit std before evolution.
     normalize_inputs: bool = False
-    # ─── Island model (multi-population) ─────────────────────────────────
-    # Partition the population into `n_islands` equal sub-populations that
-    # evolve independently (selection + reproduction confined within each
-    # island), with periodic ring migration of each island's best
-    # individual into its neighbour. This preserves diversity and lets the
-    # search explore multiple basins in parallel, the targeted fix for the
-    # basin-trap failure mode where every seed of a single panmictic
-    # population converges to the same local optimum (e.g. Gemma L_large,
-    # where 10/10 seeds collapsed to `eml(x2, x2)`).
-    #
-    # n_islands=1 (default) is byte-identical to the original panmictic
-    # evolution, the island code path is only taken when n_islands > 1.
-    # The population is split into contiguous blocks of size
-    # `population // n_islands`; any remainder slots form a final ragged
-    # block that participates normally.
+    # Independent equal-sized subpopulations with periodic ring migration.
     n_islands: int = 1
     # Migrate every `migration_interval` generations (ignored if n_islands=1).
     migration_interval: int = 5
@@ -109,7 +81,7 @@ def _snap_peaked(tree: BatchedEMLTree):
     """Force any soft logits into one-hot by snapping to argmax."""
     tree.snap()
     tree.temp_inv.fill_(1.0)
-    tree.selection_mode = "softmax"
+    tree.selection_mode = "hard"
     tree.training = False
 
 
@@ -120,10 +92,6 @@ def _cert_friendly_bonus(tree: BatchedEMLTree, bonus: float) -> torch.Tensor:
     that encourages evolution to favor that tree).  When bonus = 0, returns
     a zero tensor.
 
-    The motivation is cert-tractability: trees whose leaves are mostly the
-    constant `1` discharge more cleanly under the axiomatized Exp/Ln SMT
-    track (Headlines 7-10), since `eml(L, 1) = exp(L) - ln(1) = exp(L)`
-    is the canonical reduction pattern that the inverse axioms target.
     """
     leaf_logits = tree.leaf_logits.data  # (B, n_leaves, 2, n_choices)
     if bonus <= 0.0 or leaf_logits.numel() == 0:
@@ -160,11 +128,7 @@ def _evaluate(
     b = torch.where(var_pred > 1e-12, b, torch.zeros_like(b))
     a = y_mean - b * pred_mean
     diff = (a + b * pred) - y
-    mse = (
-        diff.abs().pow(2).mean(dim=-1)
-        if diff.is_complex()
-        else diff.pow(2).mean(dim=-1)
-    )
+    mse = diff.abs().pow(2).mean(dim=-1) if diff.is_complex() else diff.pow(2).mean(dim=-1)
     if range_penalty > 0.0:
         y_std = y_c.pow(2).mean(dim=-1, keepdim=True).clamp(min=1e-12).sqrt()
         p_std = var_pred.clamp(min=1e-12).sqrt()
@@ -178,14 +142,10 @@ def _mutate_(tree: BatchedEMLTree, indices: torch.Tensor, n_mutations: int = 1):
     randomize their one-hot choice. `indices` is a LongTensor of tree indices.
     """
     with torch.no_grad():
-        all_logit_tensors = [tree.leaf_logits.data] + [
-            lg.data for lg in tree.internal_logits
-        ]
+        all_logit_tensors = [tree.leaf_logits.data] + [lg.data for lg in tree.internal_logits]
         n = len(indices)
         for _ in range(n_mutations):
-            which = torch.randint(
-                0, len(all_logit_tensors), (n,), device=indices.device
-            )
+            which = torch.randint(0, len(all_logit_tensors), (n,), device=indices.device)
             for tensor_idx, logits in enumerate(all_logit_tensors):
                 mask = which == tensor_idx
                 if not mask.any():
@@ -204,9 +164,7 @@ def _mutate_(tree: BatchedEMLTree, indices: torch.Tensor, n_mutations: int = 1):
                 # non-selected choice holds a saturated value (e.g., safe_eml at
                 # exp(60) ≈ 1.14e26): logit=50 gave weight 1.9e-22 and a 2.2e+4
                 # spurious contribution; logit=150 gives exactly 0.
-                row = torch.zeros(
-                    n_sel, n_choices, device=logits.device, dtype=logits.dtype
-                )
+                row = torch.zeros(n_sel, n_choices, device=logits.device, dtype=logits.dtype)
                 row.scatter_(-1, new_choice.unsqueeze(-1), 150.0)
                 logits[sel_indices, node_i, input_i] = row
 
@@ -219,9 +177,7 @@ def _clone_(tree: BatchedEMLTree, dst_indices: torch.Tensor, src_indices: torch.
             lg.data[dst_indices] = lg.data[src_indices]
 
 
-def _crossover_(
-    tree: BatchedEMLTree, dst: torch.Tensor, p1: torch.Tensor, p2: torch.Tensor
-):
+def _crossover_(tree: BatchedEMLTree, dst: torch.Tensor, p1: torch.Tensor, p2: torch.Tensor):
     """Uniform crossover: for each (node, input), pick p1 or p2 with 50/50.
 
     `dst`, `p1`, `p2` are equal-length LongTensors of tree indices. The logits
@@ -229,9 +185,7 @@ def _crossover_(
     slots, one flip per (node, input) position.
     """
     with torch.no_grad():
-        all_logit_tensors = [tree.leaf_logits.data] + [
-            lg.data for lg in tree.internal_logits
-        ]
+        all_logit_tensors = [tree.leaf_logits.data] + [lg.data for lg in tree.internal_logits]
         for logits in all_logit_tensors:
             # shape: (B, nodes, inputs, choices)
             shape_mask = (len(dst), logits.shape[1], logits.shape[2], 1)
@@ -264,9 +218,9 @@ def _seed_from_shallower_(
     with torch.no_grad():
         n_prev_leaves = src_tree.leaf_logits.shape[1]
         # Sanity check: prev leaves should equal half of deep's leaves
-        assert (
-            deep_tree.leaf_logits.shape[1] == 2 * n_prev_leaves
-        ), f"Depth mismatch: deep {deep_tree.leaf_logits.shape[1]} vs 2*src {2*n_prev_leaves}"
+        assert deep_tree.leaf_logits.shape[1] == 2 * n_prev_leaves, (
+            f"Depth mismatch: deep {deep_tree.leaf_logits.shape[1]} vs 2*src {2 * n_prev_leaves}"
+        )
 
         src_leaf = src_tree.leaf_logits.data[src_idx]  # (L_prev, 2, C)
         deep_tree.leaf_logits.data[seed_slots, :n_prev_leaves] = src_leaf
@@ -274,9 +228,7 @@ def _seed_from_shallower_(
         for lvl_idx, src_lg in enumerate(src_tree.internal_logits):
             src_block = src_lg.data[src_idx]  # (n_nodes_src, 2, C)
             n_src_nodes = src_block.shape[0]
-            deep_tree.internal_logits[lvl_idx].data[
-                seed_slots, :n_src_nodes
-            ] = src_block
+            deep_tree.internal_logits[lvl_idx].data[seed_slots, :n_src_nodes] = src_block
 
 
 def evolve(
@@ -302,6 +254,17 @@ def evolve(
     t0 = time.time()
     device = cfg.device
 
+    for name in ("depth", "population", "generations", "n_islands", "migration_interval"):
+        positive_int(name, getattr(cfg, name))
+    positive_int("mutations_per_child", cfg.mutations_per_child, allow_zero=True)
+    positive_int("migration_size", cfg.migration_size, allow_zero=True)
+    if not 0 < cfg.elite_fraction <= 1:
+        raise ValueError("elite_fraction must be in (0, 1]")
+    if not 0 <= cfg.crossover_fraction <= 1:
+        raise ValueError("crossover_fraction must be in [0, 1]")
+    if cfg.dtype not in ("float32", "float64"):
+        raise ValueError("dtype must be 'float32' or 'float64'")
+
     if cfg.n_islands > 1 and cfg.population % cfg.n_islands != 0:
         raise ValueError(
             f"population ({cfg.population}) must be divisible by n_islands "
@@ -313,9 +276,20 @@ def evolve(
     # Shape to (pop, V, N)
     if x.dim() == 1:
         x = x.unsqueeze(0)
+    if x.ndim != 2 or y.ndim != 1 or x.shape[1] != y.shape[0] or x.numel() == 0:
+        raise ValueError("Expected non-empty x=(V, N) and y=(N,) with matching samples")
+    if (
+        x.is_complex()
+        or y.is_complex()
+        or not torch.isfinite(x).all()
+        or not torch.isfinite(y).all()
+    ):
+        raise ValueError("x and y must contain finite real values")
     V, N = x.shape
-    x_batch = x.to(device=device, dtype=cfg.torch_dtype)
-    y_batch = y.to(device=device, dtype=cfg.torch_dtype)
+    x_batch = x.detach().to(device=device, dtype=cfg.torch_dtype)
+    y_batch = y.detach().to(device=device, dtype=cfg.torch_dtype)
+    if not torch.isfinite(x_batch).all() or not torch.isfinite(y_batch).all():
+        raise ValueError(f"Inputs exceed the finite range of {cfg.dtype}; rescale the data")
     x_pop = x_batch.unsqueeze(0).expand(cfg.population, V, N).contiguous()
     y_pop = y_batch.unsqueeze(0).expand(cfg.population, N).contiguous()
 
@@ -339,7 +313,7 @@ def evolve(
     if cfg.normalize_inputs:
         x_mean = x_batch.mean(dim=-1, keepdim=True).unsqueeze(0)  # (1, V, 1)
         x_std = (
-            x_batch.std(dim=-1, keepdim=True).clamp(min=1e-8).unsqueeze(0)
+            x_batch.std(dim=-1, keepdim=True, unbiased=N > 1).clamp(min=1e-8).unsqueeze(0)
         )  # (1, V, 1)
         tree.set_normalization_stats(x_mean, x_std)
 
@@ -372,14 +346,12 @@ def evolve(
             if cfg.range_penalty > 0.0
             else fitness.clone()
         )
-        # Cert-friendly bias (Track 5): reward leaf-constant-1 usage.
+        # Reward leaf-constant-one usage during selection.
         # Fitness is the SELECTION criterion, so the bonus only changes which
         # individuals are kept as elites, the MSE-based best_ever_idx tracker
         # is unaffected.
         if cfg.cert_friendly_const_bonus > 0.0:
-            fitness = fitness + _cert_friendly_bonus(
-                tree, cfg.cert_friendly_const_bonus
-            )
+            fitness = fitness + _cert_friendly_bonus(tree, cfg.cert_friendly_const_bonus)
         r2 = 1 - mse * N / ss_tot
 
         # Track global best by raw MSE (not fitness) so range_penalty doesn't
@@ -429,9 +401,7 @@ def evolve(
 
             # Mutation branch: pick a random elite parent, clone, mutate
             if n_mut > 0:
-                parent_idx = elite_idx[
-                    torch.randint(0, n_elite, (n_mut,), device=device)
-                ]
+                parent_idx = elite_idx[torch.randint(0, n_elite, (n_mut,), device=device)]
                 _clone_(tree, mut_slots, parent_idx)
                 _mutate_(tree, mut_slots, n_mutations=cfg.mutations_per_child)
 
@@ -462,9 +432,7 @@ def evolve(
 
             non_elite_mask = torch.ones(cfg.population, dtype=torch.bool, device=device)
             non_elite_mask[elite_flat] = False
-            non_elite_slots = torch.arange(cfg.population, device=device)[
-                non_elite_mask
-            ]
+            non_elite_slots = torch.arange(cfg.population, device=device)[non_elite_mask]
             slot_island = non_elite_slots // S  # island id per offspring slot
 
             n_offspring = non_elite_slots.numel()
@@ -527,10 +495,9 @@ def evolve(
 
     # Extract best expression
     if var_names is None:
-        var_names = [f"x{i+1}" for i in range(V)] if V > 1 else ["x"]
+        var_names = [f"x{i + 1}" for i in range(V)] if V > 1 else ["x"]
     best_expr_raw = extract_expressions(tree, [best_ever_idx], var_names)[0]
-    tree_str = annotate(best_expr_raw)
-    best_expr = f"{a_coef:+.4f} + ({b_coef:+.4f}) * [{tree_str}]"
+    best_expr = f"{a_coef!r} + ({b_coef!r}) * [{best_expr_raw}]"
 
     # Recompute raw (no-penalty) MSE for the restored best tree
     raw_mse_all = _evaluate(tree, x_pop, y_pop, range_penalty=0.0)

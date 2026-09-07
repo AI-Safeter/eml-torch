@@ -1,31 +1,17 @@
-"""
-Post-evolution polish: learnable numeric constants at fixed topology.
-
-After evolutionary search commits to a specific tree topology, this module
-replaces every "1" leaf choice with a learnable real-valued parameter and
-optimizes those constants (plus an affine wrapper a + b * tree) with Adam.
-
-This is what oxieml does internally during search (relax `One` leaves to
-R-valued params), but they then project the learned value back to `1` in
-the output, throwing away the continuous information. We keep it in the
-output, so the final formula may contain arbitrary constants like `-2.718`
-or `0.567` rather than just `1` and `e`.
-
-Mathematically: turns our discrete search into a two-level optimizer:
-  outer: evolutionary search over topology (discrete)
-  inner: Adam on constants + affine (continuous, closed gradient)
-"""
+"""Optimize constants and affine coefficients at a fixed EML tree topology."""
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Literal
 
 import torch
 import torch.nn as nn
 
+from ._validation import positive_int
 from .operator import safe_eml
-from .tree import BatchedEMLTree, build_base, enumerate_combos, num_combos
+from .symbolic import _formula_var_names
+from .tree import BatchedEMLTree, build_base, enumerate_combos
 
 
 @dataclass
@@ -36,6 +22,7 @@ class PolishResult:
     a: float  # affine intercept
     b: float  # affine scale
     formula: str  # formula with constants substituted
+    _tree: _FixedTopologyTree | None = field(default=None, repr=False)
 
 
 class _FixedTopologyTree(nn.Module):
@@ -61,6 +48,9 @@ class _FixedTopologyTree(nn.Module):
         self.use_mul = use_mul
         self.use_mul3 = use_mul3
         self.num_leaves = leaf_choices.shape[0]
+        self.register_buffer("x_mean", torch.zeros(num_vars, 1, dtype=dtype))
+        self.register_buffer("x_std", torch.ones(num_vars, 1, dtype=dtype))
+        self.normalize_inputs = False
 
         self.register_buffer("leaf_choices", leaf_choices.clone())
         self._internal_choices = [c.clone() for c in internal_choices]
@@ -100,23 +90,31 @@ class _FixedTopologyTree(nn.Module):
         for i, fi in enumerate(self._internal_flat_idxs):
             self.register_buffer(f"internal_flat_idx_{i}", fi)
 
+    @classmethod
+    def from_tree(cls, tree: BatchedEMLTree, index: int) -> _FixedTopologyTree:
+        leaf, internal = tree.snapped_choices()
+        fixed = cls(
+            leaf[index],
+            [choices[index] for choices in internal],
+            tree.num_vars,
+            dtype=tree.dtype,
+            use_mul=tree.use_mul,
+            use_mul3=tree.use_mul3,
+        ).to(tree.leaf_logits.device)
+        fixed.normalize_inputs = bool(tree.normalize_inputs)
+        fixed.x_mean.copy_(tree.x_mean.squeeze(0))
+        fixed.x_std.copy_(tree.x_std.squeeze(0))
+        return fixed
+
     @property
     def internal_flat_idxs(self):
-        return [
-            getattr(self, f"internal_flat_idx_{i}")
-            for i in range(len(self._internal_choices))
-        ]
+        return [getattr(self, f"internal_flat_idx_{i}") for i in range(len(self._internal_choices))]
 
     @property
     def internal_choices(self):
-        return [
-            getattr(self, f"internal_choices_{i}")
-            for i in range(len(self._internal_choices))
-        ]
+        return [getattr(self, f"internal_choices_{i}") for i in range(len(self._internal_choices))]
 
-    def _select(
-        self, choice_idx, flat_idx_tensor, base_vals, child_val, node_i, input_i
-    ):
+    def _select(self, choice_idx, flat_idx_tensor, base_vals, child_val, node_i, input_i):
         """
         Map one (node, input) choice to its actual value tensor at this forward.
 
@@ -145,6 +143,9 @@ class _FixedTopologyTree(nn.Module):
         """
         V, N = x.shape
         assert V == self.num_vars
+        x = x.to(self.dtype)
+        if self.normalize_inputs:
+            x = (x - self.x_mean) / self.x_std
         # Use the shared base builder. build_base expects (B, V, N); we run
         # polish single-batch so B=1, then squeeze.
         base = build_base(
@@ -161,12 +162,8 @@ class _FixedTopologyTree(nn.Module):
         for node in range(self.num_leaves):
             left_choice = int(self.leaf_choices[node, 0].item())
             right_choice = int(self.leaf_choices[node, 1].item())
-            left_val = self._select(
-                left_choice, self.leaf_flat_idx, base, None, node, 0
-            )
-            right_val = self._select(
-                right_choice, self.leaf_flat_idx, base, None, node, 1
-            )
+            left_val = self._select(left_choice, self.leaf_flat_idx, base, None, node, 0)
+            right_val = self._select(right_choice, self.leaf_flat_idx, base, None, node, 1)
             leaf_outputs.append(safe_eml(left_val, right_val))
         outputs = torch.stack(leaf_outputs, dim=0)  # (L, N)
 
@@ -181,12 +178,8 @@ class _FixedTopologyTree(nn.Module):
                 child_right = outputs[2 * node + 1]
                 left_choice = int(choices[node, 0].item())
                 right_choice = int(choices[node, 1].item())
-                left_val = self._select(
-                    left_choice, flat_idx, base, child_left, node, 0
-                )
-                right_val = self._select(
-                    right_choice, flat_idx, base, child_right, node, 1
-                )
+                left_val = self._select(left_choice, flat_idx, base, child_left, node, 0)
+                right_val = self._select(right_choice, flat_idx, base, child_right, node, 1)
                 new_outputs.append(safe_eml(left_val, right_val))
             outputs = torch.stack(new_outputs, dim=0)  # (M, N)
 
@@ -228,6 +221,10 @@ def polish(
     """
     import math as _math
 
+    positive_int("n_iters", n_iters, allow_zero=True)
+    if optimizer not in ("adam", "lbfgs", "adam+lbfgs"):
+        raise ValueError(f"Unknown polish optimizer: {optimizer!r}")
+
     if device is None:
         device = "cuda" if torch.cuda.is_available() else "cpu"
     # Pull choice indices from the snapped tree
@@ -236,21 +233,14 @@ def polish(
     internal_choices = [c[best_idx].to("cpu") for c in internal_idx_all]
 
     # Build the specialized tree
-    dtype = torch.float32
+    dtype = tree.dtype
     if x.dim() == 1:
         x = x.unsqueeze(0)
     V, N = x.shape
-    fixed = _FixedTopologyTree(
-        leaf_choices=leaf_choices,
-        internal_choices=internal_choices,
-        num_vars=V,
-        dtype=dtype,
-        use_mul=getattr(tree, "use_mul", False),
-        use_mul3=getattr(tree, "use_mul3", False),
-    ).to(device)
+    fixed = _FixedTopologyTree.from_tree(tree, best_idx).to(device)
 
-    x_dev = x.to(device, dtype)
-    y_dev = y.to(device, dtype)
+    x_dev = x.detach().to(device, dtype)
+    y_dev = y.detach().to(device, dtype)
 
     # Warm-start affine wrapper from evolution's best values
     a = nn.Parameter(torch.full((1,), warm_a, device=device, dtype=dtype))
@@ -298,8 +288,10 @@ def polish(
             nn.utils.clip_grad_norm_(list(fixed.parameters()) + [a, b], 1.0)
             opt.step()
 
-            if mse_loss.item() < best_mse:
-                best_mse = mse_loss.item()
+            with torch.no_grad():
+                current_mse = (a + b * fixed(x_dev) - y_dev).pow(2).mean().item()
+            if current_mse < best_mse:
+                best_mse = current_mse
                 best_state = {
                     "constants": fixed.constants.detach().clone(),
                     "a": float(a.detach().item()),
@@ -310,7 +302,7 @@ def polish(
     # L-BFGS phase (runs for optimizer in {"lbfgs", "adam+lbfgs"})
     # For "adam+lbfgs": warm-start from Adam's best state before running.
     # ------------------------------------------------------------------
-    if optimizer in ("lbfgs", "adam+lbfgs"):
+    if optimizer in ("lbfgs", "adam+lbfgs") and n_iters > 0:
         # Restore best-so-far state into parameters before LBFGS starts
         with torch.no_grad():
             fixed.constants.copy_(best_state["constants"])
@@ -345,7 +337,7 @@ def polish(
         for _step in range(n_lbfgs_steps):
             try:
                 loss_val = lbfgs_opt.step(_lbfgs_closure)
-            except Exception:
+            except RuntimeError:
                 # LBFGS can raise on degenerate line searches; stop gracefully
                 break
 
@@ -411,14 +403,14 @@ def polish(
     formula = _format_with_constants(
         leaf_choices,
         internal_choices,
-        var_names,
+        _formula_var_names(tree, var_names),
         fixed.leaf_flat_idx.cpu(),
         [fi.cpu() for fi in fixed.internal_flat_idxs],
         constants_list,
         use_mul=getattr(tree, "use_mul", False),
         use_mul3=getattr(tree, "use_mul3", False),
     )
-    full = f"{best_state['a']:+.4f} + ({best_state['b']:+.4f}) * " f"[{formula}]"
+    full = f"{best_state['a']!r} + ({best_state['b']!r}) * [{formula}]"
 
     return PolishResult(
         r2=r2,
@@ -427,6 +419,7 @@ def polish(
         a=best_state["a"],
         b=best_state["b"],
         formula=full,
+        _tree=fixed,
     )
 
 
@@ -462,7 +455,7 @@ def _format_with_constants(
     def choice_str(idx, flat_idx_tensor, node, input_side, child_str):
         if idx == 0:
             k = int(flat_idx_tensor[node, input_side].item())
-            return f"{constants[k]:.4f}"
+            return repr(constants[k])
         if 1 <= idx <= V:
             return var_names[idx - 1]
         if idx <= V + K:
@@ -472,19 +465,13 @@ def _format_with_constants(
         return child_str
 
     def leaf_expr(leaf_idx):
-        left = choice_str(
-            int(leaf_choices[leaf_idx, 0]), leaf_flat_idx, leaf_idx, 0, None
-        )
-        right = choice_str(
-            int(leaf_choices[leaf_idx, 1]), leaf_flat_idx, leaf_idx, 1, None
-        )
+        left = choice_str(int(leaf_choices[leaf_idx, 0]), leaf_flat_idx, leaf_idx, 0, None)
+        right = choice_str(int(leaf_choices[leaf_idx, 1]), leaf_flat_idx, leaf_idx, 1, None)
         return f"eml({left}, {right})"
 
     # Build bottom-up
     level_exprs = [leaf_expr(i) for i in range(leaf_choices.shape[0])]
-    for lvl, (choices, flat_idx) in enumerate(
-        zip(internal_choices, internal_flat_idxs)
-    ):
+    for lvl, (choices, flat_idx) in enumerate(zip(internal_choices, internal_flat_idxs)):
         new_exprs = []
         M = choices.shape[0]
         for node in range(M):

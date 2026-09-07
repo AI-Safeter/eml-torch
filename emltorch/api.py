@@ -1,12 +1,4 @@
-"""
-Stable public API for emltorch: a single `fit()` function that dispatches
-to the best search strategy for the given depth.
-
-Routing:
-    depth 1-2       → random search (peaked init, 256 restarts)
-    depth 3-4       → evolution + affine wrapper
-    depth 5+        → evolution + affine + more generations
-"""
+"""Public fitting, prediction, repeated-seed, residual, and Pareto APIs."""
 
 import warnings
 from dataclasses import dataclass
@@ -14,8 +6,9 @@ from typing import Literal
 
 import torch
 
+from ._validation import positive_int
 from .evolution import EvolutionConfig, evolve
-from .symbolic import annotate
+from .polish import _FixedTopologyTree
 from .polish import polish as polish_tree
 
 
@@ -27,6 +20,8 @@ def _coerce_inputs(x, y, device):
         x = torch.as_tensor(x)
     if not isinstance(y, torch.Tensor):
         y = torch.as_tensor(y)
+    if x.is_complex() or y.is_complex():
+        raise ValueError("x and y must contain real values")
     if not x.is_floating_point():
         x = x.float()
     if not y.is_floating_point():
@@ -63,10 +58,15 @@ def _coerce_inputs(x, y, device):
     else:
         raise ValueError(f"x must be 1D or 2D; got {x.ndim}D")
 
+    if x.shape[0] == 0:
+        raise ValueError("x must contain at least one feature")
+    if x.shape[1] != N:
+        raise ValueError(f"x shape {tuple(x.shape)} incompatible with len(y)={N}")
+
     if not torch.isfinite(x).all() or not torch.isfinite(y).all():
         raise ValueError("x or y contains NaN/Inf; clean inputs before calling fit().")
 
-    return x.to(device), y.to(device)
+    return x.detach().to(device), y.detach().to(device)
 
 
 @dataclass
@@ -94,37 +94,37 @@ class FitResult:
         (N,), (N, V), or (V, N)). Returns a 1-D torch.Tensor of length N
         with the affine-wrapped prediction ``a + b * tree(x)``.
         """
-        # Coerce x to (V, N) shape matching training
+        if self._tree is None:
+            raise ValueError("This FitResult has no fitted tree for prediction")
         if not isinstance(x, torch.Tensor):
             x = torch.as_tensor(x)
-        if not x.is_floating_point():
-            x = x.float()
-        if x.ndim == 1:
+        if x.is_complex():
+            raise ValueError("x must contain real values")
+        V = self._tree.num_vars
+        if x.ndim == 1 and V == 1:
             x = x.unsqueeze(0)
         elif x.ndim == 2:
-            # If V doesn't match tree's V, try transposing
-            V_tree = self._tree.num_vars
-            if x.shape[0] != V_tree and x.shape[1] == V_tree:
-                x = x.t().contiguous()
-        x = x.to(self._device)
-        # Tree forward expects (B, V, N) or (B, N) for V=1; broadcast same x
-        # to all B trees, then select the best one.
-        with torch.no_grad():
-            B = self._tree.num_trees
-            V = self._tree.num_vars
-            N = x.shape[-1]
-            if V == 1:
-                x_b = (
-                    (x.squeeze(0) if x.ndim == 2 else x)
-                    .unsqueeze(0)
-                    .expand(B, N)
-                    .contiguous()
+            if x.shape == (V, V):
+                warnings.warn(
+                    "x is square; assuming sklearn (N, V) convention and transposing",
+                    stacklevel=2,
                 )
+                x = x.t()
+            elif x.shape[1] == V:
+                x = x.t()
+        if x.ndim != 2 or x.shape[0] != V:
+            raise ValueError(f"x must have {V} features; expected (N, V) or (V, N)")
+        if not torch.isfinite(x).all():
+            raise ValueError("x contains NaN/Inf")
+        x = x.to(device=self._device, dtype=self._tree.dtype)
+        with torch.no_grad():
+            if isinstance(self._tree, _FixedTopologyTree):
+                pred = self._tree(x)
             else:
-                x_b = x.unsqueeze(0).expand(B, V, N).contiguous()
-            preds_all = self._tree.forward(x_b)  # (B, N)
-            tree_pred = preds_all[self._idx]
-        return (self.a + self.b * tree_pred).cpu()
+                # Compatibility with manually constructed results holding a population.
+                x_batch = x.unsqueeze(0).expand(self._tree.num_trees, -1, -1)
+                pred = self._tree(x_batch)[self._idx]
+            return (self.a + self.b * pred).cpu()
 
 
 def fit(
@@ -143,6 +143,9 @@ def fit(
     normalize_inputs: bool = False,
     n_islands: int = 1,
     migration_interval: int = 5,
+    use_mul: bool = False,
+    use_mul3: bool = False,
+    var_names: list[str] | None = None,
 ) -> FitResult:
     """
     Discover a closed-form EML expression fitting y ≈ f(x).
@@ -157,7 +160,7 @@ def fit(
                   "random" = peaked init + evaluate only (fast, shallow only).
                   "evolution" = population-based search with affine wrapper.
         population: for evolution/random, number of candidate trees in
-                    parallel. Defaults: depth≤3 → 1024, depth 4 → 2048,
+                    parallel. Defaults: depth 1–2 → 256, depth 3 → 1024, depth 4 → 2048,
                     depth 5+ → 4096.
         generations: for evolution, number of generations. Defaults: 20.
         device: torch device string (e.g. "cuda", "cuda:0", or "cpu"). If
@@ -173,6 +176,12 @@ def fit(
                    panmictic evolution (byte-identical behaviour). When > 1,
                    ``population`` is rounded up to the nearest multiple of
                    ``n_islands``. Only affects the "evolution" strategy.
+        use_mul: include pairwise feature products in the search choices.
+        use_mul3: include products of three distinct features.
+        var_names: unique feature names for the exported expression.
+        polish: refine constants after either random or evolutionary search.
+        normalize_inputs: standardize features using training statistics;
+            the exported expression includes this transform in raw coordinates.
         migration_interval: migrate every this-many generations (ignored
                    when n_islands == 1).
 
@@ -184,12 +193,38 @@ def fit(
     if device is None:
         device = "cuda" if torch.cuda.is_available() else "cpu"
 
-    if n_islands < 1:
-        raise ValueError(f"n_islands must be ≥ 1; got {n_islands}")
+    for name, value in (
+        ("depth", depth),
+        ("n_islands", n_islands),
+        ("migration_interval", migration_interval),
+    ):
+        positive_int(name, value)
+    for name, value in (("population", population), ("generations", generations)):
+        if value is not None:
+            positive_int(name, value)
+    positive_int("polish_iters", polish_iters, allow_zero=True)
+    if strategy not in ("auto", "random", "evolution"):
+        raise ValueError(f"Unknown strategy: {strategy}")
+    if polish_optimizer not in ("adam", "lbfgs", "adam+lbfgs"):
+        raise ValueError(f"Unknown polish optimizer: {polish_optimizer!r}")
 
     # --- Input coercion (accepts numpy / list / torch; (N,), (N,V), or (V,N)) ---
     x, y = _coerce_inputs(x, y, device)
-    V, N = x.shape
+    V = x.shape[0]
+    if var_names is None:
+        var_names = [f"x{i + 1}" for i in range(V)] if V > 1 else ["x"]
+    if (
+        len(var_names) != V
+        or len(set(var_names)) != V
+        or any(
+            not isinstance(name, str)
+            or not name.isascii()
+            or not name.isidentifier()
+            or name in {"eml", "exp", "Exp", "Ln"}
+            for name in var_names
+        )
+    ):
+        raise ValueError("var_names must contain one unique identifier per feature")
 
     # --- Strategy routing ---
     if strategy == "auto":
@@ -209,100 +244,59 @@ def fit(
 
     t0 = time.time()
 
-    if strategy == "random":
-        cfg = EvolutionConfig(
-            depth=depth,
-            num_vars=V,
-            population=population,
-            generations=1,  # one gen == random eval
-            elite_fraction=0.1,
-            mutations_per_child=0,
+    cfg = EvolutionConfig(
+        depth=depth,
+        num_vars=V,
+        population=population,
+        generations=1 if strategy == "random" else generations,
+        elite_fraction=0.1,
+        mutations_per_child=0 if strategy == "random" else 1,
+        crossover_fraction=0.3,
+        device=device,
+        r2_target=r2_target,
+        normalize_inputs=normalize_inputs,
+        n_islands=1 if strategy == "random" else n_islands,
+        migration_interval=migration_interval,
+        use_mul=use_mul,
+        use_mul3=use_mul3,
+    )
+    res = evolve(x, y, cfg, var_names=var_names)
+    result = FitResult(
+        expression=res.best_expression,
+        r2=res.best_r2,
+        mse=res.best_mse,
+        depth_used=depth,
+        strategy=strategy,
+        a=res.best_a,
+        b=res.best_b,
+        time_s=0.0,
+        generations=res.generation_r2s,
+        _tree=_FixedTopologyTree.from_tree(res.best_tree, res.best_idx),
+        _idx=0,
+        _device=device,
+    )
+    if polish:
+        pol = polish_tree(
+            res.best_tree,
+            res.best_idx,
+            x,
+            y,
+            var_names=var_names,
+            n_iters=polish_iters,
+            lr=1e-2,
             device=device,
-            r2_target=r2_target,
-            normalize_inputs=normalize_inputs,
+            warm_a=res.best_a,
+            warm_b=res.best_b,
+            optimizer=polish_optimizer,
         )
-        res = evolve(x, y, cfg)
-        return FitResult(
-            expression=res.best_expression,
-            r2=res.best_r2,
-            mse=res.best_mse,
-            depth_used=depth,
-            strategy="random",
-            a=res.best_a,
-            b=res.best_b,
-            time_s=time.time() - t0,
-            generations=res.generation_r2s,
-            _tree=res.best_tree,
-            _idx=res.best_idx,
-            _device=device,
-        )
-
-    if strategy == "evolution":
-        cfg = EvolutionConfig(
-            depth=depth,
-            num_vars=V,
-            population=population,
-            generations=generations,
-            elite_fraction=0.1,
-            mutations_per_child=1,
-            crossover_fraction=0.3,
-            device=device,
-            r2_target=r2_target,
-            normalize_inputs=normalize_inputs,
-            n_islands=n_islands,
-            migration_interval=migration_interval,
-        )
-        res = evolve(x, y, cfg)
-
-        # Opt-in polish step: fine-tune '1' leaves as learnable constants
-        if polish:
-            var_names = [f"x{i+1}" for i in range(V)] if V > 1 else ["x"]
-            pol = polish_tree(
-                res.best_tree,
-                res.best_idx,
-                x,
-                y,
-                var_names=var_names,
-                n_iters=polish_iters,
-                lr=1e-2,
-                device=device,
-                warm_a=res.best_a,
-                warm_b=res.best_b,
-                optimizer=polish_optimizer,
-            )
-            # Accept polished result only if it strictly improved
-            if pol.r2 > res.best_r2:
-                return FitResult(
-                    expression=pol.formula,
-                    r2=pol.r2,
-                    mse=pol.mse,
-                    depth_used=depth,
-                    strategy="evolution+polish",
-                    a=pol.a,
-                    b=pol.b,
-                    time_s=time.time() - t0,
-                    generations=res.generation_r2s,
-                    _tree=res.best_tree,
-                    _idx=res.best_idx,
-                    _device=device,
-                )
-
-        return FitResult(
-            expression=res.best_expression,
-            r2=res.best_r2,
-            mse=res.best_mse,
-            depth_used=depth,
-            strategy="evolution",
-            a=res.best_a,
-            b=res.best_b,
-            time_s=time.time() - t0,
-            generations=res.generation_r2s,
-            _tree=res.best_tree,
-            _idx=res.best_idx,
-            _device=device,
-        )
-
-    raise ValueError(f"Unknown strategy: {strategy}")
+        if pol.r2 > result.r2:
+            result.expression = pol.formula
+            result.r2, result.mse = pol.r2, pol.mse
+            result.a, result.b = pol.a, pol.b
+            result.strategy = f"{strategy}+polish"
+            result._tree = pol._tree
+    result.time_s = time.time() - t0
+    return result
 
 
 # ---------------------------------------------------------------------------
@@ -321,8 +315,8 @@ class MultiSeedResult:
     """
 
     n_seeds: int
-    all_results: list  # list[FitResult]
-    best_fit: object  # FitResult with highest R² (also the .predict() target)
+    all_results: list[FitResult]
+    best_fit: FitResult  # Highest R²; also the predict() target
     best_r2: float
     median_r2: float
     mean_r2: float
@@ -392,8 +386,7 @@ def fit_multi_seed(
     """
     import numpy as np
 
-    if n_seeds < 1:
-        raise ValueError(f"n_seeds must be ≥ 1; got {n_seeds}")
+    positive_int("n_seeds", n_seeds)
 
     results: list[FitResult] = []
     for s in range(seed_start, seed_start + n_seeds):
@@ -423,9 +416,7 @@ def fit_multi_seed(
     from collections import Counter
 
     topology_counts = dict(Counter(exprs))
-    top_topology, top_topology_count = max(
-        topology_counts.items(), key=lambda kv: kv[1]
-    )
+    top_topology, top_topology_count = max(topology_counts.items(), key=lambda kv: kv[1])
 
     return MultiSeedResult(
         n_seeds=n_seeds,
@@ -467,15 +458,13 @@ class BoostedResult:
     """
 
     n_stages: int
-    stage_fits: list  # list[FitResult]
-    cumulative_r2_train: list  # R² of the sum-of-stages on TRAIN, per stage
+    stage_fits: list[FitResult]
+    cumulative_r2_train: list[float]  # R² of the sum on training data
     final_r2_train: float
     time_s: float
 
     def predict(self, x):
         """Combined prediction: sum of all stage `predict()` outputs."""
-        import torch
-
         ys = [stage.predict(x) for stage in self.stage_fits]
         out = ys[0]
         for y in ys[1:]:
@@ -489,9 +478,7 @@ class BoostedResult:
         return " + ".join(parts)
 
     def summary(self) -> str:
-        first = (
-            self.cumulative_r2_train[0] if self.cumulative_r2_train else float("nan")
-        )
+        first = self.cumulative_r2_train[0] if self.cumulative_r2_train else float("nan")
         last = self.final_r2_train
         delta = last - first
         return (
@@ -528,40 +515,9 @@ def fit_residual_boost(
     targets the residual `y − sum_{j<k} stage_j(x)`. The combined predictor
     is the additive sum of all stages.
 
-    Why use this. A single EML tree of bounded depth has a finite
-    expressive class. Some targets (e.g. transformer-behavior probes whose
-    P_target involves rational/sigmoid-like structure) sit at the edge of
-    that class, single-stage EML reaches a local optimum that misses
-    informative features. Empirically, on Gemma-4-31B-it induction probes,
-    3-stage residual boosting lifts HELDOUT R² by ≈ +0.02 to +0.04 over
-    single-stage EML, with the second and third stages picking up
-    features the first stage's local optimum dropped.
-
-    The result is still purely symbolic: a sum of small EML expressions,
-    each SMT-translatable independently (lower bounds on the sum follow
-    from per-stage interval bounds).
-
-    Numerical safety. ``normalize_inputs`` defaults to ``True`` here (unlike
-    ``fit()``, which defaults to ``False``). The additive predictor sums
-    ``n_stages`` affine-wrapped trees ``a_k + b_k * tree_k(x)``; the EML leaf
-    ``exp`` is clamped per-node, but a single leaf can still reach
-    ``exp(80) ≈ 5.5e34``, and neither the affine ``b_k`` nor the stage sum is
-    bounded. On *unstandardized*, large-range features a leaf such as
-    ``eml(x_i - x_j, exp(x_k))`` evaluated at an *in-distribution* held-out
-    point can already extrapolate to ``±1e6..1e7``, the raw feature
-    differences are large, which dominates the sum and destroys held-out R²
-    (observed: a random-split blow-up to R² ~= -5.6e7 on in-distribution test
-    points). Normalizing inputs to train mean-0/std-1 keeps the leaf
-    arguments at unit scale, so in-distribution held-out predictions stay
-    bounded (the -5.6e7 case drops by ~3 orders of magnitude). This is a
-    mitigation, not a hard bound: a point pushed several std beyond the
-    training range still grows through ``exp(.)``, symbolic regressors do not
-    promise safe extrapolation outside the data manifold. The normalization is
-    a *linear* pre-transform on the inputs, so the per-stage SMT-LIB2
-    translation is preserved (it composes with the affine input map under
-    QF_LRA). If you pass ``normalize_inputs=False`` on raw, wide-range
-    features, a warning is emitted because the additive predictor can then
-    extrapolate without bound.
+    Each stage remains an independently exportable EML formula. Inputs are
+    normalized by default to limit exponential saturation. Normalization
+    uses training statistics and does not guarantee bounded extrapolation.
 
     Args mirror `fit()`. Additional:
         n_stages: number of boosting stages. Default 3. Each stage adds
@@ -570,11 +526,7 @@ def fit_residual_boost(
                     `seed_start + 100*k + s`.
         seeds_per_stage: candidate fits per stage; the candidate with the
                     best fit on that stage's residual target is kept
-                    (default 1 = single fit). Higher values help on the
-                    harder slices where a single seed lands in a weak
-                    basin, e.g. Gemma L_large stage-3 lifts ≈ +0.01
-                    going from 1 to 5 seeds-per-stage (compounds the
-                    `fit_multi_seed` discipline into each boosting stage).
+                    (default 1 = single fit).
 
     Returns:
         BoostedResult with `stage_fits` (list of FitResult), additive
@@ -584,41 +536,22 @@ def fit_residual_boost(
 
     import numpy as np
 
-    if n_stages < 1:
-        raise ValueError(f"n_stages must be ≥ 1; got {n_stages}")
-    if seeds_per_stage < 1:
-        raise ValueError(f"seeds_per_stage must be ≥ 1; got {seeds_per_stage}")
+    positive_int("n_stages", n_stages)
+    positive_int("seeds_per_stage", seeds_per_stage)
 
-    # Coerce y once; we'll work with numpy residuals between stages.
-    if not isinstance(y, torch.Tensor):
-        y_arr = np.asarray(y, dtype=np.float64).reshape(-1)
-    else:
-        y_arr = y.detach().cpu().numpy().astype(np.float64).reshape(-1)
-
-    # Safety: the additive predictor is unbounded; on raw wide-range features
-    # an EML leaf exp(.) can extrapolate to ±1e6+ on held-out points and
-    # dominate the sum. Warn if the caller opted out of normalization with
-    # features whose spread makes this likely.
+    # Validate the same shape contract as fit before constructing residuals.
+    x_features, y_tensor = _coerce_inputs(x, y, "cpu")
+    y_arr = y_tensor.detach().numpy().astype(np.float64)
     if not normalize_inputs:
-        try:
-            x_np = (
-                x.detach().cpu().numpy()
-                if isinstance(x, torch.Tensor)
-                else np.asarray(x, dtype=np.float64)
+        col_std = float(x_features.double().std(dim=1, unbiased=False).max())
+        if col_std > 5.0:
+            warnings.warn(
+                "fit_residual_boost called with normalize_inputs=False on "
+                f"features whose max per-feature std is {col_std:.1f}. "
+                "Pass normalize_inputs=True or standardize inputs first to "
+                "reduce exponential extrapolation on held-out points.",
+                stacklevel=2,
             )
-            col_std = float(np.nanmax(np.std(np.atleast_2d(x_np), axis=-1)))
-            if col_std > 5.0:
-                warnings.warn(
-                    "fit_residual_boost called with normalize_inputs=False on "
-                    f"features whose max per-feature std is {col_std:.1f}. The "
-                    "additive EML predictor is unbounded; on out-of-range "
-                    "held-out points an exp(.) leaf can extrapolate to ±1e6+ "
-                    "and destroy held-out R². Pass normalize_inputs=True "
-                    "(the default) or standardize inputs first.",
-                    stacklevel=2,
-                )
-        except Exception:
-            pass
 
     stage_fits: list = []
     cumulative_train: list = []
@@ -626,9 +559,7 @@ def fit_residual_boost(
     t0 = time.time()
 
     def _residual_r2(fit_result, residual_arr) -> float:
-        yp_np = (
-            fit_result.predict(x).detach().cpu().numpy().astype(np.float64).reshape(-1)
-        )
+        yp_np = fit_result.predict(x).detach().cpu().numpy().astype(np.float64).reshape(-1)
         ss_res = float(np.sum((residual_arr - yp_np) ** 2))
         ss_tot = float(np.sum((residual_arr - residual_arr.mean()) ** 2)) + 1e-12
         return 1.0 - ss_res / ss_tot
@@ -795,9 +726,17 @@ def fit_pareto(
     """
     import numpy as np
 
+    depths = tuple(depths)
+    if not depths:
+        raise ValueError("depths must contain at least one depth")
+    positive_int("seeds_per_depth", seeds_per_depth)
+    if not np.isfinite(rtol_r2) or rtol_r2 < 0:
+        raise ValueError("rtol_r2 must be finite and non-negative")
+    for d in depths:
+        positive_int("depth", d)
     all_evaluated: list = []
 
-    for depth_idx, d in enumerate(depths):
+    for d in depths:
         # Set reproducible seeds for each depth so repeated calls are stable.
         seed = 20260528 + d
         torch.manual_seed(seed)
@@ -833,14 +772,14 @@ def fit_pareto(
         all_evaluated.append((complexity, float(fit_result.r2), fit_result))
 
     # --- Build Pareto front ---
-    # Step 1: collapse exact (complexity, r2) ties, keeping the entry that
-    # appeared first (lowest depth index, deterministic when depths is ordered).
-    seen: dict = {}  # (c, r2) -> index in all_evaluated
-    for idx, (c, r2, fit_r) in enumerate(all_evaluated):
-        key = (c, round(r2, 10))
-        if key not in seen:
-            seen[key] = idx
-    deduped = [all_evaluated[i] for i in sorted(seen.values())]
+    # Keep the most accurate entry at each complexity, including near-ties.
+    # Rounding R² to a fixed number of digits misses ties under custom tolerances.
+    by_complexity = {}
+    for entry in all_evaluated:
+        c, r2, _ = entry
+        if c not in by_complexity or r2 > by_complexity[c][1]:
+            by_complexity[c] = entry
+    deduped = list(by_complexity.values())
 
     # Step 2: domination filter with float tolerance on R².
     # Point P_i is dominated if there exists P_j with

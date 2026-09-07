@@ -22,12 +22,12 @@ which otherwise require an external linear stage before the EML tree.
 
 import torch
 import torch.nn as nn
+
+from ._validation import positive_int
 from .operator import safe_eml
 
 
-def enumerate_combos(
-    num_vars: int, use_mul: bool = False
-) -> list[tuple[str, int, int]]:
+def enumerate_combos(num_vars: int, use_mul: bool = False) -> list[tuple[str, int, int]]:
     """Return the ordered list of (op, i, j) pair combos active for V variables.
 
     op is 'add', 'sub', or (optional) 'mul'; indices i, j are 0-based variable
@@ -57,9 +57,7 @@ def enumerate_combos(
     return combos
 
 
-def enumerate_triples(
-    num_vars: int, use_mul3: bool = False
-) -> list[tuple[int, int, int]]:
+def enumerate_triples(num_vars: int, use_mul3: bool = False) -> list[tuple[int, int, int]]:
     """Return the ordered list of unordered triple products x_i * x_j * x_k
     for i<j<k. Only populated when `use_mul3=True` and V >= 3.
 
@@ -169,13 +167,16 @@ class BatchedEMLTree(nn.Module):
         super().__init__()
         if device is None:
             device = "cuda" if torch.cuda.is_available() else "cpu"
-        assert depth >= 1, "Depth must be >= 1"
+        positive_int("depth", depth)
+        positive_int("num_trees", num_trees)
+        positive_int("num_vars", num_vars)
         self.num_trees = num_trees
         self.depth = depth
         self.num_vars = num_vars
         self.dtype = dtype
         self.use_mul = use_mul
         self.use_mul3 = use_mul3
+        self.selection_mode = "softmax"
 
         n_combo = num_combos(num_vars, use_mul=use_mul, use_mul3=use_mul3)
         # Leaves pick from {1, x_1..V, <combos>}; internals add f_child.
@@ -197,30 +198,22 @@ class BatchedEMLTree(nn.Module):
             return nn.Parameter(torch.randn(*shape, device=device) * init_scale)
 
         # Leaf logits: (B, num_leaves, 2_inputs, choices)
-        self.leaf_logits = _make_logits(
-            (num_trees, num_leaves, 2, leaf_choices), leaf_choices
-        )
+        self.leaf_logits = _make_logits((num_trees, num_leaves, 2, leaf_choices), leaf_choices)
 
         # Internal logits: one tensor per level (levels 2 .. depth)
         self.internal_logits = nn.ParameterList()
         for level in range(2, depth + 1):
             num_nodes = 2 ** (depth - level)
             self.internal_logits.append(
-                _make_logits(
-                    (num_trees, num_nodes, 2, internal_choices), internal_choices
-                )
+                _make_logits((num_trees, num_nodes, 2, internal_choices), internal_choices)
             )
 
         # Temperature inverse, increased during hardening to sharpen softmax
         self.register_buffer("temp_inv", torch.tensor(1.0, device=device))
 
         # Buffers for scale-invariant input normalization
-        self.register_buffer(
-            "x_mean", torch.zeros(1, num_vars, 1, dtype=dtype, device=device)
-        )
-        self.register_buffer(
-            "x_std", torch.ones(1, num_vars, 1, dtype=dtype, device=device)
-        )
+        self.register_buffer("x_mean", torch.zeros(1, num_vars, 1, dtype=dtype, device=device))
+        self.register_buffer("x_std", torch.ones(1, num_vars, 1, dtype=dtype, device=device))
         self.register_buffer(
             "normalize_inputs", torch.tensor(False, dtype=torch.bool, device=device)
         )
@@ -259,14 +252,16 @@ class BatchedEMLTree(nn.Module):
         """
         if x.dim() == 2:
             x = x.unsqueeze(1)  # (B, 1, N)
+        if x.ndim != 3 or x.shape[:2] != (self.num_trees, self.num_vars):
+            raise ValueError(f"x must have shape ({self.num_trees}, {self.num_vars}, N)")
         B, V, N = x.shape
+        x = x.to(self.dtype)
 
         if self.normalize_inputs:
             mean = self.x_mean.to(device=x.device, dtype=x.dtype)
             std = self.x_std.to(device=x.device, dtype=x.dtype)
             x = (x - mean) / std
 
-        device = x.device
         num_leaves = self.leaf_logits.shape[1]
 
         # Cast input to working dtype
@@ -282,6 +277,26 @@ class BatchedEMLTree(nn.Module):
             use_mul3=self.use_mul3,
         )
         C_base = base.shape[1]  # == 1 + V + n_combo
+
+        if self.selection_mode == "hard":
+            # Gather only selected operands. Dense one-hot products both waste
+            # memory and let huge unselected values contaminate snapped trees.
+            def select(indices, child=None):
+                selected = base.gather(
+                    1, indices.clamp(max=C_base - 1).unsqueeze(-1).expand(-1, -1, N)
+                )
+                if child is not None:
+                    selected = torch.where(indices.unsqueeze(-1) == C_base, child, selected)
+                return selected
+
+            leaf, internal = self.snapped_choices()
+            outputs = safe_eml(select(leaf[:, :, 0]), select(leaf[:, :, 1]))
+            for choices in internal:
+                outputs = safe_eml(
+                    select(choices[:, :, 0], outputs[:, 0::2]),
+                    select(choices[:, :, 1], outputs[:, 1::2]),
+                )
+            return outputs.squeeze(1)
 
         # ---- Leaf level ----
         w = self._weights(self.leaf_logits)  # (B, L, 2, C)
@@ -303,9 +318,7 @@ class BatchedEMLTree(nn.Module):
 
             # Build choice tensors: [1, x_1..V, <combos>, f_child]
             int_base = base.unsqueeze(1).expand(B, M, C_base, N)  # (B, M, C_base, N)
-            l_ch = torch.cat(
-                [int_base, child_left.unsqueeze(2)], 2
-            )  # (B, M, C_base+1, N)
+            l_ch = torch.cat([int_base, child_left.unsqueeze(2)], 2)  # (B, M, C_base+1, N)
             r_ch = torch.cat([int_base, child_right.unsqueeze(2)], 2)
 
             left = (w[:, :, 0, :].unsqueeze(-1) * l_ch).sum(dim=2)  # (B, M, N)
@@ -322,6 +335,7 @@ class BatchedEMLTree(nn.Module):
     @torch.no_grad()
     def snap(self):
         """Snap all logits to one-hot (argmax). Call after hardening."""
+        self.selection_mode = "hard"
         for logits in [self.leaf_logits] + list(self.internal_logits):
             idx = logits.argmax(dim=-1, keepdim=True)
             logits.zero_()
