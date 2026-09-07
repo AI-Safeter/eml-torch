@@ -98,6 +98,11 @@ def build_base(
     """
     B, V, N = x.shape
     assert V == num_vars
+    # Search populations share the same observations. Preserve that sharing
+    # through feature construction instead of materializing every combination B times.
+    # Keep independent input gradients for callers differentiating through x itself.
+    if B > 1 and x.stride(0) == 0 and not x.requires_grad:
+        return build_base(x[:1], num_vars, dtype, use_mul, use_mul3).expand(B, -1, -1)
     ones = torch.ones(B, 1, N, dtype=dtype, device=x.device)
     parts = [ones, x]
     for op, i, j in enumerate_combos(num_vars, use_mul=use_mul):
@@ -255,12 +260,18 @@ class BatchedEMLTree(nn.Module):
         if x.ndim != 3 or x.shape[:2] != (self.num_trees, self.num_vars):
             raise ValueError(f"x must have shape ({self.num_trees}, {self.num_vars}, N)")
         B, V, N = x.shape
+        shared_input = B > 1 and x.stride(0) == 0 and not x.requires_grad
+        if shared_input:
+            x = x[:1]
         x = x.to(self.dtype)
 
         if self.normalize_inputs:
             mean = self.x_mean.to(device=x.device, dtype=x.dtype)
             std = self.x_std.to(device=x.device, dtype=x.dtype)
             x = (x - mean) / std
+
+        if shared_input:
+            x = x.expand(B, -1, -1)
 
         num_leaves = self.leaf_logits.shape[1]
 

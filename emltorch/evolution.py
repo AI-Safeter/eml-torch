@@ -290,8 +290,8 @@ def evolve(
     y_batch = y.detach().to(device=device, dtype=cfg.torch_dtype)
     if not torch.isfinite(x_batch).all() or not torch.isfinite(y_batch).all():
         raise ValueError(f"Inputs exceed the finite range of {cfg.dtype}; rescale the data")
-    x_pop = x_batch.unsqueeze(0).expand(cfg.population, V, N).contiguous()
-    y_pop = y_batch.unsqueeze(0).expand(cfg.population, N).contiguous()
+    x_pop = x_batch.unsqueeze(0).expand(cfg.population, V, N)
+    y_pop = y_batch.unsqueeze(0).expand(cfg.population, N)
 
     # ss_tot for R² computation
     ss_tot = ((y_batch - y_batch.mean()) ** 2).sum().clamp(min=1e-12)
