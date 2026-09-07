@@ -1,0 +1,9 @@
+{
+  "seconds": 64.68780349940062,
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "torch": "2.5.0a0+e000cf0ad9.nv24.10",
+  "limit": 0,
+  "status": "replication of frozen tests; these are not newly unseen problems",
+  "new_control": "depth-3 four-node candidate selected using validation only",
+  "checks": "finite logits, exact restoration, alpha-zero equivalence"
+}

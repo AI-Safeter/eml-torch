@@ -1,0 +1,25 @@
+{
+  "status": "Initial unstructured model; retained as a failed comparison, no deployment export",
+  "rmse": {
+    "train": {
+      "eml": 0.02645661517126083,
+      "network": 0.0008155868915969664,
+      "polynomial3": 0.004711322741763912
+    },
+    "validation": {
+      "eml": 0.025686539248903375,
+      "network": 0.0007399744150300391,
+      "polynomial3": 0.004528274953609907
+    },
+    "test": {
+      "eml": 0.026457419024802604,
+      "network": 0.0008130371365609798,
+      "polynomial3": 0.004806497295281808
+    },
+    "shift": {
+      "eml": 5773.144957093352,
+      "network": 0.023607147058454812,
+      "polynomial3": 0.07771090529030736
+    }
+  }
+}

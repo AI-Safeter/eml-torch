@@ -1,0 +1,2 @@
+# Use a separate environment with a Torch version compatible with SymPy >=1.14.
+pysr==2.2.1

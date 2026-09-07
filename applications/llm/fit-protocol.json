@@ -1,0 +1,26 @@
+{
+  "inputs": "three-component supervised partial least squares, training mixtures only of actual MLP input, standardized with training mixtures",
+  "output": "selected direction dot actual MLP output, standardized with training mixtures",
+  "train_alphas": [
+    0,
+    0.25,
+    0.5,
+    0.75,
+    1
+  ],
+  "test_alphas": [
+    0,
+    0.125,
+    0.375,
+    0.625,
+    0.875,
+    1
+  ],
+  "variants": [
+    "eml_observed",
+    "eml_intervention"
+  ],
+  "main_variant": "eml_intervention",
+  "selection": "validation mixture coefficient MSE; test prompts and test interventions untouched",
+  "features_and_coefficients_use_training_only": true
+}

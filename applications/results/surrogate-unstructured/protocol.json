@@ -1,0 +1,27 @@
+{
+  "environment": {
+    "gpu": "NVIDIA H100 80GB HBM3",
+    "torch": "2.5.0a0+e000cf0ad9.nv24.10",
+    "numpy": "1.24.4",
+    "python": "3.10.12",
+    "seed": 20260907,
+    "tf32": false
+  },
+  "selection": "training fits, validation selects; test and shift evaluated only afterward",
+  "eml": {
+    "depths": [
+      2,
+      3,
+      4
+    ],
+    "seeds": [
+      17,
+      29
+    ],
+    "population": 1024,
+    "generations": 80,
+    "max_residual_stages": 4
+  },
+  "success_rule": "distillation: test MSE <= 1.05 * teacher test MSE and export < teacher parameter bytes; surrogate: test NRMSE <= .05 and export faster than CPU RK4",
+  "note": "A surrogate win against RK4 does not imply a win against other fitted surrogates."
+}

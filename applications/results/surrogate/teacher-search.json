@@ -1,0 +1,17 @@
+[
+  {
+    "seed": 17,
+    "validation_mse": 1.0511601431062445e-05,
+    "steps": 2500
+  },
+  {
+    "seed": 29,
+    "validation_mse": 1.4561883290298283e-05,
+    "steps": 2500
+  },
+  {
+    "seed": 43,
+    "validation_mse": 1.590313513588626e-05,
+    "steps": 2500
+  }
+]

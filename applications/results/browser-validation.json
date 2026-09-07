@@ -1,0 +1,19 @@
+{
+  "viewports": [
+    {
+      "width": 1440,
+      "tabs": 3,
+      "llm_suites": 4,
+      "horizontal_overflow": false
+    },
+    {
+      "width": 390,
+      "tabs": 3,
+      "llm_suites": 4,
+      "horizontal_overflow": false
+    }
+  ],
+  "javascript_errors": [],
+  "javascript_equation_vs_cuda_max_error": 1.9371509552001953e-07,
+  "javascript_RK4_vs_cuda_max_error": 0.0
+}

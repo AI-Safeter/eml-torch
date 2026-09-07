@@ -1,0 +1,16 @@
+{
+  "counts": {
+    "pairs": 96,
+    "range": 20,
+    "carry": 0
+  },
+  "exclusion": "Every prior train/validation/test clean and corrupted unordered pair and all pilot examples excluded.",
+  "formats": [
+    "prose",
+    "symbolic",
+    "code"
+  ],
+  "carry_limitation": "Only a few unused reserved-carry pairs remain; do not infer carry generalization from this tiny residual set.",
+  "seed": 20260908,
+  "test_selection_precedes_model_evaluation": true
+}

@@ -1,0 +1,143 @@
+{
+  "selected": {
+    "index": 16,
+    "validation_mse": 0.38763475117337537,
+    "complexity": 22,
+    "equation": "(((sin(x2) * x0) + ((sin(x4 * x0) + (x4 + x0)) + sin(x2 + x0))) * -0.6152364) - 0.14557222"
+  },
+  "candidates": [
+    {
+      "index": 0,
+      "validation_mse": 1.0099757146115382,
+      "complexity": 1,
+      "equation": "0.0069138827"
+    },
+    {
+      "index": 1,
+      "validation_mse": 0.9791912054829566,
+      "complexity": 3,
+      "equation": "x4 * -0.4171718"
+    },
+    {
+      "index": 2,
+      "validation_mse": 0.8007023514537526,
+      "complexity": 5,
+      "equation": "(x4 + x0) * -0.47302082"
+    },
+    {
+      "index": 3,
+      "validation_mse": 0.6348750086479099,
+      "complexity": 7,
+      "equation": "((x4 + x0) + x2) * -0.4764756"
+    },
+    {
+      "index": 4,
+      "validation_mse": 0.6418294373556797,
+      "complexity": 8,
+      "equation": "(x4 + (sin(x2) + x0)) * -0.5338887"
+    },
+    {
+      "index": 5,
+      "validation_mse": 0.6493152923666278,
+      "complexity": 9,
+      "equation": "(sin(sin(x2)) + (x4 + x0)) * -0.54968476"
+    },
+    {
+      "index": 6,
+      "validation_mse": 0.6116337365620463,
+      "complexity": 10,
+      "equation": "(sin(x1) + ((x4 + x2) + x0)) * -0.4454621"
+    },
+    {
+      "index": 7,
+      "validation_mse": 0.6064213297377908,
+      "complexity": 11,
+      "equation": "(x4 + ((x2 + sin(sin(x1))) + x0)) * -0.4454621"
+    },
+    {
+      "index": 8,
+      "validation_mse": 0.5987672859121532,
+      "complexity": 12,
+      "equation": "(x0 + (sin(x0 * x2) + (x2 + x4))) * -0.51172894"
+    },
+    {
+      "index": 9,
+      "validation_mse": 0.6068044644494935,
+      "complexity": 13,
+      "equation": "(sin(x2 * x0) + (x4 + (sin(x2) + x0))) * -0.54343235"
+    },
+    {
+      "index": 10,
+      "validation_mse": 0.5293757298781889,
+      "complexity": 14,
+      "equation": "(sin((x2 + 0.5761074) * x0) + (x2 + (x4 + x0))) * -0.48434865"
+    },
+    {
+      "index": 11,
+      "validation_mse": 0.5314455061372932,
+      "complexity": 15,
+      "equation": "((x0 + sin(x2)) + ((x0 * sin(x2 + 0.50920653)) + x4)) * -0.48265883"
+    },
+    {
+      "index": 12,
+      "validation_mse": 0.5318152054870027,
+      "complexity": 17,
+      "equation": "((((x0 * x2) + (x0 + x2)) + x0) + (x4 * (x0 - -2.1041698))) * -0.29969472"
+    },
+    {
+      "index": 13,
+      "validation_mse": 0.40735481521436084,
+      "complexity": 19,
+      "equation": "(((x4 + (sin(x4 * x0) + sin(x2 + x0))) + x0) + (x2 * x0)) * -0.5338875"
+    },
+    {
+      "index": 14,
+      "validation_mse": 0.4021833224415493,
+      "complexity": 20,
+      "equation": "(((sin(x2) * x0) + (x4 + (sin(x4 * x0) + x0))) + sin(x2 + x0)) * -0.5338875"
+    },
+    {
+      "index": 15,
+      "validation_mse": 0.40909696715384547,
+      "complexity": 21,
+      "equation": "(((x4 + (sin(sin(x4 * x0)) + sin(x2 + x0))) + x0) + (sin(x2) * x0)) * -0.5338875"
+    },
+    {
+      "index": 16,
+      "validation_mse": 0.38763475117337537,
+      "complexity": 22,
+      "equation": "(((sin(x2) * x0) + ((sin(x4 * x0) + (x4 + x0)) + sin(x2 + x0))) * -0.6152364) - 0.14557222"
+    }
+  ],
+  "seconds": 99.32731908001006,
+  "search_device": "CPU",
+  "scoring_device": "CUDA",
+  "budget": "40 iterations, 8 populations of 32; 120 second search timeout",
+  "comparison": "same splits and learning targets; budgets are not compute-matched",
+  "suites": {
+    "train": {
+      "rmse": 4.01605400285356,
+      "mae": 3.0864652790064597,
+      "r2": 0.659752679268512,
+      "max_error": 16.645227192104727
+    },
+    "validation": {
+      "rmse": 3.8582744529550435,
+      "mae": 3.1045011686744104,
+      "r2": 0.6690622441969084,
+      "max_error": 10.820057716698784
+    },
+    "test": {
+      "rmse": 4.048465851918644,
+      "mae": 3.038177587658298,
+      "r2": 0.600844613579872,
+      "max_error": 12.732109532069188
+    },
+    "shift": {
+      "rmse": 5.457596052044037,
+      "mae": 4.016865465304817,
+      "r2": 0.3925777202092433,
+      "max_error": 38.91805316643831
+    }
+  }
+}

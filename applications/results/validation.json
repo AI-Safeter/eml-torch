@@ -1,0 +1,129 @@
+{
+  "environment": {
+    "gpu": "NVIDIA H100 80GB HBM3",
+    "torch": "2.5.0a0+e000cf0ad9.nv24.10",
+    "numpy": "1.24.4",
+    "python": "3.10.12",
+    "seed": 20260907,
+    "tf32": false
+  },
+  "applications": {
+    "distillation": {
+      "export_checks": {
+        "train": {
+          "accepted": 614,
+          "rejected": 0,
+          "max_export_error": 1.52587890625e-05
+        },
+        "validation": {
+          "accepted": 215,
+          "rejected": 0,
+          "max_export_error": 2.288818359375e-05
+        },
+        "test": {
+          "accepted": 209,
+          "rejected": 0,
+          "max_export_error": 1.52587890625e-05
+        },
+        "shift": {
+          "accepted": 0,
+          "rejected": 465,
+          "max_export_error": null
+        }
+      },
+      "invalid_inputs_rejected": true,
+      "bootstrap_test_rmse_ci95": {
+        "eml": [
+          4.172953135511308,
+          5.774339538475309
+        ],
+        "network": [
+          2.424398326790652,
+          3.9246891303715463
+        ],
+        "polynomial3": [
+          3.4747295782129326,
+          4.778115034773814
+        ],
+        "eml_minus_network_rmse_ci95": [
+          0.9708889890236408,
+          2.656741321062441
+        ]
+      },
+      "bootstrap_unit": "operating group",
+      "bootstrap_groups": 15,
+      "numpy_network_cpu_single": {
+        "median_us": 10.541,
+        "p90_us": 10.7455,
+        "repeats": 100
+      },
+      "numpy_network_check_error": 1.0563215937509085e-06
+    },
+    "surrogate": {
+      "export_checks": {
+        "train": {
+          "accepted": 2048,
+          "rejected": 0,
+          "max_export_error": 1.1324882507324219e-06
+        },
+        "validation": {
+          "accepted": 512,
+          "rejected": 0,
+          "max_export_error": 1.3113021850585938e-06
+        },
+        "test": {
+          "accepted": 512,
+          "rejected": 0,
+          "max_export_error": 1.3113021850585938e-06
+        },
+        "shift": {
+          "accepted": 0,
+          "rejected": 512,
+          "max_export_error": null
+        }
+      },
+      "invalid_inputs_rejected": true,
+      "bootstrap_test_rmse_ci95": {
+        "eml": [
+          0.0019250355352329657,
+          0.0034213756678449538
+        ],
+        "network": [
+          0.0005190372396420621,
+          0.001160184975416211
+        ],
+        "polynomial3": [
+          0.0008998079448791637,
+          0.001985702901868962
+        ],
+        "eml_minus_network_rmse_ci95": [
+          0.0013733566636375933,
+          0.002269386110322546
+        ]
+      },
+      "bootstrap_unit": "problem",
+      "bootstrap_groups": 512,
+      "numpy_network_cpu_single": {
+        "median_us": 10.9915,
+        "p90_us": 11.1171,
+        "repeats": 100
+      },
+      "numpy_network_check_error": 4.766647451748263e-09,
+      "scipy_cpu_single": {
+        "median_us": 2723.4595,
+        "p90_us": 2750.7333,
+        "repeats": 30
+      },
+      "scipy_vs_gpu_RK4_error": 6.441848832139385e-09
+    }
+  },
+  "llm": {
+    "seconds": 64.68780349940062,
+    "gpu": "NVIDIA H100 80GB HBM3",
+    "torch": "2.5.0a0+e000cf0ad9.nv24.10",
+    "limit": 0,
+    "status": "replication of frozen tests; these are not newly unseen problems",
+    "new_control": "depth-3 four-node candidate selected using validation only",
+    "checks": "finite logits, exact restoration, alpha-zero equivalence"
+  }
+}

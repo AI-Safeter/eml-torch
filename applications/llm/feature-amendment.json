@@ -1,0 +1,11 @@
+{
+  "status": "before any test evaluation",
+  "reason": "PCA-based validation normalized MSE 0.657 for EML and 0.432 for neural control suggests inadequate coordinates",
+  "method": "three-component supervised partial least squares, training mixtures only",
+  "target": "same selected MLP-output coefficient, no numerical answer or downstream logit input",
+  "original_attempt": "pca-attempt/",
+  "component_selection_unchanged": true,
+  "rank": 3,
+  "encoder_parameters": 6144,
+  "train_only": true
+}

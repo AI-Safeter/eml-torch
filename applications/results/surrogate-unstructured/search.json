@@ -1,0 +1,218 @@
+[
+  {
+    "stage": 0,
+    "depth": 2,
+    "seed": 17,
+    "validation_mse": 0.04856020212173462,
+    "expression": "-0.2408474236726761 + (0.19968517124652863) * [eml((x0 - x1), eml(-0.2526477575302124, x0))]",
+    "eml_nodes": 2,
+    "fit_seconds": 0.34836530685424805
+  },
+  {
+    "stage": 0,
+    "depth": 2,
+    "seed": 29,
+    "validation_mse": 0.04856020212173462,
+    "expression": "-0.2408474236726761 + (0.19968517124652863) * [eml((x0 - x1), eml(-0.2526477575302124, x0))]",
+    "eml_nodes": 2,
+    "fit_seconds": 0.21778345108032227
+  },
+  {
+    "stage": 0,
+    "depth": 3,
+    "seed": 17,
+    "validation_mse": 0.04856020212173462,
+    "expression": "-0.2408474236726761 + (0.19968517124652863) * [eml((x0 - x1), eml(-0.2526477575302124, x0))]",
+    "eml_nodes": 2,
+    "fit_seconds": 0.2770655155181885
+  },
+  {
+    "stage": 0,
+    "depth": 3,
+    "seed": 29,
+    "validation_mse": 0.04856020212173462,
+    "expression": "-0.2408474236726761 + (0.19968517124652863) * [eml((x0 - x1), eml(-0.2526477575302124, x0))]",
+    "eml_nodes": 2,
+    "fit_seconds": 0.2851743698120117
+  },
+  {
+    "stage": 0,
+    "depth": 4,
+    "seed": 17,
+    "validation_mse": 0.0637536570429802,
+    "expression": "-0.15767177939414978 + (0.19864530861377716) * [eml((x0 - x1), eml(eml(0.9927895665168762, eml((x0 + x1), x1)), x0))]",
+    "eml_nodes": 4,
+    "fit_seconds": 0.3720231056213379
+  },
+  {
+    "stage": 0,
+    "depth": 4,
+    "seed": 29,
+    "validation_mse": 0.04856020212173462,
+    "expression": "-0.2408474236726761 + (0.19968517124652863) * [eml((x0 - x1), eml(-0.2526477575302124, x0))]",
+    "eml_nodes": 2,
+    "fit_seconds": 0.3655867576599121
+  },
+  {
+    "stage": 1,
+    "depth": 2,
+    "seed": 17,
+    "validation_mse": 0.028703607618808746,
+    "expression": "0.27383583784103394 + (-0.028425704687833786) * [eml((x0 - x1), (x0 - x1))]",
+    "eml_nodes": 1,
+    "fit_seconds": 0.16897249221801758
+  },
+  {
+    "stage": 1,
+    "depth": 2,
+    "seed": 29,
+    "validation_mse": 0.028703607618808746,
+    "expression": "0.27383583784103394 + (-0.028425704687833786) * [eml((x0 - x1), (x0 - x1))]",
+    "eml_nodes": 1,
+    "fit_seconds": 0.1715548038482666
+  },
+  {
+    "stage": 1,
+    "depth": 3,
+    "seed": 17,
+    "validation_mse": 0.028703607618808746,
+    "expression": "0.27383583784103394 + (-0.028425704687833786) * [eml((x0 - x1), (x0 - x1))]",
+    "eml_nodes": 1,
+    "fit_seconds": 0.2244706153869629
+  },
+  {
+    "stage": 1,
+    "depth": 3,
+    "seed": 29,
+    "validation_mse": 0.020966436713933945,
+    "expression": "0.30910465121269226 + (-0.030912261456251144) * [eml((x0 - x1), eml((x0 - x1), eml((x0 * x1), (x0 - x1))))]",
+    "eml_nodes": 3,
+    "fit_seconds": 0.2628154754638672
+  },
+  {
+    "stage": 1,
+    "depth": 4,
+    "seed": 17,
+    "validation_mse": 0.028703607618808746,
+    "expression": "0.27383583784103394 + (-0.028425704687833786) * [eml((x0 - x1), (x0 - x1))]",
+    "eml_nodes": 1,
+    "fit_seconds": 0.3190762996673584
+  },
+  {
+    "stage": 1,
+    "depth": 4,
+    "seed": 29,
+    "validation_mse": 0.028703607618808746,
+    "expression": "0.27383583784103394 + (-0.028425704687833786) * [eml((x0 - x1), (x0 - x1))]",
+    "eml_nodes": 1,
+    "fit_seconds": 0.3246164321899414
+  },
+  {
+    "stage": 2,
+    "depth": 2,
+    "seed": 17,
+    "validation_mse": 0.01789597049355507,
+    "expression": "0.02219155617058277 + (-0.014949639327824116) * [eml((x0 - x1), eml(x0, (x0 * x1)))]",
+    "eml_nodes": 2,
+    "fit_seconds": 0.1642301082611084
+  },
+  {
+    "stage": 2,
+    "depth": 2,
+    "seed": 29,
+    "validation_mse": 0.01789597049355507,
+    "expression": "0.02219155617058277 + (-0.014949639327824116) * [eml((x0 - x1), eml(x0, (x0 * x1)))]",
+    "eml_nodes": 2,
+    "fit_seconds": 0.1628420352935791
+  },
+  {
+    "stage": 2,
+    "depth": 3,
+    "seed": 17,
+    "validation_mse": 0.01789597049355507,
+    "expression": "0.02219155617058277 + (-0.014949639327824116) * [eml((x0 - x1), eml(x0, (x0 * x1)))]",
+    "eml_nodes": 2,
+    "fit_seconds": 0.21539592742919922
+  },
+  {
+    "stage": 2,
+    "depth": 3,
+    "seed": 29,
+    "validation_mse": 0.015315640717744827,
+    "expression": "0.004339957609772682 + (-0.002894844627007842) * [eml(eml(x0, eml((x0 + x1), x0)), eml(eml((x0 - x1), (x0 * x1)), eml(x1, x0)))]",
+    "eml_nodes": 6,
+    "fit_seconds": 0.21558547019958496
+  },
+  {
+    "stage": 2,
+    "depth": 4,
+    "seed": 17,
+    "validation_mse": 0.01789597049355507,
+    "expression": "0.02219155617058277 + (-0.014949639327824116) * [eml((x0 - x1), eml(x0, (x0 * x1)))]",
+    "eml_nodes": 2,
+    "fit_seconds": 0.31894493103027344
+  },
+  {
+    "stage": 2,
+    "depth": 4,
+    "seed": 29,
+    "validation_mse": 0.014608132652938366,
+    "expression": "0.032456107437610626 + (-0.007247627712786198) * [eml(eml(x0, eml(eml((x0 + x1), x0), x0)), eml(eml((x0 - x1), eml(x1, x1)), eml((x0 * x1), eml((x0 + x1), (x1 - x0)))))]",
+    "eml_nodes": 9,
+    "fit_seconds": 0.32909178733825684
+  },
+  {
+    "stage": 3,
+    "depth": 2,
+    "seed": 17,
+    "validation_mse": 0.012860085815191269,
+    "expression": "-0.03630845621228218 + (4.419079147055527e-08) * [eml(eml(x0, x0), (x0 * x1))]",
+    "eml_nodes": 2,
+    "fit_seconds": 0.3316915035247803
+  },
+  {
+    "stage": 3,
+    "depth": 2,
+    "seed": 29,
+    "validation_mse": 0.012253941036760807,
+    "expression": "0.7001407146453857 + (-0.053330227732658386) * [eml(eml(1, 1), eml((x0 - x1), (x0 - x1)))]",
+    "eml_nodes": 3,
+    "fit_seconds": 0.17866134643554688
+  },
+  {
+    "stage": 3,
+    "depth": 3,
+    "seed": 17,
+    "validation_mse": 0.012253941968083382,
+    "expression": "0.03692715987563133 + (-0.053330227732658386) * [eml(1, eml((x0 - x1), (x0 - x1)))]",
+    "eml_nodes": 2,
+    "fit_seconds": 0.2367713451385498
+  },
+  {
+    "stage": 3,
+    "depth": 3,
+    "seed": 29,
+    "validation_mse": 0.011448530480265617,
+    "expression": "-0.07578040659427643 + (0.007526933681219816) * [eml((x0 + x1), eml((x0 + x1), eml(x1, (x0 * x1))))]",
+    "eml_nodes": 3,
+    "fit_seconds": 0.2411515712738037
+  },
+  {
+    "stage": 3,
+    "depth": 4,
+    "seed": 17,
+    "validation_mse": 0.012860085815191269,
+    "expression": "-0.03630845621228218 + (4.419079147055527e-08) * [eml(eml(x0, x0), (x0 * x1))]",
+    "eml_nodes": 2,
+    "fit_seconds": 0.6021866798400879
+  },
+  {
+    "stage": 3,
+    "depth": 4,
+    "seed": 29,
+    "validation_mse": 0.012253941968083382,
+    "expression": "0.03692715987563133 + (-0.053330227732658386) * [eml(1, eml((x0 - x1), (x0 - x1)))]",
+    "eml_nodes": 2,
+    "fit_seconds": 0.32848668098449707
+  }
+]

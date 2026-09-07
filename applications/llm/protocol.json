@@ -1,0 +1,43 @@
+{
+  "model": "Qwen/Qwen3-1.7B",
+  "revision": "70d244cc86ccca08cf5af4e1e306ecf908b1ad5e",
+  "seed": 20260907,
+  "counts": {
+    "train": 505,
+    "validation": 128,
+    "test": 128,
+    "carry": 74,
+    "range": 96
+  },
+  "arithmetic": "two-digit positive integer addition, two-digit results; no model weights trained",
+  "component": "last prompt position MLP-output rank-one orthogonal contribution",
+  "selection": "train full-MLP interchange patching; top three layers; first four training-output PCA directions per layer; validation selects direction by mean clean-answer-versus-corrupt-answer first-digit logit margin effect",
+  "features": "first three PCs of selected MLP input, training statistics only; predict downstream scalar component coefficient",
+  "fit": "EML depth2/3/4, seeds0/1/2, population1024, generations50, LBFGS200; select validation scalar MSE",
+  "comparisons": [
+    "linear",
+    "quadratic",
+    "cubic",
+    "Fourier with linear terms",
+    "small MLP",
+    "mean",
+    "shuffled coefficients",
+    "matched unrelated direction",
+    "original restoration"
+  ],
+  "intervention": "convex mixtures of clean/corrupt upstream MLP inputs at alpha 0,.25,.5,.75,1; train/validation pairs only for fitting intervention-augmented candidates; test pairs sealed",
+  "tests": [
+    "unseen operand pairs",
+    "units-sum >=16 held out from fitting",
+    "operand >=70 held out",
+    "symbolic and code formats held out"
+  ],
+  "primary_metrics": [
+    "full greedy answer exact match",
+    "first-digit KL and agreement",
+    "component normalized RMSE",
+    "paired first-digit margin effect agreement and restoration"
+  ],
+  "success": "replacement <=1 percentage point exact-answer accuracy loss; intervention normalized RMSE <=.2 and correlation >=.9; no blanket novelty/speed claim",
+  "pilot": "0.6B unreliable under tested prompt formats; 1.7B passed eight illustrative prompt checks; pilot pairs excluded below if present"
+}

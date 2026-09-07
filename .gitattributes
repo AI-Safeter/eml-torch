@@ -1,0 +1,2 @@
+# Preserve the upstream dataset bytes and its original CRLF line endings.
+applications/results/distillation/airfoil_self_noise.dat -text whitespace=cr-at-eol

@@ -1,0 +1,227 @@
+{
+  "full_layers": [
+    {
+      "layer": 0,
+      "mean_margin_effect": -0.00010452668357174844,
+      "fraction_full_clean_corrupt_gap": -2.4067512017472367e-06
+    },
+    {
+      "layer": 1,
+      "mean_margin_effect": -0.000596722005866468,
+      "fraction_full_clean_corrupt_gap": -1.3739662980336922e-05
+    },
+    {
+      "layer": 2,
+      "mean_margin_effect": -0.0003625154495239258,
+      "fraction_full_clean_corrupt_gap": -8.347002544998605e-06
+    },
+    {
+      "layer": 3,
+      "mean_margin_effect": -0.0015324553241953254,
+      "fraction_full_clean_corrupt_gap": -3.528514028285799e-05
+    },
+    {
+      "layer": 4,
+      "mean_margin_effect": -0.00040109953260980546,
+      "fraction_full_clean_corrupt_gap": -9.235410032561475e-06
+    },
+    {
+      "layer": 5,
+      "mean_margin_effect": 0.0028485856018960476,
+      "fraction_full_clean_corrupt_gap": 6.55893460537974e-05
+    },
+    {
+      "layer": 6,
+      "mean_margin_effect": 0.002430180786177516,
+      "fraction_full_clean_corrupt_gap": 5.5955477852514694e-05
+    },
+    {
+      "layer": 7,
+      "mean_margin_effect": 0.0013453960418701172,
+      "fraction_full_clean_corrupt_gap": 3.097805679804481e-05
+    },
+    {
+      "layer": 8,
+      "mean_margin_effect": 0.0008246501674875617,
+      "fraction_full_clean_corrupt_gap": 1.8987761916883233e-05
+    },
+    {
+      "layer": 9,
+      "mean_margin_effect": -0.009516279213130474,
+      "fraction_full_clean_corrupt_gap": -0.0002191145423325604
+    },
+    {
+      "layer": 10,
+      "mean_margin_effect": 0.021379154175519943,
+      "fraction_full_clean_corrupt_gap": 0.0004922599976010259
+    },
+    {
+      "layer": 11,
+      "mean_margin_effect": 0.010722140781581402,
+      "fraction_full_clean_corrupt_gap": 0.0002468797854249423
+    },
+    {
+      "layer": 12,
+      "mean_margin_effect": -0.004919906612485647,
+      "fraction_full_clean_corrupt_gap": -0.00011328199410398593
+    },
+    {
+      "layer": 13,
+      "mean_margin_effect": 0.006464540958404541,
+      "fraction_full_clean_corrupt_gap": 0.00014884755919482304
+    },
+    {
+      "layer": 14,
+      "mean_margin_effect": 0.029770752415060997,
+      "fraction_full_clean_corrupt_gap": 0.0006854784989201872
+    },
+    {
+      "layer": 15,
+      "mean_margin_effect": 0.04400300979614258,
+      "fraction_full_clean_corrupt_gap": 0.0010131795354883476
+    },
+    {
+      "layer": 16,
+      "mean_margin_effect": 0.039739709347486496,
+      "fraction_full_clean_corrupt_gap": 0.0009150160510306256
+    },
+    {
+      "layer": 17,
+      "mean_margin_effect": 0.27719518542289734,
+      "fraction_full_clean_corrupt_gap": 0.006382483618904575
+    },
+    {
+      "layer": 18,
+      "mean_margin_effect": -0.021533668041229248,
+      "fraction_full_clean_corrupt_gap": -0.0004958177152983181
+    },
+    {
+      "layer": 19,
+      "mean_margin_effect": -0.14339137077331543,
+      "fraction_full_clean_corrupt_gap": -0.003301619664341254
+    },
+    {
+      "layer": 20,
+      "mean_margin_effect": 27.189733505249023,
+      "fraction_full_clean_corrupt_gap": 0.6260499381866171
+    },
+    {
+      "layer": 21,
+      "mean_margin_effect": 39.502681732177734,
+      "fraction_full_clean_corrupt_gap": 0.9095584350564225
+    },
+    {
+      "layer": 22,
+      "mean_margin_effect": 6.925745964050293,
+      "fraction_full_clean_corrupt_gap": 0.15946691172434085
+    },
+    {
+      "layer": 23,
+      "mean_margin_effect": 1.723893165588379,
+      "fraction_full_clean_corrupt_gap": 0.03969304110864443
+    },
+    {
+      "layer": 24,
+      "mean_margin_effect": 3.859330892562866,
+      "fraction_full_clean_corrupt_gap": 0.08886199146689855
+    },
+    {
+      "layer": 25,
+      "mean_margin_effect": 19.505643844604492,
+      "fraction_full_clean_corrupt_gap": 0.4491219864603439
+    },
+    {
+      "layer": 26,
+      "mean_margin_effect": 7.928191184997559,
+      "fraction_full_clean_corrupt_gap": 0.18254844610158474
+    },
+    {
+      "layer": 27,
+      "mean_margin_effect": 11.356051445007324,
+      "fraction_full_clean_corrupt_gap": 0.2614757258955255
+    }
+  ],
+  "directions": [
+    {
+      "layer": 21,
+      "pc": 0,
+      "mean_margin_effect": 2.4625959396362305,
+      "fraction_full_clean_corrupt_gap": 0.05777883778707292
+    },
+    {
+      "layer": 21,
+      "pc": 1,
+      "mean_margin_effect": 2.166393756866455,
+      "fraction_full_clean_corrupt_gap": 0.05082917235679537
+    },
+    {
+      "layer": 21,
+      "pc": 2,
+      "mean_margin_effect": 4.714728355407715,
+      "fraction_full_clean_corrupt_gap": 0.1106196597146406
+    },
+    {
+      "layer": 21,
+      "pc": 3,
+      "mean_margin_effect": 1.4999141693115234,
+      "fraction_full_clean_corrupt_gap": 0.03519184616863474
+    },
+    {
+      "layer": 20,
+      "pc": 0,
+      "mean_margin_effect": -0.10792362689971924,
+      "fraction_full_clean_corrupt_gap": -0.0025321660089119543
+    },
+    {
+      "layer": 20,
+      "pc": 1,
+      "mean_margin_effect": 1.315861701965332,
+      "fraction_full_clean_corrupt_gap": 0.030873501659109962
+    },
+    {
+      "layer": 20,
+      "pc": 2,
+      "mean_margin_effect": 0.3292778730392456,
+      "fraction_full_clean_corrupt_gap": 0.007725706238278514
+    },
+    {
+      "layer": 20,
+      "pc": 3,
+      "mean_margin_effect": 0.4098411202430725,
+      "fraction_full_clean_corrupt_gap": 0.009615927332558956
+    },
+    {
+      "layer": 25,
+      "pc": 0,
+      "mean_margin_effect": 1.1568679809570312,
+      "fraction_full_clean_corrupt_gap": 0.027143099822802726
+    },
+    {
+      "layer": 25,
+      "pc": 1,
+      "mean_margin_effect": 1.3886336088180542,
+      "fraction_full_clean_corrupt_gap": 0.03258091785915475
+    },
+    {
+      "layer": 25,
+      "pc": 2,
+      "mean_margin_effect": 1.5217759609222412,
+      "fraction_full_clean_corrupt_gap": 0.03570478005717069
+    },
+    {
+      "layer": 25,
+      "pc": 3,
+      "mean_margin_effect": 0.5122972130775452,
+      "fraction_full_clean_corrupt_gap": 0.012019810922594737
+    }
+  ],
+  "selected": {
+    "layer": 21,
+    "pc": 2,
+    "mean_margin_effect": 4.714728355407715,
+    "fraction_full_clean_corrupt_gap": 0.1106196597146406
+  },
+  "feature_variance_explained": 0.36781376600265503,
+  "train_first_digit_accuracy": 1.0,
+  "validation_first_digit_accuracy": 1.0
+}

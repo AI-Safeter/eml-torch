@@ -1,0 +1,8 @@
+{
+  "diagnosis": "Saved SVD vector squared norm was 0.9995722811650621, rather than exactly 1. The patch must divide by d dot d.",
+  "correction": "delta_out = (predicted_coefficient - original_coefficient) * d / (d dot d); normalize the unrelated control and match intervention norm.",
+  "all_fits_and_selection_unchanged": true,
+  "all_heldout_evaluations_rerun": true,
+  "initial_results_archived": "projection-audit-initial/",
+  "fits_sha256": "e1eb8093097b2edff0746fbc4686b6d256cfaf6b51fa0c7ec39915d5d123b059"
+}
