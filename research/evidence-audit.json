@@ -1,0 +1,129 @@
+{
+  "completed_epoch": 1788806548.5144217,
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "checks": [
+    {
+      "model_folder": ".",
+      "operation": "add",
+      "split_pairs": {
+        "train": 1024,
+        "validation": 256,
+        "test": 256,
+        "shift": 256,
+        "carry": 256
+      },
+      "validated_heads": {
+        "heads/eml": 0.048883967101573944,
+        "heads/neural": 0.05275823920965195,
+        "heads-active-r32-g0/eml": 0.004775144625455141,
+        "heads-active-r32-g0/neural": 0.005356533452868462,
+        "heads-active-r32-g0.1/eml": 0.002898760372772813,
+        "heads-active-r32-g0.1/neural": 0.004140928853303194,
+        "minimal/eml": 0.023286422714591026,
+        "minimal/neural": 0.024847600609064102,
+        "best_small/eml": 0.023286422714591026,
+        "best_small/neural": 0.024847600609064102,
+        "seed-59/eml": 0.0033147973008453846,
+        "seed-59/neural": 0.004451621789485216,
+        "seed-71/eml": 0.003203192725777626,
+        "seed-71/neural": 0.004069794435054064,
+        "seed-83/eml": 0.0031539422925561666,
+        "seed-83/neural": 0.0035070281010121107,
+        "seed-97/eml": 0.0028560960199683905,
+        "seed-97/neural": 0.00404550414532423
+      }
+    },
+    {
+      "model_folder": ".",
+      "operation": "multiply",
+      "split_pairs": {
+        "train": 1024,
+        "validation": 256,
+        "test": 256,
+        "shift": 256
+      },
+      "validated_heads": {
+        "heads/eml": 0.05390571057796478,
+        "heads/neural": 0.04509082809090614,
+        "heads-active-r32-g0/eml": 0.0011782195651903749,
+        "heads-active-r32-g0/neural": 0.0017042981926351786,
+        "heads-active-r32-g0.1/eml": 0.0007247995818033814,
+        "heads-active-r32-g0.1/neural": 0.0008412891766056418
+      }
+    },
+    {
+      "model_folder": ".",
+      "operation": "divide",
+      "split_pairs": {
+        "train": 768,
+        "validation": 192,
+        "test": 192,
+        "shift": 192
+      },
+      "validated_heads": {
+        "heads/eml": 0.17217232286930084,
+        "heads/neural": 0.1653171330690384,
+        "heads-active-r32-g0/eml": 0.010193618014454842,
+        "heads-active-r32-g0/neural": 0.010845441371202469,
+        "heads-active-r32-g0.1/eml": 0.005891037173569202,
+        "heads-active-r32-g0.1/neural": 0.0073002297431230545
+      }
+    },
+    {
+      "model_folder": "replication-0.6b",
+      "operation": "add",
+      "split_pairs": {
+        "train": 1024,
+        "validation": 256,
+        "test": 256,
+        "shift": 256,
+        "carry": 256
+      },
+      "validated_heads": {
+        "heads-active-r32-g0/eml": 0.0008919492829591036,
+        "heads-active-r32-g0/neural": 0.0012817675014957786,
+        "minimal/eml": 0.023596277460455894,
+        "minimal/neural": 0.02520940639078617,
+        "best_small/eml": 0.0027287735138088465,
+        "best_small/neural": 0.0028690120670944452
+      }
+    },
+    {
+      "model_folder": "replication-0.6b",
+      "operation": "multiply",
+      "split_pairs": {
+        "train": 1024,
+        "validation": 256,
+        "test": 256,
+        "shift": 256
+      },
+      "validated_heads": {
+        "heads-active-r32-g0/eml": 0.001076467800885439,
+        "heads-active-r32-g0/neural": 0.0011464415583759546,
+        "minimal/eml": 0.006045864894986153,
+        "minimal/neural": 0.00819685310125351,
+        "best_small/eml": 0.006045864894986153,
+        "best_small/neural": 0.00819685310125351
+      }
+    },
+    {
+      "model_folder": "replication-0.6b",
+      "operation": "divide",
+      "split_pairs": {
+        "train": 768,
+        "validation": 192,
+        "test": 192,
+        "shift": 192
+      },
+      "validated_heads": {
+        "heads-active-r32-g0/eml": 0.009039709344506264,
+        "heads-active-r32-g0/neural": 0.011583900079131126,
+        "minimal/eml": 0.02491304650902748,
+        "minimal/neural": 0.026054594665765762,
+        "best_small/eml": 0.02491304650902748,
+        "best_small/neural": 0.026054594665765762
+      }
+    }
+  ],
+  "status": "passed"
+}

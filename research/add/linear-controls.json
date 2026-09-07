@@ -1,0 +1,107 @@
+{
+  "completed_epoch": 1788800937.2633061,
+  "candidates": [
+    {
+      "name": "linear-pls-r2",
+      "feature": "pls",
+      "rank": 2,
+      "validation_objective": 0.7843431234359741,
+      "validation_mse": 0.13476942479610443,
+      "validation_response_mse": 0.16239342093467712,
+      "stored_coefficients": 2049
+    },
+    {
+      "name": "linear-pls-r4",
+      "feature": "pls",
+      "rank": 4,
+      "validation_objective": 0.641664445400238,
+      "validation_mse": 0.099899522960186,
+      "validation_response_mse": 0.13544122874736786,
+      "stored_coefficients": 2049
+    },
+    {
+      "name": "linear-pls-r8",
+      "feature": "pls",
+      "rank": 8,
+      "validation_objective": 0.5727112293243408,
+      "validation_mse": 0.09309983998537064,
+      "validation_response_mse": 0.1199028491973877,
+      "stored_coefficients": 2049
+    },
+    {
+      "name": "linear-pls-r16",
+      "feature": "pls",
+      "rank": 16,
+      "validation_objective": 0.4837425649166107,
+      "validation_mse": 0.08135214447975159,
+      "validation_response_mse": 0.10059760510921478,
+      "stored_coefficients": 2049
+    },
+    {
+      "name": "linear-pls-r32",
+      "feature": "pls",
+      "rank": 32,
+      "validation_objective": 0.41841423511505127,
+      "validation_mse": 0.06852687895298004,
+      "validation_response_mse": 0.0874718427658081,
+      "stored_coefficients": 2049
+    },
+    {
+      "name": "linear-active-r2",
+      "feature": "active",
+      "rank": 2,
+      "validation_objective": 0.7567960619926453,
+      "validation_mse": 0.11693387478590012,
+      "validation_response_mse": 0.15996554493904114,
+      "stored_coefficients": 2049
+    },
+    {
+      "name": "linear-active-r4",
+      "feature": "active",
+      "rank": 4,
+      "validation_objective": 0.7494072914123535,
+      "validation_mse": 0.11453108489513397,
+      "validation_response_mse": 0.1587190479040146,
+      "stored_coefficients": 2049
+    },
+    {
+      "name": "linear-active-r8",
+      "feature": "active",
+      "rank": 8,
+      "validation_objective": 0.7462798357009888,
+      "validation_mse": 0.1195516362786293,
+      "validation_response_mse": 0.15668204426765442,
+      "stored_coefficients": 2049
+    },
+    {
+      "name": "linear-active-r16",
+      "feature": "active",
+      "rank": 16,
+      "validation_objective": 0.6602025032043457,
+      "validation_mse": 0.10646307468414307,
+      "validation_response_mse": 0.13843485713005066,
+      "stored_coefficients": 2049
+    },
+    {
+      "name": "linear-active-r32",
+      "feature": "active",
+      "rank": 32,
+      "validation_objective": 0.6236310005187988,
+      "validation_mse": 0.10220438987016678,
+      "validation_response_mse": 0.13035665452480316,
+      "stored_coefficients": 2049
+    }
+  ],
+  "selected": {
+    "name": "linear-pls-r32",
+    "feature": "pls",
+    "rank": 32,
+    "validation_objective": 0.41841423511505127,
+    "validation_mse": 0.06852687895298004,
+    "validation_response_mse": 0.0874718427658081,
+    "stored_coefficients": 2049
+  },
+  "method": "Training least squares, value MSE plus 4 times response MSE; validation selects rank and feature basis. Folded to one input-weight vector and bias.",
+  "late_control": false,
+  "test_outputs_used_to_fit": false
+}

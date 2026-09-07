@@ -1,0 +1,32 @@
+{
+  "frozen_epoch": 1788803709.7625291,
+  "eml": {
+    "kind": "eml_square",
+    "width": 32,
+    "seed": 29,
+    "gradient_weight": 0.1,
+    "validation_mse": 0.004575562779791653,
+    "validation_real_mse": 0.005902105011045933,
+    "validation_query_mse": 0.0032490205485373735,
+    "selected_step": 7800,
+    "steps": 8000,
+    "parameters": 422,
+    "seconds": 30.77334807626903,
+    "name": "eml_square-w32-s29-g0.1"
+  },
+  "neural": {
+    "kind": "silu",
+    "width": 16,
+    "seed": 17,
+    "gradient_weight": 0.1,
+    "validation_mse": 0.019991463981568813,
+    "validation_real_mse": 0.02558094635605812,
+    "validation_query_mse": 0.014401981607079506,
+    "selected_step": 7900,
+    "steps": 8000,
+    "parameters": 230,
+    "seconds": 22.72562932781875,
+    "name": "silu-w16-s17-g0.1"
+  },
+  "validation_fidelity_threshold_met": false
+}

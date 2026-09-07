@@ -1,0 +1,5 @@
+{
+  "status": "passed",
+  "all_three_frozen_problem_files_regenerate_bitwise": true,
+  "historical_exclusions_source": "historical-addition-pairs.json"
+}

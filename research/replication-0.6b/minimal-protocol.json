@@ -1,0 +1,31 @@
+{
+  "created_epoch": 1788800670.1215198,
+  "purpose": "Find a substantially smaller EML head and confirm on additional operand problems absent from every earlier split. Exploratory follow-up to the initial fixed-width replication.",
+  "ranks": [
+    2,
+    4,
+    8,
+    16
+  ],
+  "widths": [
+    1,
+    2,
+    4,
+    8
+  ],
+  "kinds": [
+    "eml_square",
+    "eml_log",
+    "silu"
+  ],
+  "seeds": [
+    17,
+    29
+  ],
+  "max_steps": 8000,
+  "response_weight": 4,
+  "selection": "Minimum stored parameter count among EML heads with validation absolute MSE <= 0.005 and response MSE <= 0.005; otherwise best validation objective, explicitly marking the small-head threshold failure. Compare with validation-best EML, a neural control at the same rank/width, frozen rank32 heads, and sparse original neurons.",
+  "fresh_test_pairs_per_operation": 96,
+  "test_outputs_not_evaluated": true,
+  "primary_test": "Complete accuracy and four off-grid causal strengths across the three known prompt formats; paired operand-group uncertainty."
+}

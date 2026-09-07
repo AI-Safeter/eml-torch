@@ -1,0 +1,132 @@
+{
+  "total_network_candidates": 962,
+  "searches": [
+    {
+      "path": "add/heads/candidates.json",
+      "candidates": 90,
+      "training_seconds": 1440.5217483900487,
+      "steps": 672290
+    },
+    {
+      "path": "add/heads-active-r32-g0.1/candidates.json",
+      "candidates": 36,
+      "training_seconds": 2279.156971786171,
+      "steps": 601022
+    },
+    {
+      "path": "add/heads-active-r32-g0/candidates.json",
+      "candidates": 36,
+      "training_seconds": 1760.1825711857527,
+      "steps": 607719
+    },
+    {
+      "path": "divide/heads/candidates.json",
+      "candidates": 90,
+      "training_seconds": 1626.0838549081236,
+      "steps": 758088
+    },
+    {
+      "path": "divide/heads-active-r32-g0.1/candidates.json",
+      "candidates": 36,
+      "training_seconds": 2084.5390966441482,
+      "steps": 563021
+    },
+    {
+      "path": "divide/heads-active-r32-g0/candidates.json",
+      "candidates": 36,
+      "training_seconds": 1281.977141942829,
+      "steps": 538029
+    },
+    {
+      "path": "multiply/heads/candidates.json",
+      "candidates": 90,
+      "training_seconds": 2290.7183938622475,
+      "steps": 1069980
+    },
+    {
+      "path": "multiply/heads-active-r32-g0.1/candidates.json",
+      "candidates": 36,
+      "training_seconds": 2101.62094319053,
+      "steps": 592821
+    },
+    {
+      "path": "multiply/heads-active-r32-g0/candidates.json",
+      "candidates": 36,
+      "training_seconds": 1607.22740505822,
+      "steps": 659712
+    },
+    {
+      "path": "replication-0.6b/add/heads-active-r32-g0/candidates.json",
+      "candidates": 12,
+      "training_seconds": 337.506423888728,
+      "steps": 143701
+    },
+    {
+      "path": "replication-0.6b/divide/heads-active-r32-g0/candidates.json",
+      "candidates": 12,
+      "training_seconds": 351.6128522604704,
+      "steps": 144000
+    },
+    {
+      "path": "replication-0.6b/multiply/heads-active-r32-g0/candidates.json",
+      "candidates": 12,
+      "training_seconds": 347.1840216778219,
+      "steps": 144000
+    },
+    {
+      "path": "add/minimal-heads/candidates.json",
+      "candidates": 96,
+      "training_seconds": 1445.0089688505977,
+      "steps": 656445
+    },
+    {
+      "path": "replication-0.6b/add/minimal-heads/candidates.json",
+      "candidates": 96,
+      "training_seconds": 2403.0124793406576,
+      "steps": 722319
+    },
+    {
+      "path": "replication-0.6b/divide/minimal-heads/candidates.json",
+      "candidates": 96,
+      "training_seconds": 1986.1017786432058,
+      "steps": 743516
+    },
+    {
+      "path": "replication-0.6b/multiply/minimal-heads/candidates.json",
+      "candidates": 96,
+      "training_seconds": 1776.8648045938462,
+      "steps": 733217
+    },
+    {
+      "path": "airfoil-replay/candidates.json",
+      "candidates": 48,
+      "training_seconds": 951.8118191435933,
+      "steps": 365208
+    },
+    {
+      "path": "add/seed-replication/seed-71.json",
+      "candidates": 2,
+      "training_seconds": 140.3206624891609,
+      "steps": 40000
+    },
+    {
+      "path": "add/seed-replication/seed-97.json",
+      "candidates": 2,
+      "training_seconds": 171.1184052284807,
+      "steps": 40000
+    },
+    {
+      "path": "add/seed-replication/seed-59.json",
+      "candidates": 2,
+      "training_seconds": 191.30172413401306,
+      "steps": 40000
+    },
+    {
+      "path": "add/seed-replication/seed-83.json",
+      "candidates": 2,
+      "training_seconds": 118.2497595846653,
+      "steps": 35401
+    }
+  ],
+  "note": "Original exploratory fits; excludes computational reproduction runs, pretrained teacher fitting, and exact linear/sparse least-squares controls."
+}

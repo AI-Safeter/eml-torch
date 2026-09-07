@@ -1,0 +1,34 @@
+{
+  "python": "3.10.12",
+  "torch": "2.5.0a0+e000cf0ad9.nv24.10",
+  "cuda": "12.6",
+  "packages": {
+    "transformers": "4.51.3",
+    "numpy": "1.24.4",
+    "scipy": "1.14.0",
+    "matplotlib": "3.10.3",
+    "safetensors": "0.4.5",
+    "huggingface-hub": "0.36.2",
+    "playwright": "1.62.0",
+    "ruff": "0.16.6",
+    "build": "1.6.0",
+    "pip": "22.0.2",
+    "base_setuptools": "59.6.0"
+  },
+  "gpu_driver": [
+    "NVIDIA H100 80GB HBM3, 570.124.06",
+    "NVIDIA H100 80GB HBM3, 570.124.06",
+    "NVIDIA H100 80GB HBM3, 570.124.06",
+    "NVIDIA H100 80GB HBM3, 570.124.06"
+  ],
+  "core_commit": "b6a842850a01622d146e5115b32a5d34087e4da4",
+  "tf32": false,
+  "gcc": "11.4.0",
+  "nvcc": "nvcc: NVIDIA (R) Cuda compiler driver\nCopyright (c) 2005-2024 NVIDIA Corporation\nBuilt on Thu_Sep_12_02:18:05_PDT_2024\nCuda compilation tools, release 12.6, V12.6.77\nBuild cuda_12.6.r12.6/compiler.34841621_0",
+  "cpu_model": "Intel(R) Xeon(R) Gold 6448Y",
+  "verified_wheel_builder": {
+    "frontend": "build==1.6.0",
+    "isolated_setuptools": "84.0.0",
+    "command": "python -m build --wheel"
+  }
+}

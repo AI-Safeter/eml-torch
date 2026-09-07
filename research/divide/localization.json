@@ -1,0 +1,200 @@
+{
+  "full_layer_effects": [
+    {
+      "layer": 0,
+      "mean_margin_restored": 0.00026237964630126953
+    },
+    {
+      "layer": 1,
+      "mean_margin_restored": -0.00040149688720703125
+    },
+    {
+      "layer": 2,
+      "mean_margin_restored": -0.0011606812477111816
+    },
+    {
+      "layer": 3,
+      "mean_margin_restored": 0.0024853746872395277
+    },
+    {
+      "layer": 4,
+      "mean_margin_restored": -0.002539515495300293
+    },
+    {
+      "layer": 5,
+      "mean_margin_restored": -0.004092196933925152
+    },
+    {
+      "layer": 6,
+      "mean_margin_restored": -0.0011206865310668945
+    },
+    {
+      "layer": 7,
+      "mean_margin_restored": 0.006304542534053326
+    },
+    {
+      "layer": 8,
+      "mean_margin_restored": 0.0009995102882385254
+    },
+    {
+      "layer": 9,
+      "mean_margin_restored": -0.03360937163233757
+    },
+    {
+      "layer": 10,
+      "mean_margin_restored": -0.019643744453787804
+    },
+    {
+      "layer": 11,
+      "mean_margin_restored": -0.04548170417547226
+    },
+    {
+      "layer": 12,
+      "mean_margin_restored": 0.02994503639638424
+    },
+    {
+      "layer": 13,
+      "mean_margin_restored": -0.050733428448438644
+    },
+    {
+      "layer": 14,
+      "mean_margin_restored": 0.01641492173075676
+    },
+    {
+      "layer": 15,
+      "mean_margin_restored": 0.04921301454305649
+    },
+    {
+      "layer": 16,
+      "mean_margin_restored": 0.05000025033950806
+    },
+    {
+      "layer": 17,
+      "mean_margin_restored": 0.12505602836608887
+    },
+    {
+      "layer": 18,
+      "mean_margin_restored": 0.18006807565689087
+    },
+    {
+      "layer": 19,
+      "mean_margin_restored": 0.18715351819992065
+    },
+    {
+      "layer": 20,
+      "mean_margin_restored": 15.5352201461792
+    },
+    {
+      "layer": 21,
+      "mean_margin_restored": 22.241994857788086
+    },
+    {
+      "layer": 22,
+      "mean_margin_restored": 22.38022232055664
+    },
+    {
+      "layer": 23,
+      "mean_margin_restored": 1.2691713571548462
+    },
+    {
+      "layer": 24,
+      "mean_margin_restored": 7.0000128746032715
+    },
+    {
+      "layer": 25,
+      "mean_margin_restored": 16.501272201538086
+    },
+    {
+      "layer": 26,
+      "mean_margin_restored": 4.722525596618652
+    },
+    {
+      "layer": 27,
+      "mean_margin_restored": 12.497313499450684
+    }
+  ],
+  "direction_candidates": [
+    {
+      "layer": 22,
+      "direction_index": 0,
+      "validation_margin_restored": 4.482732772827148
+    },
+    {
+      "layer": 22,
+      "direction_index": 1,
+      "validation_margin_restored": 1.1692323684692383
+    },
+    {
+      "layer": 22,
+      "direction_index": 2,
+      "validation_margin_restored": 0.2765096426010132
+    },
+    {
+      "layer": 22,
+      "direction_index": 3,
+      "validation_margin_restored": 0.3436740040779114
+    },
+    {
+      "layer": 22,
+      "direction_index": 4,
+      "validation_margin_restored": 0.8289076685905457
+    },
+    {
+      "layer": 21,
+      "direction_index": 0,
+      "validation_margin_restored": 1.2442607879638672
+    },
+    {
+      "layer": 21,
+      "direction_index": 1,
+      "validation_margin_restored": 2.1247448921203613
+    },
+    {
+      "layer": 21,
+      "direction_index": 2,
+      "validation_margin_restored": 1.1932225227355957
+    },
+    {
+      "layer": 21,
+      "direction_index": 3,
+      "validation_margin_restored": -0.0903492420911789
+    },
+    {
+      "layer": 21,
+      "direction_index": 4,
+      "validation_margin_restored": 1.5183290243148804
+    },
+    {
+      "layer": 25,
+      "direction_index": 0,
+      "validation_margin_restored": 2.1771275997161865
+    },
+    {
+      "layer": 25,
+      "direction_index": 1,
+      "validation_margin_restored": 2.4806556701660156
+    },
+    {
+      "layer": 25,
+      "direction_index": 2,
+      "validation_margin_restored": 0.7919465899467468
+    },
+    {
+      "layer": 25,
+      "direction_index": 3,
+      "validation_margin_restored": 1.000675916671753
+    },
+    {
+      "layer": 25,
+      "direction_index": 4,
+      "validation_margin_restored": 1.0380942821502686
+    }
+  ],
+  "selected": {
+    "layer": 22,
+    "direction_index": 0,
+    "validation_margin_restored": 4.482732772827148
+  },
+  "training_clean_corrupt_margin_gap": 39.50315856933594,
+  "restore_equivalent": true
+}

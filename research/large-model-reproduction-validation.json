@@ -1,0 +1,107 @@
+{
+  "completed_epoch": 1788809666.5852432,
+  "model": "Qwen/Qwen3-1.7B",
+  "scope": "All primary ordinary/intervention/coordinate suites and the compact addition cohort; new output directory, frozen published checkpoints.",
+  "raw_files_bitwise_identical": [
+    {
+      "file": "add/coordinate-interventions.json",
+      "sha256": "8d9eee6232a207b88949922a0812d7df244cb1c6a595f6ff33983fda0a482fc9"
+    },
+    {
+      "file": "add/interventions-carry.json",
+      "sha256": "e6c33be50ad8a62ac66a2fa90193d8bf5e244daaeaea59e57bc4853836c2184a"
+    },
+    {
+      "file": "add/interventions-minimal-fresh.json",
+      "sha256": "0f029508d92129f00340ff4054ce721512daff3c40dce98ec5217821bd178109"
+    },
+    {
+      "file": "add/interventions-shift.json",
+      "sha256": "4890fb6e22f155eca3b9ea70fbd58056b9a5d9ecc6cf1a1f2c48867964626460"
+    },
+    {
+      "file": "add/interventions-test-known-formats.json",
+      "sha256": "c3914a65465cea13afb1832bcc8363d488066a93a12f368e87d9572051f1d567"
+    },
+    {
+      "file": "add/interventions-test-new-format.json",
+      "sha256": "8d711916f11fdc46ab33aad03d9c5c82f85e8073ca1cb653f19cff3d9e801a7c"
+    },
+    {
+      "file": "add/ordinary-carry.json",
+      "sha256": "10e2ea0392e0ce2479bef9afbb89c876378d109195544d88b9d81e54abb19cef"
+    },
+    {
+      "file": "add/ordinary-minimal-fresh.json",
+      "sha256": "63df9a9f0ce4f6aef7cace8e28bfd1b0aaeb5001b13b75076f64970b02e25464"
+    },
+    {
+      "file": "add/ordinary-shift.json",
+      "sha256": "3801dd9b3f782f1cc43980e459719fa9445537a62c9bfd415df70aea9b3b7eaa"
+    },
+    {
+      "file": "add/ordinary-test-known-formats.json",
+      "sha256": "e7cb2c35fdfec2b29f71134bdd78e47765878f4b5a7a0769b8e0c97feb8895e4"
+    },
+    {
+      "file": "add/ordinary-test-new-format.json",
+      "sha256": "5174a551ba4c7e670b45a9d8ea264742f1974fb0b8aeb171863af02956d61881"
+    },
+    {
+      "file": "divide/coordinate-interventions.json",
+      "sha256": "6d45da82c849d10fa986ae13b0ddb6e9b37bfe9e401c7a4c582c3b83ddd4cc0d"
+    },
+    {
+      "file": "divide/interventions-shift.json",
+      "sha256": "8696cafc8dbd64381f2e0622aa62fe67be58dfcb93425151cf24e5bd5a3ae74a"
+    },
+    {
+      "file": "divide/interventions-test-known-formats.json",
+      "sha256": "b1abbc0a988f679e5ee384c189a420e8f4b711334e52ecf831db46f16d71b623"
+    },
+    {
+      "file": "divide/interventions-test-new-format.json",
+      "sha256": "42643d6c64e0d8493ae3c2c1e331420bdd31655fe8e62b38da210257cabdfb05"
+    },
+    {
+      "file": "divide/ordinary-shift.json",
+      "sha256": "777c9cedc83d37c5828413e3c26dd8f161738a006f1882f0b981de7e7f29aa9c"
+    },
+    {
+      "file": "divide/ordinary-test-known-formats.json",
+      "sha256": "887bffce7540a6614bbb9f8c5dc252709fe5604228e78d3c545dbde6fc8480ad"
+    },
+    {
+      "file": "divide/ordinary-test-new-format.json",
+      "sha256": "61daf5bd0971154ed8b8b17e4a7577f0f5d4fdafc12eeb81a091e2d989c819fa"
+    },
+    {
+      "file": "multiply/coordinate-interventions.json",
+      "sha256": "bb5e225395aedbcd4d9b51954089f9a1232b08039bf675b9c21a2f5c81860623"
+    },
+    {
+      "file": "multiply/interventions-shift.json",
+      "sha256": "f99b7a82976b3e0ffa5122a78e2db84d46924d9b2b38dbf833e87681290d6a8e"
+    },
+    {
+      "file": "multiply/interventions-test-known-formats.json",
+      "sha256": "e2f4c26df698d331ab9e83470635f5f0aad4abbf99edf64e6e992f8b3f842289"
+    },
+    {
+      "file": "multiply/interventions-test-new-format.json",
+      "sha256": "32d2e2a51720319d36d4ea58aafab970715f9b0477a5b5e37a10c85e6819fb9f"
+    },
+    {
+      "file": "multiply/ordinary-shift.json",
+      "sha256": "1d29b48123e5cebdc65ea410c184a5dc4b862f800736503da682b4ddd956a47e"
+    },
+    {
+      "file": "multiply/ordinary-test-known-formats.json",
+      "sha256": "eef4730e28c1867455b4a6fddf48935cbfd5acca8151ef2c9ff6efbaafc8b0ed"
+    },
+    {
+      "file": "multiply/ordinary-test-new-format.json",
+      "sha256": "d08ee27bd7c2b4c3da925b984300886b95f74095afe11cdc5f41092eb1d4d1f2"
+    }
+  ]
+}

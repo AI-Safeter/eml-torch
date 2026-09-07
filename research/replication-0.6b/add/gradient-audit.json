@@ -1,0 +1,31 @@
+{
+  "feature_gradient_energy_fraction": {
+    "pls32": {
+      "train": 0.19353796541690826,
+      "validation": 0.19021660089492798
+    },
+    "active16": {
+      "train": 0.9919243454933167,
+      "validation": 0.9913466572761536
+    },
+    "active32": {
+      "train": 0.996755063533783,
+      "validation": 0.9962119460105896
+    },
+    "active64": {
+      "train": 0.9987808465957642,
+      "validation": 0.9984065294265747
+    }
+  },
+  "orthogonal_perturbation": {
+    "epsilon": 0.01,
+    "cases": 32,
+    "max_standardized_feature_change": 5.783194296782312e-07,
+    "true_coefficient_response_rms": 0.14679820835590363,
+    "linearized_response_rms": 0.14679911732673645
+  },
+  "interpretation": "Any predictor depending only on linear coordinates has its input gradient in their span. Omitted gradient energy is an irreducible local derivative error for that representation, not a bound on natural arithmetic accuracy.",
+  "subspace_fit": "Training gradients only; validation gradients only audit the fixed subspaces.",
+  "source": "https://arxiv.org/abs/1408.0545",
+  "dtype": "float32 gradients, float64 eigendecomposition"
+}

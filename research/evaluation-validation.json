@@ -1,0 +1,254 @@
+{
+  "completed_epoch": 1788798882.9166243,
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "validation_pairs": 4,
+  "prompt_cases": 12,
+  "checks": [
+    "Exact restore logits and generation",
+    "Zero-intervention reference equivalence",
+    "Mean replacement has zero response",
+    "Pair-grouping across formats",
+    "Analytic half-response NRMSE",
+    "Strict complete-answer parser"
+  ],
+  "test_data_used": false,
+  "validation_models_not_final_selection": {
+    "heads": {
+      "heads/eml": {
+        "status": "complete",
+        "kind": "eml_square",
+        "width": 32,
+        "seed": 29,
+        "response_weight": 4.0,
+        "rank": 32,
+        "parameters": 2177,
+        "eml_nodes": 32,
+        "steps": 7501,
+        "bad_steps": 0,
+        "seconds": 17.88102807663381,
+        "validation_objective": 0.048883967101573944,
+        "validation_mse": 0.008969775401055813,
+        "validation_response_mse": 0.00997854769229889,
+        "selected_step": 5000,
+        "name": "eml_square-w32-s29-r4",
+        "features": "pls",
+        "checkpoint": "heads/eml_square-w32-s29-r4.pt"
+      },
+      "heads/neural": {
+        "status": "complete",
+        "kind": "silu",
+        "width": 16,
+        "seed": 29,
+        "response_weight": 4.0,
+        "rank": 32,
+        "parameters": 1121,
+        "eml_nodes": 0,
+        "steps": 6601,
+        "bad_steps": 0,
+        "seconds": 12.578209044411778,
+        "validation_objective": 0.05492355674505234,
+        "validation_mse": 0.010473274625837803,
+        "validation_response_mse": 0.011112570762634277,
+        "selected_step": 4100,
+        "name": "silu-w16-s29-r4",
+        "features": "pls",
+        "checkpoint": "heads/silu-w16-s29-r4.pt"
+      },
+      "heads-active-r32-g0/eml": {
+        "status": "complete",
+        "kind": "eml_square",
+        "width": 32,
+        "seed": 17,
+        "response_weight": 4.0,
+        "gradient_weight": 0.0,
+        "rank": 32,
+        "parameters": 2177,
+        "eml_nodes": 32,
+        "steps": 19301,
+        "bad_steps": 0,
+        "seconds": 58.93079570308328,
+        "validation_objective": 0.0054800184443593025,
+        "validation_mse": 0.0007638271199539304,
+        "validation_response_mse": 0.0011790478602051735,
+        "selected_step": 16800,
+        "name": "eml_square-w32-s17-r4",
+        "features": "active",
+        "checkpoint": "heads-active-r32-g0/eml_square-w32-s17-r4.pt"
+      },
+      "heads-active-r32-g0/neural": {
+        "status": "complete",
+        "kind": "silu_two",
+        "width": 32,
+        "seed": 17,
+        "response_weight": 4.0,
+        "gradient_weight": 0.0,
+        "rank": 32,
+        "parameters": 2177,
+        "eml_nodes": 0,
+        "steps": 20000,
+        "bad_steps": 0,
+        "seconds": 56.33313851058483,
+        "validation_objective": 0.005356533452868462,
+        "validation_mse": 0.0008629391086287796,
+        "validation_response_mse": 0.0011233985424041748,
+        "selected_step": 19900,
+        "name": "silu_two-w32-s17-r4",
+        "features": "active",
+        "checkpoint": "heads-active-r32-g0/silu_two-w32-s17-r4.pt"
+      }
+    }
+  },
+  "metrics": {
+    "original": {
+      "independent_operand_pairs": 4,
+      "offgrid_interventions": 48,
+      "response_correlation": 1.0,
+      "response_correlation_ci95": [
+        1.0,
+        1.0
+      ],
+      "response_nrmse": 0.0,
+      "response_nrmse_ci95": [
+        0.0,
+        0.0
+      ],
+      "reference_response_rms_logits": 0.4390826318082512,
+      "response_sign_agreement_above_0_1_logit": 1.0,
+      "mean_kl_vs_original_same_intervention": 0.0,
+      "coefficient_r2": 1.0
+    },
+    "restore": {
+      "independent_operand_pairs": 4,
+      "offgrid_interventions": 48,
+      "response_correlation": 1.0,
+      "response_correlation_ci95": [
+        1.0,
+        1.0
+      ],
+      "response_nrmse": 0.0,
+      "response_nrmse_ci95": [
+        0.0,
+        0.0
+      ],
+      "reference_response_rms_logits": 0.4390826318082512,
+      "response_sign_agreement_above_0_1_logit": 1.0,
+      "mean_kl_vs_original_same_intervention": 0.0,
+      "coefficient_r2": 1.0
+    },
+    "mean": {
+      "independent_operand_pairs": 4,
+      "offgrid_interventions": 48,
+      "response_correlation": null,
+      "response_correlation_ci95": null,
+      "response_nrmse": 1.0,
+      "response_nrmse_ci95": [
+        1.0,
+        1.0
+      ],
+      "reference_response_rms_logits": 0.4390826318082512,
+      "response_sign_agreement_above_0_1_logit": 0.0,
+      "mean_kl_vs_original_same_intervention": 3.475536011289745e-05,
+      "coefficient_r2": -0.13760263477383394
+    },
+    "heads/eml": {
+      "independent_operand_pairs": 4,
+      "offgrid_interventions": 48,
+      "response_correlation": 0.8155365133675911,
+      "response_correlation_ci95": [
+        0.4733242857530113,
+        0.9905099177155915
+      ],
+      "response_nrmse": 0.8041137478951867,
+      "response_nrmse_ci95": [
+        0.15368428327613223,
+        1.313326700612037
+      ],
+      "reference_response_rms_logits": 0.4390826318082512,
+      "response_sign_agreement_above_0_1_logit": 0.9230769230769231,
+      "mean_kl_vs_original_same_intervention": 6.90743724999423e-07,
+      "coefficient_r2": 0.9856519407894068
+    },
+    "heads/neural": {
+      "independent_operand_pairs": 4,
+      "offgrid_interventions": 48,
+      "response_correlation": 0.9533502437873532,
+      "response_correlation_ci95": [
+        0.8560013231204351,
+        0.9962727479525285
+      ],
+      "response_nrmse": 0.3047002589385832,
+      "response_nrmse_ci95": [
+        0.10312838149079874,
+        0.4824154741856297
+      ],
+      "reference_response_rms_logits": 0.4390826318082512,
+      "response_sign_agreement_above_0_1_logit": 0.9615384615384616,
+      "mean_kl_vs_original_same_intervention": 5.191108545536867e-06,
+      "coefficient_r2": 0.9855320222804533
+    },
+    "heads-active-r32-g0/eml": {
+      "independent_operand_pairs": 4,
+      "offgrid_interventions": 48,
+      "response_correlation": 0.992094447984611,
+      "response_correlation_ci95": [
+        0.9821696434842547,
+        0.9998130542286439
+      ],
+      "response_nrmse": 0.13466421962873004,
+      "response_nrmse_ci95": [
+        0.02229525181501523,
+        0.22027838711157816
+      ],
+      "reference_response_rms_logits": 0.4390826318082512,
+      "response_sign_agreement_above_0_1_logit": 1.0,
+      "mean_kl_vs_original_same_intervention": 1.1981130406894316e-06,
+      "coefficient_r2": 0.9988744973598728
+    },
+    "heads-active-r32-g0/neural": {
+      "independent_operand_pairs": 4,
+      "offgrid_interventions": 48,
+      "response_correlation": 0.9872385341853787,
+      "response_correlation_ci95": [
+        0.9697246025752633,
+        0.9997110574034249
+      ],
+      "response_nrmse": 0.18137951546981163,
+      "response_nrmse_ci95": [
+        0.023611747456596742,
+        0.2979494471588348
+      ],
+      "reference_response_rms_logits": 0.4390826318082512,
+      "response_sign_agreement_above_0_1_logit": 0.9615384615384616,
+      "mean_kl_vs_original_same_intervention": 2.29832398719089e-06,
+      "coefficient_r2": 0.9991879217203304
+    }
+  },
+  "comparisons": {
+    "heads/eml": {
+      "neural_control": "heads/neural",
+      "eml_minus_neural_response_mse_logits_squared": 0.10676071876817635,
+      "paired_difference_ci95": [
+        -0.0001433547593781744,
+        0.31598562155212073
+      ],
+      "eml_to_neural_response_rmse_ratio": 2.6390320464324506,
+      "ratio_ci95": [
+        0.8464309408509925,
+        2.723685251027187
+      ]
+    },
+    "heads-active-r32-g0/eml": {
+      "neural_control": "heads-active-r32-g0/neural",
+      "eml_minus_neural_response_mse_logits_squared": -0.0028464188486244284,
+      "paired_difference_ci95": [
+        -0.00851902884634607,
+        1.664015902254807e-06
+      ],
+      "eml_to_neural_response_rmse_ratio": 0.7424444777014703,
+      "ratio_ci95": [
+        0.7392995863164583,
+        1.0195670074202074
+      ]
+    }
+  }
+}

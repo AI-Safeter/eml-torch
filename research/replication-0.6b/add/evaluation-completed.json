@@ -1,0 +1,10 @@
+{
+  "completed_epoch": 1788800619.768511,
+  "suites": [
+    "test-known-formats",
+    "test-new-format",
+    "shift",
+    "carry"
+  ],
+  "restore_equivalent": true
+}

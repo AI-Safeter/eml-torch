@@ -1,0 +1,54 @@
+{
+  "completed_epoch": 1788807243.8341472,
+  "model": "Qwen/Qwen3-1.7B",
+  "head": "heads-active-r32-g0.1/eml",
+  "results": {
+    "test": {
+      "pairs": 64,
+      "styles": 3,
+      "mixed_inputs": 576,
+      "gradient_energy_captured": 0.9896643161773682,
+      "coefficient_response_nrmse": 0.023953499272465706,
+      "coefficient_rmse_in_training_std": 0.021433601155877113,
+      "fraction_outside_any_training_coordinate_range": 0.01215277798473835,
+      "maximum_absolute_standardized_coordinate": 4.6658124923706055,
+      "left_argument_range": [
+        -2.4383182525634766,
+        2.2036449909210205
+      ],
+      "right_argument_range": [
+        -5.193130970001221,
+        6.402164936065674
+      ],
+      "nonlinear_term_range_in_training_output_std": [
+        -0.9751383066177368,
+        0.8623390197753906
+      ],
+      "numerical_guard_activated": false
+    },
+    "shift": {
+      "pairs": 64,
+      "styles": 3,
+      "mixed_inputs": 576,
+      "gradient_energy_captured": 0.973253607749939,
+      "coefficient_response_nrmse": 0.05109357833862305,
+      "coefficient_rmse_in_training_std": 0.06337715685367584,
+      "fraction_outside_any_training_coordinate_range": 0.1128472238779068,
+      "maximum_absolute_standardized_coordinate": 5.275125026702881,
+      "left_argument_range": [
+        -2.969642162322998,
+        2.7528483867645264
+      ],
+      "right_argument_range": [
+        -3.8158676624298096,
+        5.409578800201416
+      ],
+      "nonlinear_term_range_in_training_output_std": [
+        -0.9720568656921387,
+        0.976608395576477
+      ],
+      "numerical_guard_activated": false
+    }
+  },
+  "interpretation": "Exploratory 64-pair diagnostic after observing shift results. Coefficient NRMSE differs from the primary downstream margin metric. No refitting, head changes, or test-based selection."
+}

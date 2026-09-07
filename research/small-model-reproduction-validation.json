@@ -1,0 +1,215 @@
+{
+  "completed_epoch": 1788808704.8760834,
+  "model": "Qwen/Qwen3-0.6B",
+  "scope": "All primary ordinary/intervention/coordinate suites, all compact fresh cohorts, and supplemental linear controls; new output directory, frozen published checkpoints.",
+  "raw_files_bitwise_identical": [
+    {
+      "file": "add/coordinate-interventions.json",
+      "sha256": "8a8467486d355d5ae8a1a99ca7b17e312d8de3b47b9c2e1af1f948dbd006d70a"
+    },
+    {
+      "file": "add/interventions-carry.json",
+      "sha256": "acf23a9d478d1dcbd6b792e61d23395d58c0d44e61c8e5a40ba8788138f3e863"
+    },
+    {
+      "file": "add/interventions-minimal-fresh.json",
+      "sha256": "4a55ab194d785bd9fe1a517a2942cf783327a7c01532e5c04967504281baf38d"
+    },
+    {
+      "file": "add/interventions-shift.json",
+      "sha256": "68d53999043d2ac84a2118c1254e06c40718e1895d38077f59a7834659cc01e5"
+    },
+    {
+      "file": "add/interventions-test-known-formats.json",
+      "sha256": "c4405ae7d752014aad0d5e34b24070b0a529ea0c53d6ed5a911ff4acdd84a41d"
+    },
+    {
+      "file": "add/interventions-test-new-format.json",
+      "sha256": "8ece126a7997dfb79e8c3045f8540191d1548e06212254bcd711d0574d4e2dd6"
+    },
+    {
+      "file": "add/linear-coordinate-interventions.json",
+      "sha256": "91c8c3e59c4d17fdd32c58e5a04e458e12a9bbf49a21ed618d70b197566d7d5f"
+    },
+    {
+      "file": "add/linear-interventions-carry.json",
+      "sha256": "8bd83bb0ecce714d0c2f4b206111988c7519e2985c39da99a577727341ac6c6d"
+    },
+    {
+      "file": "add/linear-interventions-shift.json",
+      "sha256": "10dce31791aba8d8318be1a55bc0ef3456a79f553af64ccd36900629b8a3b0fb"
+    },
+    {
+      "file": "add/linear-interventions-test-known-formats.json",
+      "sha256": "97bfc4624918ce433f61546750e3da3a9c1deaeabc935dca5d6bde1c8caaba1a"
+    },
+    {
+      "file": "add/linear-interventions-test-new-format.json",
+      "sha256": "1ad5f43152aaa74ccb511f130521001515bec9b99c359178a256f712bb3e9b62"
+    },
+    {
+      "file": "add/linear-ordinary-carry.json",
+      "sha256": "1b8e546a7c6adb8d0125be48dbb9706397c8c416439d8b632d929ad8a1c71aa1"
+    },
+    {
+      "file": "add/linear-ordinary-shift.json",
+      "sha256": "29f5e019d1a9b0780b8f89c00fb2c78919f2280103683aa56921afad05877549"
+    },
+    {
+      "file": "add/linear-ordinary-test-known-formats.json",
+      "sha256": "a9ffc59a37fd6a8ab45b15d26982b3b9d42940bd0c4fe0764afe152b6c22581a"
+    },
+    {
+      "file": "add/linear-ordinary-test-new-format.json",
+      "sha256": "0d1e2257a182a7e8abf9b6986902d73cec238a8ee672fea70069602e7b661f1e"
+    },
+    {
+      "file": "add/ordinary-carry.json",
+      "sha256": "6dbd0760d44c73de99e324e7cee9e50e47dcc30915ec8e175789c9d068d4829f"
+    },
+    {
+      "file": "add/ordinary-minimal-fresh.json",
+      "sha256": "fc03a39e0fc58928e827f0f33029e42394b788f4eed031a03ca7883bcebc419c"
+    },
+    {
+      "file": "add/ordinary-shift.json",
+      "sha256": "3e8acb3e40afe89fd4cb7487a00cb5e52d3bbdfcf55a7804bf712f0205c2b741"
+    },
+    {
+      "file": "add/ordinary-test-known-formats.json",
+      "sha256": "b30573fac08a9d8b1c88a1f3ca48aa92955cdda4da92f597e8fa2563f2df1555"
+    },
+    {
+      "file": "add/ordinary-test-new-format.json",
+      "sha256": "0b2d6bc9982ea2347217682164ab803fe2e575f45aac647b45609616b0d9e455"
+    },
+    {
+      "file": "divide/coordinate-interventions.json",
+      "sha256": "ac0f1e3b86b1795bc7f51b34376d1ce75836da3447e942710f83afffde07f7aa"
+    },
+    {
+      "file": "divide/interventions-minimal-fresh.json",
+      "sha256": "baac1486be3e220d271ed0e4aa242dbdfa50637bc602469f02c671a3b1881ab0"
+    },
+    {
+      "file": "divide/interventions-shift.json",
+      "sha256": "d0903459934589bc5723b376e5ebe3efc31b48fb3e96085f1945a8d7766ce998"
+    },
+    {
+      "file": "divide/interventions-test-known-formats.json",
+      "sha256": "a91265ed2b69447e0fcb4cdcdf3edd22da51700cff0c0330ba7336b45b1d41c5"
+    },
+    {
+      "file": "divide/interventions-test-new-format.json",
+      "sha256": "f36de944a96a15964ffd4a3078539acde62dccd70f7098009a3d814ad6a4be79"
+    },
+    {
+      "file": "divide/linear-coordinate-interventions.json",
+      "sha256": "6fc7a98d7006eafa955baba8793331035514bc4a8e91b6bd2f8c5e25f927cd27"
+    },
+    {
+      "file": "divide/linear-interventions-shift.json",
+      "sha256": "241fa748a243f193cdfcbf24e880f210d2056c80359634604e12711f1f40a0b4"
+    },
+    {
+      "file": "divide/linear-interventions-test-known-formats.json",
+      "sha256": "5025f0eed708aea2cb24232760e7ef7b30d288dcd9219ad80f62feb9e07c8597"
+    },
+    {
+      "file": "divide/linear-interventions-test-new-format.json",
+      "sha256": "ad97da33e62a3b40975321b3bc57e69dfb5b381b074a43a8d51a10cb47b77608"
+    },
+    {
+      "file": "divide/linear-ordinary-shift.json",
+      "sha256": "49990216086456e43a2d1f283e5a01ffbac3a31d1f34f5b4a0311090c5d19b1a"
+    },
+    {
+      "file": "divide/linear-ordinary-test-known-formats.json",
+      "sha256": "2f0286d38a2756b7fd305d9988b4f3aa16ade970fcd23f18529133cd0e0d497f"
+    },
+    {
+      "file": "divide/linear-ordinary-test-new-format.json",
+      "sha256": "1654ea45d3c0f4f1abbcd89239362af6730325d54ac823b6b778f71119835c5f"
+    },
+    {
+      "file": "divide/ordinary-minimal-fresh.json",
+      "sha256": "7fd1aeabb7c3e942b14319eeb2dc9f23eb77dcc029ed033826cab5a1e90b3420"
+    },
+    {
+      "file": "divide/ordinary-shift.json",
+      "sha256": "b1939af0b9421f7dce0436f1c0da9e1527a45edf5552a6d049c098f445b100d5"
+    },
+    {
+      "file": "divide/ordinary-test-known-formats.json",
+      "sha256": "8cfd6c48e3ce7ef5f96e324f652a16d85b0be57f0f51b9f476a94837f8e1454d"
+    },
+    {
+      "file": "divide/ordinary-test-new-format.json",
+      "sha256": "fc3824aec6ac63865a5c190b968a312c53876a493c6fdb4147c9ac0a6df59bea"
+    },
+    {
+      "file": "multiply/coordinate-interventions.json",
+      "sha256": "fa5bbe057e9bea10f858a33b546eb210b285107a80050a675f06b32b33432d63"
+    },
+    {
+      "file": "multiply/interventions-minimal-fresh.json",
+      "sha256": "bb0189b303af1efc270f78305d3c53562bbd51cc15ec3f148aefd0a264031a19"
+    },
+    {
+      "file": "multiply/interventions-shift.json",
+      "sha256": "5f76d3efb788abc69442d20437f9dba5f4c98423666f2532b7d886d647a199a3"
+    },
+    {
+      "file": "multiply/interventions-test-known-formats.json",
+      "sha256": "9ad5f279e057c17116d08cca2785799f6718ca517d9fbd347aec555994b64e46"
+    },
+    {
+      "file": "multiply/interventions-test-new-format.json",
+      "sha256": "2a1d1983c76ef706bf18b3fd06e20bdca52251ce3ec880db45654f4242c2f425"
+    },
+    {
+      "file": "multiply/linear-coordinate-interventions.json",
+      "sha256": "2c44afbaa62375729956b0d5cdac79d0a5da2eb13f9b990d195614c808d822e8"
+    },
+    {
+      "file": "multiply/linear-interventions-shift.json",
+      "sha256": "ffaa7355cc5854d6c52fefb37ab0f32a197f880b3936633abbba6c70bfed8cf0"
+    },
+    {
+      "file": "multiply/linear-interventions-test-known-formats.json",
+      "sha256": "c9b82ff3a8e63d3b2ee4c14444fa8f27b954be96049ddd5a4f4da4c537124bc3"
+    },
+    {
+      "file": "multiply/linear-interventions-test-new-format.json",
+      "sha256": "a4e7f23c6dbb7d43fa4f13786e7c2d6c901b00f4d18eba6dbbc328fd3465b125"
+    },
+    {
+      "file": "multiply/linear-ordinary-shift.json",
+      "sha256": "e738397e628a9cda1652b2598091a8dee3414b56eba4f525d1d5d09e148ad2fc"
+    },
+    {
+      "file": "multiply/linear-ordinary-test-known-formats.json",
+      "sha256": "b5efe541f5ab55a14edc2f06fc86ed9b168fc6839de2ad81cde6188f744915c9"
+    },
+    {
+      "file": "multiply/linear-ordinary-test-new-format.json",
+      "sha256": "7f2d709b9277518431745651e247808432776ff55afac2be11caf1bc771e739c"
+    },
+    {
+      "file": "multiply/ordinary-minimal-fresh.json",
+      "sha256": "2b9f3a500f7e7f303ea13469580ccd87976f5b3ae28ce33d7b97b1e4ec734bde"
+    },
+    {
+      "file": "multiply/ordinary-shift.json",
+      "sha256": "1ccac5281f061673db4c5965f5b9e7f0dab0c78d4ebe7d18a5bd8466b261180c"
+    },
+    {
+      "file": "multiply/ordinary-test-known-formats.json",
+      "sha256": "1e4f1a72dac6841767f91f90acc80d7925f61cd270a46700db7c1b2c7ce3eb3a"
+    },
+    {
+      "file": "multiply/ordinary-test-new-format.json",
+      "sha256": "b956399686db6f89acc1321257a720e446c122d2be0086395b7ae467b0207baf"
+    }
+  ]
+}

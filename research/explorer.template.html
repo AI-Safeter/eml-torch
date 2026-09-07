@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Equations inside a language model</title>
+<style>
+:root{color-scheme:dark;font:16px/1.5 system-ui,sans-serif;background:#101722;color:#e5edf7}
+*{box-sizing:border-box}body{margin:0}main{max-width:1180px;margin:auto;padding:40px 24px 72px}
+h1{font-size:clamp(1.8rem,4vw,2.7rem);line-height:1.15;margin:8px 0 18px;letter-spacing:-.03em}
+h2{font-size:1.05rem;margin:0 0 12px}p{max-width:880px;color:#acbbcf}a{color:#74d9d2}
+.eyebrow{font-size:.78rem;letter-spacing:.12em;color:#75d7ce;text-transform:uppercase}
+.panel{background:#182231;border:1px solid #2c394c;border-radius:12px;padding:22px;margin:20px 0}
+.controls{display:grid;grid-template-columns:2fr 1fr 2fr;gap:16px}label{display:block;color:#b6c5d9;font-size:.82rem}
+select{display:block;width:100%;min-width:0;background:#111a27;border:1px solid #425269;color:#f0f5fa;padding:10px;border-radius:6px;font:inherit;margin-top:6px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:20px 0}.card{padding:18px 20px;background:#182231;border:1px solid #2c394c;border-radius:10px}
+.big{font-size:2rem;font-weight:650;letter-spacing:-.04em;margin:2px 0}.sub{color:#94a9c1;font-size:.8rem}
+.plots{display:grid;grid-template-columns:1fr 1fr;gap:22px}.plots>div{min-width:0}.chart{display:block;width:100%;height:auto}
+.legend{display:flex;gap:20px;flex-wrap:wrap;font-size:.8rem;margin:8px 0 18px;color:#b5c4d8}
+.legend span:before{content:"";display:inline-block;width:18px;height:3px;vertical-align:middle;margin-right:7px;background:var(--color)}
+input[type=range]{width:100%;accent-color:#67dbcf;margin:14px 0 8px}
+.strength{display:flex;justify-content:space-between;align-items:baseline;gap:12px}.strength strong{font-variant-numeric:tabular-nums;color:#74e4d7}
+.answers{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px}.answer{font:600 1.05rem ui-monospace,monospace;margin-top:5px;overflow-wrap:anywhere}
+.ok{color:#75ddbf}.bad{color:#f2ac86}.formula{font:clamp(.83rem,1.5vw,1.03rem)/1.8 ui-monospace,monospace;overflow-wrap:anywhere;color:#d0e3f5}
+.table-wrap{overflow:auto}table{border-collapse:collapse;width:100%;font-size:.85rem;white-space:nowrap}
+th,td{text-align:left;padding:12px 14px;border-bottom:1px solid #2c394c}th{font-weight:500;color:#9fb2cb}td:first-child{white-space:normal;min-width:150px}
+details{margin:16px 0}summary{cursor:pointer;color:#a9c7e5}pre{font-size:.75rem;background:#101722;padding:16px;max-height:380px;overflow:auto}
+.note{font-size:.85rem;color:#96abc4}.pill{display:inline-block;background:#223846;border:1px solid #355469;padding:3px 10px;border-radius:20px;font-size:.75rem;color:#9adfd8}
+footer{border-top:1px solid #2c394c;margin-top:28px;padding-top:20px;color:#8ca3bf;font-size:.8rem}
+@media(max-width:700px){main{padding:24px 14px 48px}.controls,.plots{grid-template-columns:1fr}.cards{gap:8px}.card{padding:12px}.big{font-size:1.4rem}.sub{font-size:.72rem}.panel{padding:16px}.answers{gap:8px}.answer{font-size:.88rem}}
+</style>
+<main>
+<div class="eyebrow">EML · arithmetic component study</div>
+<h1>Equations inside a language model</h1>
+<p>Explore a measured replacement of one internal arithmetic contribution. The EML equation runs in your browser. Original-model values and downstream responses come from frozen GPU tests.</p>
+<div class="panel controls">
+<label>Experiment<select id="dataset"></select></label>
+<label>Prompt format<select id="style"></select></label>
+<label>Operand pair<select id="problem"></select></label>
+</div>
+<div class="cards">
+<div class="card"><div class="sub">Response NRMSE · full test set</div><div class="big" id="error"></div><div class="sub" id="error-ci"></div></div>
+<div class="card"><div class="sub">Complete-answer accuracy</div><div class="big" id="accuracy"></div><div class="sub" id="accuracy-change"></div></div>
+<div class="card"><div class="sub">Equation size</div><div class="big" id="nodes"></div><div class="sub" id="size-detail"></div></div>
+</div>
+<p class="note" id="ablation"></p>
+<div class="panel">
+<div class="strength"><h2 id="pair-title"></h2><span class="pill" id="layer"></span></div>
+<div class="legend"><span style="--color:#dde8f4">Original component</span><span style="--color:#6de1d3">EML replacement</span><span style="--color:#efa783">Neural control</span></div>
+<div class="plots">
+<div><h2>Internal contribution response</h2><svg class="chart" id="coefficient" viewBox="0 0 500 270" role="img" aria-label="Component coefficient responses"></svg></div>
+<div><h2>Downstream model response</h2><svg class="chart" id="margin" viewBox="0 0 500 270" role="img" aria-label="First-answer-token logit margin responses"></svg></div>
+</div>
+<div class="strength"><label for="alpha">Upstream interpolation: corrupted → clean</label><strong id="alpha-value"></strong></div>
+<input id="alpha" type="range" min="0" max="5" step="1" value="3">
+<div class="note">The curves compare changes from the corrupted-input baseline. Original values are measured at the marked strengths. The cyan contribution curve evaluates the saved equation between those points. Downstream responses measure the logit margin between the clean and corrupted answers’ first tokens.</div>
+<div class="answers">
+<div><div class="sub">Original answer to the clean problem</div><div class="answer" id="answer-original"></div></div>
+<div><div class="sub">EML replacement answer</div><div class="answer" id="answer-eml"></div></div>
+<div><div class="sub">Neural control answer</div><div class="answer" id="answer-neural"></div></div>
+</div>
+</div>
+<div class="panel">
+<h2>The equation</h2><div class="formula" id="formula"></div>
+<p class="note" id="projection-note"></p>
+<h2>Which terms change at this strength?</h2>
+<svg class="chart" id="units" viewBox="0 0 1000 190" role="img" aria-label="EML unit contributions and linear residual"></svg>
+<div class="note">Bars show each weighted EML unit’s change from the corrupted baseline. “L” is the linear residual. Their sum is the equation’s contribution response.</div>
+<details><summary>Inspect saved equation coefficients</summary><pre id="parameters"></pre></details>
+</div>
+<div class="panel"><h2>Generalization and intervention checks</h2><div class="table-wrap"><table><thead><tr><th>Test</th><th>Original accuracy</th><th>EML accuracy</th><th>Response NRMSE</th><th>95% interval</th></tr></thead><tbody id="suite-table"></tbody></table></div>
+<p class="note">Intervals resample operand groups, keeping prompt formats and intervention strengths together. Coordinate edits are local, potentially off-manifold diagnostics. The primary response-error threshold is 20%; low error on one test does not establish general arithmetic competence.</p></div>
+<footer id="footer"></footer>
+</main>
+<script>
+const DATA = _PAYLOAD_;
+const $ = id => document.getElementById(id);
+const colors = {original:"#dde8f4",eml:"#6de1d3",neural:"#efa783"};
+let active, visibleCases=[];
+const pct = x => x == null ? "—" : (100*x).toFixed(2)+"%";
+const num = x => Math.abs(x)>=100 ? x.toFixed(0) : Math.abs(x)>0 && Math.abs(x)<.01 ? x.toExponential(1) : x.toFixed(2);
+const esc = x => String(x).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
+const dot = (a,b) => a.reduce((s,v,i)=>s+v*b[i],0);
+const affine = (w,b,z) => w.map((row,i)=>dot(row,z)+b[i]);
+const E = (a,b) => Math.exp(Math.max(-80,Math.min(80,a)))-Math.log(Math.max(1e-6,Math.min(1e30,b)));
+function parts(d,z){
+ const s=d.state,kind=d.head.kind;
+ const right=affine(s["right.weight"],s["right.bias"],z);
+ const left=kind==="eml_log"?right.map(()=>0):affine(s["left.weight"],s["left.bias"],z);
+ const hidden=right.map((v,i)=>E(left[i],kind==="eml_affine"?v:1+v*v));
+ const units=hidden.map((v,i)=>v*s["out.weight"][0][i]*d.output_scale);
+ const skip=(dot(s["skip.weight"][0],z)+s["skip.bias"][0])*d.output_scale;
+ return {value:d.output_mean+skip+units.reduce((a,b)=>a+b,0),units,skip};
+}
+function features(row,a){return row.corrupt_features.map((v,i)=>(1-a)*v+a*row.clean_features[i]);}
+function options(element,values,labels){
+ element.replaceChildren();
+ values.forEach((value,i)=>{const option=document.createElement("option");option.value=value;option.textContent=labels?labels[i]:value;element.append(option);});
+}
+function chart(id,series,marker){
+ const w=500,h=270,l=60,r=16,t=18,b=42;
+ const all=series.flatMap(s=>s.values),lo=Math.min(0,...all),hi=Math.max(0,...all),pad=Math.max((hi-lo)*.12,.01);
+ const min=lo-pad,max=hi+pad,x=v=>l+v*(w-l-r),y=v=>h-b-(v-min)/(max-min)*(h-t-b);
+ let html="";
+ for(let i=0;i<4;i++){const v=min+(max-min)*i/3;html+='<line x1="'+l+'" x2="'+(w-r)+'" y1="'+y(v)+'" y2="'+y(v)+'" stroke="#2b394d"/><text x="'+(l-8)+'" y="'+(y(v)+4)+'" fill="#8da5c1" font-size="11" text-anchor="end">'+num(v)+'</text>';}
+ [0,.5,1].forEach(v=>{html+='<text x="'+x(v)+'" y="'+(h-17)+'" fill="#8da5c1" font-size="11" text-anchor="middle">'+v+'</text>';});
+ html+='<line x1="'+x(marker)+'" x2="'+x(marker)+'" y1="'+t+'" y2="'+(h-b)+'" stroke="#6a809c" stroke-dasharray="4 5"/>';
+ series.forEach(s=>{
+  const points=s.values.map((v,i)=>x(s.xs[i])+","+y(v)).join(" ");
+  html+='<polyline points="'+points+'" fill="none" stroke="'+colors[s.name]+'" stroke-width="2.5"/>';
+  if(s.dots)s.values.forEach((v,i)=>{html+='<circle cx="'+x(s.xs[i])+'" cy="'+y(v)+'" r="3" fill="'+colors[s.name]+'"/>';});
+ });
+ $(id).innerHTML=html;
+}
+function bars(values){
+ const w=1000,h=190,l=20,r=12,t=14,b=34,max=Math.max(...values.map(Math.abs),.01),mid=(h-b+t)/2,scale=(h-b-t)/2/max;
+ let html='<line x1="'+l+'" x2="'+(w-r)+'" y1="'+mid+'" y2="'+mid+'" stroke="#53657d"/>';
+ values.forEach((v,i)=>{const cell=(w-l-r)/values.length,x=l+cell*i+cell*.15,bw=cell*.7,height=Math.abs(v)*scale,y=v>=0?mid-height:mid,label=i===values.length-1?"L":String(i+1);
+ html+='<rect x="'+x+'" y="'+y+'" width="'+bw+'" height="'+Math.max(height,.4)+'" fill="'+(v>=0?"#6de1d3":"#efa783")+'"><title>'+label+': '+num(v)+'</title></rect><text x="'+(x+bw/2)+'" y="'+(h-12)+'" text-anchor="middle" fill="#9cb2cd" font-size="12">'+label+'</text>';});
+ $("units").innerHTML=html;
+}
+function render(){
+ const row=visibleCases[Number($("problem").value)||0];if(!row)return;
+ const index=Number($("alpha").value),alpha=active.alphas[index],baseline=parts(active,row.corrupt_features),current=parts(active,features(row,alpha));
+ const fine=Array.from({length:65},(_,i)=>i/64);
+ const original=row.curves.original,neural=row.curves.neural;
+ chart("coefficient",[
+  {name:"original",xs:active.alphas,values:original.true_coefficient.map(v=>v-original.true_coefficient[0]),dots:true},
+  {name:"neural",xs:active.alphas,values:neural.predicted_coefficient.map(v=>v-neural.predicted_coefficient[0]),dots:true},
+  {name:"eml",xs:fine,values:fine.map(a=>parts(active,features(row,a)).value-baseline.value)}
+ ],alpha);
+ chart("margin",["original","neural","eml"].map(name=>({name,xs:active.alphas,values:row.curves[name].margin.map(v=>v-row.curves[name].margin[0]),dots:true})),alpha);
+ bars([...current.units.map((v,i)=>v-baseline.units[i]),current.skip-baseline.skip]);
+ $("alpha-value").textContent=alpha.toFixed(3);
+ const op={add:"+",multiply:"×",divide:"÷"}[active.operation];
+ $("pair-title").textContent=row.c+" "+op+" "+row.b+" → "+row.a+" "+op+" "+row.b;
+ ["original","eml","neural"].forEach(name=>{const el=$("answer-"+name),v=row.answers[name];el.textContent=v.text.trim()+" · "+(v.correct?"correct":"incorrect");el.className="answer "+(v.correct?"ok":"bad");});
+}
+function changeStyle(){
+ visibleCases=active.cases.filter(row=>row.style===$("style").value);
+ const op={add:"+",multiply:"×",divide:"÷"}[active.operation];
+ options($("problem"),visibleCases.map((_,i)=>i),visibleCases.map(row=>row.a+" "+op+" "+row.b+" ↔ "+row.c+" "+op+" "+row.b));
+ render();
+}
+function chooseDataset(){
+ active=DATA[Number($("dataset").value)||0];
+ options($("style"),[...new Set(active.cases.map(row=>row.style))]);
+ const m=active.metrics.eml,n=m.ordinary,c=m.interventions;
+ $("error").textContent=pct(c.response_nrmse);
+ $("error-ci").textContent="95% interval "+c.response_nrmse_ci95.map(pct).join(" – ");
+ $("accuracy").textContent=pct(n.exact_answer_accuracy);
+ $("accuracy-change").textContent=(n.accuracy_change_pp>=0?"+":"")+n.accuracy_change_pp.toFixed(2)+" percentage points vs original";
+ $("ablation").textContent="Constant-component control: replacing this contribution with its training mean gives "+pct(active.metrics.mean.ordinary.exact_answer_accuracy)+" accuracy on the full test set; the original model scores "+pct(active.metrics.original.ordinary.exact_answer_accuracy)+". The rest of the model remains active.";
+ $("nodes").textContent=active.head.width+" EML units";
+ $("size-detail").textContent=active.rank+" input features · "+active.head.parameters+" head parameters";
+ $("layer").textContent="MLP layer "+(active.layer_index+1);
+ const log=active.head.kind==="eml_log";
+ $("formula").textContent="c(z) = μ + σ [ s(z) + Σᵢ wᵢ "+(log?"(1 − log(1 + rᵢ(z)²))":"(exp(aᵢ(z)) − log("+(active.head.kind==="eml_affine"?"rᵢ(z)":"1 + rᵢ(z)²")+"))")+" ]";
+ $("projection-note").textContent="The arguments aᵢ, rᵢ, and s are affine functions of "+active.rank+" numerical activation features. The input projection adds "+active.projection_coefficients.toLocaleString()+" coefficients. Numerical EML guards apply. These coordinates have not been identified as human arithmetic concepts.";
+ $("parameters").textContent=JSON.stringify({output_mean:active.output_mean,output_scale:active.output_scale,state:active.state},null,2);
+ const labels={"test-known-formats":"New operands · known formats","test-new-format":"New instruction format","shift":"Larger operands","carry":"Carry-pattern holdout","coordinate-interventions":"Direct internal-coordinate edits","minimal-fresh":"Additional fresh operands"};
+ $("suite-table").innerHTML=Object.entries(active.suite_metrics).map(([name,v])=>'<tr><td>'+esc(labels[name]||name)+'</td><td>'+pct(v.original_ordinary?.exact_answer_accuracy)+'</td><td>'+pct(v.ordinary?.exact_answer_accuracy)+'</td><td class="'+(v.interventions.response_nrmse>.2?"bad":"ok")+'">'+pct(v.interventions.response_nrmse)+'</td><td>'+v.interventions.response_nrmse_ci95.map(pct).join(" – ")+'</td></tr>').join("");
+ $("footer").textContent=active.scope+". Scores use the full held-out set ("+n.prompt_cases+" prompts); this explorer shows the first 32 operand pairs without filtering. Neural controls are competitive. No complete-LLM acceleration or general arithmetic discovery is claimed. Model: "+active.model+" · revision "+active.revision+".";
+ changeStyle();
+}
+options($("dataset"),DATA.map((_,i)=>i),DATA.map(d=>d.model.split("/")[1]+" · "+d.operation+" · "+d.mode));
+$("dataset").addEventListener("change",chooseDataset);$("style").addEventListener("change",changeStyle);$("problem").addEventListener("change",render);$("alpha").addEventListener("input",render);
+window.emlExplorer={data:DATA,parts,features,selectDataset:i=>{$("dataset").value=i;chooseDataset();}};
+chooseDataset();
+</script>
+</html>

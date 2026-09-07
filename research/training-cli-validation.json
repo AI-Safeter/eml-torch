@@ -1,0 +1,9 @@
+{
+  "status": "passed",
+  "device": "H100 CUDA",
+  "expired_session_ignored": true,
+  "initial_zero_time_then_resume": true,
+  "completed_candidates": 12,
+  "checkpoint_hashes_preserved_on_resume": true,
+  "changed_protocol_rejected": true
+}

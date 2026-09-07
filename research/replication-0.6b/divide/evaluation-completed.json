@@ -1,0 +1,9 @@
+{
+  "completed_epoch": 1788800396.2453613,
+  "suites": [
+    "test-known-formats",
+    "test-new-format",
+    "shift"
+  ],
+  "restore_equivalent": true
+}

@@ -1,0 +1,43 @@
+{
+  "completed_epoch": 1788803672.0723102,
+  "stages": [
+    {
+      "directory": "heads-active-r32-g0",
+      "start_epoch": 1788799950.8641255,
+      "command": [
+        "/home/ubuntu/samuel/eml-torch/.venv/bin/python",
+        "/home/ubuntu/samuel/emltorch-four-hour-research/train_heads.py",
+        "multiply",
+        "--features",
+        "active",
+        "--rank",
+        "32",
+        "--gradient-weight",
+        "0.0",
+        "--max-seconds",
+        "3600"
+      ],
+      "exit_code": 0,
+      "completed_epoch": 1788801564.4496632
+    },
+    {
+      "directory": "heads-active-r32-g0.1",
+      "start_epoch": 1788801564.4521785,
+      "command": [
+        "/home/ubuntu/samuel/eml-torch/.venv/bin/python",
+        "/home/ubuntu/samuel/emltorch-four-hour-research/train_heads.py",
+        "multiply",
+        "--features",
+        "active",
+        "--rank",
+        "32",
+        "--gradient-weight",
+        "0.1",
+        "--max-seconds",
+        "3600"
+      ],
+      "exit_code": 0,
+      "completed_epoch": 1788803672.0679986
+    }
+  ]
+}

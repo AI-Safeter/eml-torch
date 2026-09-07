@@ -1,0 +1,9 @@
+line-length = 100
+target-version = "py310"
+
+[lint]
+select = ["E4", "E7", "E9", "F", "I", "B"]
+ignore = ["B905"]
+
+[lint.isort]
+known-first-party = ["emltorch", "data", "heads", "model_io", "train_heads", "active_features", "evaluate_heads", "benchmark_native", "native_head", "packed_head"]

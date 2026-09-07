@@ -1,0 +1,6 @@
+{
+  "source": "/tmp/emltorch-head-installed/emltorch/__init__.py",
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "head_forward_backward": true,
+  "existing_fit_api_smoke": true
+}

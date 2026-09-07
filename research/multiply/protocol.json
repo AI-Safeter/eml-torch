@@ -1,0 +1,33 @@
+{
+  "operation": "multiply",
+  "counts": {
+    "train": 1024,
+    "validation": 256,
+    "test": 256,
+    "shift": 256
+  },
+  "seed": 20260910,
+  "formats_training": [
+    "prose",
+    "symbolic",
+    "code"
+  ],
+  "formats_test": [
+    "prose",
+    "symbolic",
+    "code",
+    "instruction"
+  ],
+  "grouping": "Clean and corrupted operand problems are unique and disjoint across splits; commutative operations canonicalized.",
+  "prior_addition_pairs_excluded": 0,
+  "test_model_outputs_unseen_at_freeze": true,
+  "selection": "Training full-MLP patching selects three layers; validation selects one direction; all heads selected on validation only.",
+  "success": {
+    "accuracy_drop_pp_max": 1,
+    "causal_correlation_min": 0.9,
+    "causal_nrmse_max": 0.2
+  },
+  "model": "Qwen/Qwen3-1.7B",
+  "revision": "70d244cc86ccca08cf5af4e1e306ecf908b1ad5e",
+  "sha256": "726e80a34856d1bd05d89ee80ad7605f754a06db2df729aeb714c69c456c5a5e"
+}

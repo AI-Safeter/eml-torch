@@ -40,3 +40,5 @@ error.
 
 MIT. The EML operator and universality construction are due to
 [Andrzej Odrzywołek](https://arxiv.org/abs/2603.21852).
+
+Research artifacts for scalar arithmetic-component replacement are available in [research/](research/README.md), including GPU measurements, controls, an offline explorer, and reproduction commands.

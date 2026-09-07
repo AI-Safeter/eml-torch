@@ -1,0 +1,15 @@
+{
+  "seconds": 35.64679264090955,
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "torch": "2.5.0a0+e000cf0ad9.nv24.10",
+  "dtype": "float32 model, float64 PLS",
+  "selected": {
+    "layer": 22,
+    "direction_index": 0,
+    "validation_margin_restored": 2.584376573562622
+  },
+  "train_samples": 15360,
+  "validation_samples": 3840,
+  "test_activations_not_collected": true,
+  "completed_epoch": 1788799356.9359987
+}
