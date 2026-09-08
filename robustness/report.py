@@ -6,6 +6,7 @@ import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+import torch
 from runtime import HERE, RUNS
 
 PRIMARY = "heads-active-r32-g0.1/eml"
@@ -98,6 +99,13 @@ def main():
     results, cells = {}, []
     for model in LABELS:
         for op in ["add", "multiply", "divide"]:
+            component = torch.load(RUNS / model / op / "component-active.pt", weights_only=True)
+            selection = json.loads((RUNS / model / op / "selection.json").read_text())
+            stored = {
+                key: component[key].numel()
+                for key in ["encoder", "input_mean", "direction", "zmean", "zstd", "ymean", "ystd"]
+            }
+            stored["head"] = selection["heads"][PRIMARY]["parameters"]
             data = json.loads((RUNS / model / op / "robust-results.json").read_text())
             per_style = json.loads((RUNS / model / op / "per-style-results.json").read_text())
             for category in ["ordinary", "interventions"]:
@@ -109,11 +117,15 @@ def main():
                     "model": model,
                     "operation": op,
                     "checks": data["primary_checks"],
+                    "stored_scalar_coefficients": stored,
                     "eml": causal[PRIMARY],
                     "neural": causal[CONTROL],
                     "ordinary": data["ordinary"]["ordinary-test-known-formats"][PRIMARY],
                     "unconditioned": data["ordinary"]["ordinary-unconditioned"][PRIMARY],
                     "all_tokens": data["ordinary"]["ordinary-all-tokens-unconditioned"][PRIMARY],
+                    "gradient_capture": json.loads(
+                        (RUNS / model / op / "gradient-audit.json").read_text()
+                    )["feature_gradient_energy_fraction"],
                 }
             )
     whole = json.loads((RUNS / "whole-block/utility-results.json").read_text())
@@ -149,6 +161,32 @@ def main():
         )
     lines += [
         "",
+        "The scalar predictor includes a dense input projection and normalization/direction constants. Head size alone is not its deployment footprint:",
+        "",
+        "| Model / operation | Head coefficients | Projection coefficients | Total predictor/patch coefficients |",
+        "|---|---:|---:|---:|",
+    ]
+    for c in cells:
+        stored = c["stored_scalar_coefficients"]
+        lines.append(
+            f"| {LABELS[c['model']]} / {c['operation']} | {stored['head']:,} | {stored['encoder']:,} | {sum(stored.values()):,} |"
+        )
+    lines += [
+        "",
+        "## Retained input sensitivity",
+        "",
+        "Validation gradient energy inside each frozen rank-32 input subspace is a local diagnostic. It does not guarantee accuracy on distant operands or arbitrary edits. The active subspace was fitted using training gradients only.",
+        "",
+        "| Model / operation | PLS retained gradient energy | Active retained gradient energy |",
+        "|---|---:|---:|",
+    ]
+    for c in cells:
+        capture = c["gradient_capture"]
+        lines.append(
+            f"| {LABELS[c['model']]} / {c['operation']} | {100 * capture['pls32']['validation']:.2f}% | {100 * capture['active32']['validation']:.2f}% |"
+        )
+    lines += [
+        "",
         "## Unconditioned prompts and later generated tokens",
         "",
         "The primary contrast cohort is conditioned on answer-token differences. The separate ordinary cohort has no such condition. These original-model accuracies limit any claim about retained arithmetic ability.",
@@ -175,6 +213,20 @@ def main():
         lines.append(
             f"| {kind} | {r['stored_coefficients']:,} | {r['block_storage_reduction']:.2f}× | {number(r['language_increase'])} | {number(r['language_increase_upper95'])} | {'pass' if r['all_utility_checks_pass'] else 'fail'} |"
         )
+    lines += [
+        "",
+        "Whole-block complete-answer accuracy on the unconditioned cohort:",
+        "",
+        "| Operation | Original | EML | SwiGLU | Linear |",
+        "|---|---:|---:|---:|---:|",
+    ]
+    for op in ["add", "multiply", "divide"]:
+        name = op + "/unconditioned"
+        accuracies = [whole["original"]["arithmetic"][name]["original_accuracy"]] + [
+            whole[k]["arithmetic"][name]["replacement_accuracy"]
+            for k in ["eml", "swiglu", "linear"]
+        ]
+        lines.append("| " + op + " | " + " | ".join(f"{100 * a:.2f}%" for a in accuracies) + " |")
     lines += [
         "",
         "The selected original MLP does not execute in this replacement path. The rest of the model remains frozen. Retention requires a language cross-entropy increase upper bound ≤ .02 nats/token and an accuracy-loss upper bound ≤ 1 percentage point for each operation on unconditioned prompts, in addition to ≥ 4× block storage reduction and finite outputs.",
