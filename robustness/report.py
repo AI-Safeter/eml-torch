@@ -120,6 +120,9 @@ def main():
                     "stored_scalar_coefficients": stored,
                     "eml": causal[PRIMARY],
                     "neural": causal[CONTROL],
+                    "paired_comparison": data["interventions"]["interventions-test-known-formats"][
+                        "comparisons"
+                    ][PRIMARY],
                     "ordinary": data["ordinary"]["ordinary-test-known-formats"][PRIMARY],
                     "unconditioned": data["ordinary"]["ordinary-unconditioned"][PRIMARY],
                     "all_tokens": data["ordinary"]["ordinary-all-tokens-unconditioned"][PRIMARY],
@@ -132,12 +135,14 @@ def main():
     timing = json.loads((RUNS / "whole-block/latency.json").read_text())
     block_timing = json.loads((RUNS / "whole-block/block-latency.json").read_text())
     storage = json.loads((RUNS / "whole-block/model-storage.json").read_text())
+    output_fidelity = json.loads((RUNS / "whole-block/output-fidelity.json").read_text())
     summary = {
         "primary": cells,
         "whole_block": whole,
         "latency": timing,
         "standalone_block_latency": block_timing,
         "model_storage": storage,
+        "whole_output_fidelity": output_fidelity,
         "scalar_passed": sum(c["checks"]["all_pass"] for c in cells),
         "scalar_total": 9,
     }
@@ -153,13 +158,26 @@ def main():
         "",
         "NRMSE intervals below are adjusted across nine cells. Accuracy-loss upper bounds account for three correlated prompt formats within each operand group and remain positive when no regressions are observed.",
         "",
-        "| Model / operation | EML NRMSE [interval] | SiLU NRMSE | Original → EML accuracy | Upper accuracy loss (pp) | All primary bounds |",
-        "|---|---:|---:|---:|---:|---|",
+        "| Model / operation | EML NRMSE [interval] | EML correlation [interval] | SiLU NRMSE | Original → EML accuracy | Upper accuracy loss (pp) | All primary bounds |",
+        "|---|---:|---:|---:|---:|---:|---|",
     ]
     for c in cells:
         n = c["ordinary"]
         lines.append(
-            f"| {LABELS[c['model']]} / {c['operation']} | {number(c['eml']['nrmse'])} {interval(c['eml']['nrmse_simultaneous_ci95'])} | {number(c['neural']['nrmse'])} | {100 * n['original_accuracy']:.2f}% → {100 * n['accuracy']:.2f}% | {number(n['accuracy_loss_upper_pp'])} | {'pass' if c['checks']['all_pass'] else 'fail'} |"
+            f"| {LABELS[c['model']]} / {c['operation']} | {number(c['eml']['nrmse'])} {interval(c['eml']['nrmse_simultaneous_ci95'])} | {number(c['eml']['correlation'])} {interval(c['eml']['correlation_simultaneous_ci95'])} | {number(c['neural']['nrmse'])} | {100 * n['original_accuracy']:.2f}% → {100 * n['accuracy']:.2f}% | {number(n['accuracy_loss_upper_pp'])} | {'pass' if c['checks']['all_pass'] else 'fail'} |"
+        )
+    lines += [
+        "",
+        "The paired comparison below uses the same operand groups and active features with derivative-loss weight .1. Negative differences favor EML. These 95% intervals are per comparison, without adjustment across cells; an isolated favorable result does not establish operator superiority.",
+        "",
+        "| Model / operation | EML minus SiLU response MSE | Paired 95% interval |",
+        "|---|---:|---:|",
+    ]
+    for c in cells:
+        comparison = c["paired_comparison"]
+        lo, hi = comparison["paired_difference_ci95"]
+        lines.append(
+            f"| {LABELS[c['model']]} / {c['operation']} | {comparison['eml_minus_control_response_mse']:.6g} | [{lo:.6g}, {hi:.6g}] |"
         )
     lines += [
         "",
@@ -214,6 +232,21 @@ def main():
         r = whole[kind]
         lines.append(
             f"| {kind} | {r['stored_coefficients']:,} | {r['block_storage_reduction']:.2f}× | {number(r['language_increase'])} | {number(r['language_increase_upper95'])} | {'pass' if r['all_utility_checks_pass'] else 'fail'} |"
+        )
+    lines += [
+        "",
+        "Complete MLP-output fidelity is measured on real, unpadded held-out token positions. Its NRMSE denominator is RMS original MLP output, including the mean; this differs from the downstream margin-response normalization in the scalar study.",
+        "",
+        "| Token domain | EML output NRMSE | SwiGLU output NRMSE | Linear output NRMSE |",
+        "|---|---:|---:|---:|",
+    ]
+    for domain, values in output_fidelity.items():
+        lines.append(
+            "| "
+            + domain
+            + " | "
+            + " | ".join(number(values[k]["output_nrmse"]) for k in ["eml", "swiglu", "linear"])
+            + " |"
         )
     lines += [
         "",
