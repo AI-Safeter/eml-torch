@@ -1,0 +1,60 @@
+{
+  "model": {
+    "id": "google/gemma-4-E2B-it",
+    "revision": "3e22461f65e89153144f8adb70e3b8c2cc9845a7",
+    "torch": "2.9.0+cu128",
+    "transformers": "5.16.1",
+    "precision": "float32"
+  },
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "loaded_parameters": 5104297504,
+  "all_native_logits_body_and_restoration_checks_bitwise_equal": true,
+  "standalone_mlp_outputs_and_input_gradients_bitwise_equal": true,
+  "native_gelu_sparse_control_verified": true,
+  "mlp_checks": [
+    {
+      "layer": 0,
+      "intermediate_size": 6144
+    },
+    {
+      "layer": 34,
+      "intermediate_size": 12288
+    }
+  ],
+  "training_checks": [
+    {
+      "operation": "add",
+      "training_prompts": 4,
+      "generated": [
+        "826.",
+        "869.",
+        "335.",
+        "462."
+      ],
+      "generation_hook_calls": 5
+    },
+    {
+      "operation": "multiply",
+      "training_prompts": 4,
+      "generated": [
+        "14595.",
+        "8976.",
+        "14260.",
+        "3255."
+      ],
+      "generation_hook_calls": 7
+    },
+    {
+      "operation": "divide",
+      "training_prompts": 4,
+      "generated": [
+        "250.642857142857",
+        "29376 / 64.\n\nWe can perform the division",
+        "270.352941176470",
+        "282.285714285714"
+      ],
+      "generation_hook_calls": 16
+    }
+  ],
+  "test_outputs_collected": false
+}

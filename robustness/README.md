@@ -2,6 +2,8 @@
 
 Status: experiments in progress. Training/validation results are not held-out findings. The earlier exploratory release remains under `../research/`; its manifest is unchanged. The small `emltorch` package is unchanged by this study.
 
+The user requested **Gemma 4 E2B IT in place of SmolLM2**. See [the amendment](GEMMA_AMENDMENT.md). Completed SmolLM2 artifacts are preserved as an incomplete, superseded arm. Gemma uses a separate pinned backend; the original Qwen environment and running evaluations continue unchanged.
+
 Read [the scalar protocol](PROTOCOL.md), [the whole-block protocol](WHOLE_BLOCK_PROTOCOL.md), [evaluation details](EVALUATION_DETAILS.md), and [related work](RELATED_WORK.md). Four source snapshots record the implementation and the documented normalization-folding repair. Run `python verify_sources.py` to verify them together.
 
 ## Environment and data
@@ -34,9 +36,19 @@ CUDA_VISIBLE_DEVICES=0 python run_fits.py qwen17b
 CUDA_VISIBLE_DEVICES=0 python run_evaluation.py qwen17b
 ```
 
-For this checkout layout, pass the absolute sibling run directory to `--output` (or `../../emltorch-robustness-runs/qwen17b` when starting inside `robustness/`). `run_fits.py` and `run_evaluation.py` use the location defined in `runtime.py`. Repeat for `qwen4b` and `smollm` on other GPUs. The evaluator checks that all ten candidates per operation/method have finished, creates missing sparse/linear controls, validates restoration and all-token hooks, then evaluates every selected head and every seed. It does not choose a model on test performance.
+For this checkout layout, pass the absolute sibling run directory to `--output` (or `../../emltorch-robustness-runs/qwen17b` when starting inside `robustness/`). `run_fits.py` and `run_evaluation.py` use the location defined in `runtime.py`. Repeat for `qwen4b` on another GPU. The `smollm` option remains for reproduction of the superseded arm; use the separate Gemma entry points below for its replacement. The evaluator checks that all ten candidates per operation/method have finished, creates missing sparse/linear controls, validates restoration and all-token hooks, then evaluates every selected head and every seed. It does not choose a model on test performance.
 
 The primary result is `MODEL/OPERATION/robust-results.json`. Original dense MLPs still execute in scalar replacement. This path cannot demonstrate full-block compression or a model speedup.
+
+Gemma's adapter and collection entry points, run inside a separate environment with `gemma/requirements.txt` and the core package installed:
+
+```bash
+CUDA_VISIBLE_DEVICES=0 python gemma/validate.py
+python gemma/freeze.py --verify
+CUDA_VISIBLE_DEVICES=0 python gemma/collect.py
+```
+
+The original-neuron control uses Gemma's native GELU. The learned SiLU comparator remains unchanged. Gemma's exact revision, float32 precision, and backend versions are recorded in `gemma/model.json`; adapter validation records the loaded parameter count, including embeddings and modality modules.
 
 An independent feature-pipeline replay can be run after collection:
 

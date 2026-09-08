@@ -1,0 +1,19 @@
+{
+  "epoch": 1788838715.31579,
+  "stage": "Gemma adapter and collection before Gemma feature collection",
+  "files": {
+    "GEMMA_AMENDMENT.md": "4d348ba06ca79f0c15be6365ef4a5e88afa73a823565970f26b47ca745428185",
+    "gemma/adapter.py": "63a4be329753aa9b99c66eb99fa92b2b3217fb230afa5da967fabded4adc5e46",
+    "gemma/execute.py": "3e0a77177ffcca1f9a5a18160c2d56a6fee819f4669a85e7d289def1b5505a61",
+    "gemma/collect.py": "517b4a717925bebc4fa6cdd88a3462aac0a599eb51779ca2fcd7ad4d49608d7f",
+    "gemma/sparse_neurons.py": "a2b94e30c2ce66f3444b185d17c00e2cdf017f6934124bfdf77c03a2285b47a0",
+    "gemma/validate.py": "82a8800d47fb484c64b0ae02f76c882fa3930044b4c69b354b06a160e3b2a227",
+    "gemma/freeze.py": "ef9fc9ffcf25c334ed1880bc93e8465979fad88c931519246568d0e1b7064c61",
+    "gemma/model.json": "5fca12720faf175e9da168f11961a4a8e27874f2a8736754e7c6f2376dab377f",
+    "freeze.json": "f0d9a36f96d22fa0877bb58cab3c29b8bcb5b7fb32e801260fc969cd1cac88f9",
+    "extension-freeze.json": "b7d3f22bb2ae50543d9a9ab93594b2b876106318a3ce84d6ee511780f52ab200",
+    "evaluation-freeze.json": "552b78a761e2e02f0d3546ad1c9df5af4d4c10dca642802249729586401c10f5",
+    "deployment-freeze.json": "8df2f33e3265884c494393275eda5b6a0b720054ae77bfa1a8da5cddcbd13af6"
+  },
+  "test_outputs_collected": false
+}
