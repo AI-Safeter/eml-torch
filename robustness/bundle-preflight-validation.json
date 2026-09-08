@@ -1,0 +1,11 @@
+{
+  "scope": "Packaging preflight on a real CUDA validation trace; final full evidence bundle remains pending",
+  "source_sha256": "e277e73f031261bd705482281161b42276c2f8b32fe0ab8646c274b45330c0f0",
+  "roundtrip_bytes_identical": true,
+  "repeat_unpack_idempotent": true,
+  "rejected": [
+    "different existing output refused",
+    "corrupted payload refused",
+    "outside path refused"
+  ]
+}
