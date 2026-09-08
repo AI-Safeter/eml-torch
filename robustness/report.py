@@ -24,6 +24,42 @@ def interval(value):
     return "undefined" if value is None else f"[{number(value[0])}, {number(value[1])}]"
 
 
+def seed_range(values):
+    if any(value is None for value in values):
+        return "undefined response normalization"
+    return f"{number(min(values), 4)}–{number(max(values), 4)}"
+
+
+def sensitivity_summary(data):
+    prefix = PRIMARY.rsplit("/", 1)[0]
+    seeds = data["interventions"]["interventions-all-seeds"]["models"]
+    return {
+        "seed_response_nrmse": {
+            label: [
+                seeds[f"{prefix}/{kind}-seed-{seed}"]["nrmse"] for seed in [101, 211, 307, 401, 503]
+            ]
+            for label, kind in [("eml", "eml_square"), ("neural", "silu_two")]
+        },
+        "stress_response_nrmse": {
+            suite: {
+                label: data["interventions"][suite]["models"][method]["nrmse"]
+                for label, method in [("eml", PRIMARY), ("neural", CONTROL)]
+            }
+            for suite in [
+                "interventions-shift",
+                "interventions-both-operands",
+                "geometry-ambient",
+                "geometry-nullspace",
+            ]
+        },
+        "geometry_response_rms": {
+            suite: data["interventions"][f"geometry-{suite}"]["models"]["original"]["response_rms"]
+            for suite in ["ambient", "nullspace"]
+        },
+        "shift_accuracy": data["ordinary"]["ordinary-shift"][PRIMARY],
+    }
+
+
 def figures(cells, destination):
     fig, axes = plt.subplots(1, 3, figsize=(13, 5), layout="constrained", sharey=True)
     for index, row in enumerate(cells):
@@ -132,6 +168,7 @@ def main():
                     "model": model,
                     "operation": op,
                     "checks": data["primary_checks"],
+                    **sensitivity_summary(data),
                     "stored_scalar_coefficients": stored,
                     "eml": causal[PRIMARY],
                     "neural": causal[CONTROL],
@@ -204,6 +241,18 @@ def main():
         )
     lines += [
         "",
+        "Every primary-family training seed is included below. These are observed minimum–maximum response NRMSE values across seeds 101, 211, 307, 401, and 503, not confidence intervals. All seeds use the same test operands. The validation-selected seed remains the primary result regardless of its position in this range.",
+        "",
+        "| Model / operation | EML five-seed range | SiLU five-seed range |",
+        "|---|---:|---:|",
+    ]
+    for c in cells:
+        seeds = c["seed_response_nrmse"]
+        lines.append(
+            f"| {LABELS[c['model']]} / {c['operation']} | {seed_range(seeds['eml'])} | {seed_range(seeds['neural'])} |"
+        )
+    lines += [
+        "",
         "The scalar predictor includes a dense input projection and normalization/direction constants. Head size alone is not its deployment footprint:",
         "",
         "| Model / operation | Head coefficients | Projection coefficients | Total predictor/patch coefficients |",
@@ -259,6 +308,28 @@ def main():
         normal, causal = c["new_formats"], c["new_formats_response"]
         lines.append(
             f"| {LABELS[c['model']]} / {c['operation']} | {100 * normal['original_accuracy']:.2f}% | {100 * normal['accuracy']:.2f}% | {number(causal['nrmse'])} |"
+        )
+    lines += [
+        "",
+        "## Larger operands and off-subspace edits",
+        "",
+        "Each response entry is EML / SiLU NRMSE for the validation-selected primary-family heads. Each suite normalizes by its own original margin-response RMS. Ambient and nullspace diagnostics edit the MLP input outside the natural clean–corrupted interpolation path. A predictor that only sees the retained features cannot in general reproduce sensitivity to omitted directions. Relative error near one can still correspond to a small absolute margin change; the original response RMS values provide that scale. These diagnostics do not redefine the primary acceptance criteria; their complete intervals remain in the explorer.",
+        "",
+        "| Model / operation | Larger operands | Both operands edited | Ambient directions | Nullspace directions | Original response RMS: ambient / nullspace | Shifted answer accuracy: original → EML |",
+        "|---|---:|---:|---:|---:|---:|---:|",
+    ]
+    for c in cells:
+        pairs = [
+            f"{number(v['eml'])} / {number(v['neural'])}"
+            for v in c["stress_response_nrmse"].values()
+        ]
+        normal = c["shift_accuracy"]
+        scale = c["geometry_response_rms"]
+        lines.append(
+            f"| {LABELS[c['model']]} / {c['operation']} | "
+            + " | ".join(pairs)
+            + f" | {number(scale['ambient'], 4)} / {number(scale['nullspace'], 4)}"
+            + f" | {100 * normal['original_accuracy']:.2f}% → {100 * normal['accuracy']:.2f}% |"
         )
     lines += [
         "",
