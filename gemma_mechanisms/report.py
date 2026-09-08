@@ -50,6 +50,8 @@ def main():
         provenance[key] = digest(path)
         return json.loads(path.read_text())
 
+    assert read(out / "release-audit.json")["status"] == "complete"
+
     selection = read(out / "training/selection.json")
     gate, final = [read(out / "evaluation" / f"{s}-summary.json") for s in ["gate", "final"]]
     fits = [read(p) for p in sorted((out / "training").glob("*-b*-d*-s*.json"))]
@@ -100,7 +102,11 @@ def main():
                 for op in SPEC["arithmetic"]["operations"]:
                     t = [r for r in raw["original"][field] if r["op"] == op]
                     s = [r for r in raw[name][field] if r["op"] == op]
-                    record[f"{field}/{op}"] = accuracy(t, s, 0.05, True)
+                    record[f"{field}/{op}"] = (
+                        final["methods"][name]["accuracy"][op]
+                        if split == "final" and field == "arithmetic"
+                        else accuracy(t, s, 0.05, True)
+                    )
                 for label, predicate in [
                     ("long_carry", lambda r: r["op"] == "add" and carry_chain(r["a"], r["b"]) >= 3),
                     ("no_carry", lambda r: r["op"] == "add" and carry_chain(r["a"], r["b"]) == 0),
@@ -199,6 +205,50 @@ def main():
     read(out / "training/freeze.json")
     read(out / "evaluation/gate/freeze.json")
     read(out / "evaluation/final/freeze.json")
+    module_timing = []
+    for r in read(out / "microbenchmark.json")["records"]:
+        module_timing.append(
+            {
+                "method": r["method"],
+                "tokens": r["tokens"],
+                **{
+                    f"{kind}_{metric}": statistics.median(s[kind][metric] for s in r["samples"])
+                    for kind in ["original", "student"]
+                    for metric in ["gpu_ms_per_call", "wall_ms_per_call"]
+                },
+            }
+        )
+    chosen = selection["families"]["eml"]
+    chosen_training = next(
+        r
+        for r in training
+        if r["kind"] == "eml" and r["budget"] == chosen["budget"] and r["depth"] == chosen["depth"]
+    )
+    failure_analysis = {
+        "selected_eml_training": chosen_training,
+        "selected_eml_domain_errors": {
+            name: {"train": audits[name]["train"], "selection": audits[name]["selection"]}
+            for name in chosen["checkpoints"]
+        },
+        "raw_training_error_fraction_at_rank_floor": chosen_training["rank_floor"]
+        / chosen_training["training_raw_mse_mean"],
+        "selected_eml_failed_gate_endpoints": {
+            name: [k for k, v in gate["methods"][name]["accuracy"].items() if not v["passes"]]
+            + (["language"] if not gate["methods"][name]["language_ce_increase"]["passes"] else [])
+            + (
+                ["hostname_language"]
+                if not gate["methods"][name]["language_ce_increase"]["hostname_sensitivity_passes"]
+                else []
+            )
+            for name in chosen["checkpoints"]
+        },
+        "selected_eml_parameter_reduction": {
+            name: final["methods"][name]["storage"]["model_parameter_reduction"]
+            for name in chosen["checkpoints"]
+        },
+        "benchmark_comparison_cpu_reference_mlp_bytes": 56623104 * 2,
+        "comparison_reference_note": "Held outside the registered model only for alternating benchmarks/evaluation; absent from exported inference. CPU staging and transfers are outside measured execution.",
+    }
     summary = {
         "selection": selection,
         "gate": gate,
@@ -209,6 +259,8 @@ def main():
         "timing": timing,
         "routing": routing,
         "equations": equations,
+        "module_timing": module_timing,
+        "failure_analysis": failure_analysis,
     }
     save(destination / "summary.json", summary)
     lines = [
@@ -263,6 +315,15 @@ def main():
         "",
         "The covariance-tail floor applies to raw MLP outputs confined to an affine decoder subspace of the stated rank. It bounds any such decoder on this training distribution, regardless of nonlinear depth; it does not bound EML architectures generally or the normalized residual contribution. The JSON also reports clipping, sampled exponent clamps, precision conversion, and actual CUDA memory peaks.",
         "",
+        f"For the selected EML configuration, the raw training MSE is {chosen_training['training_raw_mse_mean']:.5f} and its rank floor is {chosen_training['rank_floor']:.5f}. The floor is {100 * failure_analysis['raw_training_error_fraction_at_rank_floor']:.1f}% of the observed raw error. Deeper nonlinear stages cannot remove that affine-output-rank constraint. Residual error above the floor, domain-specific errors, clipping and seed spread remain separate capacity/optimization diagnostics; they do not identify a universal EML limitation.",
+        "",
+        "Selected EML gate failures: "
+        + "; ".join(
+            f"`{name}`: {', '.join(endpoints) or 'none'}"
+            for name, endpoints in failure_analysis["selected_eml_failed_gate_endpoints"].items()
+        )
+        + ". The detailed bounds distinguish measured net degradation from failure to certify a one-percentage-point limit.",
+        "",
         "## Actual replacement inference cost",
         "",
         "Fully GPU-resident BF16, native eager SDPA, identical optimization of baselines. Each workload uses 10 warm-ups and 50 alternating paired runs with 32 forced decode steps. Model loading, comparison transfers, tokenization, and warm-up are excluded; prefill, decoding, and phase synchronization are included. Other users share these H100s. Intervals describe variability within these runs, not exclusive-serving or between-run uncertainty.",
@@ -280,6 +341,20 @@ def main():
     lines += [
         "",
         "The JSON reports each paired original baseline, separate GPU event timings, prefill/decode throughput, peak allocated/reserved memory, device UUID, and counted student state. End-to-end speedup is a measured paired ratio; parameter reduction alone is not evidence of speedup.",
+        "",
+        "Alternating comparisons retain an extra **113,246,208-byte CPU reference MLP** outside the registered replacement model. That apparatus is explicitly separate from deployed parameter counts and is absent from the export. Its transfers are outside timing; GPU execution and peak working memory are measured on the installed replacement path.",
+        "",
+        "Isolated module timings below diagnose token-count dependence. They omit the rest of Gemma and cannot establish an end-to-end speedup. All five tested token counts and both CUDA-event/wall measurements are in the JSON.",
+        "",
+        "| Method | Tokens | Original module GPU ms | Replacement module GPU ms | Original wall ms | Replacement wall ms |",
+        "|---|---:|---:|---:|---:|---:|",
+    ]
+    for r in module_timing:
+        if r["tokens"] in [1, 4096]:
+            lines.append(
+                f"| {r['method']} | {r['tokens']} | {r['original_gpu_ms_per_call']:.4f} | {r['student_gpu_ms_per_call']:.4f} | {r['original_wall_ms_per_call']:.4f} | {r['student_wall_ms_per_call']:.4f} |"
+            )
+    lines += [
         "",
         "## Causal result",
         "",

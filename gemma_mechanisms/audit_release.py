@@ -1,0 +1,152 @@
+"""Validate complete result identities, scoring, deployment counts and frozen sources."""
+
+import argparse
+import json
+
+import torch
+
+from .evaluate import parse_answer, roster
+from .runtime import HERE, SPEC, digest, root, save, setup
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--output", required=True)
+    parser.add_argument("--mechanisms-output", required=True)
+    args = parser.parse_args()
+    setup(919)
+    out, mechanism = root(args.output), root(args.mechanisms_output)
+    checked = {}
+
+    def read(path):
+        key = (
+            ("replacement/" + str(path.relative_to(out)))
+            if path.is_relative_to(out)
+            else ("mechanisms/" + str(path.relative_to(mechanism)))
+        )
+        checked[key] = digest(path)
+        return json.loads(path.read_text())
+
+    def source_check(freeze):
+        for name, expected in freeze["sources"].items():
+            assert digest(HERE / name) == expected, ("Changed frozen source", name)
+
+    data = read(out / "data/freeze.json")
+    for name, sha in data["files"].items():
+        assert digest(out / "data" / name) == sha
+    source_check(read(out / "collection/freeze.json"))
+    training = read(out / "training/freeze.json")
+    source_check(training)
+    for name, sha in training["inputs"].items():
+        assert digest(out / name) == sha
+    fits = list((out / "training").glob("*-b*-d*-s*.json"))
+    assert len(fits) == 42
+    for path in fits:
+        record = read(path)
+        assert record["status"] == "complete" and record["failure"] is None
+        assert record["training_freeze_sha256"] == digest(out / "training/freeze.json")
+        assert digest(path.with_suffix(".pt")) == record["checkpoint_sha256"]
+        audit = read(out / "fit-audits" / path.name)
+        assert audit["fit_record_sha256"] == digest(path)
+        assert audit["checkpoint_sha256"] == record["checkpoint_sha256"]
+        assert audit["objective_replay_exact"]
+        assert audit["training_raw_mse"] + 1e-6 >= audit["training_raw_mse_lower_bound"]
+    deployed = {r["name"]: r for r in read(out / "deployment-validation.json")["records"]}
+    names = roster(out)
+    for split in ["gate", "final", "shift"]:
+        directory = out / "evaluation" / split
+        frozen = read(directory / "freeze.json")
+        source_check(frozen)
+        assert frozen["checkpoints"] == names
+        expected_rows = {r["id"]: r for r in read(out / "data" / f"arithmetic-{split}.json")}
+        for name in names:
+            record = read(directory / f"{name}.json")
+            assert record["freeze_sha256"] == digest(directory / "freeze.json")
+            assert record["nonfinite_outputs"] == 0
+            assert record["original_mlp_executed"] == (name == "original")
+            expected_count = (
+                5104297504
+                if name == "original"
+                else 5104297504 - 56623104 + deployed[name]["deployed"]["parameters"]
+            )
+            assert record["accounting"]["parameters"] == expected_count
+            assert record["accounting"]["buffers"] == 2289
+            result = record["results"]
+            fields = {"arithmetic": SPEC["arithmetic"]["formats"]}
+            if split != "gate":
+                fields["new_formats"] = SPEC["arithmetic"]["new_formats"]
+            for field, styles in fields.items():
+                identities = [(r["id"], r["style"]) for r in result[field]]
+                expected = {(identity, style) for identity in expected_rows for style in styles}
+                assert len(identities) == len(expected) and set(identities) == expected
+                for row in result[field]:
+                    source = expected_rows[row["id"]]
+                    assert all(row[k] == source[k] for k in ["a", "b", "answer", "op"])
+                    predicted = parse_answer(row["text"])
+                    assert predicted == row["prediction"]
+                    assert row["correct"] == (predicted == source["answer"])
+            if split != "shift":
+                qa = {r["id"]: r for r in read(out / "data" / f"arc-{split}.json")}
+                assert len(result["arc"]) == len(qa) and {r["id"] for r in result["arc"]} == set(qa)
+                for row in result["arc"]:
+                    source = qa[row["id"]]
+                    score = torch.tensor(row["scores"], device="cuda", dtype=torch.float64)
+                    assert torch.isfinite(score).all()
+                    label = source["choices"]["label"][int(score.argmax())]
+                    assert row["prediction"] == label and row["correct"] == (
+                        label == source["answerKey"]
+                    )
+                blocks = torch.load(out / "data" / f"language-{split}.pt", weights_only=True)
+                assert [r["document"] for r in result["language"]] == list(range(len(blocks)))
+                assert all(r["tokens"] == blocks.shape[1] - 1 == 256 for r in result["language"])
+                assert torch.isfinite(
+                    torch.tensor([r["ce_nats"] for r in result["language"]], device="cuda")
+                ).all()
+        print("AUDITED QUALITY", split, len(names), flush=True)
+    source_check(read(out / "benchmark/freeze.json"))
+    benchmark_paths = list((out / "benchmark").glob("*-b*-p*.json"))
+    assert len(benchmark_paths) == 4 * sum(name.endswith("-s1103") for name in names)
+    for path in benchmark_paths:
+        record = read(path)
+        assert record["freeze_sha256"] == digest(out / "benchmark/freeze.json")
+        assert len(record["samples"]) == 50
+        values = [
+            v
+            for pair in record["samples"]
+            for method in ["original", record["method"]]
+            for v in pair[method].values()
+        ]
+        assert torch.isfinite(torch.tensor(values, device="cuda", dtype=torch.float64)).all()
+        assert all(v > 0 for v in values)
+    for split in ["gate", "shift"]:
+        for style in ["known", "new"]:
+            name = f"{split}-256-{style}"
+            frozen_path = mechanism / "state-sufficiency/v3" / f"{name}-freeze.json"
+            frozen = read(frozen_path)
+            assert frozen["source_sha256"] == digest(HERE / "state_sufficiency.py")
+            for source, sha in frozen["support_sources"].items():
+                assert digest(HERE / source) == sha
+            for checkpoint, sha in frozen["equations"].items():
+                assert digest(mechanism / "residual/equations" / checkpoint) == sha
+            data = read(frozen_path.with_name(f"{name}.json"))
+            assert data["freeze_sha256"] == digest(frozen_path)
+            assert data["evaluated_groups"] == 256
+            identities = [(r["id"], r["style"], r["kind"]) for r in data["records"]]
+            assert len(identities) == len(set(identities)) == 256 * 2 * len(frozen["variants"])
+            equations = read(mechanism / "equation-responses" / f"{name}.json")
+            assert equations["source_data_sha256"] == digest(frozen_path.with_name(f"{name}.json"))
+            assert equations["source_sha256"] == digest(HERE / "equation_responses.py")
+    save(
+        out / "release-audit.json",
+        {
+            "status": "complete",
+            "scientific_inputs": checked,
+            "source_sha256": digest(HERE / "audit_release.py"),
+            "scope": "GPU scoring/accounting validation and complete identity/source/checkpoint binding. Fit objectives were independently replayed on CUDA by audit_fits.",
+        },
+    )
+    print("RELEASE AUDIT COMPLETE", flush=True)
+
+
+if __name__ == "__main__":
+    main()
