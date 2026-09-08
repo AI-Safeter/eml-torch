@@ -1,5 +1,5 @@
 {
-  "scope": "Gemma addition primary cohort only; remaining operations, seeds and stress evaluations incomplete",
+  "scope": "Gemma addition primary and ordinary decoding cohorts; all-seed and full nine-cell study audits remain incomplete",
   "selection_audit": {
     "component_and_checkpoint_hashes_verified": true,
     "control_grids_and_validation_selection_verified": true,
@@ -645,5 +645,284 @@
     "accuracy_bound": true,
     "nrmse_bound": true,
     "correlation_bound": true
+  },
+  "decoding": {
+    "scope": "All-token replacement extends the scalar patch through greedy decoding. These diagnostics do not redefine the primary criteria. Unconditioned refers to operand sampling; prompts retain the fixed assistant prefill.",
+    "methods_in_table": [
+      "original",
+      "heads-active-r32-g0.1/eml",
+      "heads-active-r32-g0.1/neural"
+    ],
+    "full_controls": "All 12 methods remain in the raw cohort files for the final study audit.",
+    "cohorts": {
+      "ordinary-all-tokens-test-known-formats": {
+        "raw_sha256": "7033d14ecc7b02e9e99dee7893a6c09f65bb219f0a295bd3c67426a36ccc733d",
+        "trace_audit": {
+          "methods": 12,
+          "unique_conditions_per_method": 3072
+        },
+        "metrics": {
+          "original": {
+            "original_accuracy": 0.9957682291666666,
+            "accuracy": 0.9957682291666666,
+            "operand_groups": 1024,
+            "formats": 3,
+            "simultaneous_cells": 9,
+            "alpha": 0.05,
+            "loss_threshold_counts": [
+              0,
+              0,
+              0
+            ],
+            "threshold_upper_bounds": [
+              0.006125274038492533,
+              0.006125274038492533,
+              0.006125274038492533
+            ],
+            "accuracy_loss_pp": 0.0,
+            "accuracy_loss_upper_pp": 0.6125274038492533,
+            "passes_one_percentage_point_bound": true,
+            "assumption": "Independent sampled operand groups; formats within each group may depend.",
+            "answer_agreement": 1.0,
+            "mean_first_token_kl": 0.0
+          },
+          "heads-active-r32-g0.1/eml": {
+            "original_accuracy": 0.9957682291666666,
+            "accuracy": 0.9957682291666666,
+            "operand_groups": 1024,
+            "formats": 3,
+            "simultaneous_cells": 9,
+            "alpha": 0.05,
+            "loss_threshold_counts": [
+              0,
+              0,
+              0
+            ],
+            "threshold_upper_bounds": [
+              0.006125274038492533,
+              0.006125274038492533,
+              0.006125274038492533
+            ],
+            "accuracy_loss_pp": 0.0,
+            "accuracy_loss_upper_pp": 0.6125274038492533,
+            "passes_one_percentage_point_bound": true,
+            "assumption": "Independent sampled operand groups; formats within each group may depend.",
+            "answer_agreement": 0.9996744791666666,
+            "mean_first_token_kl": 3.531447632832517e-05
+          },
+          "heads-active-r32-g0.1/neural": {
+            "original_accuracy": 0.9957682291666666,
+            "accuracy": 0.9954427083333333,
+            "operand_groups": 1024,
+            "formats": 3,
+            "simultaneous_cells": 9,
+            "alpha": 0.05,
+            "loss_threshold_counts": [
+              1,
+              0,
+              0
+            ],
+            "threshold_upper_bounds": [
+              0.008316851896908657,
+              0.006125274038492533,
+              0.006125274038492533
+            ],
+            "accuracy_loss_pp": 0.03255208333333333,
+            "accuracy_loss_upper_pp": 0.6855799991297907,
+            "passes_one_percentage_point_bound": true,
+            "assumption": "Independent sampled operand groups; formats within each group may depend.",
+            "answer_agreement": 0.9996744791666666,
+            "mean_first_token_kl": 7.055258924724206e-06
+          }
+        },
+        "eml_record_counts": {
+          "prompts": 3072,
+          "correct_to_incorrect": 0,
+          "incorrect_to_correct": 0,
+          "exact_text_changes": 65
+        }
+      },
+      "ordinary-unconditioned": {
+        "raw_sha256": "a53b85f935f2cb38ffaf7b3a43d112d4488d8b24de68ef7d2a95dd970410a1a1",
+        "trace_audit": {
+          "methods": 12,
+          "unique_conditions_per_method": 3072
+        },
+        "metrics": {
+          "original": {
+            "original_accuracy": 0.9951171875,
+            "accuracy": 0.9951171875,
+            "operand_groups": 1024,
+            "formats": 3,
+            "simultaneous_cells": 9,
+            "alpha": 0.05,
+            "loss_threshold_counts": [
+              0,
+              0,
+              0
+            ],
+            "threshold_upper_bounds": [
+              0.006125274038492533,
+              0.006125274038492533,
+              0.006125274038492533
+            ],
+            "accuracy_loss_pp": 0.0,
+            "accuracy_loss_upper_pp": 0.6125274038492533,
+            "passes_one_percentage_point_bound": true,
+            "assumption": "Independent sampled operand groups; formats within each group may depend.",
+            "answer_agreement": 1.0,
+            "mean_first_token_kl": 0.0
+          },
+          "heads-active-r32-g0.1/eml": {
+            "original_accuracy": 0.9951171875,
+            "accuracy": 0.9951171875,
+            "operand_groups": 1024,
+            "formats": 3,
+            "simultaneous_cells": 9,
+            "alpha": 0.05,
+            "loss_threshold_counts": [
+              0,
+              0,
+              0
+            ],
+            "threshold_upper_bounds": [
+              0.006125274038492533,
+              0.006125274038492533,
+              0.006125274038492533
+            ],
+            "accuracy_loss_pp": 0.0,
+            "accuracy_loss_upper_pp": 0.6125274038492533,
+            "passes_one_percentage_point_bound": true,
+            "assumption": "Independent sampled operand groups; formats within each group may depend.",
+            "answer_agreement": 1.0,
+            "mean_first_token_kl": 7.573682660820885e-08
+          },
+          "heads-active-r32-g0.1/neural": {
+            "original_accuracy": 0.9951171875,
+            "accuracy": 0.9951171875,
+            "operand_groups": 1024,
+            "formats": 3,
+            "simultaneous_cells": 9,
+            "alpha": 0.05,
+            "loss_threshold_counts": [
+              0,
+              0,
+              0
+            ],
+            "threshold_upper_bounds": [
+              0.006125274038492533,
+              0.006125274038492533,
+              0.006125274038492533
+            ],
+            "accuracy_loss_pp": 0.0,
+            "accuracy_loss_upper_pp": 0.6125274038492533,
+            "passes_one_percentage_point_bound": true,
+            "assumption": "Independent sampled operand groups; formats within each group may depend.",
+            "answer_agreement": 1.0,
+            "mean_first_token_kl": 8.576212939884304e-08
+          }
+        },
+        "eml_record_counts": {
+          "prompts": 3072,
+          "correct_to_incorrect": 0,
+          "incorrect_to_correct": 0,
+          "exact_text_changes": 0
+        }
+      },
+      "ordinary-all-tokens-unconditioned": {
+        "raw_sha256": "ba0086bbbd113a117bc6848361bb63c98999d9ccc21e13aa201ac8f4dd5dc81d",
+        "trace_audit": {
+          "methods": 12,
+          "unique_conditions_per_method": 3072
+        },
+        "metrics": {
+          "original": {
+            "original_accuracy": 0.9951171875,
+            "accuracy": 0.9951171875,
+            "operand_groups": 1024,
+            "formats": 3,
+            "simultaneous_cells": 9,
+            "alpha": 0.05,
+            "loss_threshold_counts": [
+              0,
+              0,
+              0
+            ],
+            "threshold_upper_bounds": [
+              0.006125274038492533,
+              0.006125274038492533,
+              0.006125274038492533
+            ],
+            "accuracy_loss_pp": 0.0,
+            "accuracy_loss_upper_pp": 0.6125274038492533,
+            "passes_one_percentage_point_bound": true,
+            "assumption": "Independent sampled operand groups; formats within each group may depend.",
+            "answer_agreement": 1.0,
+            "mean_first_token_kl": 0.0
+          },
+          "heads-active-r32-g0.1/eml": {
+            "original_accuracy": 0.9951171875,
+            "accuracy": 0.9951171875,
+            "operand_groups": 1024,
+            "formats": 3,
+            "simultaneous_cells": 9,
+            "alpha": 0.05,
+            "loss_threshold_counts": [
+              0,
+              0,
+              0
+            ],
+            "threshold_upper_bounds": [
+              0.006125274038492533,
+              0.006125274038492533,
+              0.006125274038492533
+            ],
+            "accuracy_loss_pp": 0.0,
+            "accuracy_loss_upper_pp": 0.6125274038492533,
+            "passes_one_percentage_point_bound": true,
+            "assumption": "Independent sampled operand groups; formats within each group may depend.",
+            "answer_agreement": 1.0,
+            "mean_first_token_kl": 7.573682660820885e-08
+          },
+          "heads-active-r32-g0.1/neural": {
+            "original_accuracy": 0.9951171875,
+            "accuracy": 0.9951171875,
+            "operand_groups": 1024,
+            "formats": 3,
+            "simultaneous_cells": 9,
+            "alpha": 0.05,
+            "loss_threshold_counts": [
+              0,
+              0,
+              0
+            ],
+            "threshold_upper_bounds": [
+              0.006125274038492533,
+              0.006125274038492533,
+              0.006125274038492533
+            ],
+            "accuracy_loss_pp": 0.0,
+            "accuracy_loss_upper_pp": 0.6125274038492533,
+            "passes_one_percentage_point_bound": true,
+            "assumption": "Independent sampled operand groups; formats within each group may depend.",
+            "answer_agreement": 1.0,
+            "mean_first_token_kl": 8.576212939884304e-08
+          }
+        },
+        "eml_record_counts": {
+          "prompts": 3072,
+          "correct_to_incorrect": 0,
+          "incorrect_to_correct": 0,
+          "exact_text_changes": 91
+        }
+      }
+    },
+    "statistics_source_sha256": {
+      "analyze.py": "ceca3fbaca7acb3c9649f8aeb0cb0d045e92b3a18aa492ec02118c7e0cfb3fc1",
+      "robust_statistics.py": "87500686a176aa68285ac1f190da18bff38322e8bcb97bb2bf1fec206f7e8300",
+      "trace_audit.py": "bfce48e60d0f22002264092a8ec35142b6c080696a8528c230fd29be31d53fbc"
+    },
+    "torch": "2.9.0+cu128",
+    "gpu": "NVIDIA H100 80GB HBM3"
   }
 }

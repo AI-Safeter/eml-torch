@@ -8,7 +8,8 @@ source hashes, trace checks and the frozen validation selection.
 The cohort contains 1,024 unseen operand pairs in three familiar prompt formats
 (3,072 prompts). Pairs are conditioned on different first answer tokens for clean
 and corrupted operands. Prompts use the fixed assistant prefill `The answer is `.
-The separate unconditioned-operand and new-format tests remain necessary.
+Unconditioned-operand decoding results are now available below. Full seed and
+stress analysis remains necessary before the study report can be completed.
 
 The selected EML and SiLU heads each have 2,177 parameters and consume 32 active
 features. These counts exclude the feature projection and normalization. Each
@@ -39,3 +40,28 @@ fidelity, as the linear control illustrates.
 Response error concerns changes in the downstream answer-token logit margin
 under held-out interpolation strengths. It is not a reconstruction metric for
 the entire model, identification of an arithmetic algorithm, or a speed claim.
+
+## Replacement throughout decoding
+
+The all-token test reapplies the same scalar replacement at each generation
+step. The separate unconditioned cohort contains 1,024 fresh operand pairs and
+three familiar formats (3,072 prompts), without conditioning on a change in the
+answer's first token. It retains the fixed assistant prefill.
+
+| Cohort and patch scope | Original accuracy | EML accuracy | SiLU accuracy | EML upper accuracy loss (pp) |
+|---|---:|---:|---:|---:|
+| Primary operands, all generated tokens | 99.5768% | 99.5768% | 99.5443% | 0.6125 |
+| Unconditioned operands, prefill only | 99.5117% | 99.5117% | 99.5117% | 0.6125 |
+| Unconditioned operands, all generated tokens | 99.5117% | 99.5117% | 99.5117% | 0.6125 |
+
+These diagnostics meet the one-percentage-point accuracy-loss bound using the
+frozen statistics. They support retention under repeated scalar replacement
+on these addition prompts; they do not establish an advantage over SiLU,
+performance without the assistant prefill, or equivalent behavior on other
+operations. The source hashes, trace checks and GPU-recomputed metrics are
+included in the machine-readable audit. All 12 methods remain in the raw traces.
+
+Accuracy retention does not mean identical generated text. With the EML patch
+applied throughout decoding, 65 primary-cohort continuations and 91
+unconditioned-cohort continuations changed text, while no prompt changed its
+correct/incorrect label under the frozen numeric parser.
