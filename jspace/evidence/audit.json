@@ -1,0 +1,218 @@
+{
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "source_sha256": "31153bf2e18f4e531e7ecdcbd03c017eb76d8deaaf86421ddc614643b5c32fa1",
+  "text_only_forward_bitwise_equal": true,
+  "identity_intervention_bitwise_equal": true,
+  "gradient_execution": "native BF16",
+  "projected_vs_explicit_coordinate_jacobian_relative_error": [
+    0.007365785073488951,
+    0.013526517897844315,
+    0.007393903099000454
+  ],
+  "future_source_to_earlier_target_max_abs_gradient": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "earlier_source_to_later_target_gradient_norm": [
+    18.105680465698242,
+    0.0,
+    0.0
+  ],
+  "finite_difference_checks": [
+    {
+      "layer": 10,
+      "step_fraction_of_residual_norm": 0.0001,
+      "residual_norm": 52.6925163269043,
+      "autograd": 5.0206990242004395,
+      "finite_difference": 4.584338664508511,
+      "relative_error": 0.0869122720937091
+    },
+    {
+      "layer": 10,
+      "step_fraction_of_residual_norm": 0.00025,
+      "residual_norm": 52.6925163269043,
+      "autograd": 5.0206990242004395,
+      "finite_difference": 3.2641390352020596,
+      "relative_error": 0.349863630648148
+    },
+    {
+      "layer": 10,
+      "step_fraction_of_residual_norm": 0.0005,
+      "residual_norm": 52.6925163269043,
+      "autograd": 5.0206990242004395,
+      "finite_difference": -0.042417499256317964,
+      "relative_error": 1.008448524608199
+    },
+    {
+      "layer": 10,
+      "step_fraction_of_residual_norm": 0.001,
+      "residual_norm": 52.6925163269043,
+      "autograd": 5.0206990242004395,
+      "finite_difference": -1.7140371198597526,
+      "relative_error": 1.3413941189459604
+    },
+    {
+      "layer": 10,
+      "step_fraction_of_residual_norm": 0.002,
+      "residual_norm": 52.6925163269043,
+      "autograd": 5.0206990242004395,
+      "finite_difference": -0.9971139089524365,
+      "relative_error": 1.198600614007375
+    },
+    {
+      "layer": 10,
+      "step_fraction_of_residual_norm": 0.005,
+      "residual_norm": 52.6925163269043,
+      "autograd": 5.0206990242004395,
+      "finite_difference": -0.37783689204446286,
+      "relative_error": 1.0752558339432892
+    },
+    {
+      "layer": 10,
+      "step_fraction_of_residual_norm": 0.01,
+      "residual_norm": 52.6925163269043,
+      "autograd": 5.0206990242004395,
+      "finite_difference": -0.22101861762903238,
+      "relative_error": 1.0440214831766839
+    },
+    {
+      "layer": 10,
+      "step_fraction_of_residual_norm": 0.02,
+      "residual_norm": 52.6925163269043,
+      "autograd": 5.0206990242004395,
+      "finite_difference": 0.06752751406335483,
+      "relative_error": 0.9865501768303849
+    },
+    {
+      "layer": 17,
+      "step_fraction_of_residual_norm": 0.0001,
+      "residual_norm": 72.30490112304688,
+      "autograd": 0.09078352153301239,
+      "finite_difference": 0.041877049931055205,
+      "relative_error": 0.5387152952000536
+    },
+    {
+      "layer": 17,
+      "step_fraction_of_residual_norm": 0.00025,
+      "residual_norm": 72.30490112304688,
+      "autograd": 0.09078352153301239,
+      "finite_difference": 0.0630216627407317,
+      "relative_error": 0.3058028409063797
+    },
+    {
+      "layer": 17,
+      "step_fraction_of_residual_norm": 0.0005,
+      "residual_norm": 72.30490112304688,
+      "autograd": 0.09078352153301239,
+      "finite_difference": 0.09166952178018112,
+      "relative_error": 0.00975948313314266
+    },
+    {
+      "layer": 17,
+      "step_fraction_of_residual_norm": 0.001,
+      "residual_norm": 72.30490112304688,
+      "autograd": 0.09078352153301239,
+      "finite_difference": 0.09321353190854463,
+      "relative_error": 0.026767086520746997
+    },
+    {
+      "layer": 17,
+      "step_fraction_of_residual_norm": 0.002,
+      "residual_norm": 72.30490112304688,
+      "autograd": 0.09078352153301239,
+      "finite_difference": 0.0896009150445366,
+      "relative_error": 0.013026664624876321
+    },
+    {
+      "layer": 17,
+      "step_fraction_of_residual_norm": 0.005,
+      "residual_norm": 72.30490112304688,
+      "autograd": 0.09078352153301239,
+      "finite_difference": 0.09023556256059313,
+      "relative_error": 0.006035885843225396
+    },
+    {
+      "layer": 17,
+      "step_fraction_of_residual_norm": 0.01,
+      "residual_norm": 72.30490112304688,
+      "autograd": 0.09078352153301239,
+      "finite_difference": 0.091427409780875,
+      "relative_error": 0.007092567428423361
+    },
+    {
+      "layer": 17,
+      "step_fraction_of_residual_norm": 0.02,
+      "residual_norm": 72.30490112304688,
+      "autograd": 0.09078352153301239,
+      "finite_difference": 0.09297296556806964,
+      "relative_error": 0.02411719658023049
+    },
+    {
+      "layer": 24,
+      "step_fraction_of_residual_norm": 0.0001,
+      "residual_norm": 69.57984161376953,
+      "autograd": 0.09974175691604614,
+      "finite_difference": -0.00016276096991119156,
+      "relative_error": 1.0016318237711432
+    },
+    {
+      "layer": 24,
+      "step_fraction_of_residual_norm": 0.00025,
+      "residual_norm": 69.57984161376953,
+      "autograd": 0.09974175691604614,
+      "finite_difference": 0.04425556435553673,
+      "relative_error": 0.5562985280799978
+    },
+    {
+      "layer": 24,
+      "step_fraction_of_residual_norm": 0.0005,
+      "residual_norm": 69.57984161376953,
+      "autograd": 0.09974175691604614,
+      "finite_difference": 0.06387768423335649,
+      "relative_error": 0.3595692896494382
+    },
+    {
+      "layer": 24,
+      "step_fraction_of_residual_norm": 0.001,
+      "residual_norm": 69.57984161376953,
+      "autograd": 0.09974175691604614,
+      "finite_difference": 0.07771365163083338,
+      "relative_error": 0.22085138628301973
+    },
+    {
+      "layer": 24,
+      "step_fraction_of_residual_norm": 0.002,
+      "residual_norm": 69.57984161376953,
+      "autograd": 0.09974175691604614,
+      "finite_difference": 0.09099965827734721,
+      "relative_error": 0.08764732955383232
+    },
+    {
+      "layer": 24,
+      "step_fraction_of_residual_norm": 0.005,
+      "residual_norm": 69.57984161376953,
+      "autograd": 0.09974175691604614,
+      "finite_difference": 0.09896046864304034,
+      "relative_error": 0.007833111197985246
+    },
+    {
+      "layer": 24,
+      "step_fraction_of_residual_norm": 0.01,
+      "residual_norm": 69.57984161376953,
+      "autograd": 0.09974175691604614,
+      "finite_difference": 0.09887394833798228,
+      "relative_error": 0.008700554360540324
+    },
+    {
+      "layer": 24,
+      "step_fraction_of_residual_norm": 0.02,
+      "residual_norm": 69.57984161376953,
+      "autograd": 0.09974175691604614,
+      "finite_difference": 0.09449271214285378,
+      "relative_error": 0.0526263516453851
+    }
+  ],
+  "passed": true,
+  "peak_allocated_gib": 10.301560401916504
+}
