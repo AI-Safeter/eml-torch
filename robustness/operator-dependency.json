@@ -1,0 +1,9 @@
+{
+  "path": "../emltorch/operator.py",
+  "sha256": "03d92ec3bbe02256c1785e46f85d97bb1f990c08410bd2d4e78eb8d699a8a0d8",
+  "historical_source_commit": "462246ac050794bee73cf0265800153037b38d46",
+  "historical_path": "emltorch/operator.py",
+  "recorded_on": "2026-09-08",
+  "timing": "Dependency audit added after partial study results; the operator bytes match the study's starting commit and both current Python environments. No operator or inference change.",
+  "scope": "The EML operator actually imported by scalar and vector checkpoint replays must match this hash and the bundled source. Its path and hash are included in checkpoint audit cache identities."
+}

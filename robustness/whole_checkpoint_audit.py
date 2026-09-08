@@ -6,10 +6,14 @@ from pathlib import Path
 
 import torch
 from runtime import HERE, RUNS, configure
-from whole_student import Student
+from scalar_checkpoint_audit import operator_paths
+from whole_student import Student, safe_eml
 
 
 def validate():
+    assert torch.__version__ == "2.5.0a0+e000cf0ad9.nv24.10", (
+        "Run the whole-block checkpoint audit in the original Qwen environment"
+    )
     out = RUNS / "whole-block"
     candidates = json.loads((out / "candidates.json").read_text())
     assert len(candidates) == 27
@@ -49,11 +53,12 @@ def validate():
     paths = [out / "candidates.json", HERE / "whole_student.py", Path(__file__)]
     paths += [out / f"activations-{domain}-validation.pt" for domain in ["arithmetic", "language"]]
     paths += [out / f"{r['name']}.pt" for r in candidates if r["status"] == "complete"]
+    paths += operator_paths(safe_eml)
     hashes = {str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in paths}
     destination = out / "checkpoint-audit.json"
     if destination.exists():
         previous = json.loads(destination.read_text())
-        if previous["input_sha256"] == hashes:
+        if previous["input_sha256"] == hashes and previous.get("torch") == torch.__version__:
             print("WHOLE CHECKPOINT AUDIT HASHES VERIFIED", flush=True)
             return previous
     validation = {
@@ -87,6 +92,7 @@ def validate():
         "input_sha256": hashes,
         "checkpoints": checked,
         "gpu": torch.cuda.get_device_name(),
+        "torch": torch.__version__,
         "validation_scores_recomputed": True,
         "complete_grid_validation_selection_and_language_hashes_verified": True,
     }

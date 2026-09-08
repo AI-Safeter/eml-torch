@@ -98,6 +98,11 @@ model.addEventListener('change',render);operation.addEventListener('change',rend
 
 
 def main():
+    from scalar_checkpoint_audit import operator_paths
+
+    from emltorch.operator import safe_eml
+
+    operator_paths(safe_eml)
     audit = json.loads((RUNS / "audit.json").read_text())
     assert audit["status"] == "complete" and audit["roster"] == ROSTER
     assert set(audit["scalar"]) == {

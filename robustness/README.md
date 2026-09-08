@@ -112,6 +112,18 @@ The scalar audit also checks component and control checkpoint hashes, exact spar
 
 The whole-block audit also verifies the complete candidate grid, validation-only selection, localized layer, language-file hashes, and arithmetic cohorts. It recomputes every saved utility metric from the raw records on CUDA, requiring exact agreement (`whole-evidence-audit.json`).
 
+Checkpoint audit identities also include the EML operator actually imported by
+the head, the bundled operator, and the [dependency record](operator-dependency.json).
+Both copies must match the operator in the study's starting commit. This guard
+was added after partial results; it does not change the operator or inference.
+It prevents an editable install from silently supplying different operator code
+while reusing a cached checkpoint audit. The report checks the dependency too.
+Whole-block replay additionally requires the original Qwen PyTorch environment.
+The [dependency validation](operator-dependency-validation.json) reproduced all
+270 primary scalar, 90 superseded scalar, and 27 whole-block checkpoint scores
+exactly on GPU. Changed operator imports and an incorrect whole-block backend
+were rejected even when a previous checkpoint audit existed.
+
 The scalar audit now also recomputes every saved summary and per-format result
 from its raw traces on CUDA, including all seeds, controls, confidence intervals,
 paired comparisons, and primary decisions. Values must match exactly; it never

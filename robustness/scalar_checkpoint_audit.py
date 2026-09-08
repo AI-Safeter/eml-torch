@@ -2,6 +2,7 @@
 
 import argparse
 import hashlib
+import inspect
 import json
 import os
 import subprocess
@@ -12,8 +13,21 @@ import torch
 from runtime import HERE, RUNS, configure
 
 
+def operator_paths(operator):
+    """Bind cached validation to the operator actually imported by the head."""
+    manifest = HERE / "operator-dependency.json"
+    spec = json.loads(manifest.read_text())
+    bundled = (HERE / spec["path"]).resolve()
+    imported = Path(inspect.getsourcefile(operator)).resolve()
+    for path in {bundled, imported}:
+        assert hashlib.sha256(path.read_bytes()).hexdigest() == spec["sha256"], (
+            f"EML operator differs from the study dependency: {path}"
+        )
+    return [manifest, bundled, imported, Path(__file__).resolve()]
+
+
 def validate(out, directory):
-    from heads import Head, objective, parameter_count
+    from heads import Head, objective, parameter_count, safe_eml
 
     folder = out / directory
     expected_torch = (
@@ -61,6 +75,7 @@ def validate(out, directory):
         Path(__file__),
     ]
     paths += [folder / f"{r['name']}.pt" for r in records if r["status"] == "complete"]
+    paths += operator_paths(safe_eml)
     hashes = {str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in paths}
     destination = folder / "checkpoint-audit.json"
     if destination.exists():
