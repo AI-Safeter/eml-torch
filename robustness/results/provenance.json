@@ -1,0 +1,10 @@
+{
+  "audited_input_sha256": "6dec3facf2559ef4d815d06c3eb1bd42982ae3952aeab5f4881187549199a02a",
+  "files": {
+    "REPORT.md": "7736c9b5a6e5dbddd8dd8f2784b4f9c0b78650519e478c1935d9f18eff53b5dc",
+    "summary.json": "6fc612d346f8641deea35d1ac43cd44527366378dac163f0e9532732b665bec7",
+    "primary.png": "187c2a783a7d8692d329cdb75079532582fccfe71df820a071b8c5c72a7e60f2",
+    "primary.pdf": "d1a5f8414a19d15250c6cb575fd795fa452952b73692f275296f735960d7469f",
+    "explorer.html": "c02b612ccc57223d5e90897bd2f1fb31e303c1218efd079fa6c88bf3d5548b74"
+  }
+}
