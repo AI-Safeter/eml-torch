@@ -1,0 +1,13 @@
+# Evaluation implementation freeze
+
+These details complete the initial protocol before test model outputs are collected. The training grid, data, model pins, primary metrics, and whole-block architectures remain unchanged. Validation smoke checks may repair software errors but cannot select a new model using test results.
+
+Every completed seed from each of the three scalar feature/loss methods receives ordinary complete-answer and natural intervention evaluation on the entire primary test cohort. Validation-selected heads receive the complete stress suite, including all-token generation. Failed seeds remain in candidate logs. The primary inferential decision concerns the validation-selected EML active32 derivative-.1 head in each of the nine cells; simultaneous intervals displayed for other heads do not imply an additional family-wide multiple-comparison guarantee.
+
+The already declared ambient and nullspace diagnostics use the first 32 primary pairs and three training formats, seed 20260925, with one independent Gaussian direction per prompt. Normalize the direction to unit length. For nullspace tests, remove its projection onto the active32 basis before normalizing. Perturb by 0, -.1, -.01, .01, or .1 times the original input's L2 norm. These intentionally off-distribution edits measure failure boundaries. They do not modify the natural intervention success criteria. Extrapolation uses the first 128 primary pairs at strengths 0, -.25, and 1.25.
+
+The response bootstrap uses 20,000 operand-group draws, seed 20260926, and Bonferroni-adjusted tails .025/9. Paired EML/control mean squared response-error comparisons use 10,000 draws, seed 20260929. Accuracy upper limits assume independent sampled operand groups; the actual benchmark samples disjoint problems without replacement and imposes contrast constraints. Bounds should be interpreted with that sampling design, not as distribution-free guarantees for arbitrary future prompts.
+
+Whole-block output fidelity uses every real token from the frozen language test blocks and the primary arithmetic prompts with their correct answer appended. Report RMSE normalized by RMS original MLP output, including its mean. This output metric complements downstream behavior and does not replace the predeclared language/accuracy retention criteria. Padding is excluded. End-to-end latency is measured in eager float32; no compiled-speed claim is implied.
+
+Implementation sources are snapshotted in `evaluation-freeze.json` before test exposure. The original 33-file freeze and the later whole-training source snapshot remain available for audit. Additional implementation files were developed during training; they do not alter the frozen fit functions or candidate objectives.
