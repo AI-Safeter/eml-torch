@@ -46,3 +46,9 @@ The [one-layer quantization-correction experiment](kv_correction/README.md) comp
 The [Gemma Jacobian-lens study](jspace/README.md) provides a GPU-validated
 selected-token estimator and a failed semantic-swap feasibility gate. It has
 not established an EML benefit.
+
+The [complete Gemma MLP replacement study](gemma_mechanisms/README.md)
+removes the original block from inference and compares compositional EML,
+matched-depth SiLU, and linear replacements. It also tests arithmetic
+feature hypotheses with residual and KV interventions. See its frozen
+acceptance criteria and held-out results before using an experimental export.

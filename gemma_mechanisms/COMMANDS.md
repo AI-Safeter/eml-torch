@@ -116,6 +116,9 @@ CUDA_VISIBLE_DEVICES=2 EML_GEMMA_MECHANISMS_RUNS=/path/to/fresh-study-bos \
   "$GEMMA_PYTHON" -m gemma_mechanisms.microbenchmark
 CUDA_VISIBLE_DEVICES=2 EML_GEMMA_MECHANISMS_RUNS=/path/to/fresh-study-bos \
   "$GEMMA_PYTHON" -m gemma_mechanisms.longer_training
+TORCHINDUCTOR_COMPILE_THREADS=2 CUDA_VISIBLE_DEVICES=2 \
+  EML_GEMMA_MECHANISMS_RUNS=/path/to/fresh-study-bos \
+  "$GEMMA_PYTHON" -m gemma_mechanisms.compile_probe
 CUDA_VISIBLE_DEVICES=2 "$GEMMA_PYTHON" -m gemma_mechanisms.audit_release \
   --output /path/to/fresh-study-bos --mechanisms-output /path/to/fresh-study
 CUDA_VISIBLE_DEVICES=2 "$GEMMA_PYTHON" -m gemma_mechanisms.report \
@@ -126,3 +129,9 @@ The report command requires completed confirmation. Exact execution inputs,
 checkpoint identities and source hashes are retained in per-phase freezes.
 The original BOS diagnostic run is reproduced from historical source revisions,
 not by rerunning today's corrected preparer into its existing directory.
+
+The compiler diagnostic applies identical Inductor settings to the native MLP
+and every first-seed replacement. It records setup time, numerical differences,
+and both eager/compiled module timings. These optional measurements do not
+replace the frozen eager end-to-end benchmark or establish compiled-model
+quality. Unsupported configurations remain recorded as failures.

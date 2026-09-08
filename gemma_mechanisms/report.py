@@ -317,8 +317,12 @@ def main():
             }
         )
     chosen = selection["families"]["eml"]
+    equation_observational = read(mechanism / "residual/equations/observational-results.json")
     extension = [read(p) for p in sorted((out / "optimization-extension").glob("*-b*-s*.json"))]
     assert len(extension) == 6
+    compiler = [read(p) for p in sorted((out / "compiler-diagnostic").glob("*-b*-s*.json"))]
+    if compiler:
+        read(out / "compiler-diagnostic/freeze.json")
     superseded = [read(p) for p in sorted((mechanism / "training").glob("*-b*-s*.json"))]
     assert not superseded or len(superseded) == 42
     chosen_training = next(
@@ -362,9 +366,11 @@ def main():
         "timing": timing,
         "routing": routing,
         "equations": equations,
+        "equation_observational": equation_observational,
         "module_timing": module_timing,
         "failure_analysis": failure_analysis,
         "optimization_extension": extension,
+        "compiler_diagnostic": compiler,
         "superseded_bos_grid_fit_seconds": sum(r["training_seconds"] for r in superseded),
     }
     save(destination / "summary.json", summary)
@@ -415,6 +421,21 @@ def main():
             lo, hi = v["gain_95ci"]
             cells.append(f"{100 * v['eml_accuracy_gain']:+.2f} [{100 * lo:+.2f}, {100 * hi:+.2f}]")
         lines.append(f"| {seed} | " + " | ".join(cells) + " |")
+    lines += [
+        "",
+        "Generalization below keeps every generated answer, including malformed outputs and native errors. Each student entry is the mean and range over the three selected EML seeds. These summaries do not replace the paired per-seed intervals in the JSON.",
+        "",
+        "| Operand split / prompts | Task | Original % | EML %, mean [seed range] | Groups per seed |",
+        "|---|---|---:|---|---:|",
+    ]
+    for split in ["final", "shift"]:
+        for field in ["arithmetic", "new_formats"]:
+            for op in SPEC["arithmetic"]["operations"]:
+                rs = [diagnostics[split][name][f"{field}/{op}"] for name in chosen["checkpoints"]]
+                values = [100 * r["student_accuracy"] for r in rs]
+                lines.append(
+                    f"| {split} / {'known' if field == 'arithmetic' else 'new'} | {op} | {100 * rs[0]['teacher_accuracy']:.2f} | {mean(values):.2f} [{min(values):.2f}, {max(values):.2f}] | {rs[0]['groups']} |"
+                )
     lines += [
         "",
         "## Depth, capacity, and training cost",
@@ -491,6 +512,31 @@ def main():
             lines.append(
                 f"| {r['method']} | {r['tokens']} | {r['original_gpu_ms_per_call']:.4f} | {r['student_gpu_ms_per_call']:.4f} | {r['original_wall_ms_per_call']:.4f} | {r['student_wall_ms_per_call']:.4f} |"
             )
+    if compiler:
+        lines += [
+            "",
+            "An additional module diagnostic applies identical `torch.compile` Inductor/default/fullgraph settings to every native/student pair. The table includes every configuration. Setup times and precision differences are recorded; compilation can change BF16 rounding. These results do not replace the eager full-model benchmark or establish compiled-model answer quality. CUDA-event intervals include any gaps between submitted kernels, not just kernel execution time.",
+            "",
+            "| Method | Tokens | Original eager / compiled GPU ms | Student eager / compiled GPU ms | Student compiled-vs-eager NRMSE |",
+            "|---|---:|---|---|---:|",
+        ]
+        for result in compiler:
+            for r in result["records"]:
+                if r["status"] == "failed":
+                    lines.append(
+                        f"| {result['method']} | {r['tokens']} | Failed: {r['error_type']} | See JSON | — |"
+                    )
+                    continue
+                cells = [
+                    " / ".join(
+                        f"{statistics.median(s[f'{kind}_{mode}']['gpu_ms_per_call'] for s in r['samples']):.4f}"
+                        for mode in ["eager", "compiled"]
+                    )
+                    for kind in ["original", "student"]
+                ]
+                lines.append(
+                    f"| {result['method']} | {r['tokens']} | {cells[0]} | {cells[1]} | {r['precision']['student']['output_nrmse']:.5f} |"
+                )
     lines += [
         "",
         "## Causal result",
@@ -524,6 +570,36 @@ def main():
     lines += [
         "",
         "An exact match of the source residual can coexist with different downstream states and logits when reused KV differs. A deterministic equation of that residual alone therefore lacks a required input in these interventions. Each equation-response file quantifies the best possible average squared error on these conflicting-input pairs and tests the actual trained EML/SiLU, linear, symbolic, and identity equations. Cache-only interventions provide a direct test: unchanged equation inputs imply zero predicted change despite a nonzero native response.",
+        "",
+        "Equation response NRMSE below uses the full gate/known cohort. The three-seed mean is reported for every tested depth; no intervention result selects a depth. The complete JSON includes all four cohorts, seeds, simpler controls, absolute response energy, MSE intervals and input-collision bounds. Large normalized errors for a small native response should be read alongside its absolute energy.",
+        "",
+        "| Equation | Coefficients | Selection observational MSE | Natural donor response NRMSE | Residual-only response NRMSE | V-only response NRMSE |",
+        "|---|---:|---:|---:|---:|---:|",
+    ]
+    eq_groups = [(kind, [kind]) for kind in ["linear", "symbolic", "identity"]]
+    eq_groups += [
+        (
+            f"{kind} depth {depth}",
+            [f"{kind}-d{depth}-s{seed}" for seed in SPEC["replacement"]["seeds"]],
+        )
+        for kind in ["eml", "silu"]
+        for depth in [1, 2, 4]
+    ]
+    obs = equation_observational["results"]
+    for label, names in eq_groups:
+        coeff = obs[names[0]].get("coefficients", 72 if label == "linear" else 0)
+        entries = equations["gate-256-known"]["results"]
+        response = [
+            mean(entries[name][kind]["response_nrmse"] for name in names)
+            for kind in ["donor", "hidden_only", "sliding_values_only"]
+        ]
+        cells = " | ".join(f"{v:.4f}" for v in response)
+        lines.append(
+            f"| {label} | {coeff} | {mean(obs[name]['mean'] for name in names):.4f} | {cells} |"
+        )
+    lines += [
+        "",
+        "The equation input readout adds **12,296 coefficients**; measuring downstream quantities adds another **12,296**, reported separately from the equation. Inputs include estimates of carry and result digits already present in the upstream state. This is a propagation fit, not derivation of arithmetic from operand labels.",
         "",
         "This is evidence about conditional causal routing and input sufficiency. It is not a recovered addition algorithm, an explanation of multiplication/division, or proof that EML cannot succeed with a different state representation. Failed carry mediation prevents using that interpretation to justify a mechanism-based replacement.",
         "",

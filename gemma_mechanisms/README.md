@@ -8,6 +8,23 @@ The exact checkpoint is **google/gemma-4-E2B-it**, revision `3e22461f65e89153144
 
 The study compares EML and SiLU at depths 1/2/4, coefficient ceilings 3M/6M, bottlenecks 256/512, and three seeds, plus linear controls: 42 fits. Every encoder, nonlinear projection, decoder, bias, norm, and statistic counts. Deployment folds affine statistics and collapses linear factors when that is cheaper. The surrounding native norms and all other model components remain counted.
 
+The deployed EML block composes the following learned stages. `E`, `D`, `A`,
+`B`, and `R` are affine projections, `LN` is a learned LayerNorm, and `L` is
+the number of stages. Every coefficient in these operations is included in
+the budget. The implementation uses the repository's stabilized `safe_eml`.
+
+```text
+h₀ = E(x)
+uₗ = LNₗ(hₗ)
+hₗ₊₁ = hₗ + L⁻¹ᐟ² Rₗ(exp(clamp(Aₗ(uₗ), −12, 12)) − log(1 + Bₗ(uₗ)²) − 1)
+MLP replacement(x) = D(h_L)
+```
+
+SiLU uses the same stage depth, norms, encoder and decoder structure, with
+its inner width adjusted to match the coefficient budget. A linear control
+has no nonlinear stages. This is a learned compositional network; its weights
+are not a recovered symbolic arithmetic algorithm.
+
 `runtime.setup` enforces torch 2.9.0+cu128 and transformers 5.16.1; [environment.json](environment.json) records supporting packages. Model weights must already be available at the pinned Hugging Face snapshot. Dataset IDs, revisions, seeds, splits, training budgets and acceptance criteria are fixed in `protocol.json`. `prepare.py` now includes native BOS for each document.
 
 The local diagnostic root is `/home/ubuntu/samuel/emltorch-gemma-replacement-runs`; the corrected replacement root appends `-bos`. Use a fresh directory for a new reproduction. The original 42 fits are retained as diagnostics after the BOS correction; they are not the accepted replacement experiment. `prepare_corrected.py` reproduces that amendment from original 256-token files. Do not apply it to already corrected 257-token inputs.

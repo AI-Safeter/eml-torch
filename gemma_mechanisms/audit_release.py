@@ -75,6 +75,7 @@ def main():
         assert record["training_freeze_sha256"] == digest(out / "training/freeze.json")
         assert digest(path.with_suffix(".pt")) == record["checkpoint_sha256"]
         audit = read(out / "fit-audits" / path.name)
+        source_check(audit)
         assert audit["fit_record_sha256"] == digest(path)
         assert audit["checkpoint_sha256"] == record["checkpoint_sha256"]
         assert audit["objective_replay_exact"]
@@ -111,7 +112,9 @@ def main():
     del raw, norm, cscale
     torch.cuda.empty_cache()
     print("AUDITED OPTIMIZATION EXTENSION", flush=True)
-    deployed = {r["name"]: r for r in read(out / "deployment-validation.json")["records"]}
+    deployment = read(out / "deployment-validation.json")
+    source_check(deployment)
+    deployed = {r["name"]: r for r in deployment["records"]}
     names = roster(out)
     for split in ["gate", "final", "shift"]:
         directory = out / "evaluation" / split
@@ -190,6 +193,32 @@ def main():
         ]
         tensor = torch.tensor(values, device="cuda")
         assert torch.isfinite(tensor).all() and (tensor > 0).all()
+    compiler = out / "compiler-diagnostic"
+    if compiler.exists():
+        source_check(read(compiler / "freeze.json"))
+        paths = list(compiler.glob("*-b*-s*.json"))
+        assert len(paths) == 5
+        for path in paths:
+            record = read(path)
+            assert record["freeze_sha256"] == digest(compiler / "freeze.json")
+            assert record["checkpoint_sha256"] == digest(
+                out / "training" / path.with_suffix(".pt").name
+            )
+            assert len(record["records"]) == 2
+            for result in record["records"]:
+                assert result["status"] in {"complete", "failed"}
+                if result["status"] == "complete":
+                    assert len(result["samples"]) == 50
+                    values = [
+                        v
+                        for pair in result["samples"]
+                        for metrics in pair.values()
+                        for v in metrics.values()
+                    ]
+                    values = torch.tensor(values, device="cuda")
+                    assert torch.isfinite(values).all() and (values > 0).all()
+                else:
+                    assert result["error_type"] and result["error"]
     for split in ["gate", "shift"]:
         for style in ["known", "new"]:
             name = f"{split}-256-{style}"
@@ -208,6 +237,8 @@ def main():
             equations = read(mechanism / "equation-responses" / f"{name}.json")
             assert equations["source_data_sha256"] == digest(frozen_path.with_name(f"{name}.json"))
             assert equations["source_sha256"] == digest(HERE / "equation_responses.py")
+            for checkpoint, sha in equations["checkpoints"].items():
+                assert digest(mechanism / "residual/equations" / checkpoint) == sha
     save(
         out / "release-audit.json",
         {
