@@ -7,6 +7,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import torch
+from audit import execution_sources
 from metric_audit import require as require_scalar_metrics
 from runtime import HERE, RUNS
 
@@ -141,6 +142,7 @@ def main():
     operator_paths(safe_eml)
     audit = json.loads((RUNS / "audit.json").read_text())
     assert audit["status"] == "complete" and audit["roster"] == ROSTER
+    assert audit["execution_sources"] == execution_sources()
     assert set(audit["scalar"]) == {
         f"{model}/{op}" for model in LABELS for op in ["add", "multiply", "divide"]
     }

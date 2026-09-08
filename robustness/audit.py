@@ -1,11 +1,23 @@
 """Require complete evidence and recompute every scalar validation objective on GPU."""
 
+import hashlib
 import json
 import math
 from collections import Counter
 
 from runtime import HERE, RUNS, configure
 from verify_sources import main as verify_sources
+
+
+def execution_sources():
+    records = {}
+    for name in ["gemma/host-execution-freeze.json", "gemma/generation-execution-freeze.json"]:
+        path = HERE / name
+        frozen = json.loads(path.read_text())
+        for source, expected in frozen["files"].items():
+            assert hashlib.sha256((HERE / source).read_bytes()).hexdigest() == expected, source
+        records[name] = hashlib.sha256(path.read_bytes()).hexdigest()
+    return records
 
 
 def audit_selection(out, selected):
@@ -131,6 +143,7 @@ def main():
     verify_sources()
     roster = json.loads((HERE / "study.json").read_text())
     audit = {"status": "complete", "scalar": {}, "whole_block": {}, "roster": roster}
+    audit["execution_sources"] = execution_sources()
     directories = ["heads", "heads-active-r32-g0", "heads-active-r32-g0.1"]
     for model in roster["primary_models"]:
         for op in ["add", "multiply", "divide"]:

@@ -7,6 +7,9 @@ scalar fidelity criteria; its EML-versus-SiLU comparison is inconclusive. The
 remaining cells and stress/seed evaluations are still required. A separate
 [Gemma execution driver](gemma/HOST_EXECUTION.md) keeps the 8.75 GiB per-layer
 embedding table on CPU to resume FP32 evaluation on shared GPUs.
+The optional [generation prefill driver](gemma/GENERATION_EXECUTION.md) also
+reuses unchanged layers across repeated head evaluations, with exact native
+decoding and saved-cohort checks.
 
 The user requested **Gemma 4 E2B IT in place of SmolLM2**. See [the amendment](GEMMA_AMENDMENT.md). Completed SmolLM2 artifacts are preserved as an incomplete, superseded arm. Gemma uses a separate pinned backend; the original Qwen environment and running evaluations continue unchanged.
 
@@ -43,7 +46,7 @@ CUDA_VISIBLE_DEVICES=0 python run_evaluation.py qwen17b
 
 For this checkout layout, pass the absolute sibling run directory to `--output` (or `../../emltorch-robustness-runs/qwen17b` when starting inside `robustness/`). `run_fits.py` and `run_evaluation.py` use the location defined in `runtime.py`. Repeat for `qwen4b` on another GPU. The `smollm` option remains for reproduction of the superseded arm; use the separate Gemma entry points below for its replacement. The evaluator checks that all ten candidates per operation/method have finished, creates missing sparse/linear controls, validates restoration and all-token hooks, then evaluates every selected head and every seed. It does not choose a model on test performance.
 
-Qwen evaluation stages now cache unchanged layers before the scalar intervention when token IDs and attention masks match. See [the execution amendment](PREFIX_CACHE_AMENDMENT.md). Generation and whole-block timing retain their native execution paths. Gemma's default entry points also retain native execution; the separately validated [host execution driver](gemma/HOST_EXECUTION.md) enables its prefix reuse. Both Qwen models passed bitwise validation checks, and a full Qwen3-1.7B primary intervention replay reproduced the original file hash. The direct-script evaluator also reproduced four original validation cohorts exactly (`prefix-dispatch-validation.json`).
+Qwen evaluation stages now cache unchanged layers before the scalar intervention when token IDs and attention masks match. See [the execution amendment](PREFIX_CACHE_AMENDMENT.md). Qwen generation and whole-block timing retain their native execution paths. Gemma's default entry points also retain native execution; the separately validated [host execution driver](gemma/HOST_EXECUTION.md) enables its non-generative prefix reuse, and the [generation driver](gemma/GENERATION_EXECUTION.md) extends reuse to generation prefill. Both Qwen models passed bitwise validation checks, and a full Qwen3-1.7B primary intervention replay reproduced the original file hash. The direct-script evaluator also reproduced four original validation cohorts exactly (`prefix-dispatch-validation.json`).
 
 To reproduce the cache checks, use the original Qwen environment:
 

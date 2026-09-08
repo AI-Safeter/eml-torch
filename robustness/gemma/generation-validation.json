@@ -1,0 +1,97 @@
+{
+  "passed": true,
+  "model": {
+    "id": "google/gemma-4-E2B-it",
+    "revision": "3e22461f65e89153144f8adb70e3b8c2cc9845a7",
+    "torch": "2.9.0+cu128",
+    "transformers": "5.16.1",
+    "precision": "float32"
+  },
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "sources": {
+    "gemma/validate_generation_prefix.py": "992a2d48bdc1506b3b01482c9d56785abaaaf3fd3ee17ca79375f045ff16ef2d",
+    "gemma/generation_prefix.py": "d5e136dbb1edd9e0cbb91dae4b0c0afad0e4863aa9307cdf16eeffc39cd9dd20"
+  },
+  "native_validation_sha256": "b2af735177ebaf9ea18c194d802a0fdfedd70aafb6b90de62b217b4f10821acc",
+  "native_comparisons": 72,
+  "rows_per_comparison": 32,
+  "compared": [
+    "generated tokens",
+    "every generation score",
+    "final KV cache",
+    "patch records"
+  ],
+  "replay_records": 36864,
+  "replay_raw_bytes_identical": true,
+  "replay_sha256": "e3f02329b8a58a1c2683b08de5157a8f8d56fa42fda927a3c67e0066cacf1048",
+  "trace_audit": {
+    "methods": 12,
+    "unique_conditions_per_method": 3072
+  },
+  "replay_cache_hits": 1056,
+  "replay_cache_misses": 96,
+  "timing": [
+    {
+      "repeat": 0,
+      "cache": false,
+      "seconds": 9.081135954707861
+    },
+    {
+      "repeat": 0,
+      "cache": true,
+      "seconds": 6.190995303913951
+    },
+    {
+      "repeat": 1,
+      "cache": true,
+      "seconds": 6.261563125997782
+    },
+    {
+      "repeat": 1,
+      "cache": false,
+      "seconds": 9.29196078516543
+    },
+    {
+      "repeat": 2,
+      "cache": false,
+      "seconds": 9.202118527144194
+    },
+    {
+      "repeat": 2,
+      "cache": true,
+      "seconds": 6.0696400217711926
+    },
+    {
+      "repeat": 3,
+      "cache": true,
+      "seconds": 6.318819520995021
+    },
+    {
+      "repeat": 3,
+      "cache": false,
+      "seconds": 7.4532084334641695
+    },
+    {
+      "repeat": 4,
+      "cache": false,
+      "seconds": 6.176489485427737
+    },
+    {
+      "repeat": 4,
+      "cache": true,
+      "seconds": 6.248405531048775
+    },
+    {
+      "repeat": 5,
+      "cache": true,
+      "seconds": 6.188865872099996
+    },
+    {
+      "repeat": 5,
+      "cache": false,
+      "seconds": 9.119075201451778
+    }
+  ],
+  "seconds": 1033.1979016307741,
+  "peak_allocated_gib": 11.320135116577148
+}

@@ -1,0 +1,32 @@
+{
+  "passed": true,
+  "driver": "gemma/generation_execute.py",
+  "file_bytes_identical": true,
+  "files": {
+    "ordinary-validation-audit.json": {
+      "sha256": "1da0350bbfad6ab4ad77c0cab67b616de4aca0990724fda9a82337998aa9e69e",
+      "records": 144
+    },
+    "interventions-validation-audit.json": {
+      "sha256": "dd790e769faabbe59984a2413818d2abcb433109e45508d8bb7cde30af67b6a2",
+      "records": 864
+    },
+    "ordinary-all-tokens-validation.json": {
+      "sha256": "5a4be5c3d40738df9d4624b7ba12e98f90e1787245d020511889069c53e4838a",
+      "records": 144
+    },
+    "coordinate-validation.json": {
+      "sha256": "958bd3ddec18782d14481120eb5da4841852a755e18610d481f7d6e061ca766e",
+      "records": 1728
+    }
+  },
+  "generation_hits": 22,
+  "generation_misses": 2,
+  "generation_snapshot_released_after_interventions": true,
+  "sources": {
+    "gemma/generation_execute.py": "ac76ed73e1a48296761541182ca5819f9086a7ee1f3af61634660751f4aa252f",
+    "gemma/generation_prefix.py": "d5e136dbb1edd9e0cbb91dae4b0c0afad0e4863aa9307cdf16eeffc39cd9dd20",
+    "gemma/host_execute.py": "ac278c2836b4c58b68514ab32c59115d1ddd58e13a81294d0f4271eb67bb678a",
+    "gemma/host_embeddings.py": "90585687a08eb1aef72dfc274f2992a178845f997bdf6f24c63d88e16adad3cd"
+  }
+}

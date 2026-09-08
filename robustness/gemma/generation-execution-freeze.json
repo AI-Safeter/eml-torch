@@ -1,0 +1,14 @@
+{
+  "recorded_epoch": 1788862231.868669,
+  "scope": "Native Gemma scalar generation prefill reuse; original model precision, heads, data, and criteria unchanged",
+  "files": {
+    "gemma/generation_prefix.py": "d5e136dbb1edd9e0cbb91dae4b0c0afad0e4863aa9307cdf16eeffc39cd9dd20",
+    "gemma/validate_generation_prefix.py": "992a2d48bdc1506b3b01482c9d56785abaaaf3fd3ee17ca79375f045ff16ef2d",
+    "gemma/generation_execute.py": "ac76ed73e1a48296761541182ca5819f9086a7ee1f3af61634660751f4aa252f",
+    "gemma/GENERATION_EXECUTION.md": "4af47145872ad4ffbaf807a197790b422592ea28800f395550aafdb5f83ef675",
+    "gemma/generation-validation.json": "e13dea114933a9b27cfc5ce39d2620d8b607d71e859efcd82dcaeddb7d02a837",
+    "gemma/generation-native-validation.json.gz": "051804a81ea472fd4d28195e8f24020ae1d2c3dc76fe2f000b3923addcbb87f2",
+    "gemma/host-execution-freeze.json": "d2e44e4d248aad4d822cd9d507e9aa07e4ab0906e314031d0cfff9008fe68f1f",
+    "gemma/generation-dispatch-validation.json": "19ddcc950cdc15d471be1a3fce94b1f0cdd01b898b3df955064eda011f23030f"
+  }
+}
