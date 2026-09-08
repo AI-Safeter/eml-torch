@@ -135,6 +135,8 @@ def audit_whole():
 
 
 def main():
+    from bundle import input_fingerprint
+
     configure("qwen17b")
     from data import STYLES, save
     from evaluate_heads import digest
@@ -146,6 +148,7 @@ def main():
     setup()
     verify_sources()
     roster = json.loads((HERE / "study.json").read_text())
+    inputs = input_fingerprint(roster)
     audit = {"status": "complete", "scalar": {}, "whole_block": {}, "roster": roster}
     audit["execution_sources"] = execution_sources()
     directories = ["heads", "heads-active-r32-g0", "heads-active-r32-g0.1"]
@@ -373,6 +376,8 @@ def main():
                 assert digest(path) == item["sha256"]
         audit["independent_feature_replays"][model] = {"tensor_archives_bitwise_equal": 24}
     audit["whole_block"] = audit_whole()
+    assert input_fingerprint(roster) == inputs, "Evidence changed during the study audit"
+    audit["input_sha256"] = inputs
     save(RUNS / "audit.json", audit)
     print("COMPLETE STUDY AUDIT PASSED", flush=True)
 

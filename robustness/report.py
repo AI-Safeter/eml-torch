@@ -7,7 +7,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import torch
-from audit import execution_sources
+from bundle import report_provenance, require_audit
 from metric_audit import require as require_scalar_metrics
 from runtime import HERE, RUNS
 
@@ -140,12 +140,7 @@ def main():
     from emltorch.operator import safe_eml
 
     operator_paths(safe_eml)
-    audit = json.loads((RUNS / "audit.json").read_text())
-    assert audit["status"] == "complete" and audit["roster"] == ROSTER
-    assert audit["execution_sources"] == execution_sources()
-    assert set(audit["scalar"]) == {
-        f"{model}/{op}" for model in LABELS for op in ["add", "multiply", "divide"]
-    }
+    audit = require_audit()
     destination = HERE / "results"
     destination.mkdir(exist_ok=True)
     results, cells = {}, []
@@ -460,6 +455,10 @@ def main():
     (destination / "REPORT.md").write_text("\n".join(lines) + "\n")
     figures(cells, destination)
     explorer(results, destination)
+    assert require_audit() == audit, "Audit changed while rendering"
+    (destination / "provenance.json").write_text(
+        json.dumps(report_provenance(audit), indent=2) + "\n"
+    )
     print("AUDITED REPORT RENDERED", destination, flush=True)
 
 

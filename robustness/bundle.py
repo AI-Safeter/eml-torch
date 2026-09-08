@@ -27,7 +27,49 @@ def safe(root, relative):
     return path
 
 
-def create(destination):
+def evidence_paths(roster):
+    """Evidence retained for an offline audit, excluding live-job metadata."""
+    for model in [*roster["primary_models"], *roster["superseded_models"], "whole-block"]:
+        for source in sorted((RUNS / model).rglob("*")):
+            if not source.is_file() or source.suffix not in [".json", ".pt"]:
+                continue
+            assert source.resolve().is_relative_to(RUNS.resolve()), str(source)
+            if source.name == "job.json" or source.name.endswith("-job.json"):
+                continue
+            if source.name.startswith("partial-"):
+                continue
+            if source.name in ["inputs-train.pt", "inputs-validation.pt"]:
+                continue
+            if source.name.startswith("activations-") and source.name.endswith("-train.pt"):
+                continue
+            yield source
+
+
+def input_fingerprint(roster):
+    """Portable identities for scientific inputs and the code that audits them."""
+    paths = {
+        "runs/" + str(p.relative_to(RUNS)): p
+        for p in evidence_paths(roster)
+        if p.name not in ["checkpoint-audit.json", "metric-audit.json"]
+    }
+    for root in [HERE, HERE.parent / "emltorch"]:
+        for path in sorted(root.rglob("*")):
+            if (
+                not path.is_file()
+                or path.suffix not in [".py", ".json"]
+                or path.is_relative_to(HERE / "results")
+            ):
+                continue
+            assert path.resolve().is_relative_to(HERE.parent.resolve()), path
+            paths["source/" + str(path.relative_to(HERE.parent))] = path
+    return {name: sha(path) for name, path in sorted(paths.items())}
+
+
+def require_audit():
+    from audit import execution_sources
+    from verify_sources import main as verify_sources
+
+    verify_sources()
     audit = json.loads((RUNS / "audit.json").read_text())
     roster = json.loads((HERE / "study.json").read_text())
     assert audit["status"] == "complete" and audit["roster"] == roster
@@ -36,7 +78,30 @@ def create(destination):
         for model in roster["primary_models"]
         for op in ["add", "multiply", "divide"]
     }
-    assert (HERE / "results/REPORT.md").exists()
+    assert audit["execution_sources"] == execution_sources()
+    assert audit["input_sha256"] == input_fingerprint(roster), "Evidence changed since audit"
+    return audit
+
+
+def audit_identity(audit):
+    return hashlib.sha256(json.dumps(audit["input_sha256"], sort_keys=True).encode()).hexdigest()
+
+
+def report_provenance(audit):
+    return {
+        "audited_input_sha256": audit_identity(audit),
+        "files": {
+            name: sha(HERE / "results" / name)
+            for name in ["REPORT.md", "summary.json", "primary.png", "primary.pdf", "explorer.html"]
+        },
+    }
+
+
+def create(destination):
+    audit = require_audit()
+    roster = audit["roster"]
+    provenance = json.loads((HERE / "results/provenance.json").read_text())
+    assert provenance == report_provenance(audit), "Report differs from audited evidence"
     repo = HERE.parent
     assert not destination.is_relative_to(repo.resolve()) and not destination.is_relative_to(
         RUNS.resolve()
@@ -68,26 +133,12 @@ def create(destination):
     for name in filter(None, tracked):
         assert (repo / name).resolve().is_relative_to(repo.resolve()), name
         copy(repo / name, "eml-torch/" + name)
-    for model in [*roster["primary_models"], *roster["superseded_models"], "whole-block"]:
-        for source in sorted((RUNS / model).rglob("*")):
-            if not source.is_file() or source.suffix not in [".json", ".pt"]:
-                continue
-            assert source.resolve().is_relative_to(RUNS.resolve()), str(source)
-            if source.name == "job.json" or source.name.endswith("-job.json"):
-                continue
-            if source.name.startswith("partial-"):
-                continue
-            # Recollect these large training activations for a new training run.
-            # Validation features/activations remain for an offline checkpoint audit.
-            if source.name in ["inputs-train.pt", "inputs-validation.pt"]:
-                continue
-            if source.name.startswith("activations-") and source.name.endswith("-train.pt"):
-                continue
-            copy(
-                source,
-                "emltorch-robustness-runs/" + str(source.relative_to(RUNS)),
-                source.suffix == ".json",
-            )
+    for source in evidence_paths(roster):
+        copy(
+            source,
+            "emltorch-robustness-runs/" + str(source.relative_to(RUNS)),
+            source.suffix == ".json",
+        )
     copy(RUNS / "audit.json", "emltorch-robustness-runs/audit.json", True)
     instructions = """# EML component robustness bundle
 
@@ -135,6 +186,15 @@ causes the whole-block checkpoint audit to run again.
         "files": manifest,
     }
     (destination / "manifest.json").write_text(json.dumps(record, indent=2) + "\n")
+    assert require_audit() == audit, "Audit changed while packaging"
+    assert report_provenance(audit) == provenance, "Report changed while packaging"
+    assert not subprocess.check_output(["git", "status", "--porcelain"], cwd=repo, text=True), (
+        "Source checkout changed while packaging"
+    )
+    assert (
+        subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=repo, text=True).strip()
+        == record["source_commit"]
+    ), "Source commit changed while packaging"
     verify(destination)
     archive = destination.with_suffix(".zip")
     assert not archive.exists(), "Refusing to overwrite an existing archive"
