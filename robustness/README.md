@@ -22,6 +22,13 @@ NRMSE one, illustrating why accuracy alone misses lost input sensitivity.
 This is a primary-cohort result; seed, stress, and decoding suites
 are still pending for the complete multiplication cell.
 
+[Gemma division's primary cohort](gemma/primary-division.json) passes the fidelity
+criteria but favors SiLU over EML: response NRMSE is 0.0128 versus 0.0145, with a
+paired per-comparison 95% interval favoring SiLU. All 12 evaluated methods have the same
+observed answer accuracy, 71.91%, including the constant coefficient with
+response NRMSE one. Seed and stress results remain pending. This result limits
+any claim of an EML advantage across model families.
+
 The user requested **Gemma 4 E2B IT in place of SmolLM2**. See [the amendment](GEMMA_AMENDMENT.md). Completed SmolLM2 artifacts are preserved as an incomplete, superseded arm. Gemma uses a separate pinned backend; the original Qwen environment and running evaluations continue unchanged.
 
 Read [the scalar protocol](PROTOCOL.md), [the whole-block protocol](WHOLE_BLOCK_PROTOCOL.md), [evaluation details](EVALUATION_DETAILS.md), and [related work](RELATED_WORK.md). Append-only source snapshots record the original implementation, normalization-folding repair, and Gemma adapter/execution amendment. Run `python verify_sources.py` to verify them together.
