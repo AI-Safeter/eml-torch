@@ -33,6 +33,17 @@ def main():
         for name, expected in freeze["sources"].items():
             assert digest(HERE / name) == expected, ("Changed frozen source", name)
 
+    # The initial GPU operator checks predate the fitted candidates. Their
+    # broader historical source snapshot is retained rather than rewritten.
+    for name in ["student-validation.json", "integration-validation.json"]:
+        path = HERE / name
+        checked[f"repository/{name}"] = digest(path)
+        record = json.loads(path.read_text())
+        assert (
+            digest(HERE.parent / "emltorch/operator.py")
+            == record["sources"]["../emltorch/operator.py"]
+        )
+
     data = read(out / "data/freeze.json")
     for name, sha in data["files"].items():
         assert digest(out / "data" / name) == sha

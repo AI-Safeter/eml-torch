@@ -318,6 +318,22 @@ def main():
         )
     chosen = selection["families"]["eml"]
     equation_observational = read(mechanism / "residual/equations/observational-results.json")
+    equation_accounting = {
+        "linear_map_coefficients": 72,
+        "shared_metric_scale_coefficients": 8,
+        "probes": {},
+    }
+    for layer in [26, 32]:
+        path = mechanism / "residual/mechanism" / f"layer{layer}-prefix2.pt"
+        probe = torch.load(path, weights_only=True)
+        tensors = [v for v in probe.values() if isinstance(v, torch.Tensor)]
+        equation_accounting["probes"][str(layer)] = {
+            "stored_tensor_coefficients": sum(v.numel() for v in tensors),
+            "stored_tensor_bytes": sum(v.numel() * v.element_size() for v in tensors),
+            "checkpoint_bytes": path.stat().st_size,
+            "collapsed_quantity_projection_coefficients": 1537 * 8,
+        }
+        provenance["mechanisms/" + str(path.relative_to(mechanism))] = digest(path)
     extension = [read(p) for p in sorted((out / "optimization-extension").glob("*-b*-s*.json"))]
     assert len(extension) == 6
     compiler = [read(p) for p in sorted((out / "compiler-diagnostic").glob("*-b*-s*.json"))]
@@ -374,6 +390,7 @@ def main():
         "routing": routing,
         "equations": equations,
         "equation_observational": equation_observational,
+        "equation_accounting": equation_accounting,
         "module_timing": module_timing,
         "failure_analysis": failure_analysis,
         "optimization_extension": extension,
@@ -413,6 +430,20 @@ def main():
     lines += [
         "",
         "Division uses the preregistered 24-token integer-only output contract. The original model often emits prose and has very low accuracy under this contract, providing weak evidence about preservation of division competence. No parser or generation-budget change was made after observing that problem.",
+        "",
+        "For the selected EML checkpoints, paired net accuracy losses versus the original follow. Positive loss is worse. These descriptive 95% intervals resample operand groups or ARC questions; the expansion decision uses the separately reported, more conservative bounds.",
+        "",
+        "| Seed | Addition loss pp [95% CI] | Multiplication loss pp [95% CI] | Division loss pp [95% CI] | ARC loss pp [95% CI] |",
+        "|---|---|---|---|---|",
+    ]
+    for name in chosen["checkpoints"]:
+        cells = []
+        for key in ["add", "multiply", "divide", "arc"]:
+            v = final["methods"][name]["accuracy"][key]
+            lo, hi = v["net_loss_bootstrap"]["two_sided_95"]
+            cells.append(f"{100 * v['net_loss']:+.2f} [{100 * lo:+.2f}, {100 * hi:+.2f}]")
+        lines.append(f"| {name.rsplit('-s', 1)[1]} | " + " | ".join(cells) + " |")
+    lines += [
         "",
         "The initial grid omitted BOS from raw documents. A selection-only native check found 9.764632 versus 4.795804 nats/token without/with BOS. Those 42 fits were retained as diagnostics. The reported grid recollects language activations with BOS and retrains all 42 candidates; no replacement gate/final outputs were opened before the correction. Arithmetic chat tokenization already included BOS. See [BOS amendment](../BOS_AMENDMENT.md).",
         "",
@@ -568,13 +599,15 @@ def main():
         "",
         "Carry and digit probes are hypotheses. High decoding accuracy did not establish the operand-orthogonal carry direction as a sufficient or dominant mediator. The confirmation tests transplant native residual/KV state, use same-carry and matched random controls, and block the downstream carry readout. All rates include native errors and fixed prefixes inconsistent with the donor's true answer; that prefix-consistent subset is reported separately.",
         "",
-        "| Cohort | Eligible / original groups | Both residual+KV: exact logits / cases | Residual only: donor digit % | Earlier sliding V: donor digit % | Random KV % | Carry direction % |",
-        "|---|---:|---:|---:|---:|---:|---:|",
+        "The target digit is the specified digit of the donor's true sum. Native donor accuracy is the reference for that score; exact-logit matching instead compares the donor model output even when its arithmetic is wrong.",
+        "",
+        "| Cohort | Eligible / original groups | Both residual+KV: exact logits / cases | Native donor target digit % | Residual only % | Earlier sliding V % | Random KV % | Carry direction % |",
+        "|---|---:|---:|---:|---:|---:|---:|---:|",
     ]
     for name, r in routing.items():
         v = r["variants"]
         lines.append(
-            f"| {name} | {r['eligible_original_groups']}/{r['all_original_groups']} | {v['both']['exact_logit_cases']}/{v['both']['cases']} | {100 * v['hidden_only']['target_digit_accuracy']:.2f} | {100 * v['sliding_other_values']['target_digit_accuracy']:.2f} | {100 * v['matched_random_sliding_kv']['target_digit_accuracy']:.2f} | {100 * v['carry_direction']['target_digit_accuracy']:.2f} |"
+            f"| {name} | {r['eligible_original_groups']}/{r['all_original_groups']} | {v['both']['exact_logit_cases']}/{v['both']['cases']} | {100 * v['donor']['target_digit_accuracy']:.2f} | {100 * v['hidden_only']['target_digit_accuracy']:.2f} | {100 * v['sliding_other_values']['target_digit_accuracy']:.2f} | {100 * v['matched_random_sliding_kv']['target_digit_accuracy']:.2f} | {100 * v['carry_direction']['target_digit_accuracy']:.2f} |"
         )
     lines += [
         "",
@@ -626,7 +659,7 @@ def main():
         )
     lines += [
         "",
-        "The equation input readout adds **12,296 coefficients**; measuring downstream quantities adds another **12,296**, reported separately from the equation. Inputs include estimates of carry and result digits already present in the upstream state. This is a propagation fit, not derivation of arithmetic from operand labels.",
+        "Each algebraically collapsed quantity readout has **12,296 coefficients**, for input and downstream measurement separately. The research harness retains the original **95,294-coefficient probe checkpoint at each layer** and constructs those projections from it; their tensor and file bytes are reported in the JSON. The linear equation has 72 coefficients plus a shared eight-value metric scale retained for evaluation. Inputs include estimates of carry and result digits already present in the upstream state. This is a propagation fit, not derivation of arithmetic from operand labels.",
         "",
         "This is evidence about conditional causal routing and input sufficiency. It is not a recovered addition algorithm, an explanation of multiplication/division, or proof that EML cannot succeed with a different state representation. The small blocking effects can include a partial causal contribution; they do not validate the proposed carry algorithm or justify a mechanism-based replacement.",
         "",
@@ -784,7 +817,11 @@ def main():
         destination / "provenance.json",
         {
             "scientific_inputs": provenance,
-            "source_sha256": {p.name: digest(p) for p in sorted(HERE.glob("*.py"))},
+            "source_sha256": {p.name: digest(p) for p in sorted(HERE.glob("*.py"))}
+            | {"../emltorch/operator.py": digest(HERE.parent / "emltorch/operator.py")},
+            "supporting_files": {
+                p.name: digest(p) for p in sorted([*HERE.glob("*.json"), *HERE.glob("*.md")])
+            },
             "files": {
                 name: digest(destination / name)
                 for name in [
