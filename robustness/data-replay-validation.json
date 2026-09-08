@@ -1,0 +1,41 @@
+{
+  "all_nine_files_byte_identical": true,
+  "files": [
+    {
+      "path": "data/add/extra-problems.json",
+      "sha256": "ff693c87060defc5757009b44ddb0376da6e0da7a39553757b5b7f7f5dfa36b6"
+    },
+    {
+      "path": "data/add/problems.json",
+      "sha256": "cf18ec85aef4aefc7c30ce23882716b88d712ea51754af276c4aa82ea32305fe"
+    },
+    {
+      "path": "data/add/protocol.json",
+      "sha256": "57f47685302d3039d0299a27b28c578d1fcb8ea9f4ba27e57667c4e8bb444179"
+    },
+    {
+      "path": "data/divide/extra-problems.json",
+      "sha256": "8e3f95a4de0bfbf028ef2ae565a796519c0350b31f3642b63f0f36dd98f0fbaa"
+    },
+    {
+      "path": "data/divide/problems.json",
+      "sha256": "1e77011e7a2005aac85d8945c377e9e51afb3316c8e5d04288529be43e71849c"
+    },
+    {
+      "path": "data/divide/protocol.json",
+      "sha256": "f1fad996b3cecf54e847fa33dfdcd75bb1525859c1f5d50c33b4621f1e3fcf63"
+    },
+    {
+      "path": "data/multiply/extra-problems.json",
+      "sha256": "dc7bbe97629f9c71c68a540c715ad6ebbb9318ceb9479f30d879cc6b46920d09"
+    },
+    {
+      "path": "data/multiply/problems.json",
+      "sha256": "98c0a6fb44c8268541e1eecb5d6f186b22e35828b76a265a3e4693057119a33d"
+    },
+    {
+      "path": "data/multiply/protocol.json",
+      "sha256": "1a3b3dffc9e3de996fa7cb14a2be020425a21e33e2bed0c3991656be2a5cff14"
+    }
+  ]
+}
