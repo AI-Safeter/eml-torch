@@ -156,7 +156,7 @@ def language(out, tok):
             ids = tok.encode(row["text"], add_special_tokens=False)
             if len(ids) < spec["tokens_per_document"]:
                 continue
-            ids = ids[: spec["tokens_per_document"]]
+            ids = [tok.bos_token_id] + ids[: spec["tokens_per_document"]]
             seen.add(text_hash)
             data[split].append(ids)
             manifests[split].append(

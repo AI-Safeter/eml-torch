@@ -27,8 +27,8 @@ def main():
     assert len(eligible) == args.groups
     styles = ["reversed", "code"] if args.new_formats else ["symbolic", "prose"]
     rows = [{**row, "style": style} for row in eligible for style in styles]
-    directory = out / "state-sufficiency"
-    directory.mkdir(exist_ok=True)
+    directory = out / "state-sufficiency" / "v2"
+    directory.mkdir(parents=True, exist_ok=True)
     name = f"{args.split}-{args.groups}-{'new' if args.new_formats else 'known'}"
     freeze = {
         "source_sha256": digest(HERE / "state_sufficiency.py"),
@@ -47,6 +47,11 @@ def main():
             "sliding_kv",
             "global_kv",
             "same_carry_kv",
+            "sliding_keys_only",
+            "sliding_values_only",
+            "sliding_last_value",
+            "sliding_other_values",
+            "matched_random_sliding_kv",
         ],
         "prediction": "Exactly matching the last-token residual and both reused KV tensors should restore donor logits; matching residual alone may not.",
         "pair_source_sha256": digest(out / "residual/mechanism/donor-pairs.json"),
@@ -142,6 +147,39 @@ def main():
                 inputs["recipient"], kv={"full_attention": donor["kv"]["full_attention"]}
             )
             variants["same_carry_kv"] = run(inputs["recipient"], kv=native["same_carry"][1]["kv"])
+            rk, rv = native["recipient"][1]["kv"]["sliding_attention"]
+            dk, dv = donor["kv"]["sliding_attention"]
+            variants["sliding_keys_only"] = run(
+                inputs["recipient"], kv={"sliding_attention": (dk, rv)}
+            )
+            variants["sliding_values_only"] = run(
+                inputs["recipient"], kv={"sliding_attention": (rk, dv)}
+            )
+            last = rv.clone()
+            last[:, :, -1] = dv[:, :, -1]
+            other = dv.clone()
+            other[:, :, -1] = rv[:, :, -1]
+            variants["sliding_last_value"] = run(
+                inputs["recipient"], kv={"sliding_attention": (rk, last)}
+            )
+            variants["sliding_other_values"] = run(
+                inputs["recipient"], kv={"sliding_attention": (rk, other)}
+            )
+            generator = torch.Generator(device="cuda").manual_seed(7391 + start)
+            noise = [torch.randn(t.shape, device="cuda", generator=generator) for t in [rk, rv]]
+            mask = inputs["recipient"].attention_mask[:, None, :, None]
+            noise = [n * mask for n in noise]
+            magnitude = sum(
+                (a.float() - b.float()).square().flatten(1).sum(-1) for a, b in [(dk, rk), (dv, rv)]
+            ).sqrt()
+            noise_norm = sum(n.square().flatten(1).sum(-1) for n in noise).sqrt()
+            random_kv = tuple(
+                (t.float() + n * (magnitude / noise_norm)[:, None, None, None]).to(t.dtype)
+                for t, n in zip([rk, rv], noise)
+            )
+            variants["matched_random_sliding_kv"] = run(
+                inputs["recipient"], kv={"sliding_attention": random_kv}
+            )
             assert torch.equal(variants["hidden_only"][1]["hidden"], donor["hidden"])
             assert torch.equal(variants["both"][1]["hidden"], donor["hidden"])
             # Record failures of the prospective sufficiency prediction; do not manufacture equality.
@@ -149,6 +187,7 @@ def main():
             idx = torch.arange(len(batch), device="cuda")
             for kind, (logits, state) in variants.items():
                 same_logits = (logits == donor_logits).all(-1)
+                target_log_probability = logits.log_softmax(-1)[idx, targets]
                 hidden_error = (state["target"].float() - donor["target"].float()).square().mean(-1)
                 for i, row in enumerate(batch):
                     records.append(
@@ -163,9 +202,7 @@ def main():
                             "all_logits_bitwise_equal_to_donor": bool(same_logits[i]),
                             "max_logit_error": float((logits[i] - donor_logits[i]).abs().max()),
                             "downstream_state_mse_from_donor": float(hidden_error[i]),
-                            "target_digit_log_probability": float(
-                                logits.log_softmax(-1)[idx, targets][i]
-                            ),
+                            "target_digit_log_probability": float(target_log_probability[i]),
                             "source_hidden_bitwise_equal_to_donor": bool(
                                 torch.equal(state["hidden"][i], donor["hidden"][i])
                             ),

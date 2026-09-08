@@ -45,6 +45,14 @@ def roster(out):
                     checkpoints[name] = record["checkpoint_sha256"]
     for name, sha in checkpoints.items():
         assert digest(out / "training" / f"{name}.pt") == sha
+    # Always retain the genuinely rank-deficient trained linear control, even
+    # when validation selects the full-rank member of the larger budget.
+    for seed in SPEC["replacement"]["seeds"]:
+        name = f"linear-b3000000-d0-s{seed}"
+        record = json.loads((out / "training" / f"{name}.json").read_text())
+        if record["status"] == "complete":
+            checkpoints[name] = record["checkpoint_sha256"]
+            assert digest(out / "training" / f"{name}.pt") == checkpoints[name]
     return {"original": None, **dict(sorted(checkpoints.items()))}
 
 
