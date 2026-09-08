@@ -1,0 +1,17 @@
+{
+  "epoch": 1788829997.041643,
+  "test_model_outputs_unseen": true,
+  "initial_frozen_files_unchanged": true,
+  "note": "Implementation additions for the already fixed Stage B protocol and statistical criteria. Whole-block collection used training/validation only and completed before this extension source snapshot; no student fitting or test evaluation has started. Scalar fitting uses unchanged initial frozen code.",
+  "files": {
+    "prepare_language.py": "00b2f88872d4cd65def0f6b46e6d1477eeeb91a12ba9228b7985072ff1ef7512",
+    "robust_statistics.py": "87500686a176aa68285ac1f190da18bff38322e8bcb97bb2bf1fec206f7e8300",
+    "run_fits.py": "7e994bf6d02d39cae619006a41678ef426e2d7971d6c912b606495b91647cce3",
+    "runtime.py": "54d2f5726caa6dc227b1634e9c1740b8d78aa8da7a8f522a663d5b6210cab2c1",
+    "validate_extensions.py": "244b27493dc8f3948cc3d7ca6ceb5b731ae5f47c5f54b82fe5bc7c2bdc66ef13",
+    "whole_collect.py": "3d8d6abe506af3c257373318af2ea07084aae1f40cc09424a299a9f30d76deab",
+    "whole_fit.py": "6639508b8fe8f80b4cd3d22e06cab78cbd9bf4fa2c420602cc3bc47fc5e05b46",
+    "whole_student.py": "7c26e8baef8b16ecffc371482013417cde3881931c309f007581ad235b65a556",
+    "language-freeze.json": "83aee126e3dab0cac696335b4985fed7c524a2f9672d969bc6209bf272c6cea0"
+  }
+}
