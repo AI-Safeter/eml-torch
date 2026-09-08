@@ -4,7 +4,8 @@ Status: experiments in progress. Training/validation results are not held-out fi
 
 The [audited Gemma addition cohort](gemma/PRIMARY_ADDITION.md) passes the primary
 scalar fidelity criteria; its EML-versus-SiLU comparison is inconclusive. The
-remaining cells and stress/seed evaluations are still required. A separate
+Gemma addition seed and stress evaluations are also complete; the remaining
+model/operation cells and final study audit are still required. A separate
 [Gemma execution driver](gemma/HOST_EXECUTION.md) keeps the 8.75 GiB per-layer
 embedding table on CPU to resume FP32 evaluation on shared GPUs.
 The optional [generation prefill driver](gemma/GENERATION_EXECUTION.md) also
