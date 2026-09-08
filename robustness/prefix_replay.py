@@ -28,6 +28,14 @@ def main():
     out = RUNS / args.model / args.operation
     source = out / "interventions-test-known-formats.json"
     assert source.exists(), "A complete uncached reference cohort is required"
+    references = json.loads((HERE / "prefix-reference-freeze.json").read_text())[
+        "uncached_references"
+    ]
+    assert hashlib.sha256(source.read_bytes()).hexdigest() == references.get(
+        f"{args.model}/{args.operation}"
+    ), (
+        "Replay requires a recorded pre-cache reference; a new cached run is not an uncached baseline"
+    )
     target = args.output.resolve()
     assert not target.exists() and not target.is_relative_to(RUNS)
     assert not target.is_relative_to(HERE.parent)

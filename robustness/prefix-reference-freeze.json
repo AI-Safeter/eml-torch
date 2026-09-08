@@ -1,0 +1,16 @@
+{
+  "epoch": 1788844142.6597703,
+  "reason": "Restrict replay to the hashes of the two primary intervention cohorts recorded before cache adoption. This prevents labeling a future cached-versus-cached replay as an uncached reference comparison; evaluator and cache computations are unchanged.",
+  "files": {
+    "prefix_replay.py": "2aca14e45be699b0b8ba39add75fd1e4bf0732cfedf42e3d81c3f280c335b599",
+    "verify_sources.py": "0ec29ed84586b389f1f9b81cd44ab7de0fa7c56a789b24c17452538a138d2938"
+  },
+  "supersedes": {
+    "prefix_replay.py": "49acd45a3deea3cf19ccbdf42b6d05c7566c743b6e1c9ad71fe0e1321d2cb35a",
+    "verify_sources.py": "8084168bbc71b5c8ae53c706e96a9850c40dcf8fa4d298043a600c360611ba78"
+  },
+  "uncached_references": {
+    "qwen17b/add": "b743c5ea392a6a557c4c090b357d302c3097059d2fc9f1455e83580a2dffb366",
+    "qwen4b/add": "548809686693cd903d5e80cc7421de146d96452d66ab4f064ad3ae1521c5bf60"
+  }
+}

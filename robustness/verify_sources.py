@@ -17,6 +17,7 @@ def main():
         "gemma/source-freeze.json",
         "gemma/execution-freeze.json",
         "prefix-freeze.json",
+        "prefix-reference-freeze.json",
     ]:
         record = json.loads((HERE / name).read_text())
         for filename, digest in record["files"].items():
