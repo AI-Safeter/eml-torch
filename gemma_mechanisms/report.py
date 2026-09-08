@@ -295,6 +295,7 @@ def main():
             "batch": result["batch"],
             "prefill_tokens": result["prefill_tokens"],
             "device_uuid": result["device_uuid"],
+            "latency_reduction_definition": "Mean over paired runs of 1 - replacement_seconds / original_seconds; negative values indicate higher replacement latency.",
             "paired_speedup": bootstrap(speedups),
             "five_pair_block_speedup": bootstrap(
                 [mean(speedups[i : i + 5]) for i in range(0, 50, 5)]
@@ -478,6 +479,9 @@ def main():
         "superseded_bos_grid_fit_seconds": sum(r["training_seconds"] for r in superseded),
     }
     save(destination / "summary.json", summary)
+    eml_accuracy = [final["methods"][name]["accuracy"] for name in chosen["checkpoints"]]
+    multiplication = [100 * r["multiply"]["student_accuracy"] for r in eml_accuracy]
+    arc = [100 * r["arc"]["student_accuracy"] for r in eml_accuracy]
     lines = [
         "# Gemma complete-MLP replacement and causal arithmetic tests",
         "",
@@ -486,6 +490,8 @@ def main():
         "Exact checkpoint: `google/gemma-4-E2B-it`, revision `3e22461f65e89153144f8adb70e3b8c2cc9845a7`. Native model: **5,104,297,504 unique parameters**. Target block: **56,623,104**. E2B refers to effective size, not the total stored parameter count.",
         "",
         f"The frozen one-block expansion gate **{'passed' if gate['eml_expansion_allowed'] else 'failed'}**. The ≥20% total-parameter, ≥10% latency, and ≤1pp accuracy-loss deployment targets are **not established**. No multi-block expansion followed a failed gate.",
+        "",
+        f"The selected EML replacement removes {100 * next(iter(failure_analysis['selected_eml_parameter_reduction'].values())):.3f}% of total model parameters. Across three seeds, final multiplication accuracy is {min(multiplication):.2f}–{max(multiplication):.2f}% versus {100 * eml_accuracy[0]['multiply']['teacher_accuracy']:.2f}% originally; ARC is {min(arc):.2f}–{max(arc):.2f}% versus {100 * eml_accuracy[0]['arc']['teacher_accuracy']:.2f}%. The strongest supported result is a working complete-block replacement path with specific, experimentally supported failure diagnoses: an affine-decoder capacity constraint and missing KV inputs in the cross-layer equations. No recovered arithmetic algorithm was validated.",
         "",
         "## Held-out quality",
         "",
@@ -709,7 +715,7 @@ def main():
         )
     lines += [
         "",
-        "The JSON reports each paired original baseline, separate GPU event timings, prefill/decode throughput, peak allocated/reserved memory, device UUID, and counted student state. End-to-end speedup is a measured paired ratio; parameter reduction alone is not evidence of speedup.",
+        "The JSON reports each paired original baseline, separate GPU event timings, prefill/decode throughput, peak allocated/reserved memory, device UUID, and counted student state. Here speedup means fractional latency reduction: the mean over pairs of 1 − replacement time / original time. A negative value means higher replacement latency. Parameter reduction alone is not evidence of speedup.",
         "",
         "Alternating comparisons retain an extra **113,246,208-byte CPU reference MLP** outside the registered replacement model. That apparatus is explicitly separate from deployed parameter counts and is absent from the export. Its transfers are outside timing; GPU execution and peak working memory are measured on the installed replacement path.",
         "",
@@ -939,7 +945,7 @@ def main():
     axes[1].axvline(10, color="#245b35", linestyle="--", label="10% target")
     axes[1].set(
         yticks=[],
-        xlabel="Paired end-to-end speedup (%)",
+        xlabel="Paired end-to-end latency reduction (%)",
         title="Batch 8 / prefill 512 / decode 32",
         ylim=(-0.5, len(primary) - 0.5),
     )

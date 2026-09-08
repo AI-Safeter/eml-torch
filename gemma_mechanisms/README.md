@@ -2,7 +2,9 @@
 
 This study installs a compact EML network in place of an entire native Gemma MLP. The original block is removed from the registered model and its forward is poisoned during evaluation and timing. Teacher activations supervise offline training; they are not inputs to replacement inference.
 
-Read [the protocol](PROTOCOL.md), [BOS correction](BOS_AMENDMENT.md), [evaluation criteria](EVALUATION_PLAN.md), and [causal confirmation plan](CAUSAL_CONFIRMATION.md). The completed comparison is written to `results/REPORT.md`. A working replacement path does not establish preserved quality or a recovered arithmetic algorithm. [COMMANDS.md](COMMANDS.md) provides reproduction and export commands.
+Read [the results report](results/REPORT.md), [protocol](PROTOCOL.md), [BOS correction](BOS_AMENDMENT.md), [evaluation criteria](EVALUATION_PLAN.md), and [causal confirmation plan](CAUSAL_CONFIRMATION.md). [COMMANDS.md](COMMANDS.md) provides reproduction and export commands.
+
+The selected EML block removes 0.992% of total model parameters, but fails the frozen quality gate in all three seeds. Final multiplication accuracy falls from 41.82% to 31.47–31.96%, and ARC falls from 67.99% to 64.62–65.22%. Multi-block expansion stopped. The report includes paired uncertainty, matched-depth SiLU and linear controls, full-model timing, and two failure diagnoses: the affine decoder's rank constraint and missing KV inputs in cross-layer arithmetic equations. No recovered arithmetic algorithm was validated.
 
 The exact checkpoint is **google/gemma-4-E2B-it**, revision `3e22461f65e89153144f8adb70e3b8c2cc9845a7`. It has **5,104,297,504 unique parameters**, including embeddings and multimodal components. E2B is an effective-size designation. The layer-26 MLP has 56,623,104 parameters. A single compact replacement removes about 1% of total parameters, so it cannot meet the 20% deployment target on its own.
 

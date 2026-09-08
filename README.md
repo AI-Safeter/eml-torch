@@ -51,4 +51,7 @@ The [complete Gemma MLP replacement study](gemma_mechanisms/README.md)
 removes the original block from inference and compares compositional EML,
 matched-depth SiLU, and linear replacements. It also tests arithmetic
 feature hypotheses with residual and KV interventions. See its frozen
-acceptance criteria and held-out results before using an experimental export.
+acceptance criteria and [held-out results](gemma_mechanisms/results/REPORT.md).
+The selected EML replacement failed the quality gate; expansion to several
+blocks stopped. The report explains the measured capacity and input-sufficiency
+limits without claiming a consistent EML advantage or a recovered arithmetic algorithm.
