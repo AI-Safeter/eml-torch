@@ -374,6 +374,8 @@ def main():
         "",
         "This is evidence about conditional causal routing and input sufficiency. It is not a recovered addition algorithm, an explanation of multiplication/division, or proof that EML cannot succeed with a different state representation. Failed carry mediation prevents using that interpretation to justify a mechanism-based replacement.",
         "",
+        "The omitted-KV limitation applies to the cross-layer equation. The native MLP itself is a deterministic function of its complete input, so missing KV does not explain the compact MLP's reconstruction error. See [the bound derivations and their scope](../THEORY_LIMITS.md).",
+        "",
         "## Reproduction and evidence",
         "",
         "See [commands](../README.md), the [prospective protocol](../PROTOCOL.md), [evaluation details](../EVALUATION_PLAN.md), and [causal confirmation plan](../CAUSAL_CONFIRMATION.md). `summary.json` contains all seed results and diagnostics. `provenance.json` binds source and scientific inputs by SHA-256. Large activation tensors, raw evaluation traces, and checkpoints are retained in the external run roots; the compact export needs the pinned base checkpoint and replacement weights, with no teacher activations at inference.",
