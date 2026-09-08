@@ -100,6 +100,7 @@ def main():
     parser.add_argument(
         "--candidate", help="Run one named grid member; scientific policy is unchanged"
     )
+    parser.add_argument("--prepare-only", action="store_true")
     args = parser.parse_args()
     setup(SPEC["data_seed"])
     out = root(args.output)
@@ -140,23 +141,28 @@ def main():
     preparation_started = time.perf_counter()
     statistics, cscale = moments(raw["train"])
     init_path = directory / "initialization.pt"
-    if init_path.exists():
+    initialize_now = not init_path.exists()
+    if not initialize_now:
         init = torch.load(init_path, weights_only=True)
     else:
         init = initialization(raw["train"], statistics)
         torch.save(init, init_path)
     torch.cuda.synchronize()
-    save(
-        directory / "initialization.json",
-        {
-            "seconds": time.perf_counter() - preparation_started,
-            "fixed_training_output_subspace_residual": {
-                str(width): float(init["eigenvalues"][width:].sum() / init["eigenvalues"].sum())
-                for width in [256, 512, 976, 1536]
+    if initialize_now:
+        save(
+            directory / "initialization.json",
+            {
+                "seconds": time.perf_counter() - preparation_started,
+                "fixed_training_output_subspace_residual": {
+                    str(width): float(init["eigenvalues"][width:].sum() / init["eigenvalues"].sum())
+                    for width in [256, 512, 976, 1536]
+                },
+                "note": "Fixed training eigenspaces only; learned student decoder may move. No teacher at inference.",
             },
-            "note": "Fixed training eigenspaces only; learned student decoder may move. No teacher at inference.",
-        },
-    )
+        )
+    if args.prepare_only:
+        print("TRAINING PREPARATION COMPLETE", flush=True)
+        return
     spec = SPEC["replacement"]
     grid = [
         (seed, budget, depth, kind)
