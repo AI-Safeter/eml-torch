@@ -11,7 +11,11 @@ from verify_sources import main as verify_sources
 
 def execution_sources():
     records = {}
-    for name in ["gemma/host-execution-freeze.json", "gemma/generation-execution-freeze.json"]:
+    for name in [
+        "gemma/host-execution-freeze.json",
+        "gemma/generation-execution-freeze.json",
+        "gemma/auxiliary-execution-freeze.json",
+    ]:
         path = HERE / name
         frozen = json.loads(path.read_text())
         for source, expected in frozen["files"].items():
