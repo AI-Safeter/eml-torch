@@ -25,7 +25,7 @@ its inner width adjusted to match the coefficient budget. A linear control
 has no nonlinear stages. This is a learned compositional network; its weights
 are not a recovered symbolic arithmetic algorithm.
 
-`runtime.setup` enforces torch 2.9.0+cu128 and transformers 5.16.1; [environment.json](environment.json) records supporting packages. Model weights must already be available at the pinned Hugging Face snapshot. Dataset IDs, revisions, seeds, splits, training budgets and acceptance criteria are fixed in `protocol.json`. `prepare.py` now includes native BOS for each document.
+The runtime enforces torch 2.9.0+cu128 and transformers 5.16.1; [environment.json](environment.json) records supporting packages. Model weights must already be available at the pinned Hugging Face snapshot. Dataset IDs, revisions, seeds, splits, training budgets and acceptance criteria are fixed in `protocol.json`. `prepare.py` now includes native BOS for each document.
 
 The local diagnostic root is `/home/ubuntu/samuel/emltorch-gemma-replacement-runs`; the corrected replacement root appends `-bos`. Use a fresh directory for a new reproduction. The original 42 fits are retained as diagnostics after the BOS correction; they are not the accepted replacement experiment. `prepare_corrected.py` reproduces that amendment from original 256-token files. Do not apply it to already corrected 257-token inputs.
 

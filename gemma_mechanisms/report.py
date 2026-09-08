@@ -114,7 +114,8 @@ def main():
         provenance[key] = digest(path)
         return json.loads(path.read_text())
 
-    assert read(out / "release-audit.json")["status"] == "complete"
+    release_audit = read(out / "release-audit.json")
+    assert release_audit["status"] == "complete"
 
     selection = read(out / "training/selection.json")
     gate, final = [read(out / "evaluation" / f"{s}-summary.json") for s in ["gate", "final"]]
@@ -473,6 +474,7 @@ def main():
         "optimization_extension": extension,
         "compiler_diagnostic": compiler,
         "decoder_error_decomposition": decoder,
+        "decoder_rank_checks": release_audit["decoder_rank_checks"],
         "superseded_bos_grid_fit_seconds": sum(r["training_seconds"] for r in superseded),
     }
     save(destination / "summary.json", summary)
@@ -585,6 +587,22 @@ def main():
         "",
         "The linear controls are trained low-rank affine surrogates of the whole MLP, including a full-rank member at the larger training budget. They do not retain the native gated-GELU computation. This study therefore makes no superiority claim over methods that factorize the native MLP's individual weight matrices.",
         "",
+        "The deployment ledger below covers every topology in held-out evaluation; counts are identical across its three seeds. Training coefficients include normalization statistics. Deployed module bytes include all parameters and buffers. The full model retains 2,289 buffer values (6,178 bytes), including native components outside the replaced MLP. The surrounding feed-forward norms contribute 3,072 parameters and remain included in the full-model count.",
+        "",
+        "| Module | Training coefficients | Deployed parameters | Module buffers | BF16 module bytes | Full model parameters | Total parameter reduction % |",
+        "|---|---:|---:|---:|---:|---:|---:|",
+        "| Original MLP | 56,623,104 | 56,623,104 | 0 | 113,246,208 | 5,104,297,504 | 0 |",
+    ]
+    for r in deployed["records"]:
+        if r["name"] not in methods or not r["name"].endswith("-s1103"):
+            continue
+        d = r["deployed"]
+        total = 5104297504 - 56623104 + d["parameters"]
+        lines.append(
+            f"| {r['name'].rsplit('-s', 1)[0]} | {r['trained']['coefficients']:,} | {d['parameters']:,} | {d['buffers']:,} | {d['parameter_bytes'] + d['buffer_bytes']:,} | {total:,} | {100 * (1 - total / 5104297504):.3f} |"
+        )
+    lines += [
+        "",
         "| Family | Budget | Depth | Output rank | Selection objective, mean of 3 seeds | Train raw MSE | Rank floor | Fit minutes, 3 seeds |",
         "|---|---:|---:|---:|---:|---:|---:|---:|",
     ]
@@ -644,7 +662,7 @@ def main():
     if decoder:
         lines += [
             "",
-            "An exact error decomposition sharpens the capacity diagnosis. In normalized target coordinates, QR factorization of the learned decoder separates the target component outside its affine range from prediction error inside that range. The terms sum to the observed raw MSE; closure and agreement with the earlier fit audit are checked on CUDA. Each row averages three seeds at the selected depth and budget.",
+            "An exact error decomposition sharpens the capacity diagnosis. In normalized target coordinates, QR factorization of the learned decoder separates the target component outside its affine range from prediction error inside that range. The terms sum to the observed raw MSE; closure and agreement with the earlier fit audit are checked on CUDA. The release audit independently verifies full column rank and records singular values and conditioning. Each row averages three seeds at the selected depth and budget.",
             "",
             "| Family / updates | Train total | Train outside decoder | Train within decoder | Selection total | Selection outside | Selection within |",
             "|---|---:|---:|---:|---:|---:|---:|",
@@ -679,15 +697,15 @@ def main():
         "",
         "Fully GPU-resident BF16, native eager SDPA, identical optimization of baselines. Each workload uses 10 warm-ups and 50 alternating paired runs with 32 forced decode steps. Model loading, comparison transfers, tokenization, and warm-up are excluded; prefill, decoding, and phase synchronization are included. Other users share these H100s. Intervals describe variability within these runs, not exclusive-serving or between-run uncertainty.",
         "",
-        "| Method | Batch/prefill | Prefill ms | Decode ms | End-to-end ms | Output tokens/s | Peak allocated GiB | E2E speedup %, block-bootstrap 95% CI |",
-        "|---|---|---:|---:|---:|---:|---:|---|",
+        "| Method | Batch/prefill | Prefill ms | Decode ms | End-to-end ms | Paired original E2E ms | Output tokens/s | Peak allocated GiB | E2E speedup %, block-bootstrap 95% CI |",
+        "|---|---|---:|---:|---:|---:|---:|---:|---|",
     ]
     for r in timing:
         v = r["student"]
         b = r["five_pair_block_speedup"]
         lo, hi = b["two_sided_95"]
         lines.append(
-            f"| {r['method']} | {r['batch']}/{r['prefill_tokens']} | {1000 * v['prefill_seconds']:.1f} | {1000 * v['decode_seconds']:.1f} | {1000 * v['end_to_end_seconds']:.1f} | {v['output_tokens_per_second']:.1f} | {v['peak_allocated_bytes'] / 2**30:.2f} | {100 * b['mean']:+.2f} [{100 * lo:+.2f}, {100 * hi:+.2f}] |"
+            f"| {r['method']} | {r['batch']}/{r['prefill_tokens']} | {1000 * v['prefill_seconds']:.1f} | {1000 * v['decode_seconds']:.1f} | {1000 * v['end_to_end_seconds']:.1f} | {1000 * r['original']['end_to_end_seconds']:.1f} | {v['output_tokens_per_second']:.1f} | {v['peak_allocated_bytes'] / 2**30:.2f} | {100 * b['mean']:+.2f} [{100 * lo:+.2f}, {100 * hi:+.2f}] |"
         )
     lines += [
         "",
@@ -808,7 +826,7 @@ def main():
         "",
         "## Reproduction and evidence",
         "",
-        "See [commands](../README.md), the [prospective protocol](../PROTOCOL.md), [evaluation details](../EVALUATION_PLAN.md), and [causal confirmation plan](../CAUSAL_CONFIRMATION.md). `summary.json` contains all seed results and diagnostics. `provenance.json` binds source and scientific inputs by SHA-256. Large activation tensors, raw evaluation traces, and checkpoints are retained in the external run roots; the compact export needs the pinned base checkpoint and replacement weights, with no teacher activations at inference.",
+        "See [commands](../COMMANDS.md), the [prospective protocol](../PROTOCOL.md), [evaluation details](../EVALUATION_PLAN.md), and [causal confirmation plan](../CAUSAL_CONFIRMATION.md). `summary.json` contains all seed results and diagnostics. `provenance.json` binds source and scientific inputs by SHA-256. Large activation tensors, raw evaluation traces, and checkpoints are retained in the external run roots; the compact export needs the pinned base checkpoint and replacement weights, with no teacher activations at inference.",
     ]
     (destination / "REPORT.md").write_text("\n".join(lines) + "\n")
     fig, axes = plt.subplots(1, 2, figsize=(12, 4.5), constrained_layout=True)

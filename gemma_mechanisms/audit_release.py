@@ -18,7 +18,7 @@ def main():
     args = parser.parse_args()
     setup(919)
     out, mechanism = root(args.output), root(args.mechanisms_output)
-    checked = {}
+    checked, decoder_ranks = {}, {}
 
     def read(path):
         key = (
@@ -139,6 +139,23 @@ def main():
             assert checkpoint not in seen
             seen.add(checkpoint)
             assert digest(out / checkpoint) == frozen["checkpoints"][checkpoint]
+            weight = (
+                torch.load(out / checkpoint, weights_only=True)["state"]["decoder.weight"]
+                .cuda()
+                .double()
+            )
+            singular = torch.linalg.svdvals(weight)
+            rank = int((singular > singular.max() * 1e-10).sum())
+            assert rank == weight.shape[1] == record["rank"], (
+                "Decoder decomposition needs full column rank"
+            )
+            decoder_ranks[checkpoint] = {
+                "rank": rank,
+                "smallest_singular_value": float(singular.min()),
+                "largest_singular_value": float(singular.max()),
+                "condition_number": float(singular.max() / singular.min()),
+            }
+            del weight, singular
             for split in record["results"].values():
                 for values in split.values():
                     numeric = torch.tensor(
@@ -285,6 +302,7 @@ def main():
         {
             "status": "complete",
             "scientific_inputs": checked,
+            "decoder_rank_checks": decoder_ranks,
             "source_sha256": digest(HERE / "audit_release.py"),
             "scope": "GPU scoring/accounting validation and complete identity/source/checkpoint binding. Fit objectives were independently replayed on CUDA by audit_fits.",
         },
