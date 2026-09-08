@@ -38,3 +38,8 @@ Goodfire's feature interventions and parameter decomposition, and arithmetic
 heuristic research. Those connections do not imply a validated mechanism here.
 
 Source, protocols, compact results and hashes are committed. Raw traces, checkpoints and activation tensors remain in the external run roots. A compact export stores only the folded BF16 student and verifies a bitwise CUDA reload. It still requires the pinned base model, but no teacher activations at inference. Consult held-out quality before using an experimental export in an application.
+
+Parameter reduction refers to the installed model after the original MLP is
+removed. The small export is a replacement-module artifact; the supplied loader
+still reads the full pinned base checkpoint. It is not a standalone compressed
+full-model download.
