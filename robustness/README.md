@@ -4,7 +4,7 @@ Status: experiments in progress. Training/validation results are not held-out fi
 
 The user requested **Gemma 4 E2B IT in place of SmolLM2**. See [the amendment](GEMMA_AMENDMENT.md). Completed SmolLM2 artifacts are preserved as an incomplete, superseded arm. Gemma uses a separate pinned backend; the original Qwen environment and running evaluations continue unchanged.
 
-Read [the scalar protocol](PROTOCOL.md), [the whole-block protocol](WHOLE_BLOCK_PROTOCOL.md), [evaluation details](EVALUATION_DETAILS.md), and [related work](RELATED_WORK.md). Four source snapshots record the implementation and the documented normalization-folding repair. Run `python verify_sources.py` to verify them together.
+Read [the scalar protocol](PROTOCOL.md), [the whole-block protocol](WHOLE_BLOCK_PROTOCOL.md), [evaluation details](EVALUATION_DETAILS.md), and [related work](RELATED_WORK.md). Append-only source snapshots record the original implementation, normalization-folding repair, and Gemma adapter/execution amendment. Run `python verify_sources.py` to verify them together.
 
 ## Environment and data
 
@@ -16,7 +16,6 @@ From this directory:
 python make_data.py --output /tmp/eml-fresh-data
 python prepare_models.py qwen17b
 python prepare_models.py qwen4b
-python prepare_models.py smollm
 python prepare_language.py
 CUDA_VISIBLE_DEVICES=0 python validate_adapter.py qwen17b
 CUDA_VISIBLE_DEVICES=0 python robust_statistics.py
@@ -46,6 +45,8 @@ Gemma's adapter and collection entry points, run inside a separate environment w
 CUDA_VISIBLE_DEVICES=0 python gemma/validate.py
 python gemma/freeze.py --verify
 CUDA_VISIBLE_DEVICES=0 python gemma/collect.py
+CUDA_VISIBLE_DEVICES=0 python run_fits.py gemma
+CUDA_VISIBLE_DEVICES=0 python run_evaluation.py gemma
 ```
 
 The original-neuron control uses Gemma's native GELU. The learned SiLU comparator remains unchanged. Gemma's exact revision, float32 precision, and backend versions are recorded in `gemma/model.json`; adapter validation records the loaded parameter count, including embeddings and modality modules.
@@ -53,10 +54,12 @@ The original-neuron control uses Gemma's native GELU. The learned SiLU comparato
 An independent feature-pipeline replay can be run after collection:
 
 ```bash
-CUDA_VISIBLE_DEVICES=0 python replay_collection.py smollm --output /tmp/eml-smollm-replay
+CUDA_VISIBLE_DEVICES=0 python replay_collection.py qwen17b --output /tmp/eml-qwen-replay
+# In the separate Gemma environment:
+CUDA_VISIBLE_DEVICES=0 python gemma/replay.py --output /tmp/eml-gemma-replay
 ```
 
-This recollects training/validation activations and recomputes the projections and derivatives. It compares all 24 tensor archives on GPU and records file-byte equality separately. Use a different output directory from the original run.
+This recollects training/validation activations and recomputes the projections and derivatives. It compares all 24 tensor archives on GPU and records file-byte equality separately. Use a different output directory from the original run. Gemma replay requires a new empty location and copies the frozen source into an isolated checkout layout before recollecting all features.
 
 ## Whole-block study
 
@@ -82,14 +85,14 @@ Do not run this reproduction into a directory containing different experiments. 
 After all scalar and whole-block stages have completed:
 
 ```bash
-CUDA_VISIBLE_DEVICES=0 python audit.py
+GEMMA_PYTHON=/path/to/gemma-env/bin/python CUDA_VISIBLE_DEVICES=0 python audit.py
 python report.py
 ```
 
-The audit checks exact problem/edit identities, duplicate conditions, required controls, finite values, and restoration traces, and recomputes saved validation objectives on CUDA. The trace checker was verified against real Qwen3-4B validation traces and deliberately corrupted copies (`trace-audit-validation.json`). Generation checks on all three models verify exact restoration and execution during decoding; they are implementation checks, not held-out performance results.
+Run the main audit in the original Qwen environment; `GEMMA_PYTHON` selects the separate pinned environment for Gemma checkpoint validation. Checkpoint audit caches record the PyTorch version as well as source and input hashes. The audit checks exact problem/edit identities, duplicate conditions, required controls, finite values, and restoration traces, and recomputes saved validation objectives on CUDA. The trace checker was verified against real Qwen3-4B validation traces and deliberately corrupted copies (`trace-audit-validation.json`). The original generation checks and Gemma adapter validation verify exact restoration and execution during decoding; they are implementation checks, not held-out performance results.
 
 The whole-block audit also verifies the complete candidate grid, validation-only selection, localized layer, language-file hashes, and arithmetic cohorts. It recomputes every saved utility metric from the raw records on CUDA, requiring exact agreement (`whole-evidence-audit.json`).
 
-The report refuses to render without the complete audit. It creates `results/REPORT.md`, a figure in PNG/PDF, and an interactive explorer with every model/operation cell, per-format results, controls, and seeds. Reporting code does not alter checkpoint selection or the primary criteria.
+The amended roster in `study.json` defines the exact nine primary cells. The audit separately accounts for all 90 superseded SmolLM2 fits and recomputes its completed primary ordinary metrics without requiring canceled inference stages. The report refuses to render without the complete audit for the amended roster. It creates `results/REPORT.md`, a figure in PNG/PDF, and an interactive explorer with every model/operation cell, per-format results, controls, and seeds. Reporting code does not alter checkpoint selection or the primary criteria.
 
 After committing the completed report, `python bundle.py create --path /absolute/path/to/new-bundle` packages the tracked source, raw test traces, all candidate checkpoints, and validation tensors. It creates a manifest and ZIP with a SHA-256 delivery record. Large training activations and pretrained model weights are regenerated from the pinned inputs. The bundle includes instructions to verify, unpack, and run the GPU audit independently. Raw traces and large checkpoint collections need not be added to Git.

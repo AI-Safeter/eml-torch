@@ -11,7 +11,8 @@ from runtime import HERE, RUNS
 
 PRIMARY = "heads-active-r32-g0.1/eml"
 CONTROL = "heads-active-r32-g0.1/neural"
-LABELS = {"qwen17b": "Qwen3-1.7B", "qwen4b": "Qwen3-4B", "smollm": "SmolLM2-1.7B"}
+ROSTER = json.loads((HERE / "study.json").read_text())
+LABELS = ROSTER["primary_models"]
 
 
 def number(value, digits=3):
@@ -84,16 +85,23 @@ body{font:16px/1.5 system-ui,sans-serif;background:#f5f4ef;color:#222;margin:0}m
 <label>Model <select id="model"></select></label><label>Operation <select id="operation"><option>add</option><option>multiply</option><option>divide</option></select></label>
 <p id="decision"></p><p class="note">Response intervals are adjusted across nine cells per metric. Stress and seed results do not redefine the primary criteria. Accuracy bounds assume independent operand groups and preserve dependence between prompt formats.</p>
 <div class="scroll"><table><thead><tr><th>Suite</th><th>Method</th><th>Response NRMSE</th><th>Response correlation</th><th>Answer accuracy</th><th>Upper accuracy loss (pp)</th></tr></thead><tbody id="rows"></tbody></table></div><p><a href="REPORT.md">Full report</a> · <a href="summary.json">Summary data</a></p></main>
-<script>const DATA=__DATA__;const PRIMARY='heads-active-r32-g0.1/eml';const LABELS={qwen17b:'Qwen3-1.7B',qwen4b:'Qwen3-4B',smollm:'SmolLM2-1.7B'};const model=document.querySelector('#model');const operation=document.querySelector('#operation');for(const [key,label] of Object.entries(LABELS)){const o=document.createElement('option');o.value=key;o.textContent=label;model.append(o)}
+<script>const DATA=__DATA__;const PRIMARY='heads-active-r32-g0.1/eml';const LABELS=__LABELS__;const model=document.querySelector('#model');const operation=document.querySelector('#operation');for(const [key,label] of Object.entries(LABELS)){const o=document.createElement('option');o.value=key;o.textContent=label;model.append(o)}
 const fmt=x=>x===null||x===undefined?'—':Number(x).toFixed(3);
 function render(){const d=DATA[model.value+'/'+operation.value];document.querySelector('#decision').textContent='Primary criteria: '+(d.primary_checks.all_pass?'all passed':'one or more failed')+'. This is a fidelity test; it does not establish a semantic arithmetic algorithm.';const body=document.querySelector('#rows');body.replaceChildren();const suites=new Set([...Object.keys(d.ordinary).map(x=>x.replace(/^ordinary-/,'')),...Object.keys(d.interventions).map(x=>x.replace(/^interventions-/,''))]);for(const suite of suites){const normal=d.ordinary['ordinary-'+suite]||{};const causal=d.interventions['interventions-'+suite]||d.interventions[suite]||{models:{}};const names=new Set([...Object.keys(normal),...Object.keys(causal.models)]);for(const name of names){if(name==='original'||name==='restore')continue;const n=normal[name]||{},c=causal.models[name]||{};const row=document.createElement('tr');for(const value of [suite,name,fmt(c.nrmse),fmt(c.correlation),n.accuracy===undefined?'—':fmt(100*n.accuracy)+'%',fmt(n.accuracy_loss_upper_pp)]){const td=document.createElement('td');td.textContent=value;row.append(td)}body.append(row)}}}
 model.addEventListener('change',render);operation.addEventListener('change',render);render();</script></html>"""
-    (destination / "explorer.html").write_text(html.replace("__DATA__", payload))
+    (destination / "explorer.html").write_text(
+        html.replace("__DATA__", payload).replace(
+            "__LABELS__", json.dumps(LABELS).replace("<", "\\u003c")
+        )
+    )
 
 
 def main():
     audit = json.loads((RUNS / "audit.json").read_text())
-    assert audit["status"] == "complete" and len(audit["scalar"]) == 9
+    assert audit["status"] == "complete" and audit["roster"] == ROSTER
+    assert set(audit["scalar"]) == {
+        f"{model}/{op}" for model in LABELS for op in ["add", "multiply", "divide"]
+    }
     destination = HERE / "results"
     destination.mkdir(exist_ok=True)
     results, cells = {}, []
@@ -138,6 +146,8 @@ def main():
     output_fidelity = json.loads((RUNS / "whole-block/output-fidelity.json").read_text())
     summary = {
         "primary": cells,
+        "roster": ROSTER,
+        "superseded": audit["superseded"],
         "whole_block": whole,
         "latency": timing,
         "standalone_block_latency": block_timing,
@@ -299,10 +309,26 @@ def main():
         "",
         "## Evidence and limits",
         "",
-        "All 270 scalar candidates and 27 vector candidates are accounted for by the study audit, including any failed fits. Validation objectives are recomputed from the saved checkpoints on GPU. Source/data snapshots, model revisions, and selection hashes precede their corresponding evaluations; the normalization-folding repair is documented. The previous exploratory release is preserved separately.",
+        "All 270 primary scalar candidates, 90 superseded scalar candidates, and 27 vector candidates are accounted for by the study audit, including any failed fits. Validation objectives are recomputed from the saved checkpoints on GPU. Original snapshots remain available. The user-requested Gemma amendment was frozen before Gemma fitting/evaluation, after partial Qwen and superseded SmolLM2 results had been observed. Selection hashes precede the corresponding evaluations; the normalization-folding repair is documented. The previous exploratory release is preserved separately.",
         "",
         "See [protocol](../PROTOCOL.md), [evaluation details](../EVALUATION_DETAILS.md), [reproduction](../README.md), and [prior work](../RELATED_WORK.md). Symbolic component replacement, arithmetic neuron interventions, and geometric explanations have substantial prior work. This study alone establishes neither priority nor an EML-specific advantage over neural controls. Individual operand values may repeat in-range; independent problem pairs and larger-range tests support different generalization claims.",
     ]
+    lines += [
+        "",
+        "## Superseded model arm",
+        "",
+        "The user requested Gemma E2B after SmolLM2 addition ordinary results had been observed. Gemma uses the same frozen data and criteria, with a separate pinned PyTorch/Transformers backend. Cross-family differences therefore do not isolate backend effects. See [the amendment](../GEMMA_AMENDMENT.md).",
+        "",
+        "SmolLM2's remaining inference was stopped at the user's request. Its 90 completed fits and completed traces are retained in the evidence bundle. It is incomplete and excluded from the amended nine-cell decision; stopping its evaluation is not a fit failure.",
+        "",
+    ]
+    for model, arm in audit["superseded"].items():
+        for op, metrics in arm["ordinary_primary_metrics"].items():
+            eml = metrics[PRIMARY]
+            neural = metrics[CONTROL]
+            lines.append(
+                f"{arm['label']} / {op}: ordinary accuracy was {100 * eml['original_accuracy']:.3f}% for the original, {100 * eml['accuracy']:.3f}% for EML, and {100 * neural['accuracy']:.3f}% for SiLU. Causal and stress evaluation is incomplete; this is not a primary pass claim."
+            )
     (destination / "REPORT.md").write_text("\n".join(lines) + "\n")
     figures(cells, destination)
     explorer(results, destination)

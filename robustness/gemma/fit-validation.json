@@ -1,0 +1,23 @@
+{
+  "scope": "First completed addition primary-method candidates only; full grid still running",
+  "torch": "2.9.0+cu128",
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "checkpoints": [
+    {
+      "name": "eml_square-w32-s101-r4",
+      "score_absolute_errors": {
+        "validation_objective": 0.0,
+        "validation_mse": 0.0,
+        "validation_response_mse": 0.0
+      }
+    },
+    {
+      "name": "silu_two-w32-s101-r4",
+      "score_absolute_errors": {
+        "validation_objective": 0.0,
+        "validation_mse": 0.0,
+        "validation_response_mse": 0.0
+      }
+    }
+  ]
+}

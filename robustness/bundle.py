@@ -29,7 +29,13 @@ def safe(root, relative):
 
 def create(destination):
     audit = json.loads((RUNS / "audit.json").read_text())
-    assert audit["status"] == "complete" and len(audit["scalar"]) == 9
+    roster = json.loads((HERE / "study.json").read_text())
+    assert audit["status"] == "complete" and audit["roster"] == roster
+    assert set(audit["scalar"]) == {
+        f"{model}/{op}"
+        for model in roster["primary_models"]
+        for op in ["add", "multiply", "divide"]
+    }
     assert (HERE / "results/REPORT.md").exists()
     repo = HERE.parent
     assert not destination.is_relative_to(repo.resolve()) and not destination.is_relative_to(
@@ -62,7 +68,7 @@ def create(destination):
     for name in filter(None, tracked):
         assert (repo / name).resolve().is_relative_to(repo.resolve()), name
         copy(repo / name, "eml-torch/" + name)
-    for model in ["qwen17b", "qwen4b", "smollm", "whole-block"]:
+    for model in [*roster["primary_models"], *roster["superseded_models"], "whole-block"]:
         for source in sorted((RUNS / model).rglob("*")):
             if not source.is_file() or source.suffix not in [".json", ".pt"]:
                 continue
@@ -98,11 +104,13 @@ After extracting this ZIP, run from the bundle root:
 python eml-torch/robustness/bundle.py verify --path .
 python eml-torch/robustness/bundle.py unpack --path .
 cd eml-torch/robustness
-CUDA_VISIBLE_DEVICES=0 python audit.py
+GEMMA_PYTHON=/path/to/gemma-env/bin/python CUDA_VISIBLE_DEVICES=0 python audit.py
 ```
 
 Install the core package and the research dependencies documented in the study
-README. The audit performs numerical validation on CUDA. For a fresh training
+README. The audit performs numerical validation on CUDA. For numerical
+replay of Gemma checkpoints, it uses the separate pinned environment selected by
+GEMMA_PYTHON. Run the main audit in the original Qwen environment. For a fresh training
 reproduction, use a separate empty checkout/workspace and follow that README;
 do not treat this populated evaluation bundle as a fresh training directory.
 

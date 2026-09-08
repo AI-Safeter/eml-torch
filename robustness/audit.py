@@ -82,9 +82,10 @@ def main():
 
     setup()
     verify_sources()
-    audit = {"status": "complete", "scalar": {}, "whole_block": {}}
+    roster = json.loads((HERE / "study.json").read_text())
+    audit = {"status": "complete", "scalar": {}, "whole_block": {}, "roster": roster}
     directories = ["heads", "heads-active-r32-g0", "heads-active-r32-g0.1"]
-    for model in ["qwen17b", "qwen4b", "smollm"]:
+    for model in roster["primary_models"]:
         for op in ["add", "multiply", "divide"]:
             out = RUNS / model / op
             selected = json.loads((out / "selection.json").read_text())
@@ -244,8 +245,55 @@ def main():
                 "primary_and_stress_counts": file_counts,
                 "raw_conditions_controls_and_restoration_verified": True,
             }
+    assert set(audit["scalar"]) == {
+        f"{model}/{op}"
+        for model in roster["primary_models"]
+        for op in ["add", "multiply", "divide"]
+    }
+    audit["superseded"] = {}
+    for model, spec in roster["superseded_models"].items():
+        from analyze import ordinary
+
+        fits = 0
+        ordinary_metrics = {}
+        for op in ["add", "multiply", "divide"]:
+            for directory in directories:
+                fits += len(
+                    validate_scalar_checkpoints(RUNS / model / op, directory)["checkpoints"]
+                )
+            out = RUNS / model / op
+            path = out / "ordinary-test-known-formats.json"
+            if path.exists():
+                selected = json.loads((out / "selection.json").read_text())
+                problems = json.loads((out / "problems.json").read_text())
+                raw = json.loads(path.read_text())
+                check_traces(
+                    raw,
+                    expand(problems["test"], STYLES),
+                    [
+                        "original",
+                        "restore",
+                        "mean",
+                        *selected["heads"],
+                        *selected["sparse"],
+                        *selected["linear"],
+                    ],
+                )
+                ordinary_metrics[op] = ordinary(raw)
+        assert fits == spec["completed_fits"]
+        audit["superseded"][model] = {
+            **spec,
+            "fits": fits,
+            "validation_objectives_recomputed_on_gpu": True,
+            "ordinary_primary_metrics": ordinary_metrics,
+            "completed_evaluation_files": sorted(
+                str(path.relative_to(RUNS / model))
+                for pattern in ["ordinary-*.json", "interventions-*.json"]
+                for path in (RUNS / model).rglob(pattern)
+            ),
+        }
     audit["independent_feature_replays"] = {}
-    for model in ["qwen17b", "smollm"]:
+    for model in ["qwen17b", "gemma", *roster["superseded_models"]]:
         replay = json.loads((HERE / f"replay-{model}.json").read_text())
         assert len(replay["archives"]) == 24
         for item in replay["archives"]:

@@ -1,7 +1,11 @@
 """Audit completed scalar searches independently of the later test evaluations."""
 
+import argparse
 import hashlib
 import json
+import os
+import subprocess
+import sys
 from pathlib import Path
 
 import torch
@@ -12,6 +16,32 @@ def validate(out, directory):
     from heads import Head, objective, parameter_count
 
     folder = out / directory
+    expected_torch = (
+        json.loads((HERE / "gemma/model.json").read_text())["torch"]
+        if out.parent.name == "gemma"
+        else "2.5.0a0+e000cf0ad9.nv24.10"
+    )
+    if torch.__version__ != expected_torch:
+        key = "GEMMA_PYTHON" if out.parent.name == "gemma" else "QWEN_PYTHON"
+        python = os.environ.get(key)
+        assert python, f"Set {key} to the model's pinned Python environment for GPU replay"
+        assert os.path.abspath(python) != os.path.abspath(sys.executable), key
+        subprocess.run(
+            [
+                python,
+                str(Path(__file__).resolve()),
+                "--model",
+                out.parent.name,
+                "--operation",
+                out.name,
+                "--directory",
+                directory,
+            ],
+            check=True,
+        )
+        report = json.loads((folder / "checkpoint-audit.json").read_text())
+        assert report["torch"] == expected_torch
+        return report
     status = json.loads((folder / "completed.json").read_text())
     assert status["status"] == "complete_grid"
     records = json.loads((folder / "candidates.json").read_text())
@@ -35,7 +65,7 @@ def validate(out, directory):
     destination = folder / "checkpoint-audit.json"
     if destination.exists():
         previous = json.loads(destination.read_text())
-        if previous["input_sha256"] == hashes:
+        if previous["input_sha256"] == hashes and previous.get("torch") == torch.__version__:
             return previous
     data = torch.load(out / filename, weights_only=True)["validation"]
     x, y = data["x"].cuda(), data["y"].cuda()
@@ -59,6 +89,7 @@ def validate(out, directory):
         "input_sha256": hashes,
         "checkpoints": checked,
         "gpu": torch.cuda.get_device_name(),
+        "torch": torch.__version__,
         "validation_scores_recomputed": True,
     }
     destination.write_text(json.dumps(report, indent=2) + "\n")
@@ -66,15 +97,30 @@ def validate(out, directory):
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--model", choices=["qwen17b", "qwen4b", "smollm", "gemma"])
+    parser.add_argument("--operation", choices=["add", "multiply", "divide"])
+    parser.add_argument(
+        "--directory", choices=["heads", "heads-active-r32-g0", "heads-active-r32-g0.1"]
+    )
+    args = parser.parse_args()
     configure("qwen17b")
     from model_io import setup
 
     setup()
     total = 0
-    for model in ["qwen17b", "qwen4b", "smollm"]:
-        for op in ["add", "multiply", "divide"]:
+    roster = json.loads((HERE / "study.json").read_text())
+    models = (
+        [args.model] if args.model else [*roster["primary_models"], *roster["superseded_models"]]
+    )
+    for model in models:
+        for op in [args.operation] if args.operation else ["add", "multiply", "divide"]:
             out = RUNS / model / op
-            for directory in ["heads", "heads-active-r32-g0", "heads-active-r32-g0.1"]:
+            for directory in (
+                [args.directory]
+                if args.directory
+                else ["heads", "heads-active-r32-g0", "heads-active-r32-g0.1"]
+            ):
                 marker = out / directory / "completed.json"
                 if marker.exists() and json.loads(marker.read_text())["status"] == "complete_grid":
                     total += len(validate(out, directory)["checkpoints"])
