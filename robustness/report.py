@@ -118,10 +118,12 @@ def main():
             )
     whole = json.loads((RUNS / "whole-block/utility-results.json").read_text())
     timing = json.loads((RUNS / "whole-block/latency.json").read_text())
+    storage = json.loads((RUNS / "whole-block/model-storage.json").read_text())
     summary = {
         "primary": cells,
         "whole_block": whole,
         "latency": timing,
+        "model_storage": storage,
         "scalar_passed": sum(c["checks"]["all_pass"] for c in cells),
         "scalar_total": 9,
     }
@@ -176,6 +178,8 @@ def main():
     lines += [
         "",
         "The selected original MLP does not execute in this replacement path. The rest of the model remains frozen. Retention requires a language cross-entropy increase upper bound ≤ .02 nats/token and an accuracy-loss upper bound ≤ 1 percentage point for each operation on unconditioned prompts, in addition to ≥ 4× block storage reduction and finite outputs.",
+        "",
+        f"The EML replacement reduces the entire model's parameter count by **{storage['students']['eml']['full_model_parameter_reduction_percent']:.2f}%**. The block reduction must not be read as a whole-model compression ratio. These are architecture counts; paired benchmarks keep the original and replacement alternatives resident and do not measure peak-memory savings.",
         "",
         "## End-to-end latency",
         "",

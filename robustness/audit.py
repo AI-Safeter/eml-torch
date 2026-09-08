@@ -158,6 +158,15 @@ def main():
     assert len(json.loads((whole / "block-latency.json").read_text())["records"]) == 12
     assert len(json.loads((whole / "output-fidelity.json").read_text())) == 2
     assert (whole / "utility-results.json").exists()
+    storage = json.loads((whole / "model-storage.json").read_text())["students"]
+    assert set(storage) == {"eml", "swiglu", "linear"}
+    for row in storage.values():
+        assert (
+            row["original_model_parameters"]
+            - row["original_block_parameters"]
+            + row["deployed_student_parameters"]
+            == row["replaced_model_parameters"]
+        )
     audit["whole_block"] = {
         "fits": 27,
         "required_test_and_latency_artifacts_present": True,

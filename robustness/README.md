@@ -49,6 +49,7 @@ CUDA_VISIBLE_DEVICES=0 python whole_evaluate.py
 CUDA_VISIBLE_DEVICES=0 python whole_fidelity.py
 CUDA_VISIBLE_DEVICES=0 python whole_benchmark.py
 CUDA_VISIBLE_DEVICES=0 python block_latency.py
+python model_storage.py
 ```
 
 The teacher MLP is actually replaced in downstream evaluation, with a guard against accidentally calling it. Deployment folds normalization into affine weights. Validation-selected EML, SwiGLU and factorized-linear students receive the same tests. `utility-results.json` reports the predeclared retention and storage criteria. `latency.json` reports actual prefill and fixed-token decode timings; `block-latency.json` is a separate standalone measurement. A fast but inaccurate replacement does not meet the utility criteria.

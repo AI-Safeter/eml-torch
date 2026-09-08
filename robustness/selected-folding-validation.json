@@ -1,0 +1,44 @@
+[
+  {
+    "kind": "eml",
+    "checkpoint": "eml-w512-s101.pt",
+    "domain": "arithmetic",
+    "validation_tokens": 16384,
+    "maximum_absolute_error": 0.0001678466796875
+  },
+  {
+    "kind": "eml",
+    "checkpoint": "eml-w512-s101.pt",
+    "domain": "language",
+    "validation_tokens": 16384,
+    "maximum_absolute_error": 0.0001983642578125
+  },
+  {
+    "kind": "swiglu",
+    "checkpoint": "swiglu-w512-s101.pt",
+    "domain": "arithmetic",
+    "validation_tokens": 16384,
+    "maximum_absolute_error": 0.00017547607421875
+  },
+  {
+    "kind": "swiglu",
+    "checkpoint": "swiglu-w512-s101.pt",
+    "domain": "language",
+    "validation_tokens": 16384,
+    "maximum_absolute_error": 0.000335693359375
+  },
+  {
+    "kind": "linear",
+    "checkpoint": "linear-w512-s211.pt",
+    "domain": "arithmetic",
+    "validation_tokens": 16384,
+    "maximum_absolute_error": 0.00016021728515625
+  },
+  {
+    "kind": "linear",
+    "checkpoint": "linear-w512-s211.pt",
+    "domain": "language",
+    "validation_tokens": 16384,
+    "maximum_absolute_error": 0.0001678466796875
+  }
+]
