@@ -1,0 +1,184 @@
+"""Synchronized, paired timing of the actual replacement model, with native caches."""
+
+import argparse
+import gc
+import json
+import subprocess
+import time
+
+import torch
+
+from .deploy import load_deployed
+from .evaluate import roster
+from .runtime import HERE, SPEC, accounting, digest, load, root, save, setup, text_layers
+
+
+def telemetry():
+    command = [
+        "nvidia-smi",
+        "--query-gpu=index,uuid,name,memory.used,memory.free,utilization.gpu",
+        "--format=csv,noheader",
+    ]
+    return subprocess.check_output(command, text=True).strip().splitlines()
+
+
+@torch.inference_mode()
+def workload(model, ids, forced):
+    mask = torch.ones_like(ids)
+    pre_start, pre_end, dec_start, dec_end = [
+        torch.cuda.Event(enable_timing=True) for _ in range(4)
+    ]
+    torch.cuda.synchronize()
+    torch.cuda.reset_peak_memory_stats()
+    start = time.perf_counter()
+    pre_start.record()
+    result = model(input_ids=ids, attention_mask=mask, use_cache=True, logits_to_keep=1)
+    pre_end.record()
+    torch.cuda.synchronize()
+    prefill_seconds = time.perf_counter() - start
+    decode_start = time.perf_counter()
+    dec_start.record()
+    for step in range(forced.shape[1]):
+        token = forced[:, step : step + 1]
+        mask = torch.cat([mask, torch.ones_like(token)], -1)
+        result = model(
+            input_ids=token,
+            attention_mask=mask,
+            past_key_values=result.past_key_values,
+            use_cache=True,
+            logits_to_keep=1,
+        )
+    dec_end.record()
+    torch.cuda.synchronize()
+    end = time.perf_counter()
+    assert torch.isfinite(result.logits).all()
+    elapsed = end - start
+    return {
+        "prefill_seconds": prefill_seconds,
+        "decode_seconds": end - decode_start,
+        "end_to_end_seconds": elapsed,
+        "prefill_gpu_ms": pre_start.elapsed_time(pre_end),
+        "decode_gpu_ms": dec_start.elapsed_time(dec_end),
+        "prefill_tokens_per_second": ids.numel() / prefill_seconds,
+        "decode_tokens_per_second": forced.numel() / (end - decode_start),
+        "output_tokens_per_second": forced.numel() / elapsed,
+        "total_tokens_per_second": (ids.numel() + forced.numel()) / elapsed,
+        "peak_allocated_bytes": torch.cuda.max_memory_allocated(),
+        "peak_reserved_bytes": torch.cuda.max_memory_reserved(),
+    }
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--output")
+    parser.add_argument(
+        "--pilot",
+        action="store_true",
+        help="Same timing protocol, fixed first-seed depth-one pilot models",
+    )
+    parser.add_argument("--primary-only", action="store_true")
+    args = parser.parse_args()
+    setup(73)
+    out = root(args.output)
+    if args.pilot:
+        methods = [f"{k}-b3000000-d1-s1103" for k in ["eml", "silu"]] + ["linear-b3000000-d0-s1103"]
+    else:
+        methods = [name for name in roster(out) if name.endswith("-s1103")]
+    directory = out / ("benchmark-pilot" if args.pilot else "benchmark")
+    directory.mkdir(exist_ok=True)
+    freeze = {
+        "sources": {
+            p: digest(HERE / p)
+            for p in ["benchmark.py", "deploy.py", "runtime.py", "student.py", "protocol.json"]
+        },
+        "checkpoints": {m: digest(out / "training" / f"{m}.pt") for m in methods},
+        "protocol": SPEC["benchmark"],
+        "pilot": args.pilot,
+        "placement": "Entire native model and PLE table on GPU; staged comparison modules on CPU outside timing",
+        "optimization": "Native eager SDPA; affine statistics folded in every student; linear factors collapsed when cheaper. No compilation.",
+        "input_sha256": digest(out / "data/language-selection.pt"),
+    }
+    frozen = directory / "freeze.json"
+    if frozen.exists():
+        assert json.loads(frozen.read_text()) == freeze
+    else:
+        save(frozen, freeze)
+    model = load(host_ple=False)
+    base_accounting = accounting(model)
+    original = text_layers(model)[26].mlp
+    original_ids = {id(p) for p in original.parameters()}
+    native_forward = original.forward
+    blocks = torch.load(out / "data/language-selection.pt", weights_only=True)
+    tokens = torch.cat([blocks[:8], blocks[8:16]], -1)
+    forced = blocks[16:24, :32].cuda()
+    shapes = (
+        [(8, 512)] if args.primary_only else [(b, length) for b in [1, 8] for length in [128, 512]]
+    )
+
+    def forbidden(*a, **kw):
+        raise AssertionError("Original MLP executed in the measured student path")
+
+    for method in methods:
+        student = load_deployed(out / "training" / f"{method}.pt", device="cpu")
+        student_accounting = accounting(student)
+
+        def activate(name, student=student):
+            if name == "original":
+                student.cpu()
+                original.forward = native_forward
+                text_layers(model)[26].mlp = original.cuda()
+            else:
+                original.cpu()
+                original.forward = forbidden
+                text_layers(model)[26].mlp = student.cuda()
+                assert not original_ids.intersection(id(p) for p in model.parameters())
+            gc.collect()
+            torch.cuda.empty_cache()
+
+        for batch, length in shapes:
+            path = directory / f"{method}-b{batch}-p{length}.json"
+            if path.exists():
+                assert json.loads(path.read_text())["freeze_sha256"] == digest(frozen)
+                continue
+            ids, decode = tokens[:batch, :length].cuda(), forced[:batch]
+            before = telemetry()
+            for name in ["original", method]:
+                activate(name)
+                for _ in range(SPEC["benchmark"]["warmup"]):
+                    workload(model, ids, decode)
+            samples = []
+            for repeat in range(SPEC["benchmark"]["paired_repeats"]):
+                order = ["original", method] if repeat % 2 == 0 else [method, "original"]
+                pair = {"repeat": repeat, "order": order}
+                for name in order:
+                    activate(name)
+                    pair[name] = workload(model, ids, decode)
+                samples.append(pair)
+                if repeat % 10 == 0:
+                    print("BENCHMARK", method, batch, length, repeat, flush=True)
+            save(
+                path,
+                {
+                    "method": method,
+                    "batch": batch,
+                    "prefill_tokens": length,
+                    "decode_steps": 32,
+                    "samples": samples,
+                    "telemetry_before": before,
+                    "telemetry_after": telemetry(),
+                    "original_accounting": base_accounting,
+                    "student_module_accounting": student_accounting,
+                    "freeze_sha256": digest(frozen),
+                    "sharing": "Other processes are present. These paired measurements describe this shared-device workload, not exclusive serving.",
+                    "timing_excludes": "Model loading, comparison module transfers, tokenization and warm-up; includes native prefill, cached decoding, fixed-token feeding, and phase synchronization.",
+                },
+            )
+            print("BENCHMARK COMPLETE", path.name, flush=True)
+        text_layers(model)[26].mlp = original.cuda()
+        original.forward = native_forward
+        del student
+        torch.cuda.empty_cache()
+
+
+if __name__ == "__main__":
+    main()

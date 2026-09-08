@@ -1,17 +1,22 @@
 """Check native scorers and run a clearly labeled selection-only quality pilot."""
 
+import argparse
 import gc
 import json
 import time
 
 import torch
 
+from .deploy import load_deployed
 from .evaluate import arc, arithmetic, language
 from .runtime import HERE, SPEC, accounting, digest, load, prompt, root, save, setup, tokenizer
 from .student import install, load_student
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--deployed", action="store_true")
+    args = parser.parse_args()
     setup(73)
     out = root()
     tok = tokenizer()
@@ -101,7 +106,8 @@ def main():
                 raise AssertionError("Original MLP executed in pilot replacement path")
 
             original.forward = forbidden
-            removed = install(model, load_student(out / "training" / f"{name}.pt"))
+            loader = load_deployed if args.deployed else load_student
+            removed = install(model, loader(out / "training" / f"{name}.pt"))
             del removed
         started = time.perf_counter()
         a = arithmetic(model, tok, rows, SPEC["arithmetic"]["formats"])
@@ -129,7 +135,7 @@ def main():
             flush=True,
         )
     save(
-        out / "selection-pilot.json",
+        out / ("selection-pilot-deployed.json" if args.deployed else "selection-pilot.json"),
         {
             "checks": checks,
             "arc_max_score_error": maximum_error,

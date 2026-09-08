@@ -8,6 +8,7 @@ import time
 
 import torch
 
+from .deploy import load_deployed
 from .prepare import content
 from .runtime import (
     HERE,
@@ -22,7 +23,7 @@ from .runtime import (
     text_layers,
     tokenizer,
 )
-from .student import install, load_student
+from .student import install
 
 
 def roster(out):
@@ -172,6 +173,9 @@ def main():
             p: digest(HERE / p)
             for p in [
                 "evaluate.py",
+                "deploy.py",
+                "quality_summary.py",
+                "EVALUATION_PLAN.md",
                 "runtime.py",
                 "student.py",
                 "prepare.py",
@@ -214,7 +218,7 @@ def main():
         else:
             original.cpu()
             original.forward = forbidden
-            student = load_student(out / "training" / f"{method}.pt")
+            student = load_deployed(out / "training" / f"{method}.pt")
             removed = install(model, student, layer)
             del removed
             assert not original_ids.intersection(id(p) for p in model.parameters())
