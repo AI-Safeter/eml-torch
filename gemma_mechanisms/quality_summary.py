@@ -84,6 +84,26 @@ def main():
     alpha = SPEC["acceptance"]["alpha"] / (5 * len(SPEC["replacement"]["seeds"]))
     original = records["original"]["results"]
     documents = json.loads((out / "data/language-documents.json").read_text())[args.split]
+    expected_arithmetic = {
+        (r["id"], r["op"], style)
+        for r in json.loads((out / "data" / f"arithmetic-{args.split}.json").read_text())
+        for style in SPEC["arithmetic"]["formats"]
+    }
+    expected_arc = {
+        r["id"] for r in json.loads((out / "data" / f"arc-{args.split}.json").read_text())
+    }
+    for record in records.values():
+        result = record["results"]
+        identities = [(r["id"], r["op"], r["style"]) for r in result["arithmetic"]]
+        assert (
+            len(identities) == len(expected_arithmetic) and set(identities) == expected_arithmetic
+        )
+        assert (
+            len(result["arc"]) == len(expected_arc)
+            and {r["id"] for r in result["arc"]} == expected_arc
+        )
+        assert [r["document"] for r in result["language"]] == list(range(len(documents)))
+        assert record["nonfinite_outputs"] == 0
     summaries = {}
     for name, record in records.items():
         if name == "original":

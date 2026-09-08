@@ -206,6 +206,11 @@ def main():
         assert digest(out / "data" / file) == sha
     rows = json.loads((out / "data" / f"arithmetic-{args.split}.json").read_text())
     model, tok = load(), tokenizer()
+
+    def require_finite(module, inputs, output):
+        assert torch.isfinite(output.logits).all(), "Nonfinite native model output"
+
+    model.register_forward_hook(require_finite)
     layer = SPEC["replacement"]["layer"]
     original = text_layers(model)[layer].mlp
     original_forward = original.forward
@@ -256,6 +261,7 @@ def main():
                 "peak_allocated_bytes": torch.cuda.max_memory_allocated(),
                 "peak_reserved_bytes": torch.cuda.max_memory_reserved(),
                 "original_mlp_executed": method == "original",
+                "nonfinite_outputs": 0,
             },
         )
         print("EVALUATION COMPLETE", args.split, method, flush=True)

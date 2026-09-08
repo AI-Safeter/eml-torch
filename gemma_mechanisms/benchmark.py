@@ -77,6 +77,7 @@ def main():
         help="Same timing protocol, fixed first-seed depth-one pilot models",
     )
     parser.add_argument("--primary-only", action="store_true")
+    parser.add_argument("--method", help="One method from the frozen roster; enables disjoint GPU workers")
     args = parser.parse_args()
     setup(73)
     out = root(args.output)
@@ -103,6 +104,9 @@ def main():
         assert json.loads(frozen.read_text()) == freeze
     else:
         save(frozen, freeze)
+    if args.method:
+        assert args.method in methods
+        methods = [args.method]
     model = load(host_ple=False)
     base_accounting = accounting(model)
     original = text_layers(model)[26].mlp
