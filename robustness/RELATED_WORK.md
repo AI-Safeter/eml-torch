@@ -58,3 +58,42 @@ comparison. Such a study needs separate validation and a fresh holdout after
 the present results. Neither mathematical paper implies a general advantage or
 disadvantage for EML on this task, and the current evidence should not be framed
 as a mathematical limitation of EML.
+
+## A fixed feature projection imposes a separate limit
+
+The current heads receive an affine projection `z = P h + b`, including feature
+normalization. Both their nonlinear branch and linear skip use only `z`.
+Universality for functions of `z` therefore does not imply universality for
+functions of the full hidden state `h`.
+
+If `P delta = 0`, every deterministic head satisfies
+`g(P (h + delta) + b) = g(P h + b)`, regardless of its activation, width, or
+depth. If the original scalar coefficients at these two inputs are `y0` and
+`y1`, their shared prediction `v` obeys the elementary identity
+
+```text
+[(v - y0)^2 + (v - y1)^2] / 2
+  = (v - (y0 + y1)/2)^2 + (y1 - y0)^2 / 4
+  >= (y1 - y0)^2 / 4.
+```
+
+In this study's scalar-intervention diagnostic, the remaining MLP contribution
+and model inputs stay fixed. An unchanged predicted coefficient thus gives zero
+downstream margin response. Against a nonzero original response, this yields
+response NRMSE exactly one in exact arithmetic; correlation with a constant
+response is undefined. The implemented nullspace projection is approximate in
+FP32, so measured responses can be small rather than exactly zero.
+
+The [Gemma addition geometry audit](gemma/geometry-addition.json) illustrates
+this distinction. Across 32 operand groups and three formats, the original
+coefficient response RMS in the active-feature nullspace is 0.01417, versus
+about 0.000002 for either primary head. Their downstream response NRMSE values
+are both about 1.0003. The original margin response RMS is only 0.001368, so the
+relative error alone overstates the absolute effect. All 12 methods and five
+strengths are retained in each raw geometry cohort.
+
+This is a limitation of the fixed representation, shared by EML and SiLU. More
+depth may improve approximation within the retained features; recovering
+sensitivity to omitted directions requires changing the information supplied
+to the predictor. These diagnostic results do not select a new representation
+or change the frozen primary criteria.

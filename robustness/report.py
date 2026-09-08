@@ -316,6 +316,7 @@ def main():
         "## Larger operands and off-subspace edits",
         "",
         "Each response entry is EML / SiLU NRMSE for the validation-selected primary-family heads. Each suite normalizes by its own original margin-response RMS. Ambient and nullspace diagnostics edit the MLP input outside the natural clean–corrupted interpolation path. A predictor that only sees the retained features cannot in general reproduce sensitivity to omitted directions. Relative error near one can still correspond to a small absolute margin change; the original response RMS values provide that scale. These diagnostics do not redefine the primary acceptance criteria; their complete intervals remain in the explorer.",
+        "The [fixed-feature bound](../RELATED_WORK.md#a-fixed-feature-projection-imposes-a-separate-limit) explains why depth alone cannot recover an omitted direction: an exactly unchanged feature vector produces zero student response, hence NRMSE one when the original response is nonzero. This limits the representation shared by the primary EML and SiLU heads, rather than ranking their activations.",
         "",
         "| Model / operation | Larger operands | Both operands edited | Ambient directions | Nullspace directions | Original response RMS: ambient / nullspace | Shifted answer accuracy: original → EML |",
         "|---|---:|---:|---:|---:|---:|---:|",

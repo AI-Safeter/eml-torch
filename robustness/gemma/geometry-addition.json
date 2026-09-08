@@ -1,0 +1,278 @@
+{
+  "model": {
+    "id": "google/gemma-4-E2B-it",
+    "revision": "3e22461f65e89153144f8adb70e3b8c2cc9845a7",
+    "torch": "2.9.0+cu128",
+    "transformers": "5.16.1",
+    "precision": "float32"
+  },
+  "source_commit": "928384b441a9566beef388772ee4d61dcb405fbe",
+  "geometry_evaluation": "Frozen geometry_evaluate.py through generation_execute.py on CUDA; validation-selected heads and original controls",
+  "metric_evaluation": "Frozen analyze.interventions on CUDA; coefficient RMS excludes alpha zero and uses each method's own baseline",
+  "raw_records": 11520,
+  "operand_groups": 32,
+  "formats": 3,
+  "strengths": [
+    0.0,
+    -0.1,
+    -0.01,
+    0.01,
+    0.1
+  ],
+  "source_hashes": {
+    "geometry_evaluate.py": "f5bca6414748ed08493afcec10300176ed29c4ee09fff5c171656924e3a879b0",
+    "src/evaluate_heads.py": "c44b42d08f8028e74fddda0d4cb9270a7cc1014bf5827b896201c8420c42a8b1",
+    "src/heads.py": "0f1e5a3021783338d49f9cb88a1d46f57ab60739002b9f256f2a4dbcd6546a6e",
+    "analyze.py": "ceca3fbaca7acb3c9649f8aeb0cb0d045e92b3a18aa492ec02118c7e0cfb3fc1",
+    "robust_statistics.py": "87500686a176aa68285ac1f190da18bff38322e8bcb97bb2bf1fec206f7e8300",
+    "trace_audit.py": "bfce48e60d0f22002264092a8ec35142b6c080696a8528c230fd29be31d53fbc",
+    "gemma/generation-execution-freeze.json": "221be58b0428bada486ad6f30ae146701fb16b25f44780367cd77b94e4200ab8"
+  },
+  "selection_sha256": "15f3bd981fbe2d778049cea464ebdac47800aba6b6de0c1b30fc66de10894981",
+  "results": {
+    "ambient": {
+      "trace": {
+        "methods": 12,
+        "unique_conditions_per_method": 480
+      },
+      "raw_sha256": "7740279cfdd6b0be0ac3da17b581c0116e77149dea0be30d03fc306fdbf0a568",
+      "methods": {
+        "original": {
+          "coefficient_response_rms": 0.18761822578039639,
+          "coefficient_response_max_abs": 0.7071399688720703,
+          "response": {
+            "operand_groups": 32,
+            "response_rms": 0.02294346849667787,
+            "nrmse": 0.0,
+            "correlation": 1.0000000000000002,
+            "bootstrap_draws": 20000,
+            "bootstrap_seed": 20260926,
+            "simultaneous_cells": 9,
+            "nrmse_ci95": [
+              0.0,
+              0.0
+            ],
+            "correlation_ci95": [
+              1.0,
+              1.0
+            ],
+            "nrmse_simultaneous_ci95": [
+              0.0,
+              0.0
+            ],
+            "correlation_simultaneous_ci95": [
+              1.0,
+              1.0
+            ]
+          }
+        },
+        "heads-active-r32-g0.1/eml": {
+          "coefficient_response_rms": 0.18311988338431448,
+          "coefficient_response_max_abs": 0.6451535224914551,
+          "response": {
+            "operand_groups": 32,
+            "response_rms": 0.02294346849667787,
+            "nrmse": 0.14004349021651571,
+            "correlation": 0.9901436114753162,
+            "bootstrap_draws": 20000,
+            "bootstrap_seed": 20260926,
+            "simultaneous_cells": 9,
+            "nrmse_ci95": [
+              0.10582344703644939,
+              0.19151105336901325
+            ],
+            "correlation_ci95": [
+              0.9818540354040644,
+              0.9945138206471803
+            ],
+            "nrmse_simultaneous_ci95": [
+              0.09484814385197658,
+              0.21258828030235452
+            ],
+            "correlation_simultaneous_ci95": [
+              0.9776830433077796,
+              0.9956521485094918
+            ]
+          }
+        },
+        "heads-active-r32-g0.1/neural": {
+          "coefficient_response_rms": 0.18372404176571366,
+          "coefficient_response_max_abs": 0.6580557823181152,
+          "response": {
+            "operand_groups": 32,
+            "response_rms": 0.02294346849667787,
+            "nrmse": 0.1526603570171717,
+            "correlation": 0.9885371039597681,
+            "bootstrap_draws": 20000,
+            "bootstrap_seed": 20260926,
+            "simultaneous_cells": 9,
+            "nrmse_ci95": [
+              0.11166708517339533,
+              0.20986112434680354
+            ],
+            "correlation_ci95": [
+              0.9783112084017617,
+              0.9939387127875945
+            ],
+            "nrmse_simultaneous_ci95": [
+              0.09979678523603276,
+              0.22938808572725183
+            ],
+            "correlation_simultaneous_ci95": [
+              0.9736998932133937,
+              0.9951792316585482
+            ]
+          }
+        }
+      },
+      "comparisons": {
+        "heads/eml": {
+          "control": "heads/neural",
+          "eml_minus_control_response_mse": 5.224521929865962e-05,
+          "paired_difference_ci95": [
+            -0.00010645852927642828,
+            0.00019486899889287196
+          ]
+        },
+        "heads-active-r32-g0/eml": {
+          "control": "heads-active-r32-g0/neural",
+          "eml_minus_control_response_mse": -2.0225562498884155e-06,
+          "paired_difference_ci95": [
+            -1.7443846097601556e-05,
+            8.249763188198731e-06
+          ]
+        },
+        "heads-active-r32-g0.1/eml": {
+          "control": "heads-active-r32-g0.1/neural",
+          "eml_minus_control_response_mse": -1.9440082136649535e-06,
+          "paired_difference_ci95": [
+            -5.5038135153987845e-06,
+            9.930240923476194e-07
+          ]
+        }
+      }
+    },
+    "nullspace": {
+      "trace": {
+        "methods": 12,
+        "unique_conditions_per_method": 480
+      },
+      "raw_sha256": "da6da2a989b86677997c64a7f19e414838af4f95a54fb2cd96e8378f81e537f9",
+      "methods": {
+        "original": {
+          "coefficient_response_rms": 0.014168110447974364,
+          "coefficient_response_max_abs": 0.058998823165893555,
+          "response": {
+            "operand_groups": 32,
+            "response_rms": 0.0013679905985873111,
+            "nrmse": 0.0,
+            "correlation": 1.0000000000000002,
+            "bootstrap_draws": 20000,
+            "bootstrap_seed": 20260926,
+            "simultaneous_cells": 9,
+            "nrmse_ci95": [
+              0.0,
+              0.0
+            ],
+            "correlation_ci95": [
+              1.0,
+              1.0
+            ],
+            "nrmse_simultaneous_ci95": [
+              0.0,
+              0.0
+            ],
+            "correlation_simultaneous_ci95": [
+              1.0,
+              1.0
+            ]
+          }
+        },
+        "heads-active-r32-g0.1/eml": {
+          "coefficient_response_rms": 2.029936286722713e-06,
+          "coefficient_response_max_abs": 6.67572021484375e-06,
+          "response": {
+            "operand_groups": 32,
+            "response_rms": 0.0013679905985873111,
+            "nrmse": 1.0002589069120689,
+            "correlation": -0.03782268515211339,
+            "bootstrap_draws": 20000,
+            "bootstrap_seed": 20260926,
+            "simultaneous_cells": 9,
+            "nrmse_ci95": [
+              0.9998261885333519,
+              1.0007762016458237
+            ],
+            "correlation_ci95": [
+              -0.1072701227928716,
+              0.031109480507553796
+            ],
+            "nrmse_simultaneous_ci95": [
+              0.9996480690867907,
+              1.001088270027264
+            ],
+            "correlation_simultaneous_ci95": [
+              -0.1353504465830843,
+              0.05992764248836708
+            ]
+          }
+        },
+        "heads-active-r32-g0.1/neural": {
+          "coefficient_response_rms": 2.085030814091562e-06,
+          "coefficient_response_max_abs": 7.62939453125e-06,
+          "response": {
+            "operand_groups": 32,
+            "response_rms": 0.0013679905985873111,
+            "nrmse": 1.0003863945339542,
+            "correlation": -0.0538596655987691,
+            "bootstrap_draws": 20000,
+            "bootstrap_seed": 20260926,
+            "simultaneous_cells": 9,
+            "nrmse_ci95": [
+              0.9998592997528772,
+              1.0008536729413366
+            ],
+            "correlation_ci95": [
+              -0.1219101101184574,
+              0.023772513249397272
+            ],
+            "nrmse_simultaneous_ci95": [
+              0.9995945749766288,
+              1.0010631631093472
+            ],
+            "correlation_simultaneous_ci95": [
+              -0.14555358333649498,
+              0.056157533351241726
+            ]
+          }
+        }
+      },
+      "comparisons": {
+        "heads/eml": {
+          "control": "heads/neural",
+          "eml_minus_control_response_mse": -2.9572842189888108e-06,
+          "paired_difference_ci95": [
+            -0.00019725619280090237,
+            0.0001408964057326045
+          ]
+        },
+        "heads-active-r32-g0/eml": {
+          "control": "heads-active-r32-g0/neural",
+          "eml_minus_control_response_mse": 2.339390903216554e-10,
+          "paired_difference_ci95": [
+            -1.7744829013584723e-09,
+            2.3224631699273815e-09
+          ]
+        },
+        "heads-active-r32-g0.1/eml": {
+          "control": "heads-active-r32-g0.1/neural",
+          "eml_minus_control_response_mse": -4.773141881742049e-10,
+          "paired_difference_ci95": [
+            -2.8122634887495225e-09,
+            1.5654071224465342e-09
+          ]
+        }
+      }
+    }
+  }
+}
