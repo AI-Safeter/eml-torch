@@ -1,0 +1,160 @@
+{
+  "scope": "Post-fit training and validation features for all nine primary cells; no held-out inputs and no saved training-gradient trajectory.",
+  "source_sha256": "c6d84083c801ca3217e8d40c0967d5dc93d8d717c15979fc5c306327af874930",
+  "raw_evidence": "head-numerics-evidence.json.gz",
+  "raw_evidence_sha256": "bbc1b8cd4e0e383809a6bd3b361e026ec2e1bd7ebcd19a1a9732f68111581dde",
+  "cells": {
+    "qwen17b/add": {
+      "gpu": "NVIDIA H100 80GB HBM3",
+      "torch": "2.5.0a0+e000cf0ad9.nv24.10",
+      "fits": 30,
+      "eml_checkpoints": 15,
+      "nonfinite_training_steps": 0,
+      "parameter_counts": [
+        2177
+      ],
+      "left_min": -6.912832260131836,
+      "left_max": 4.043567180633545,
+      "right_min": 1.0,
+      "right_max": 112.03059387207031,
+      "exponential_clamped_values": 0,
+      "logarithm_clamped_values": 0
+    },
+    "qwen17b/multiply": {
+      "gpu": "NVIDIA H100 80GB HBM3",
+      "torch": "2.5.0a0+e000cf0ad9.nv24.10",
+      "fits": 30,
+      "eml_checkpoints": 15,
+      "nonfinite_training_steps": 0,
+      "parameter_counts": [
+        2177
+      ],
+      "left_min": -5.751962184906006,
+      "left_max": 3.483023166656494,
+      "right_min": 1.0,
+      "right_max": 93.15750122070312,
+      "exponential_clamped_values": 0,
+      "logarithm_clamped_values": 0
+    },
+    "qwen17b/divide": {
+      "gpu": "NVIDIA H100 80GB HBM3",
+      "torch": "2.5.0a0+e000cf0ad9.nv24.10",
+      "fits": 30,
+      "eml_checkpoints": 15,
+      "nonfinite_training_steps": 0,
+      "parameter_counts": [
+        2177
+      ],
+      "left_min": -4.595897674560547,
+      "left_max": 3.4465155601501465,
+      "right_min": 1.0,
+      "right_max": 49.36906433105469,
+      "exponential_clamped_values": 0,
+      "logarithm_clamped_values": 0
+    },
+    "qwen4b/add": {
+      "gpu": "NVIDIA H100 80GB HBM3",
+      "torch": "2.5.0a0+e000cf0ad9.nv24.10",
+      "fits": 30,
+      "eml_checkpoints": 15,
+      "nonfinite_training_steps": 0,
+      "parameter_counts": [
+        2177
+      ],
+      "left_min": -4.256542682647705,
+      "left_max": 3.3253891468048096,
+      "right_min": 1.0,
+      "right_max": 36.90997314453125,
+      "exponential_clamped_values": 0,
+      "logarithm_clamped_values": 0
+    },
+    "qwen4b/multiply": {
+      "gpu": "NVIDIA H100 80GB HBM3",
+      "torch": "2.5.0a0+e000cf0ad9.nv24.10",
+      "fits": 30,
+      "eml_checkpoints": 15,
+      "nonfinite_training_steps": 0,
+      "parameter_counts": [
+        2177
+      ],
+      "left_min": -5.335814952850342,
+      "left_max": 3.5600738525390625,
+      "right_min": 1.0,
+      "right_max": 43.480247497558594,
+      "exponential_clamped_values": 0,
+      "logarithm_clamped_values": 0
+    },
+    "qwen4b/divide": {
+      "gpu": "NVIDIA H100 80GB HBM3",
+      "torch": "2.5.0a0+e000cf0ad9.nv24.10",
+      "fits": 30,
+      "eml_checkpoints": 15,
+      "nonfinite_training_steps": 0,
+      "parameter_counts": [
+        2177
+      ],
+      "left_min": -5.11319637298584,
+      "left_max": 3.7252700328826904,
+      "right_min": 1.0,
+      "right_max": 67.64421081542969,
+      "exponential_clamped_values": 0,
+      "logarithm_clamped_values": 0
+    },
+    "gemma/add": {
+      "gpu": "NVIDIA H100 80GB HBM3",
+      "torch": "2.9.0+cu128",
+      "fits": 30,
+      "eml_checkpoints": 15,
+      "nonfinite_training_steps": 0,
+      "parameter_counts": [
+        2177
+      ],
+      "left_min": -3.9557671546936035,
+      "left_max": 3.3533239364624023,
+      "right_min": 1.0,
+      "right_max": 34.21333312988281,
+      "exponential_clamped_values": 0,
+      "logarithm_clamped_values": 0
+    },
+    "gemma/multiply": {
+      "gpu": "NVIDIA H100 80GB HBM3",
+      "torch": "2.9.0+cu128",
+      "fits": 30,
+      "eml_checkpoints": 15,
+      "nonfinite_training_steps": 0,
+      "parameter_counts": [
+        2177
+      ],
+      "left_min": -6.155311107635498,
+      "left_max": 3.921588182449341,
+      "right_min": 1.0,
+      "right_max": 107.81802368164062,
+      "exponential_clamped_values": 0,
+      "logarithm_clamped_values": 0
+    },
+    "gemma/divide": {
+      "gpu": "NVIDIA H100 80GB HBM3",
+      "torch": "2.9.0+cu128",
+      "fits": 30,
+      "eml_checkpoints": 15,
+      "nonfinite_training_steps": 0,
+      "parameter_counts": [
+        2177
+      ],
+      "left_min": -4.661459445953369,
+      "left_max": 3.8113696575164795,
+      "right_min": 1.0,
+      "right_max": 126.0605697631836,
+      "exponential_clamped_values": 0,
+      "logarithm_clamped_values": 0
+    }
+  },
+  "total_fits": 270,
+  "eml_checkpoints": 135,
+  "nonfinite_training_steps": 0,
+  "interpretation": "No argument saturation was observed at the saved EML checkpoints. This does not rule out poor conditioning or frequent gradient clipping during training.",
+  "reproduction": {
+    "qwen": "CUDA_VISIBLE_DEVICES=0 python head_numerics.py qwen17b qwen4b --output /tmp/new-qwen-numerics.json",
+    "gemma": "In the pinned Gemma environment: CUDA_VISIBLE_DEVICES=0 python head_numerics.py gemma --output /tmp/new-gemma-numerics.json"
+  }
+}

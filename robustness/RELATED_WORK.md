@@ -16,3 +16,45 @@ Goodfire's [geometric calculator study](https://www.goodfire.com/research/a-geom
 The hypothesis tested here is narrower: a small differentiable EML mapping, trained with intervention responses and optional derivatives, may preserve a localized scalar contribution on a specified family of arithmetic prompts. The prospective study compares that mapping with equally budgeted neural heads, linear predictors, and original neurons; tests independent operands and another model family; and separates natural edits from failures outside the retained feature subspace. Whether these experiments support a publishable contribution depends on their completed results. Whole-block compression is evaluated separately and cannot be inferred from scalar fidelity.
 
 Literature checked September 8, 2026. Comparisons describe the cited authors' results, not independently reproduced performance. The method and benchmark budgets differ, so their headline numbers should not be ranked directly against ours.
+
+## EML versus SiLU: what the comparison establishes
+
+The [nonpolynomial activation theorem of Leshno et al.](https://pinkus.net.technion.ac.il/files/2021/02/neural.pdf)
+concerns approximation with unrestricted width and appropriate biases. It does
+not rank finite networks at a fixed parameter or optimization budget. SiLU meets
+its activation conditions. Applying the theorem to the mathematical head family,
+setting the EML right affine map to zero leaves an exponential activation. The
+implemented clipped exponential is also continuous and nonpolynomial; clipping
+alone does not remove this abstract approximation property. The theorem supplies
+no error guarantee at our fixed parameter budget or in floating-point execution.
+
+The [original EML paper](https://arxiv.org/html/2603.21852v2) constructs calculator
+operations through repeated applications of the operator, with complex
+intermediates needed for parts of the construction. Our real-valued head uses
+one EML stage with logarithm argument `1 + right(x)**2`. It does not implement
+that full construction. The identity `eml(x, 1) = exp(x)` also becomes a clipped
+exponential in `safe_eml` outside its supported argument range.
+
+At input rank 32 and width 32, the scalar EML and SiLU heads each store 2,177
+parameters, including their linear skip. EML has parallel left/right affine
+arguments and one nonlinear stage; the comparator has two sequential SiLU
+stages. This is a comparison of complete architectures at matched head storage.
+It does not isolate activation choice, match depth, or guarantee equal runtime.
+The dense feature projection adds storage to both predictors.
+
+Exponential derivatives can grow quickly, but numerical instability has not
+been established as the cause of the observed results. Training clips gradient
+norms to 1.0. The [GPU diagnostic](head-numerics.json) records zero nonfinite-loss
+or nonfinite-gradient steps across the 270 primary fits. On the stored training
+and validation features, none of the 135 final EML checkpoints reaches an
+exponential or logarithm argument clamp. This post-fit check cannot recover
+unrecorded training trajectories, gradient-clipping frequency, or conditioning.
+It does not cover the held-out inputs.
+
+A further architecture study would compare depth and width sweeps under explicit
+parameter and measured runtime budgets. A SwiGLU control would share EML's two
+affine branches and readout; a wider single-stage SiLU would provide another
+comparison. Such a study needs separate validation and a fresh holdout after
+the present results. Neither mathematical paper implies a general advantage or
+disadvantage for EML on this task, and the current evidence should not be framed
+as a mathematical limitation of EML.

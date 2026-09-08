@@ -191,6 +191,8 @@ def main():
         "",
         "The paired comparison below uses the same operand groups and active features with derivative-loss weight .1. Negative differences favor EML. These 95% intervals are per comparison, without adjustment across cells; an isolated favorable result does not establish operator superiority.",
         "",
+        "Both heads contain 2,177 parameters, but EML uses one nonlinear stage with two affine arguments and the comparator uses two sequential SiLU stages. This comparison therefore includes architectural and depth differences. Equal parameter counts do not guarantee equal runtime. See the [mathematical and implementation limits](../RELATED_WORK.md#eml-versus-silu-what-the-comparison-establishes).",
+        "",
         "| Model / operation | EML minus SiLU response MSE | Paired 95% interval |",
         "|---|---:|---:|",
     ]
