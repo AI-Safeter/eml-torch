@@ -41,4 +41,4 @@ error.
 MIT. The EML operator and universality construction are due to
 [Andrzej Odrzywołek](https://arxiv.org/abs/2603.21852).
 
-Research artifacts for scalar arithmetic-component replacement are available in [research/](research/README.md), including GPU measurements, controls, an offline explorer, and reproduction commands.
+The [one-layer quantization-correction experiment](kv_correction/README.md) compares EML with linear and SiLU controls under a fixed stop rule. Earlier [arithmetic findings](research/README.md) and [KV compression results](kv_cache/RESULTS.md) remain as evidence archives; superseded runners are available through Git history.

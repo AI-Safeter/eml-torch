@@ -1,6 +1,6 @@
 # Component robustness study
 
-Status: experiments in progress. Training/validation results are not held-out findings. The earlier exploratory release remains under `../research/`; its manifest is unchanged. The small `emltorch` package is unchanged by this study.
+Status: experiments in progress. Training/validation results are not held-out findings. Earlier exploratory evidence remains under `../research/`; its retired executables and complete manifest can be reproduced from [commit 51cb441](https://github.com/AI-Safeter/eml-torch/tree/51cb441c80ef6eef5b2fe4480b1c6b45ec896cf5/research). This study's frozen sources remain intact. The small `emltorch` package is unchanged by this study.
 
 The user requested **Gemma 4 E2B IT in place of SmolLM2**. See [the amendment](GEMMA_AMENDMENT.md). Completed SmolLM2 artifacts are preserved as an incomplete, superseded arm. Gemma uses a separate pinned backend; the original Qwen environment and running evaluations continue unchanged.
 

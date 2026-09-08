@@ -190,7 +190,7 @@ A 422-coefficient EML head distills a frozen 1,281-parameter airfoil-noise teach
 Both predictors were compiled to C with the same flags. Median amortized scalar latency was 0.471 µs for EML and 0.883 µs for the teacher, measured in seven groups on a shared CPU host. The standalone C equation agrees with the CUDA reference on all 1,503 rows; the standard-library Python API was checked on all 1,038 in-range rows and rejects inputs outside the training bounds. Bounds are not an accuracy certificate.
 
 
-Use [airfoil_equation.py](airfoil-replay/airfoil_equation.py) or compile [airfoil_equation.c](airfoil-replay/airfoil_equation.c). C entry points are unchecked primitives. The [UCI Airfoil Self-Noise dataset](https://doi.org/10.24432/C5VW2C) is by Brooks, Pope, and Marcolini (1989), CC BY 4.0.
+Use [airfoil_equation.py](https://github.com/AI-Safeter/eml-torch/blob/51cb441c80ef6eef5b2fe4480b1c6b45ec896cf5/research/airfoil-replay/airfoil_equation.py) or compile [airfoil_equation.c](https://github.com/AI-Safeter/eml-torch/blob/51cb441c80ef6eef5b2fe4480b1c6b45ec896cf5/research/airfoil-replay/airfoil_equation.c). C entry points are unchecked primitives. The [UCI Airfoil Self-Noise dataset](https://doi.org/10.24432/C5VW2C) is by Brooks, Pope, and Marcolini (1989), CC BY 4.0.
 
 
 ## Python versus native CUDA

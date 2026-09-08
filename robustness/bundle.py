@@ -95,8 +95,9 @@ Read `eml-torch/robustness/results/REPORT.md` and open its adjacent `explorer.ht
 The source and compact report are in Git; this bundle additionally contains raw
 test traces, every candidate checkpoint, and the validation tensors needed for
 an offline GPU checkpoint audit. Model weights and large training activations
-are not bundled. The earlier exploratory release is preserved under
-`eml-torch/research/` and has its own original manifest.
+are not bundled. Earlier exploratory evidence is preserved under
+`eml-torch/research/`; its retired executables and complete original manifest
+are available at Git commit 51cb441c80ef6eef5b2fe4480b1c6b45ec896cf5.
 
 After extracting this ZIP, run from the bundle root:
 
