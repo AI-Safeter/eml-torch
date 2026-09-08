@@ -115,5 +115,45 @@
     }
   ],
   "failed_checks_preserve_previous_record": true,
-  "restored_original_evidence_accepted": true
+  "restored_original_evidence_accepted": true,
+  "zero_regression_stress_cohort_bounds": {
+    "checked_on_cuda": true,
+    "function": "robust_statistics.loss_bound",
+    "source_sha256": "87500686a176aa68285ac1f190da18bff38322e8bcb97bb2bf1fec206f7e8300",
+    "torch": "2.5.0a0+e000cf0ad9.nv24.10",
+    "formats": 3,
+    "cells": 9,
+    "alpha": 0.05,
+    "all_observed_correct": true,
+    "closed_form_checked": "100 * (1 - (alpha / (formats * cells)) ** (1 / groups))",
+    "absolute_comparison_tolerance": 1e-12,
+    "minimum_groups_for_one_percentage_point": 627,
+    "observations": [
+      {
+        "groups": 256,
+        "upper_loss_pp": 2.4276900110203057,
+        "passes_one_percentage_point": false
+      },
+      {
+        "groups": 512,
+        "upper_loss_pp": 1.2213029094938437,
+        "passes_one_percentage_point": false
+      },
+      {
+        "groups": 626,
+        "upper_loss_pp": 1.0000093141071875,
+        "passes_one_percentage_point": false
+      },
+      {
+        "groups": 627,
+        "upper_loss_pp": 0.9984223915480184,
+        "passes_one_percentage_point": true
+      },
+      {
+        "groups": 1024,
+        "upper_loss_pp": 0.6125274038492533,
+        "passes_one_percentage_point": true
+      }
+    ]
+  }
 }
