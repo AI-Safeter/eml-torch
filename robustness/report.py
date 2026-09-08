@@ -7,6 +7,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import torch
+from metric_audit import require as require_scalar_metrics
 from runtime import HERE, RUNS
 
 PRIMARY = "heads-active-r32-g0.1/eml"
@@ -107,6 +108,7 @@ def main():
     results, cells = {}, []
     for model in LABELS:
         for op in ["add", "multiply", "divide"]:
+            require_scalar_metrics(RUNS / model / op)
             component = torch.load(RUNS / model / op / "component-active.pt", weights_only=True)
             selection = json.loads((RUNS / model / op / "selection.json").read_text())
             stored = {
@@ -330,6 +332,8 @@ def main():
         "## Evidence and limits",
         "",
         "All 270 primary scalar candidates, 90 superseded scalar candidates, and 27 vector candidates are accounted for by the study audit, including any failed fits. Validation objectives are recomputed from the saved checkpoints on GPU. Original snapshots remain available. The user-requested Gemma amendment was frozen before Gemma fitting/evaluation, after partial Qwen and superseded SmolLM2 results had been observed. Selection hashes precede the corresponding evaluations; the normalization-folding repair is documented. The previous exploratory release is preserved separately.",
+        "",
+        "Every scalar summary, per-format result, confidence interval, paired comparison, and primary decision is recomputed from the raw traces using the frozen CUDA statistics. Saved values must agree exactly. The report checks that the replay records still match the source and evidence hashes. This checks faithful calculation of the declared metrics; it is not an independent validation of their statistical assumptions.",
         "",
         "See [protocol](../PROTOCOL.md), [evaluation details](../EVALUATION_DETAILS.md), [reproduction](../README.md), and [prior work](../RELATED_WORK.md). Symbolic component replacement, arithmetic neuron interventions, and geometric explanations have substantial prior work. This study alone establishes neither priority nor an EML-specific advantage over neural controls. Individual operand values may repeat in-range; independent problem pairs and larger-range tests support different generalization claims.",
     ]

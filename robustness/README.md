@@ -43,7 +43,7 @@ CUDA_VISIBLE_DEVICES=0 python run_evaluation.py qwen17b
 
 For this checkout layout, pass the absolute sibling run directory to `--output` (or `../../emltorch-robustness-runs/qwen17b` when starting inside `robustness/`). `run_fits.py` and `run_evaluation.py` use the location defined in `runtime.py`. Repeat for `qwen4b` on another GPU. The `smollm` option remains for reproduction of the superseded arm; use the separate Gemma entry points below for its replacement. The evaluator checks that all ten candidates per operation/method have finished, creates missing sparse/linear controls, validates restoration and all-token hooks, then evaluates every selected head and every seed. It does not choose a model on test performance.
 
-Qwen evaluation stages now cache unchanged layers before the scalar intervention when token IDs and attention masks match. See [the execution amendment](PREFIX_CACHE_AMENDMENT.md). Gemma, generation, and whole-block timing retain their native execution paths. Both Qwen models passed bitwise validation checks, and a full Qwen3-1.7B primary intervention replay reproduced the original file hash. The direct-script evaluator also reproduced four original validation cohorts exactly (`prefix-dispatch-validation.json`).
+Qwen evaluation stages now cache unchanged layers before the scalar intervention when token IDs and attention masks match. See [the execution amendment](PREFIX_CACHE_AMENDMENT.md). Generation and whole-block timing retain their native execution paths. Gemma's default entry points also retain native execution; the separately validated [host execution driver](gemma/HOST_EXECUTION.md) enables its prefix reuse. Both Qwen models passed bitwise validation checks, and a full Qwen3-1.7B primary intervention replay reproduced the original file hash. The direct-script evaluator also reproduced four original validation cohorts exactly (`prefix-dispatch-validation.json`).
 
 To reproduce the cache checks, use the original Qwen environment:
 
@@ -111,6 +111,27 @@ Run the main audit in the original Qwen environment; `GEMMA_PYTHON` selects the 
 The scalar audit also checks component and control checkpoint hashes, exact sparse/linear control grids, validation-selected control choices, and completion before selection (`selection-audit-validation.json`). Ordinary traces must agree with the frozen strict numeric parser; deliberately altered correctness/agreement labels were rejected (`parser-audit-validation.json`). Gemma independent collection reproduced all 24 tensor archives exactly on GPU and on disk (`replay-gemma.json`).
 
 The whole-block audit also verifies the complete candidate grid, validation-only selection, localized layer, language-file hashes, and arithmetic cohorts. It recomputes every saved utility metric from the raw records on CUDA, requiring exact agreement (`whole-evidence-audit.json`).
+
+The scalar audit now also recomputes every saved summary and per-format result
+from its raw traces on CUDA, including all seeds, controls, confidence intervals,
+paired comparisons, and primary decisions. Values must match exactly; it never
+rewrites a disagreeing summary. Each cell's `metric-audit.json` binds the replay
+to source, environment, and evidence hashes. The report refuses stale or missing
+metric audit records. This verifies the implementation of the frozen statistics,
+not their modeling assumptions. To audit a completed cell independently:
+
+```bash
+CUDA_VISIBLE_DEVICES=0 python metric_audit.py --model qwen17b --operation add --force
+```
+
+Use Gemma's pinned environment for Gemma statistics, or set `GEMMA_PYTHON` when
+invoking the command from the original Qwen environment. A moved evidence bundle
+is recomputed because its recorded input paths differ.
+
+The [audit validation record](metric-audit-validation.json) covers both completed
+Qwen addition cells (3,482,112 raw method/condition records, not independent
+questions), exact GPU metric replay, relocation and cache behavior, and eight
+rejections of altered or stale evidence. The full nine-cell audit remains pending.
 
 The amended roster in `study.json` defines the exact nine primary cells. The audit separately accounts for all 90 superseded SmolLM2 fits and recomputes its completed primary ordinary metrics without requiring canceled inference stages. The report refuses to render without the complete audit for the amended roster. It creates `results/REPORT.md`, a figure in PNG/PDF, and an interactive explorer with every model/operation cell, per-format results, controls, and seeds. Reporting code does not alter checkpoint selection or the primary criteria.
 

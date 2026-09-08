@@ -122,6 +122,7 @@ def main():
     configure("qwen17b")
     from data import STYLES, save
     from evaluate_heads import digest
+    from metric_audit import validate as validate_scalar_metrics
     from model_io import expand, setup
     from scalar_checkpoint_audit import validate as validate_scalar_checkpoints
     from trace_audit import check as check_traces
@@ -293,6 +294,7 @@ def main():
                 "primary_and_stress_counts": file_counts,
                 "raw_conditions_controls_and_restoration_verified": True,
                 "selection": selection_audit,
+                "metrics": validate_scalar_metrics(out),
             }
     assert set(audit["scalar"]) == {
         f"{model}/{op}"
