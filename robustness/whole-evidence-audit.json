@@ -1,0 +1,7 @@
+{
+  "fits": 27,
+  "required_test_and_latency_artifacts_present": true,
+  "all_validation_objectives_recomputed_on_gpu": true,
+  "complete_grid_selection_language_hashes_and_arithmetic_cohorts_verified": true,
+  "all_utility_metrics_recomputed_exactly_on_gpu": true
+}

@@ -1,9 +1,75 @@
 """Require complete evidence and recompute every scalar validation objective on GPU."""
 
 import json
+import math
+from collections import Counter
 
 from runtime import HERE, RUNS, configure
 from verify_sources import main as verify_sources
+
+
+def audit_whole():
+    """Audit the completed whole-block arm independently of pending scalar tests."""
+    configure("qwen17b")
+    import torch
+    from data import STYLES
+    from evaluate_heads import parse_answer
+    from model_io import expand
+    from trace_audit import identity
+    from whole_evaluate import summarize
+
+    whole = RUNS / "whole-block"
+    selected = json.loads((whole / "selection.json").read_text())
+    assert set(selected["students"]) == {"eml", "swiglu", "linear"}
+    component = torch.load(RUNS / "qwen17b/add/component.pt", weights_only=True)
+    assert selected["layer"] == component["layer"]
+    assert selected["layer"] == json.loads((whole / "collection.json").read_text())["layer"]
+    from whole_checkpoint_audit import validate as validate_whole_checkpoints
+
+    validate_whole_checkpoints()
+    raw = {}
+    for kind in ["original", "eml", "swiglu", "linear"]:
+        data = json.loads((whole / f"evaluation-test-{kind}.json").read_text())
+        raw[kind] = data
+        assert len(data["language"]) == 256
+        assert all(math.isfinite(value) for value in data["language"])
+        assert len(data["arithmetic"]) == 6 and all(
+            len(rows) == 3072 for rows in data["arithmetic"].values()
+        )
+        for op in ["add", "multiply", "divide"]:
+            problems = json.loads((HERE / "data" / op / "problems.json").read_text())
+            extra = json.loads((HERE / "data" / op / "extra-problems.json").read_text())
+            for label, frozen in [("test", problems["test"]), ("unconditioned", extra["ordinary"])]:
+                rows = data["arithmetic"][f"{op}/{label}"]
+                assert Counter(map(identity, rows)) == Counter(
+                    map(identity, expand(frozen, STYLES))
+                )
+                assert all(
+                    row["correct"] == (parse_answer(row["text"]) == row["answer"]) for row in rows
+                )
+    assert len(json.loads((whole / "latency.json").read_text())["records"]) == 12
+    assert len(json.loads((whole / "block-latency.json").read_text())["records"]) == 12
+    assert len(json.loads((whole / "output-fidelity.json").read_text())) == 2
+    assert (whole / "utility-results.json").exists()
+    storage = json.loads((whole / "model-storage.json").read_text())["students"]
+    assert set(storage) == {"eml", "swiglu", "linear"}
+    for row in storage.values():
+        assert (
+            row["original_model_parameters"]
+            - row["original_block_parameters"]
+            + row["deployed_student_parameters"]
+            == row["replaced_model_parameters"]
+        )
+    counts = {"original": storage["eml"]["original_block_parameters"]}
+    counts.update({kind: row["deployed_student_parameters"] for kind, row in storage.items()})
+    assert summarize(raw, counts) == json.loads((whole / "utility-results.json").read_text())
+    return {
+        "fits": 27,
+        "required_test_and_latency_artifacts_present": True,
+        "all_validation_objectives_recomputed_on_gpu": True,
+        "complete_grid_selection_language_hashes_and_arithmetic_cohorts_verified": True,
+        "all_utility_metrics_recomputed_exactly_on_gpu": True,
+    }
 
 
 def main():
@@ -178,7 +244,6 @@ def main():
                 "primary_and_stress_counts": file_counts,
                 "raw_conditions_controls_and_restoration_verified": True,
             }
-    whole = RUNS / "whole-block"
     audit["independent_feature_replays"] = {}
     for model in ["qwen17b", "smollm"]:
         replay = json.loads((HERE / f"replay-{model}.json").read_text())
@@ -190,33 +255,7 @@ def main():
             if path.exists():
                 assert digest(path) == item["sha256"]
         audit["independent_feature_replays"][model] = {"tensor_archives_bitwise_equal": 24}
-    from whole_checkpoint_audit import validate as validate_whole_checkpoints
-
-    validate_whole_checkpoints()
-    for kind in ["original", "eml", "swiglu", "linear"]:
-        data = json.loads((whole / f"evaluation-test-{kind}.json").read_text())
-        assert len(data["language"]) == 256
-        assert len(data["arithmetic"]) == 6 and all(
-            len(rows) == 3072 for rows in data["arithmetic"].values()
-        )
-    assert len(json.loads((whole / "latency.json").read_text())["records"]) == 12
-    assert len(json.loads((whole / "block-latency.json").read_text())["records"]) == 12
-    assert len(json.loads((whole / "output-fidelity.json").read_text())) == 2
-    assert (whole / "utility-results.json").exists()
-    storage = json.loads((whole / "model-storage.json").read_text())["students"]
-    assert set(storage) == {"eml", "swiglu", "linear"}
-    for row in storage.values():
-        assert (
-            row["original_model_parameters"]
-            - row["original_block_parameters"]
-            + row["deployed_student_parameters"]
-            == row["replaced_model_parameters"]
-        )
-    audit["whole_block"] = {
-        "fits": 27,
-        "required_test_and_latency_artifacts_present": True,
-        "all_validation_objectives_recomputed_on_gpu": True,
-    }
+    audit["whole_block"] = audit_whole()
     save(RUNS / "audit.json", audit)
     print("COMPLETE STUDY AUDIT PASSED", flush=True)
 

@@ -76,6 +76,8 @@ python report.py
 
 The audit checks exact problem/edit identities, duplicate conditions, required controls, finite values, and restoration traces, and recomputes saved validation objectives on CUDA. The trace checker was verified against real Qwen3-4B validation traces and deliberately corrupted copies (`trace-audit-validation.json`). Generation checks on all three models verify exact restoration and execution during decoding; they are implementation checks, not held-out performance results.
 
+The whole-block audit also verifies the complete candidate grid, validation-only selection, localized layer, language-file hashes, and arithmetic cohorts. It recomputes every saved utility metric from the raw records on CUDA, requiring exact agreement (`whole-evidence-audit.json`).
+
 The report refuses to render without the complete audit. It creates `results/REPORT.md`, a figure in PNG/PDF, and an interactive explorer with every model/operation cell, per-format results, controls, and seeds. Reporting code does not alter checkpoint selection or the primary criteria.
 
 After committing the completed report, `python bundle.py create --path /absolute/path/to/new-bundle` packages the tracked source, raw test traces, all candidate checkpoints, and validation tensors. It creates a manifest and ZIP with a SHA-256 delivery record. Large training activations and pretrained model weights are regenerated from the pinned inputs. The bundle includes instructions to verify, unpack, and run the GPU audit independently. Raw traces and large checkpoint collections need not be added to Git.
