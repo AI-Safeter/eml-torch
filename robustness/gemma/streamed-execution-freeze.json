@@ -1,0 +1,14 @@
+{
+  "scope": "Native FP32 CUDA division seed interventions with streamed prefix MLP weights",
+  "files": {
+    "gemma/streamed_mlp.py": "090ce4260f2bcf4e50b00e2aa45457029a06f22be162a0c3806d8fc6d98b416a",
+    "gemma/streamed_cohort.py": "fc8d56c594646f728a5416083e5fe477c0157a297bceaff589662cff9d59febf",
+    "gemma/validate_streamed.py": "091bef90c591fbb1ee47f171df85e5cb594635eaaab5dafc43cf560f83cf3637",
+    "gemma/STREAMED_EXECUTION.md": "62fef472ec000021c8eaac223390b63778fda6162251f7f6ef3dd51a2bef51b3",
+    "gemma/streamed-validation.json": "fe62fa09c1048d3a3a86ef53fb51d9617f9f40e632c6ffdee7a898fd040aecd0",
+    "gemma/streamed-controls.json": "96045693663757da0fae5c7923f8bf5dbe144b3be29e21a5dc524a90bdf65c7b",
+    "gemma/streamed-native-validation.json.gz": "799bcde4ffcd75779a9cb619c699cc21d57465a8440b7ba745f59a1b2a5a8702",
+    "gemma/host-execution-freeze.json": "d2e44e4d248aad4d822cd9d507e9aa07e4ab0906e314031d0cfff9008fe68f1f",
+    "gemma/auxiliary-execution-freeze.json": "4adf033485f5b91bc1586922e503c67e9beff81abcd2ddaf187ce2ffddf45dc5"
+  }
+}

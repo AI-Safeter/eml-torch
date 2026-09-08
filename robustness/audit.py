@@ -15,6 +15,7 @@ def execution_sources():
         "gemma/host-execution-freeze.json",
         "gemma/generation-execution-freeze.json",
         "gemma/auxiliary-execution-freeze.json",
+        "gemma/streamed-execution-freeze.json",
     ]:
         path = HERE / name
         frozen = json.loads(path.read_text())

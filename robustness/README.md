@@ -13,6 +13,9 @@ reuses unchanged layers across repeated head evaluations, with exact native
 decoding and saved-cohort checks.
 An [isolated division worker](gemma/AUXILIARY_EXECUTION.md) can use a spare GPU
 to precompute complete cohorts, yielding when the main queue reaches division.
+The [streamed-weight worker](gemma/STREAMED_EXECUTION.md) can independently
+evaluate division seed interventions with less available GPU memory, while
+the main queue retains answer generation and the remaining suites.
 
 [Gemma multiplication's primary cohort](gemma/primary-multiplication.json) also
 passes the scalar fidelity criteria: EML response NRMSE is 0.0717, and original

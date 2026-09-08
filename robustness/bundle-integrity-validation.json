@@ -19,7 +19,7 @@
   "roundtrip_gpu_metrics_identical": true,
   "source_sha256": {
     "bundle.py": "e36008a962c18cc9ce7c095fdb8c4e072e5248a82eebb2023f53c22186dbdb98",
-    "audit.py": "4f13e4b3315a19668b95a37807dd84fb462f557a661654b32b79d623bfbccc3e",
+    "audit.py": "efc0866712f6e3fdadfb4233ff18ea8131f8f3d23865268a4e800b17bea7bee8",
     "report.py": "4375dbf3ffaab967e6dbf86abc152b29fd40251156f4acf5de7df2c4b4529883",
     "validate_bundle.py": "9240af2ecedbe62c3e74589589473a0a2e5eb619592886ba8883a4868fc02ec9"
   }

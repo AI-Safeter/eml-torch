@@ -1,0 +1,64 @@
+{
+  "engine": "streamed",
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "torch": "2.9.0+cu128",
+  "elapsed_seconds": 26.760251685976982,
+  "peak_allocated_GiB": 8.344129085540771,
+  "peak_reserved_GiB": 8.837890625,
+  "trace": {
+    "methods": 31,
+    "unique_conditions_per_method": 384
+  },
+  "method_records": 11904,
+  "source_sha256": {
+    "gemma/streamed_mlp.py": "090ce4260f2bcf4e50b00e2aa45457029a06f22be162a0c3806d8fc6d98b416a",
+    "gemma/streamed_cohort.py": "fc8d56c594646f728a5416083e5fe477c0157a297bceaff589662cff9d59febf",
+    "gemma/host-execution-freeze.json": "d2e44e4d248aad4d822cd9d507e9aa07e4ab0906e314031d0cfff9008fe68f1f",
+    "gemma/auxiliary-execution-freeze.json": "4adf033485f5b91bc1586922e503c67e9beff81abcd2ddaf187ce2ffddf45dc5",
+    "seed_evaluate.py": "b7cf70372de633646ea1bcaf4cc631067dc4ab290b7f807f633023705fa2dfdb"
+  },
+  "selection_sha256": "68e18a1580d1407b756690509dcc96dda6f4a6afd841fb913d6e21f0a0524cbd",
+  "raw_sha256": "6fe8102300cbcddbc60fc66b0ebe387040c8ae463557d02b020f4be9af4d332e",
+  "streamed_mlp_calls": [
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2
+  ],
+  "passed": true,
+  "raw_file_bytes_identical": true,
+  "native_reference": {
+    "engine": "native",
+    "gpu": "NVIDIA H100 80GB HBM3",
+    "torch": "2.9.0+cu128",
+    "elapsed_seconds": 35.60630272515118,
+    "peak_allocated_GiB": 11.719068050384521,
+    "peak_reserved_GiB": 12.09765625,
+    "trace": {
+      "methods": 31,
+      "unique_conditions_per_method": 384
+    },
+    "method_records": 11904,
+    "source_sha256": {
+      "gemma/streamed_mlp.py": "090ce4260f2bcf4e50b00e2aa45457029a06f22be162a0c3806d8fc6d98b416a",
+      "gemma/streamed_cohort.py": "fc8d56c594646f728a5416083e5fe477c0157a297bceaff589662cff9d59febf",
+      "gemma/host-execution-freeze.json": "d2e44e4d248aad4d822cd9d507e9aa07e4ab0906e314031d0cfff9008fe68f1f",
+      "gemma/auxiliary-execution-freeze.json": "4adf033485f5b91bc1586922e503c67e9beff81abcd2ddaf187ce2ffddf45dc5",
+      "seed_evaluate.py": "b7cf70372de633646ea1bcaf4cc631067dc4ab290b7f807f633023705fa2dfdb"
+    },
+    "selection_sha256": "68e18a1580d1407b756690509dcc96dda6f4a6afd841fb913d6e21f0a0524cbd",
+    "raw_sha256": "6fe8102300cbcddbc60fc66b0ebe387040c8ae463557d02b020f4be9af4d332e"
+  }
+}
