@@ -1,0 +1,26 @@
+{
+  "seed": 20260923,
+  "counts": {
+    "train": 2048,
+    "validation": 512,
+    "test": 1024,
+    "shift": 512,
+    "carry": 512
+  },
+  "ordinary_count": 1024,
+  "both_operand_count": 256,
+  "historical_problem_count_excluded": 5792,
+  "historical_sources_sha256": {
+    "add/minimal-problems.json": "26b78c4d5c622f36be2e3ccce51a35cdb7b7af0b84a59882523f1b5151c5e3c9",
+    "add/problems.json": "d17bae9330ce94827d19c941a3cb3f01c30c5ad001d640d059127b55e7d51373",
+    "replication-0.6b/add/minimal-problems.json": "26b78c4d5c622f36be2e3ccce51a35cdb7b7af0b84a59882523f1b5151c5e3c9",
+    "replication-0.6b/add/problems.json": "d17bae9330ce94827d19c941a3cb3f01c30c5ad001d640d059127b55e7d51373",
+    "historical-addition-pairs.json": "11da08f57753e9a4310aac5cfcedbb359343bfcb0183fe34273cc309e4ff54bc"
+  },
+  "new_unique_problem_count": 10752,
+  "model_outputs_unseen": true,
+  "sha256": {
+    "problems.json": "cf18ec85aef4aefc7c30ce23882716b88d712ea51754af276c4aa82ea32305fe",
+    "extra-problems.json": "ff693c87060defc5757009b44ddb0376da6e0da7a39553757b5b7f7f5dfa36b6"
+  }
+}

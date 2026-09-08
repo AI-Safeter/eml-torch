@@ -1,0 +1,10502 @@
+{
+  "ordinary": [
+    {
+      "a": 366,
+      "b": 64,
+      "c": 366,
+      "answer": 430,
+      "corrupt_answer": 430,
+      "op": "add"
+    },
+    {
+      "a": 460,
+      "b": 295,
+      "c": 460,
+      "answer": 755,
+      "corrupt_answer": 755,
+      "op": "add"
+    },
+    {
+      "a": 155,
+      "b": 23,
+      "c": 155,
+      "answer": 178,
+      "corrupt_answer": 178,
+      "op": "add"
+    },
+    {
+      "a": 105,
+      "b": 102,
+      "c": 105,
+      "answer": 207,
+      "corrupt_answer": 207,
+      "op": "add"
+    },
+    {
+      "a": 172,
+      "b": 134,
+      "c": 172,
+      "answer": 306,
+      "corrupt_answer": 306,
+      "op": "add"
+    },
+    {
+      "a": 496,
+      "b": 356,
+      "c": 496,
+      "answer": 852,
+      "corrupt_answer": 852,
+      "op": "add"
+    },
+    {
+      "a": 404,
+      "b": 290,
+      "c": 404,
+      "answer": 694,
+      "corrupt_answer": 694,
+      "op": "add"
+    },
+    {
+      "a": 461,
+      "b": 136,
+      "c": 461,
+      "answer": 597,
+      "corrupt_answer": 597,
+      "op": "add"
+    },
+    {
+      "a": 479,
+      "b": 263,
+      "c": 479,
+      "answer": 742,
+      "corrupt_answer": 742,
+      "op": "add"
+    },
+    {
+      "a": 437,
+      "b": 279,
+      "c": 437,
+      "answer": 716,
+      "corrupt_answer": 716,
+      "op": "add"
+    },
+    {
+      "a": 354,
+      "b": 215,
+      "c": 354,
+      "answer": 569,
+      "corrupt_answer": 569,
+      "op": "add"
+    },
+    {
+      "a": 297,
+      "b": 84,
+      "c": 297,
+      "answer": 381,
+      "corrupt_answer": 381,
+      "op": "add"
+    },
+    {
+      "a": 268,
+      "b": 63,
+      "c": 268,
+      "answer": 331,
+      "corrupt_answer": 331,
+      "op": "add"
+    },
+    {
+      "a": 473,
+      "b": 346,
+      "c": 473,
+      "answer": 819,
+      "corrupt_answer": 819,
+      "op": "add"
+    },
+    {
+      "a": 467,
+      "b": 450,
+      "c": 467,
+      "answer": 917,
+      "corrupt_answer": 917,
+      "op": "add"
+    },
+    {
+      "a": 252,
+      "b": 67,
+      "c": 252,
+      "answer": 319,
+      "corrupt_answer": 319,
+      "op": "add"
+    },
+    {
+      "a": 340,
+      "b": 241,
+      "c": 340,
+      "answer": 581,
+      "corrupt_answer": 581,
+      "op": "add"
+    },
+    {
+      "a": 266,
+      "b": 45,
+      "c": 266,
+      "answer": 311,
+      "corrupt_answer": 311,
+      "op": "add"
+    },
+    {
+      "a": 206,
+      "b": 88,
+      "c": 206,
+      "answer": 294,
+      "corrupt_answer": 294,
+      "op": "add"
+    },
+    {
+      "a": 271,
+      "b": 254,
+      "c": 271,
+      "answer": 525,
+      "corrupt_answer": 525,
+      "op": "add"
+    },
+    {
+      "a": 237,
+      "b": 32,
+      "c": 237,
+      "answer": 269,
+      "corrupt_answer": 269,
+      "op": "add"
+    },
+    {
+      "a": 307,
+      "b": 233,
+      "c": 307,
+      "answer": 540,
+      "corrupt_answer": 540,
+      "op": "add"
+    },
+    {
+      "a": 431,
+      "b": 414,
+      "c": 431,
+      "answer": 845,
+      "corrupt_answer": 845,
+      "op": "add"
+    },
+    {
+      "a": 473,
+      "b": 40,
+      "c": 473,
+      "answer": 513,
+      "corrupt_answer": 513,
+      "op": "add"
+    },
+    {
+      "a": 351,
+      "b": 272,
+      "c": 351,
+      "answer": 623,
+      "corrupt_answer": 623,
+      "op": "add"
+    },
+    {
+      "a": 431,
+      "b": 336,
+      "c": 431,
+      "answer": 767,
+      "corrupt_answer": 767,
+      "op": "add"
+    },
+    {
+      "a": 273,
+      "b": 15,
+      "c": 273,
+      "answer": 288,
+      "corrupt_answer": 288,
+      "op": "add"
+    },
+    {
+      "a": 273,
+      "b": 18,
+      "c": 273,
+      "answer": 291,
+      "corrupt_answer": 291,
+      "op": "add"
+    },
+    {
+      "a": 157,
+      "b": 139,
+      "c": 157,
+      "answer": 296,
+      "corrupt_answer": 296,
+      "op": "add"
+    },
+    {
+      "a": 311,
+      "b": 224,
+      "c": 311,
+      "answer": 535,
+      "corrupt_answer": 535,
+      "op": "add"
+    },
+    {
+      "a": 408,
+      "b": 270,
+      "c": 408,
+      "answer": 678,
+      "corrupt_answer": 678,
+      "op": "add"
+    },
+    {
+      "a": 471,
+      "b": 333,
+      "c": 471,
+      "answer": 804,
+      "corrupt_answer": 804,
+      "op": "add"
+    },
+    {
+      "a": 342,
+      "b": 243,
+      "c": 342,
+      "answer": 585,
+      "corrupt_answer": 585,
+      "op": "add"
+    },
+    {
+      "a": 371,
+      "b": 48,
+      "c": 371,
+      "answer": 419,
+      "corrupt_answer": 419,
+      "op": "add"
+    },
+    {
+      "a": 441,
+      "b": 83,
+      "c": 441,
+      "answer": 524,
+      "corrupt_answer": 524,
+      "op": "add"
+    },
+    {
+      "a": 208,
+      "b": 83,
+      "c": 208,
+      "answer": 291,
+      "corrupt_answer": 291,
+      "op": "add"
+    },
+    {
+      "a": 312,
+      "b": 290,
+      "c": 312,
+      "answer": 602,
+      "corrupt_answer": 602,
+      "op": "add"
+    },
+    {
+      "a": 451,
+      "b": 228,
+      "c": 451,
+      "answer": 679,
+      "corrupt_answer": 679,
+      "op": "add"
+    },
+    {
+      "a": 491,
+      "b": 48,
+      "c": 491,
+      "answer": 539,
+      "corrupt_answer": 539,
+      "op": "add"
+    },
+    {
+      "a": 295,
+      "b": 15,
+      "c": 295,
+      "answer": 310,
+      "corrupt_answer": 310,
+      "op": "add"
+    },
+    {
+      "a": 310,
+      "b": 119,
+      "c": 310,
+      "answer": 429,
+      "corrupt_answer": 429,
+      "op": "add"
+    },
+    {
+      "a": 492,
+      "b": 163,
+      "c": 492,
+      "answer": 655,
+      "corrupt_answer": 655,
+      "op": "add"
+    },
+    {
+      "a": 305,
+      "b": 294,
+      "c": 305,
+      "answer": 599,
+      "corrupt_answer": 599,
+      "op": "add"
+    },
+    {
+      "a": 406,
+      "b": 128,
+      "c": 406,
+      "answer": 534,
+      "corrupt_answer": 534,
+      "op": "add"
+    },
+    {
+      "a": 491,
+      "b": 402,
+      "c": 491,
+      "answer": 893,
+      "corrupt_answer": 893,
+      "op": "add"
+    },
+    {
+      "a": 163,
+      "b": 153,
+      "c": 163,
+      "answer": 316,
+      "corrupt_answer": 316,
+      "op": "add"
+    },
+    {
+      "a": 355,
+      "b": 98,
+      "c": 355,
+      "answer": 453,
+      "corrupt_answer": 453,
+      "op": "add"
+    },
+    {
+      "a": 347,
+      "b": 267,
+      "c": 347,
+      "answer": 614,
+      "corrupt_answer": 614,
+      "op": "add"
+    },
+    {
+      "a": 126,
+      "b": 46,
+      "c": 126,
+      "answer": 172,
+      "corrupt_answer": 172,
+      "op": "add"
+    },
+    {
+      "a": 389,
+      "b": 51,
+      "c": 389,
+      "answer": 440,
+      "corrupt_answer": 440,
+      "op": "add"
+    },
+    {
+      "a": 333,
+      "b": 178,
+      "c": 333,
+      "answer": 511,
+      "corrupt_answer": 511,
+      "op": "add"
+    },
+    {
+      "a": 486,
+      "b": 109,
+      "c": 486,
+      "answer": 595,
+      "corrupt_answer": 595,
+      "op": "add"
+    },
+    {
+      "a": 307,
+      "b": 302,
+      "c": 307,
+      "answer": 609,
+      "corrupt_answer": 609,
+      "op": "add"
+    },
+    {
+      "a": 203,
+      "b": 27,
+      "c": 203,
+      "answer": 230,
+      "corrupt_answer": 230,
+      "op": "add"
+    },
+    {
+      "a": 416,
+      "b": 38,
+      "c": 416,
+      "answer": 454,
+      "corrupt_answer": 454,
+      "op": "add"
+    },
+    {
+      "a": 215,
+      "b": 107,
+      "c": 215,
+      "answer": 322,
+      "corrupt_answer": 322,
+      "op": "add"
+    },
+    {
+      "a": 160,
+      "b": 97,
+      "c": 160,
+      "answer": 257,
+      "corrupt_answer": 257,
+      "op": "add"
+    },
+    {
+      "a": 415,
+      "b": 31,
+      "c": 415,
+      "answer": 446,
+      "corrupt_answer": 446,
+      "op": "add"
+    },
+    {
+      "a": 488,
+      "b": 318,
+      "c": 488,
+      "answer": 806,
+      "corrupt_answer": 806,
+      "op": "add"
+    },
+    {
+      "a": 269,
+      "b": 263,
+      "c": 269,
+      "answer": 532,
+      "corrupt_answer": 532,
+      "op": "add"
+    },
+    {
+      "a": 495,
+      "b": 495,
+      "c": 495,
+      "answer": 990,
+      "corrupt_answer": 990,
+      "op": "add"
+    },
+    {
+      "a": 320,
+      "b": 165,
+      "c": 320,
+      "answer": 485,
+      "corrupt_answer": 485,
+      "op": "add"
+    },
+    {
+      "a": 107,
+      "b": 16,
+      "c": 107,
+      "answer": 123,
+      "corrupt_answer": 123,
+      "op": "add"
+    },
+    {
+      "a": 163,
+      "b": 40,
+      "c": 163,
+      "answer": 203,
+      "corrupt_answer": 203,
+      "op": "add"
+    },
+    {
+      "a": 410,
+      "b": 137,
+      "c": 410,
+      "answer": 547,
+      "corrupt_answer": 547,
+      "op": "add"
+    },
+    {
+      "a": 307,
+      "b": 188,
+      "c": 307,
+      "answer": 495,
+      "corrupt_answer": 495,
+      "op": "add"
+    },
+    {
+      "a": 277,
+      "b": 138,
+      "c": 277,
+      "answer": 415,
+      "corrupt_answer": 415,
+      "op": "add"
+    },
+    {
+      "a": 404,
+      "b": 201,
+      "c": 404,
+      "answer": 605,
+      "corrupt_answer": 605,
+      "op": "add"
+    },
+    {
+      "a": 225,
+      "b": 136,
+      "c": 225,
+      "answer": 361,
+      "corrupt_answer": 361,
+      "op": "add"
+    },
+    {
+      "a": 394,
+      "b": 182,
+      "c": 394,
+      "answer": 576,
+      "corrupt_answer": 576,
+      "op": "add"
+    },
+    {
+      "a": 497,
+      "b": 69,
+      "c": 497,
+      "answer": 566,
+      "corrupt_answer": 566,
+      "op": "add"
+    },
+    {
+      "a": 339,
+      "b": 285,
+      "c": 339,
+      "answer": 624,
+      "corrupt_answer": 624,
+      "op": "add"
+    },
+    {
+      "a": 407,
+      "b": 16,
+      "c": 407,
+      "answer": 423,
+      "corrupt_answer": 423,
+      "op": "add"
+    },
+    {
+      "a": 358,
+      "b": 127,
+      "c": 358,
+      "answer": 485,
+      "corrupt_answer": 485,
+      "op": "add"
+    },
+    {
+      "a": 191,
+      "b": 89,
+      "c": 191,
+      "answer": 280,
+      "corrupt_answer": 280,
+      "op": "add"
+    },
+    {
+      "a": 490,
+      "b": 161,
+      "c": 490,
+      "answer": 651,
+      "corrupt_answer": 651,
+      "op": "add"
+    },
+    {
+      "a": 466,
+      "b": 419,
+      "c": 466,
+      "answer": 885,
+      "corrupt_answer": 885,
+      "op": "add"
+    },
+    {
+      "a": 436,
+      "b": 329,
+      "c": 436,
+      "answer": 765,
+      "corrupt_answer": 765,
+      "op": "add"
+    },
+    {
+      "a": 478,
+      "b": 440,
+      "c": 478,
+      "answer": 918,
+      "corrupt_answer": 918,
+      "op": "add"
+    },
+    {
+      "a": 370,
+      "b": 59,
+      "c": 370,
+      "answer": 429,
+      "corrupt_answer": 429,
+      "op": "add"
+    },
+    {
+      "a": 371,
+      "b": 348,
+      "c": 371,
+      "answer": 719,
+      "corrupt_answer": 719,
+      "op": "add"
+    },
+    {
+      "a": 437,
+      "b": 337,
+      "c": 437,
+      "answer": 774,
+      "corrupt_answer": 774,
+      "op": "add"
+    },
+    {
+      "a": 300,
+      "b": 297,
+      "c": 300,
+      "answer": 597,
+      "corrupt_answer": 597,
+      "op": "add"
+    },
+    {
+      "a": 315,
+      "b": 129,
+      "c": 315,
+      "answer": 444,
+      "corrupt_answer": 444,
+      "op": "add"
+    },
+    {
+      "a": 441,
+      "b": 199,
+      "c": 441,
+      "answer": 640,
+      "corrupt_answer": 640,
+      "op": "add"
+    },
+    {
+      "a": 95,
+      "b": 87,
+      "c": 95,
+      "answer": 182,
+      "corrupt_answer": 182,
+      "op": "add"
+    },
+    {
+      "a": 350,
+      "b": 304,
+      "c": 350,
+      "answer": 654,
+      "corrupt_answer": 654,
+      "op": "add"
+    },
+    {
+      "a": 416,
+      "b": 105,
+      "c": 416,
+      "answer": 521,
+      "corrupt_answer": 521,
+      "op": "add"
+    },
+    {
+      "a": 425,
+      "b": 57,
+      "c": 425,
+      "answer": 482,
+      "corrupt_answer": 482,
+      "op": "add"
+    },
+    {
+      "a": 243,
+      "b": 65,
+      "c": 243,
+      "answer": 308,
+      "corrupt_answer": 308,
+      "op": "add"
+    },
+    {
+      "a": 132,
+      "b": 56,
+      "c": 132,
+      "answer": 188,
+      "corrupt_answer": 188,
+      "op": "add"
+    },
+    {
+      "a": 206,
+      "b": 35,
+      "c": 206,
+      "answer": 241,
+      "corrupt_answer": 241,
+      "op": "add"
+    },
+    {
+      "a": 408,
+      "b": 76,
+      "c": 408,
+      "answer": 484,
+      "corrupt_answer": 484,
+      "op": "add"
+    },
+    {
+      "a": 485,
+      "b": 254,
+      "c": 485,
+      "answer": 739,
+      "corrupt_answer": 739,
+      "op": "add"
+    },
+    {
+      "a": 412,
+      "b": 277,
+      "c": 412,
+      "answer": 689,
+      "corrupt_answer": 689,
+      "op": "add"
+    },
+    {
+      "a": 76,
+      "b": 25,
+      "c": 76,
+      "answer": 101,
+      "corrupt_answer": 101,
+      "op": "add"
+    },
+    {
+      "a": 480,
+      "b": 437,
+      "c": 480,
+      "answer": 917,
+      "corrupt_answer": 917,
+      "op": "add"
+    },
+    {
+      "a": 448,
+      "b": 135,
+      "c": 448,
+      "answer": 583,
+      "corrupt_answer": 583,
+      "op": "add"
+    },
+    {
+      "a": 499,
+      "b": 126,
+      "c": 499,
+      "answer": 625,
+      "corrupt_answer": 625,
+      "op": "add"
+    },
+    {
+      "a": 493,
+      "b": 19,
+      "c": 493,
+      "answer": 512,
+      "corrupt_answer": 512,
+      "op": "add"
+    },
+    {
+      "a": 204,
+      "b": 174,
+      "c": 204,
+      "answer": 378,
+      "corrupt_answer": 378,
+      "op": "add"
+    },
+    {
+      "a": 317,
+      "b": 192,
+      "c": 317,
+      "answer": 509,
+      "corrupt_answer": 509,
+      "op": "add"
+    },
+    {
+      "a": 203,
+      "b": 105,
+      "c": 203,
+      "answer": 308,
+      "corrupt_answer": 308,
+      "op": "add"
+    },
+    {
+      "a": 154,
+      "b": 104,
+      "c": 154,
+      "answer": 258,
+      "corrupt_answer": 258,
+      "op": "add"
+    },
+    {
+      "a": 490,
+      "b": 118,
+      "c": 490,
+      "answer": 608,
+      "corrupt_answer": 608,
+      "op": "add"
+    },
+    {
+      "a": 389,
+      "b": 211,
+      "c": 389,
+      "answer": 600,
+      "corrupt_answer": 600,
+      "op": "add"
+    },
+    {
+      "a": 142,
+      "b": 80,
+      "c": 142,
+      "answer": 222,
+      "corrupt_answer": 222,
+      "op": "add"
+    },
+    {
+      "a": 498,
+      "b": 431,
+      "c": 498,
+      "answer": 929,
+      "corrupt_answer": 929,
+      "op": "add"
+    },
+    {
+      "a": 332,
+      "b": 98,
+      "c": 332,
+      "answer": 430,
+      "corrupt_answer": 430,
+      "op": "add"
+    },
+    {
+      "a": 353,
+      "b": 307,
+      "c": 353,
+      "answer": 660,
+      "corrupt_answer": 660,
+      "op": "add"
+    },
+    {
+      "a": 375,
+      "b": 87,
+      "c": 375,
+      "answer": 462,
+      "corrupt_answer": 462,
+      "op": "add"
+    },
+    {
+      "a": 443,
+      "b": 362,
+      "c": 443,
+      "answer": 805,
+      "corrupt_answer": 805,
+      "op": "add"
+    },
+    {
+      "a": 423,
+      "b": 238,
+      "c": 423,
+      "answer": 661,
+      "corrupt_answer": 661,
+      "op": "add"
+    },
+    {
+      "a": 363,
+      "b": 95,
+      "c": 363,
+      "answer": 458,
+      "corrupt_answer": 458,
+      "op": "add"
+    },
+    {
+      "a": 482,
+      "b": 30,
+      "c": 482,
+      "answer": 512,
+      "corrupt_answer": 512,
+      "op": "add"
+    },
+    {
+      "a": 347,
+      "b": 318,
+      "c": 347,
+      "answer": 665,
+      "corrupt_answer": 665,
+      "op": "add"
+    },
+    {
+      "a": 405,
+      "b": 189,
+      "c": 405,
+      "answer": 594,
+      "corrupt_answer": 594,
+      "op": "add"
+    },
+    {
+      "a": 402,
+      "b": 336,
+      "c": 402,
+      "answer": 738,
+      "corrupt_answer": 738,
+      "op": "add"
+    },
+    {
+      "a": 91,
+      "b": 44,
+      "c": 91,
+      "answer": 135,
+      "corrupt_answer": 135,
+      "op": "add"
+    },
+    {
+      "a": 480,
+      "b": 298,
+      "c": 480,
+      "answer": 778,
+      "corrupt_answer": 778,
+      "op": "add"
+    },
+    {
+      "a": 418,
+      "b": 357,
+      "c": 418,
+      "answer": 775,
+      "corrupt_answer": 775,
+      "op": "add"
+    },
+    {
+      "a": 397,
+      "b": 165,
+      "c": 397,
+      "answer": 562,
+      "corrupt_answer": 562,
+      "op": "add"
+    },
+    {
+      "a": 402,
+      "b": 167,
+      "c": 402,
+      "answer": 569,
+      "corrupt_answer": 569,
+      "op": "add"
+    },
+    {
+      "a": 438,
+      "b": 11,
+      "c": 438,
+      "answer": 449,
+      "corrupt_answer": 449,
+      "op": "add"
+    },
+    {
+      "a": 185,
+      "b": 24,
+      "c": 185,
+      "answer": 209,
+      "corrupt_answer": 209,
+      "op": "add"
+    },
+    {
+      "a": 418,
+      "b": 366,
+      "c": 418,
+      "answer": 784,
+      "corrupt_answer": 784,
+      "op": "add"
+    },
+    {
+      "a": 389,
+      "b": 317,
+      "c": 389,
+      "answer": 706,
+      "corrupt_answer": 706,
+      "op": "add"
+    },
+    {
+      "a": 347,
+      "b": 82,
+      "c": 347,
+      "answer": 429,
+      "corrupt_answer": 429,
+      "op": "add"
+    },
+    {
+      "a": 274,
+      "b": 23,
+      "c": 274,
+      "answer": 297,
+      "corrupt_answer": 297,
+      "op": "add"
+    },
+    {
+      "a": 366,
+      "b": 351,
+      "c": 366,
+      "answer": 717,
+      "corrupt_answer": 717,
+      "op": "add"
+    },
+    {
+      "a": 454,
+      "b": 413,
+      "c": 454,
+      "answer": 867,
+      "corrupt_answer": 867,
+      "op": "add"
+    },
+    {
+      "a": 135,
+      "b": 88,
+      "c": 135,
+      "answer": 223,
+      "corrupt_answer": 223,
+      "op": "add"
+    },
+    {
+      "a": 382,
+      "b": 269,
+      "c": 382,
+      "answer": 651,
+      "corrupt_answer": 651,
+      "op": "add"
+    },
+    {
+      "a": 482,
+      "b": 23,
+      "c": 482,
+      "answer": 505,
+      "corrupt_answer": 505,
+      "op": "add"
+    },
+    {
+      "a": 130,
+      "b": 113,
+      "c": 130,
+      "answer": 243,
+      "corrupt_answer": 243,
+      "op": "add"
+    },
+    {
+      "a": 451,
+      "b": 149,
+      "c": 451,
+      "answer": 600,
+      "corrupt_answer": 600,
+      "op": "add"
+    },
+    {
+      "a": 307,
+      "b": 279,
+      "c": 307,
+      "answer": 586,
+      "corrupt_answer": 586,
+      "op": "add"
+    },
+    {
+      "a": 438,
+      "b": 428,
+      "c": 438,
+      "answer": 866,
+      "corrupt_answer": 866,
+      "op": "add"
+    },
+    {
+      "a": 428,
+      "b": 293,
+      "c": 428,
+      "answer": 721,
+      "corrupt_answer": 721,
+      "op": "add"
+    },
+    {
+      "a": 127,
+      "b": 64,
+      "c": 127,
+      "answer": 191,
+      "corrupt_answer": 191,
+      "op": "add"
+    },
+    {
+      "a": 421,
+      "b": 174,
+      "c": 421,
+      "answer": 595,
+      "corrupt_answer": 595,
+      "op": "add"
+    },
+    {
+      "a": 395,
+      "b": 58,
+      "c": 395,
+      "answer": 453,
+      "corrupt_answer": 453,
+      "op": "add"
+    },
+    {
+      "a": 496,
+      "b": 443,
+      "c": 496,
+      "answer": 939,
+      "corrupt_answer": 939,
+      "op": "add"
+    },
+    {
+      "a": 321,
+      "b": 245,
+      "c": 321,
+      "answer": 566,
+      "corrupt_answer": 566,
+      "op": "add"
+    },
+    {
+      "a": 458,
+      "b": 193,
+      "c": 458,
+      "answer": 651,
+      "corrupt_answer": 651,
+      "op": "add"
+    },
+    {
+      "a": 313,
+      "b": 270,
+      "c": 313,
+      "answer": 583,
+      "corrupt_answer": 583,
+      "op": "add"
+    },
+    {
+      "a": 364,
+      "b": 145,
+      "c": 364,
+      "answer": 509,
+      "corrupt_answer": 509,
+      "op": "add"
+    },
+    {
+      "a": 447,
+      "b": 279,
+      "c": 447,
+      "answer": 726,
+      "corrupt_answer": 726,
+      "op": "add"
+    },
+    {
+      "a": 330,
+      "b": 35,
+      "c": 330,
+      "answer": 365,
+      "corrupt_answer": 365,
+      "op": "add"
+    },
+    {
+      "a": 90,
+      "b": 84,
+      "c": 90,
+      "answer": 174,
+      "corrupt_answer": 174,
+      "op": "add"
+    },
+    {
+      "a": 391,
+      "b": 306,
+      "c": 391,
+      "answer": 697,
+      "corrupt_answer": 697,
+      "op": "add"
+    },
+    {
+      "a": 177,
+      "b": 68,
+      "c": 177,
+      "answer": 245,
+      "corrupt_answer": 245,
+      "op": "add"
+    },
+    {
+      "a": 424,
+      "b": 72,
+      "c": 424,
+      "answer": 496,
+      "corrupt_answer": 496,
+      "op": "add"
+    },
+    {
+      "a": 323,
+      "b": 251,
+      "c": 323,
+      "answer": 574,
+      "corrupt_answer": 574,
+      "op": "add"
+    },
+    {
+      "a": 332,
+      "b": 65,
+      "c": 332,
+      "answer": 397,
+      "corrupt_answer": 397,
+      "op": "add"
+    },
+    {
+      "a": 494,
+      "b": 404,
+      "c": 494,
+      "answer": 898,
+      "corrupt_answer": 898,
+      "op": "add"
+    },
+    {
+      "a": 327,
+      "b": 305,
+      "c": 327,
+      "answer": 632,
+      "corrupt_answer": 632,
+      "op": "add"
+    },
+    {
+      "a": 342,
+      "b": 269,
+      "c": 342,
+      "answer": 611,
+      "corrupt_answer": 611,
+      "op": "add"
+    },
+    {
+      "a": 399,
+      "b": 271,
+      "c": 399,
+      "answer": 670,
+      "corrupt_answer": 670,
+      "op": "add"
+    },
+    {
+      "a": 387,
+      "b": 236,
+      "c": 387,
+      "answer": 623,
+      "corrupt_answer": 623,
+      "op": "add"
+    },
+    {
+      "a": 280,
+      "b": 121,
+      "c": 280,
+      "answer": 401,
+      "corrupt_answer": 401,
+      "op": "add"
+    },
+    {
+      "a": 180,
+      "b": 144,
+      "c": 180,
+      "answer": 324,
+      "corrupt_answer": 324,
+      "op": "add"
+    },
+    {
+      "a": 306,
+      "b": 206,
+      "c": 306,
+      "answer": 512,
+      "corrupt_answer": 512,
+      "op": "add"
+    },
+    {
+      "a": 173,
+      "b": 99,
+      "c": 173,
+      "answer": 272,
+      "corrupt_answer": 272,
+      "op": "add"
+    },
+    {
+      "a": 395,
+      "b": 228,
+      "c": 395,
+      "answer": 623,
+      "corrupt_answer": 623,
+      "op": "add"
+    },
+    {
+      "a": 321,
+      "b": 244,
+      "c": 321,
+      "answer": 565,
+      "corrupt_answer": 565,
+      "op": "add"
+    },
+    {
+      "a": 242,
+      "b": 234,
+      "c": 242,
+      "answer": 476,
+      "corrupt_answer": 476,
+      "op": "add"
+    },
+    {
+      "a": 469,
+      "b": 30,
+      "c": 469,
+      "answer": 499,
+      "corrupt_answer": 499,
+      "op": "add"
+    },
+    {
+      "a": 405,
+      "b": 68,
+      "c": 405,
+      "answer": 473,
+      "corrupt_answer": 473,
+      "op": "add"
+    },
+    {
+      "a": 142,
+      "b": 101,
+      "c": 142,
+      "answer": 243,
+      "corrupt_answer": 243,
+      "op": "add"
+    },
+    {
+      "a": 413,
+      "b": 311,
+      "c": 413,
+      "answer": 724,
+      "corrupt_answer": 724,
+      "op": "add"
+    },
+    {
+      "a": 269,
+      "b": 32,
+      "c": 269,
+      "answer": 301,
+      "corrupt_answer": 301,
+      "op": "add"
+    },
+    {
+      "a": 338,
+      "b": 155,
+      "c": 338,
+      "answer": 493,
+      "corrupt_answer": 493,
+      "op": "add"
+    },
+    {
+      "a": 150,
+      "b": 88,
+      "c": 150,
+      "answer": 238,
+      "corrupt_answer": 238,
+      "op": "add"
+    },
+    {
+      "a": 172,
+      "b": 35,
+      "c": 172,
+      "answer": 207,
+      "corrupt_answer": 207,
+      "op": "add"
+    },
+    {
+      "a": 448,
+      "b": 264,
+      "c": 448,
+      "answer": 712,
+      "corrupt_answer": 712,
+      "op": "add"
+    },
+    {
+      "a": 389,
+      "b": 364,
+      "c": 389,
+      "answer": 753,
+      "corrupt_answer": 753,
+      "op": "add"
+    },
+    {
+      "a": 364,
+      "b": 136,
+      "c": 364,
+      "answer": 500,
+      "corrupt_answer": 500,
+      "op": "add"
+    },
+    {
+      "a": 409,
+      "b": 391,
+      "c": 409,
+      "answer": 800,
+      "corrupt_answer": 800,
+      "op": "add"
+    },
+    {
+      "a": 231,
+      "b": 214,
+      "c": 231,
+      "answer": 445,
+      "corrupt_answer": 445,
+      "op": "add"
+    },
+    {
+      "a": 291,
+      "b": 161,
+      "c": 291,
+      "answer": 452,
+      "corrupt_answer": 452,
+      "op": "add"
+    },
+    {
+      "a": 343,
+      "b": 141,
+      "c": 343,
+      "answer": 484,
+      "corrupt_answer": 484,
+      "op": "add"
+    },
+    {
+      "a": 446,
+      "b": 426,
+      "c": 446,
+      "answer": 872,
+      "corrupt_answer": 872,
+      "op": "add"
+    },
+    {
+      "a": 445,
+      "b": 176,
+      "c": 445,
+      "answer": 621,
+      "corrupt_answer": 621,
+      "op": "add"
+    },
+    {
+      "a": 430,
+      "b": 127,
+      "c": 430,
+      "answer": 557,
+      "corrupt_answer": 557,
+      "op": "add"
+    },
+    {
+      "a": 472,
+      "b": 46,
+      "c": 472,
+      "answer": 518,
+      "corrupt_answer": 518,
+      "op": "add"
+    },
+    {
+      "a": 249,
+      "b": 44,
+      "c": 249,
+      "answer": 293,
+      "corrupt_answer": 293,
+      "op": "add"
+    },
+    {
+      "a": 437,
+      "b": 318,
+      "c": 437,
+      "answer": 755,
+      "corrupt_answer": 755,
+      "op": "add"
+    },
+    {
+      "a": 361,
+      "b": 43,
+      "c": 361,
+      "answer": 404,
+      "corrupt_answer": 404,
+      "op": "add"
+    },
+    {
+      "a": 395,
+      "b": 102,
+      "c": 395,
+      "answer": 497,
+      "corrupt_answer": 497,
+      "op": "add"
+    },
+    {
+      "a": 497,
+      "b": 174,
+      "c": 497,
+      "answer": 671,
+      "corrupt_answer": 671,
+      "op": "add"
+    },
+    {
+      "a": 490,
+      "b": 41,
+      "c": 490,
+      "answer": 531,
+      "corrupt_answer": 531,
+      "op": "add"
+    },
+    {
+      "a": 345,
+      "b": 80,
+      "c": 345,
+      "answer": 425,
+      "corrupt_answer": 425,
+      "op": "add"
+    },
+    {
+      "a": 310,
+      "b": 168,
+      "c": 310,
+      "answer": 478,
+      "corrupt_answer": 478,
+      "op": "add"
+    },
+    {
+      "a": 468,
+      "b": 340,
+      "c": 468,
+      "answer": 808,
+      "corrupt_answer": 808,
+      "op": "add"
+    },
+    {
+      "a": 435,
+      "b": 316,
+      "c": 435,
+      "answer": 751,
+      "corrupt_answer": 751,
+      "op": "add"
+    },
+    {
+      "a": 493,
+      "b": 161,
+      "c": 493,
+      "answer": 654,
+      "corrupt_answer": 654,
+      "op": "add"
+    },
+    {
+      "a": 485,
+      "b": 374,
+      "c": 485,
+      "answer": 859,
+      "corrupt_answer": 859,
+      "op": "add"
+    },
+    {
+      "a": 497,
+      "b": 254,
+      "c": 497,
+      "answer": 751,
+      "corrupt_answer": 751,
+      "op": "add"
+    },
+    {
+      "a": 278,
+      "b": 136,
+      "c": 278,
+      "answer": 414,
+      "corrupt_answer": 414,
+      "op": "add"
+    },
+    {
+      "a": 459,
+      "b": 323,
+      "c": 459,
+      "answer": 782,
+      "corrupt_answer": 782,
+      "op": "add"
+    },
+    {
+      "a": 334,
+      "b": 239,
+      "c": 334,
+      "answer": 573,
+      "corrupt_answer": 573,
+      "op": "add"
+    },
+    {
+      "a": 491,
+      "b": 454,
+      "c": 491,
+      "answer": 945,
+      "corrupt_answer": 945,
+      "op": "add"
+    },
+    {
+      "a": 437,
+      "b": 437,
+      "c": 437,
+      "answer": 874,
+      "corrupt_answer": 874,
+      "op": "add"
+    },
+    {
+      "a": 212,
+      "b": 208,
+      "c": 212,
+      "answer": 420,
+      "corrupt_answer": 420,
+      "op": "add"
+    },
+    {
+      "a": 194,
+      "b": 81,
+      "c": 194,
+      "answer": 275,
+      "corrupt_answer": 275,
+      "op": "add"
+    },
+    {
+      "a": 330,
+      "b": 80,
+      "c": 330,
+      "answer": 410,
+      "corrupt_answer": 410,
+      "op": "add"
+    },
+    {
+      "a": 485,
+      "b": 242,
+      "c": 485,
+      "answer": 727,
+      "corrupt_answer": 727,
+      "op": "add"
+    },
+    {
+      "a": 461,
+      "b": 394,
+      "c": 461,
+      "answer": 855,
+      "corrupt_answer": 855,
+      "op": "add"
+    },
+    {
+      "a": 475,
+      "b": 60,
+      "c": 475,
+      "answer": 535,
+      "corrupt_answer": 535,
+      "op": "add"
+    },
+    {
+      "a": 273,
+      "b": 190,
+      "c": 273,
+      "answer": 463,
+      "corrupt_answer": 463,
+      "op": "add"
+    },
+    {
+      "a": 419,
+      "b": 250,
+      "c": 419,
+      "answer": 669,
+      "corrupt_answer": 669,
+      "op": "add"
+    },
+    {
+      "a": 462,
+      "b": 197,
+      "c": 462,
+      "answer": 659,
+      "corrupt_answer": 659,
+      "op": "add"
+    },
+    {
+      "a": 144,
+      "b": 134,
+      "c": 144,
+      "answer": 278,
+      "corrupt_answer": 278,
+      "op": "add"
+    },
+    {
+      "a": 395,
+      "b": 342,
+      "c": 395,
+      "answer": 737,
+      "corrupt_answer": 737,
+      "op": "add"
+    },
+    {
+      "a": 385,
+      "b": 98,
+      "c": 385,
+      "answer": 483,
+      "corrupt_answer": 483,
+      "op": "add"
+    },
+    {
+      "a": 302,
+      "b": 62,
+      "c": 302,
+      "answer": 364,
+      "corrupt_answer": 364,
+      "op": "add"
+    },
+    {
+      "a": 494,
+      "b": 450,
+      "c": 494,
+      "answer": 944,
+      "corrupt_answer": 944,
+      "op": "add"
+    },
+    {
+      "a": 156,
+      "b": 77,
+      "c": 156,
+      "answer": 233,
+      "corrupt_answer": 233,
+      "op": "add"
+    },
+    {
+      "a": 292,
+      "b": 250,
+      "c": 292,
+      "answer": 542,
+      "corrupt_answer": 542,
+      "op": "add"
+    },
+    {
+      "a": 330,
+      "b": 28,
+      "c": 330,
+      "answer": 358,
+      "corrupt_answer": 358,
+      "op": "add"
+    },
+    {
+      "a": 326,
+      "b": 222,
+      "c": 326,
+      "answer": 548,
+      "corrupt_answer": 548,
+      "op": "add"
+    },
+    {
+      "a": 433,
+      "b": 124,
+      "c": 433,
+      "answer": 557,
+      "corrupt_answer": 557,
+      "op": "add"
+    },
+    {
+      "a": 283,
+      "b": 111,
+      "c": 283,
+      "answer": 394,
+      "corrupt_answer": 394,
+      "op": "add"
+    },
+    {
+      "a": 243,
+      "b": 145,
+      "c": 243,
+      "answer": 388,
+      "corrupt_answer": 388,
+      "op": "add"
+    },
+    {
+      "a": 206,
+      "b": 74,
+      "c": 206,
+      "answer": 280,
+      "corrupt_answer": 280,
+      "op": "add"
+    },
+    {
+      "a": 314,
+      "b": 56,
+      "c": 314,
+      "answer": 370,
+      "corrupt_answer": 370,
+      "op": "add"
+    },
+    {
+      "a": 389,
+      "b": 281,
+      "c": 389,
+      "answer": 670,
+      "corrupt_answer": 670,
+      "op": "add"
+    },
+    {
+      "a": 383,
+      "b": 74,
+      "c": 383,
+      "answer": 457,
+      "corrupt_answer": 457,
+      "op": "add"
+    },
+    {
+      "a": 404,
+      "b": 211,
+      "c": 404,
+      "answer": 615,
+      "corrupt_answer": 615,
+      "op": "add"
+    },
+    {
+      "a": 196,
+      "b": 170,
+      "c": 196,
+      "answer": 366,
+      "corrupt_answer": 366,
+      "op": "add"
+    },
+    {
+      "a": 494,
+      "b": 20,
+      "c": 494,
+      "answer": 514,
+      "corrupt_answer": 514,
+      "op": "add"
+    },
+    {
+      "a": 290,
+      "b": 115,
+      "c": 290,
+      "answer": 405,
+      "corrupt_answer": 405,
+      "op": "add"
+    },
+    {
+      "a": 89,
+      "b": 20,
+      "c": 89,
+      "answer": 109,
+      "corrupt_answer": 109,
+      "op": "add"
+    },
+    {
+      "a": 423,
+      "b": 277,
+      "c": 423,
+      "answer": 700,
+      "corrupt_answer": 700,
+      "op": "add"
+    },
+    {
+      "a": 411,
+      "b": 147,
+      "c": 411,
+      "answer": 558,
+      "corrupt_answer": 558,
+      "op": "add"
+    },
+    {
+      "a": 436,
+      "b": 201,
+      "c": 436,
+      "answer": 637,
+      "corrupt_answer": 637,
+      "op": "add"
+    },
+    {
+      "a": 135,
+      "b": 12,
+      "c": 135,
+      "answer": 147,
+      "corrupt_answer": 147,
+      "op": "add"
+    },
+    {
+      "a": 318,
+      "b": 285,
+      "c": 318,
+      "answer": 603,
+      "corrupt_answer": 603,
+      "op": "add"
+    },
+    {
+      "a": 487,
+      "b": 97,
+      "c": 487,
+      "answer": 584,
+      "corrupt_answer": 584,
+      "op": "add"
+    },
+    {
+      "a": 197,
+      "b": 168,
+      "c": 197,
+      "answer": 365,
+      "corrupt_answer": 365,
+      "op": "add"
+    },
+    {
+      "a": 477,
+      "b": 330,
+      "c": 477,
+      "answer": 807,
+      "corrupt_answer": 807,
+      "op": "add"
+    },
+    {
+      "a": 377,
+      "b": 15,
+      "c": 377,
+      "answer": 392,
+      "corrupt_answer": 392,
+      "op": "add"
+    },
+    {
+      "a": 360,
+      "b": 90,
+      "c": 360,
+      "answer": 450,
+      "corrupt_answer": 450,
+      "op": "add"
+    },
+    {
+      "a": 402,
+      "b": 256,
+      "c": 402,
+      "answer": 658,
+      "corrupt_answer": 658,
+      "op": "add"
+    },
+    {
+      "a": 272,
+      "b": 253,
+      "c": 272,
+      "answer": 525,
+      "corrupt_answer": 525,
+      "op": "add"
+    },
+    {
+      "a": 303,
+      "b": 100,
+      "c": 303,
+      "answer": 403,
+      "corrupt_answer": 403,
+      "op": "add"
+    },
+    {
+      "a": 294,
+      "b": 30,
+      "c": 294,
+      "answer": 324,
+      "corrupt_answer": 324,
+      "op": "add"
+    },
+    {
+      "a": 418,
+      "b": 286,
+      "c": 418,
+      "answer": 704,
+      "corrupt_answer": 704,
+      "op": "add"
+    },
+    {
+      "a": 420,
+      "b": 102,
+      "c": 420,
+      "answer": 522,
+      "corrupt_answer": 522,
+      "op": "add"
+    },
+    {
+      "a": 420,
+      "b": 37,
+      "c": 420,
+      "answer": 457,
+      "corrupt_answer": 457,
+      "op": "add"
+    },
+    {
+      "a": 261,
+      "b": 91,
+      "c": 261,
+      "answer": 352,
+      "corrupt_answer": 352,
+      "op": "add"
+    },
+    {
+      "a": 334,
+      "b": 280,
+      "c": 334,
+      "answer": 614,
+      "corrupt_answer": 614,
+      "op": "add"
+    },
+    {
+      "a": 406,
+      "b": 405,
+      "c": 406,
+      "answer": 811,
+      "corrupt_answer": 811,
+      "op": "add"
+    },
+    {
+      "a": 452,
+      "b": 41,
+      "c": 452,
+      "answer": 493,
+      "corrupt_answer": 493,
+      "op": "add"
+    },
+    {
+      "a": 235,
+      "b": 215,
+      "c": 235,
+      "answer": 450,
+      "corrupt_answer": 450,
+      "op": "add"
+    },
+    {
+      "a": 481,
+      "b": 305,
+      "c": 481,
+      "answer": 786,
+      "corrupt_answer": 786,
+      "op": "add"
+    },
+    {
+      "a": 464,
+      "b": 211,
+      "c": 464,
+      "answer": 675,
+      "corrupt_answer": 675,
+      "op": "add"
+    },
+    {
+      "a": 264,
+      "b": 213,
+      "c": 264,
+      "answer": 477,
+      "corrupt_answer": 477,
+      "op": "add"
+    },
+    {
+      "a": 447,
+      "b": 277,
+      "c": 447,
+      "answer": 724,
+      "corrupt_answer": 724,
+      "op": "add"
+    },
+    {
+      "a": 471,
+      "b": 130,
+      "c": 471,
+      "answer": 601,
+      "corrupt_answer": 601,
+      "op": "add"
+    },
+    {
+      "a": 498,
+      "b": 63,
+      "c": 498,
+      "answer": 561,
+      "corrupt_answer": 561,
+      "op": "add"
+    },
+    {
+      "a": 251,
+      "b": 162,
+      "c": 251,
+      "answer": 413,
+      "corrupt_answer": 413,
+      "op": "add"
+    },
+    {
+      "a": 403,
+      "b": 172,
+      "c": 403,
+      "answer": 575,
+      "corrupt_answer": 575,
+      "op": "add"
+    },
+    {
+      "a": 460,
+      "b": 286,
+      "c": 460,
+      "answer": 746,
+      "corrupt_answer": 746,
+      "op": "add"
+    },
+    {
+      "a": 368,
+      "b": 285,
+      "c": 368,
+      "answer": 653,
+      "corrupt_answer": 653,
+      "op": "add"
+    },
+    {
+      "a": 287,
+      "b": 34,
+      "c": 287,
+      "answer": 321,
+      "corrupt_answer": 321,
+      "op": "add"
+    },
+    {
+      "a": 455,
+      "b": 131,
+      "c": 455,
+      "answer": 586,
+      "corrupt_answer": 586,
+      "op": "add"
+    },
+    {
+      "a": 319,
+      "b": 91,
+      "c": 319,
+      "answer": 410,
+      "corrupt_answer": 410,
+      "op": "add"
+    },
+    {
+      "a": 460,
+      "b": 338,
+      "c": 460,
+      "answer": 798,
+      "corrupt_answer": 798,
+      "op": "add"
+    },
+    {
+      "a": 416,
+      "b": 340,
+      "c": 416,
+      "answer": 756,
+      "corrupt_answer": 756,
+      "op": "add"
+    },
+    {
+      "a": 218,
+      "b": 102,
+      "c": 218,
+      "answer": 320,
+      "corrupt_answer": 320,
+      "op": "add"
+    },
+    {
+      "a": 428,
+      "b": 340,
+      "c": 428,
+      "answer": 768,
+      "corrupt_answer": 768,
+      "op": "add"
+    },
+    {
+      "a": 419,
+      "b": 412,
+      "c": 419,
+      "answer": 831,
+      "corrupt_answer": 831,
+      "op": "add"
+    },
+    {
+      "a": 464,
+      "b": 68,
+      "c": 464,
+      "answer": 532,
+      "corrupt_answer": 532,
+      "op": "add"
+    },
+    {
+      "a": 442,
+      "b": 43,
+      "c": 442,
+      "answer": 485,
+      "corrupt_answer": 485,
+      "op": "add"
+    },
+    {
+      "a": 305,
+      "b": 132,
+      "c": 305,
+      "answer": 437,
+      "corrupt_answer": 437,
+      "op": "add"
+    },
+    {
+      "a": 445,
+      "b": 65,
+      "c": 445,
+      "answer": 510,
+      "corrupt_answer": 510,
+      "op": "add"
+    },
+    {
+      "a": 258,
+      "b": 247,
+      "c": 258,
+      "answer": 505,
+      "corrupt_answer": 505,
+      "op": "add"
+    },
+    {
+      "a": 476,
+      "b": 278,
+      "c": 476,
+      "answer": 754,
+      "corrupt_answer": 754,
+      "op": "add"
+    },
+    {
+      "a": 462,
+      "b": 329,
+      "c": 462,
+      "answer": 791,
+      "corrupt_answer": 791,
+      "op": "add"
+    },
+    {
+      "a": 319,
+      "b": 184,
+      "c": 319,
+      "answer": 503,
+      "corrupt_answer": 503,
+      "op": "add"
+    },
+    {
+      "a": 220,
+      "b": 56,
+      "c": 220,
+      "answer": 276,
+      "corrupt_answer": 276,
+      "op": "add"
+    },
+    {
+      "a": 427,
+      "b": 249,
+      "c": 427,
+      "answer": 676,
+      "corrupt_answer": 676,
+      "op": "add"
+    },
+    {
+      "a": 220,
+      "b": 182,
+      "c": 220,
+      "answer": 402,
+      "corrupt_answer": 402,
+      "op": "add"
+    },
+    {
+      "a": 411,
+      "b": 404,
+      "c": 411,
+      "answer": 815,
+      "corrupt_answer": 815,
+      "op": "add"
+    },
+    {
+      "a": 419,
+      "b": 222,
+      "c": 419,
+      "answer": 641,
+      "corrupt_answer": 641,
+      "op": "add"
+    },
+    {
+      "a": 374,
+      "b": 82,
+      "c": 374,
+      "answer": 456,
+      "corrupt_answer": 456,
+      "op": "add"
+    },
+    {
+      "a": 403,
+      "b": 335,
+      "c": 403,
+      "answer": 738,
+      "corrupt_answer": 738,
+      "op": "add"
+    },
+    {
+      "a": 343,
+      "b": 251,
+      "c": 343,
+      "answer": 594,
+      "corrupt_answer": 594,
+      "op": "add"
+    },
+    {
+      "a": 467,
+      "b": 312,
+      "c": 467,
+      "answer": 779,
+      "corrupt_answer": 779,
+      "op": "add"
+    },
+    {
+      "a": 228,
+      "b": 135,
+      "c": 228,
+      "answer": 363,
+      "corrupt_answer": 363,
+      "op": "add"
+    },
+    {
+      "a": 411,
+      "b": 392,
+      "c": 411,
+      "answer": 803,
+      "corrupt_answer": 803,
+      "op": "add"
+    },
+    {
+      "a": 481,
+      "b": 197,
+      "c": 481,
+      "answer": 678,
+      "corrupt_answer": 678,
+      "op": "add"
+    },
+    {
+      "a": 253,
+      "b": 155,
+      "c": 253,
+      "answer": 408,
+      "corrupt_answer": 408,
+      "op": "add"
+    },
+    {
+      "a": 162,
+      "b": 17,
+      "c": 162,
+      "answer": 179,
+      "corrupt_answer": 179,
+      "op": "add"
+    },
+    {
+      "a": 372,
+      "b": 245,
+      "c": 372,
+      "answer": 617,
+      "corrupt_answer": 617,
+      "op": "add"
+    },
+    {
+      "a": 248,
+      "b": 226,
+      "c": 248,
+      "answer": 474,
+      "corrupt_answer": 474,
+      "op": "add"
+    },
+    {
+      "a": 192,
+      "b": 68,
+      "c": 192,
+      "answer": 260,
+      "corrupt_answer": 260,
+      "op": "add"
+    },
+    {
+      "a": 210,
+      "b": 196,
+      "c": 210,
+      "answer": 406,
+      "corrupt_answer": 406,
+      "op": "add"
+    },
+    {
+      "a": 376,
+      "b": 198,
+      "c": 376,
+      "answer": 574,
+      "corrupt_answer": 574,
+      "op": "add"
+    },
+    {
+      "a": 106,
+      "b": 76,
+      "c": 106,
+      "answer": 182,
+      "corrupt_answer": 182,
+      "op": "add"
+    },
+    {
+      "a": 334,
+      "b": 14,
+      "c": 334,
+      "answer": 348,
+      "corrupt_answer": 348,
+      "op": "add"
+    },
+    {
+      "a": 426,
+      "b": 100,
+      "c": 426,
+      "answer": 526,
+      "corrupt_answer": 526,
+      "op": "add"
+    },
+    {
+      "a": 404,
+      "b": 75,
+      "c": 404,
+      "answer": 479,
+      "corrupt_answer": 479,
+      "op": "add"
+    },
+    {
+      "a": 385,
+      "b": 288,
+      "c": 385,
+      "answer": 673,
+      "corrupt_answer": 673,
+      "op": "add"
+    },
+    {
+      "a": 379,
+      "b": 323,
+      "c": 379,
+      "answer": 702,
+      "corrupt_answer": 702,
+      "op": "add"
+    },
+    {
+      "a": 459,
+      "b": 277,
+      "c": 459,
+      "answer": 736,
+      "corrupt_answer": 736,
+      "op": "add"
+    },
+    {
+      "a": 446,
+      "b": 390,
+      "c": 446,
+      "answer": 836,
+      "corrupt_answer": 836,
+      "op": "add"
+    },
+    {
+      "a": 286,
+      "b": 35,
+      "c": 286,
+      "answer": 321,
+      "corrupt_answer": 321,
+      "op": "add"
+    },
+    {
+      "a": 448,
+      "b": 10,
+      "c": 448,
+      "answer": 458,
+      "corrupt_answer": 458,
+      "op": "add"
+    },
+    {
+      "a": 72,
+      "b": 53,
+      "c": 72,
+      "answer": 125,
+      "corrupt_answer": 125,
+      "op": "add"
+    },
+    {
+      "a": 432,
+      "b": 158,
+      "c": 432,
+      "answer": 590,
+      "corrupt_answer": 590,
+      "op": "add"
+    },
+    {
+      "a": 406,
+      "b": 250,
+      "c": 406,
+      "answer": 656,
+      "corrupt_answer": 656,
+      "op": "add"
+    },
+    {
+      "a": 431,
+      "b": 402,
+      "c": 431,
+      "answer": 833,
+      "corrupt_answer": 833,
+      "op": "add"
+    },
+    {
+      "a": 282,
+      "b": 184,
+      "c": 282,
+      "answer": 466,
+      "corrupt_answer": 466,
+      "op": "add"
+    },
+    {
+      "a": 243,
+      "b": 175,
+      "c": 243,
+      "answer": 418,
+      "corrupt_answer": 418,
+      "op": "add"
+    },
+    {
+      "a": 406,
+      "b": 365,
+      "c": 406,
+      "answer": 771,
+      "corrupt_answer": 771,
+      "op": "add"
+    },
+    {
+      "a": 397,
+      "b": 32,
+      "c": 397,
+      "answer": 429,
+      "corrupt_answer": 429,
+      "op": "add"
+    },
+    {
+      "a": 247,
+      "b": 197,
+      "c": 247,
+      "answer": 444,
+      "corrupt_answer": 444,
+      "op": "add"
+    },
+    {
+      "a": 441,
+      "b": 417,
+      "c": 441,
+      "answer": 858,
+      "corrupt_answer": 858,
+      "op": "add"
+    },
+    {
+      "a": 323,
+      "b": 174,
+      "c": 323,
+      "answer": 497,
+      "corrupt_answer": 497,
+      "op": "add"
+    },
+    {
+      "a": 476,
+      "b": 101,
+      "c": 476,
+      "answer": 577,
+      "corrupt_answer": 577,
+      "op": "add"
+    },
+    {
+      "a": 326,
+      "b": 73,
+      "c": 326,
+      "answer": 399,
+      "corrupt_answer": 399,
+      "op": "add"
+    },
+    {
+      "a": 495,
+      "b": 21,
+      "c": 495,
+      "answer": 516,
+      "corrupt_answer": 516,
+      "op": "add"
+    },
+    {
+      "a": 403,
+      "b": 292,
+      "c": 403,
+      "answer": 695,
+      "corrupt_answer": 695,
+      "op": "add"
+    },
+    {
+      "a": 490,
+      "b": 324,
+      "c": 490,
+      "answer": 814,
+      "corrupt_answer": 814,
+      "op": "add"
+    },
+    {
+      "a": 181,
+      "b": 31,
+      "c": 181,
+      "answer": 212,
+      "corrupt_answer": 212,
+      "op": "add"
+    },
+    {
+      "a": 143,
+      "b": 49,
+      "c": 143,
+      "answer": 192,
+      "corrupt_answer": 192,
+      "op": "add"
+    },
+    {
+      "a": 424,
+      "b": 317,
+      "c": 424,
+      "answer": 741,
+      "corrupt_answer": 741,
+      "op": "add"
+    },
+    {
+      "a": 139,
+      "b": 24,
+      "c": 139,
+      "answer": 163,
+      "corrupt_answer": 163,
+      "op": "add"
+    },
+    {
+      "a": 293,
+      "b": 138,
+      "c": 293,
+      "answer": 431,
+      "corrupt_answer": 431,
+      "op": "add"
+    },
+    {
+      "a": 141,
+      "b": 26,
+      "c": 141,
+      "answer": 167,
+      "corrupt_answer": 167,
+      "op": "add"
+    },
+    {
+      "a": 444,
+      "b": 402,
+      "c": 444,
+      "answer": 846,
+      "corrupt_answer": 846,
+      "op": "add"
+    },
+    {
+      "a": 331,
+      "b": 126,
+      "c": 331,
+      "answer": 457,
+      "corrupt_answer": 457,
+      "op": "add"
+    },
+    {
+      "a": 300,
+      "b": 191,
+      "c": 300,
+      "answer": 491,
+      "corrupt_answer": 491,
+      "op": "add"
+    },
+    {
+      "a": 183,
+      "b": 60,
+      "c": 183,
+      "answer": 243,
+      "corrupt_answer": 243,
+      "op": "add"
+    },
+    {
+      "a": 490,
+      "b": 272,
+      "c": 490,
+      "answer": 762,
+      "corrupt_answer": 762,
+      "op": "add"
+    },
+    {
+      "a": 459,
+      "b": 425,
+      "c": 459,
+      "answer": 884,
+      "corrupt_answer": 884,
+      "op": "add"
+    },
+    {
+      "a": 459,
+      "b": 161,
+      "c": 459,
+      "answer": 620,
+      "corrupt_answer": 620,
+      "op": "add"
+    },
+    {
+      "a": 378,
+      "b": 94,
+      "c": 378,
+      "answer": 472,
+      "corrupt_answer": 472,
+      "op": "add"
+    },
+    {
+      "a": 202,
+      "b": 189,
+      "c": 202,
+      "answer": 391,
+      "corrupt_answer": 391,
+      "op": "add"
+    },
+    {
+      "a": 371,
+      "b": 37,
+      "c": 371,
+      "answer": 408,
+      "corrupt_answer": 408,
+      "op": "add"
+    },
+    {
+      "a": 190,
+      "b": 68,
+      "c": 190,
+      "answer": 258,
+      "corrupt_answer": 258,
+      "op": "add"
+    },
+    {
+      "a": 479,
+      "b": 53,
+      "c": 479,
+      "answer": 532,
+      "corrupt_answer": 532,
+      "op": "add"
+    },
+    {
+      "a": 446,
+      "b": 95,
+      "c": 446,
+      "answer": 541,
+      "corrupt_answer": 541,
+      "op": "add"
+    },
+    {
+      "a": 445,
+      "b": 266,
+      "c": 445,
+      "answer": 711,
+      "corrupt_answer": 711,
+      "op": "add"
+    },
+    {
+      "a": 381,
+      "b": 13,
+      "c": 381,
+      "answer": 394,
+      "corrupt_answer": 394,
+      "op": "add"
+    },
+    {
+      "a": 308,
+      "b": 67,
+      "c": 308,
+      "answer": 375,
+      "corrupt_answer": 375,
+      "op": "add"
+    },
+    {
+      "a": 432,
+      "b": 118,
+      "c": 432,
+      "answer": 550,
+      "corrupt_answer": 550,
+      "op": "add"
+    },
+    {
+      "a": 183,
+      "b": 181,
+      "c": 183,
+      "answer": 364,
+      "corrupt_answer": 364,
+      "op": "add"
+    },
+    {
+      "a": 317,
+      "b": 28,
+      "c": 317,
+      "answer": 345,
+      "corrupt_answer": 345,
+      "op": "add"
+    },
+    {
+      "a": 204,
+      "b": 73,
+      "c": 204,
+      "answer": 277,
+      "corrupt_answer": 277,
+      "op": "add"
+    },
+    {
+      "a": 415,
+      "b": 407,
+      "c": 415,
+      "answer": 822,
+      "corrupt_answer": 822,
+      "op": "add"
+    },
+    {
+      "a": 456,
+      "b": 50,
+      "c": 456,
+      "answer": 506,
+      "corrupt_answer": 506,
+      "op": "add"
+    },
+    {
+      "a": 300,
+      "b": 177,
+      "c": 300,
+      "answer": 477,
+      "corrupt_answer": 477,
+      "op": "add"
+    },
+    {
+      "a": 368,
+      "b": 20,
+      "c": 368,
+      "answer": 388,
+      "corrupt_answer": 388,
+      "op": "add"
+    },
+    {
+      "a": 398,
+      "b": 151,
+      "c": 398,
+      "answer": 549,
+      "corrupt_answer": 549,
+      "op": "add"
+    },
+    {
+      "a": 420,
+      "b": 195,
+      "c": 420,
+      "answer": 615,
+      "corrupt_answer": 615,
+      "op": "add"
+    },
+    {
+      "a": 185,
+      "b": 68,
+      "c": 185,
+      "answer": 253,
+      "corrupt_answer": 253,
+      "op": "add"
+    },
+    {
+      "a": 304,
+      "b": 139,
+      "c": 304,
+      "answer": 443,
+      "corrupt_answer": 443,
+      "op": "add"
+    },
+    {
+      "a": 496,
+      "b": 116,
+      "c": 496,
+      "answer": 612,
+      "corrupt_answer": 612,
+      "op": "add"
+    },
+    {
+      "a": 201,
+      "b": 35,
+      "c": 201,
+      "answer": 236,
+      "corrupt_answer": 236,
+      "op": "add"
+    },
+    {
+      "a": 397,
+      "b": 134,
+      "c": 397,
+      "answer": 531,
+      "corrupt_answer": 531,
+      "op": "add"
+    },
+    {
+      "a": 426,
+      "b": 63,
+      "c": 426,
+      "answer": 489,
+      "corrupt_answer": 489,
+      "op": "add"
+    },
+    {
+      "a": 206,
+      "b": 125,
+      "c": 206,
+      "answer": 331,
+      "corrupt_answer": 331,
+      "op": "add"
+    },
+    {
+      "a": 467,
+      "b": 316,
+      "c": 467,
+      "answer": 783,
+      "corrupt_answer": 783,
+      "op": "add"
+    },
+    {
+      "a": 446,
+      "b": 367,
+      "c": 446,
+      "answer": 813,
+      "corrupt_answer": 813,
+      "op": "add"
+    },
+    {
+      "a": 445,
+      "b": 188,
+      "c": 445,
+      "answer": 633,
+      "corrupt_answer": 633,
+      "op": "add"
+    },
+    {
+      "a": 175,
+      "b": 171,
+      "c": 175,
+      "answer": 346,
+      "corrupt_answer": 346,
+      "op": "add"
+    },
+    {
+      "a": 451,
+      "b": 366,
+      "c": 451,
+      "answer": 817,
+      "corrupt_answer": 817,
+      "op": "add"
+    },
+    {
+      "a": 322,
+      "b": 245,
+      "c": 322,
+      "answer": 567,
+      "corrupt_answer": 567,
+      "op": "add"
+    },
+    {
+      "a": 107,
+      "b": 22,
+      "c": 107,
+      "answer": 129,
+      "corrupt_answer": 129,
+      "op": "add"
+    },
+    {
+      "a": 470,
+      "b": 109,
+      "c": 470,
+      "answer": 579,
+      "corrupt_answer": 579,
+      "op": "add"
+    },
+    {
+      "a": 216,
+      "b": 147,
+      "c": 216,
+      "answer": 363,
+      "corrupt_answer": 363,
+      "op": "add"
+    },
+    {
+      "a": 382,
+      "b": 308,
+      "c": 382,
+      "answer": 690,
+      "corrupt_answer": 690,
+      "op": "add"
+    },
+    {
+      "a": 123,
+      "b": 104,
+      "c": 123,
+      "answer": 227,
+      "corrupt_answer": 227,
+      "op": "add"
+    },
+    {
+      "a": 430,
+      "b": 208,
+      "c": 430,
+      "answer": 638,
+      "corrupt_answer": 638,
+      "op": "add"
+    },
+    {
+      "a": 263,
+      "b": 221,
+      "c": 263,
+      "answer": 484,
+      "corrupt_answer": 484,
+      "op": "add"
+    },
+    {
+      "a": 104,
+      "b": 77,
+      "c": 104,
+      "answer": 181,
+      "corrupt_answer": 181,
+      "op": "add"
+    },
+    {
+      "a": 176,
+      "b": 105,
+      "c": 176,
+      "answer": 281,
+      "corrupt_answer": 281,
+      "op": "add"
+    },
+    {
+      "a": 182,
+      "b": 41,
+      "c": 182,
+      "answer": 223,
+      "corrupt_answer": 223,
+      "op": "add"
+    },
+    {
+      "a": 425,
+      "b": 17,
+      "c": 425,
+      "answer": 442,
+      "corrupt_answer": 442,
+      "op": "add"
+    },
+    {
+      "a": 401,
+      "b": 218,
+      "c": 401,
+      "answer": 619,
+      "corrupt_answer": 619,
+      "op": "add"
+    },
+    {
+      "a": 361,
+      "b": 312,
+      "c": 361,
+      "answer": 673,
+      "corrupt_answer": 673,
+      "op": "add"
+    },
+    {
+      "a": 101,
+      "b": 46,
+      "c": 101,
+      "answer": 147,
+      "corrupt_answer": 147,
+      "op": "add"
+    },
+    {
+      "a": 353,
+      "b": 253,
+      "c": 353,
+      "answer": 606,
+      "corrupt_answer": 606,
+      "op": "add"
+    },
+    {
+      "a": 419,
+      "b": 11,
+      "c": 419,
+      "answer": 430,
+      "corrupt_answer": 430,
+      "op": "add"
+    },
+    {
+      "a": 326,
+      "b": 309,
+      "c": 326,
+      "answer": 635,
+      "corrupt_answer": 635,
+      "op": "add"
+    },
+    {
+      "a": 246,
+      "b": 122,
+      "c": 246,
+      "answer": 368,
+      "corrupt_answer": 368,
+      "op": "add"
+    },
+    {
+      "a": 288,
+      "b": 217,
+      "c": 288,
+      "answer": 505,
+      "corrupt_answer": 505,
+      "op": "add"
+    },
+    {
+      "a": 449,
+      "b": 254,
+      "c": 449,
+      "answer": 703,
+      "corrupt_answer": 703,
+      "op": "add"
+    },
+    {
+      "a": 356,
+      "b": 281,
+      "c": 356,
+      "answer": 637,
+      "corrupt_answer": 637,
+      "op": "add"
+    },
+    {
+      "a": 307,
+      "b": 206,
+      "c": 307,
+      "answer": 513,
+      "corrupt_answer": 513,
+      "op": "add"
+    },
+    {
+      "a": 493,
+      "b": 312,
+      "c": 493,
+      "answer": 805,
+      "corrupt_answer": 805,
+      "op": "add"
+    },
+    {
+      "a": 91,
+      "b": 67,
+      "c": 91,
+      "answer": 158,
+      "corrupt_answer": 158,
+      "op": "add"
+    },
+    {
+      "a": 414,
+      "b": 210,
+      "c": 414,
+      "answer": 624,
+      "corrupt_answer": 624,
+      "op": "add"
+    },
+    {
+      "a": 251,
+      "b": 14,
+      "c": 251,
+      "answer": 265,
+      "corrupt_answer": 265,
+      "op": "add"
+    },
+    {
+      "a": 346,
+      "b": 83,
+      "c": 346,
+      "answer": 429,
+      "corrupt_answer": 429,
+      "op": "add"
+    },
+    {
+      "a": 357,
+      "b": 281,
+      "c": 357,
+      "answer": 638,
+      "corrupt_answer": 638,
+      "op": "add"
+    },
+    {
+      "a": 203,
+      "b": 131,
+      "c": 203,
+      "answer": 334,
+      "corrupt_answer": 334,
+      "op": "add"
+    },
+    {
+      "a": 444,
+      "b": 214,
+      "c": 444,
+      "answer": 658,
+      "corrupt_answer": 658,
+      "op": "add"
+    },
+    {
+      "a": 434,
+      "b": 118,
+      "c": 434,
+      "answer": 552,
+      "corrupt_answer": 552,
+      "op": "add"
+    },
+    {
+      "a": 443,
+      "b": 373,
+      "c": 443,
+      "answer": 816,
+      "corrupt_answer": 816,
+      "op": "add"
+    },
+    {
+      "a": 151,
+      "b": 74,
+      "c": 151,
+      "answer": 225,
+      "corrupt_answer": 225,
+      "op": "add"
+    },
+    {
+      "a": 462,
+      "b": 227,
+      "c": 462,
+      "answer": 689,
+      "corrupt_answer": 689,
+      "op": "add"
+    },
+    {
+      "a": 256,
+      "b": 109,
+      "c": 256,
+      "answer": 365,
+      "corrupt_answer": 365,
+      "op": "add"
+    },
+    {
+      "a": 354,
+      "b": 134,
+      "c": 354,
+      "answer": 488,
+      "corrupt_answer": 488,
+      "op": "add"
+    },
+    {
+      "a": 396,
+      "b": 46,
+      "c": 396,
+      "answer": 442,
+      "corrupt_answer": 442,
+      "op": "add"
+    },
+    {
+      "a": 486,
+      "b": 28,
+      "c": 486,
+      "answer": 514,
+      "corrupt_answer": 514,
+      "op": "add"
+    },
+    {
+      "a": 352,
+      "b": 28,
+      "c": 352,
+      "answer": 380,
+      "corrupt_answer": 380,
+      "op": "add"
+    },
+    {
+      "a": 430,
+      "b": 216,
+      "c": 430,
+      "answer": 646,
+      "corrupt_answer": 646,
+      "op": "add"
+    },
+    {
+      "a": 420,
+      "b": 129,
+      "c": 420,
+      "answer": 549,
+      "corrupt_answer": 549,
+      "op": "add"
+    },
+    {
+      "a": 373,
+      "b": 330,
+      "c": 373,
+      "answer": 703,
+      "corrupt_answer": 703,
+      "op": "add"
+    },
+    {
+      "a": 386,
+      "b": 179,
+      "c": 386,
+      "answer": 565,
+      "corrupt_answer": 565,
+      "op": "add"
+    },
+    {
+      "a": 141,
+      "b": 67,
+      "c": 141,
+      "answer": 208,
+      "corrupt_answer": 208,
+      "op": "add"
+    },
+    {
+      "a": 447,
+      "b": 213,
+      "c": 447,
+      "answer": 660,
+      "corrupt_answer": 660,
+      "op": "add"
+    },
+    {
+      "a": 435,
+      "b": 294,
+      "c": 435,
+      "answer": 729,
+      "corrupt_answer": 729,
+      "op": "add"
+    },
+    {
+      "a": 284,
+      "b": 59,
+      "c": 284,
+      "answer": 343,
+      "corrupt_answer": 343,
+      "op": "add"
+    },
+    {
+      "a": 257,
+      "b": 107,
+      "c": 257,
+      "answer": 364,
+      "corrupt_answer": 364,
+      "op": "add"
+    },
+    {
+      "a": 197,
+      "b": 133,
+      "c": 197,
+      "answer": 330,
+      "corrupt_answer": 330,
+      "op": "add"
+    },
+    {
+      "a": 491,
+      "b": 181,
+      "c": 491,
+      "answer": 672,
+      "corrupt_answer": 672,
+      "op": "add"
+    },
+    {
+      "a": 305,
+      "b": 159,
+      "c": 305,
+      "answer": 464,
+      "corrupt_answer": 464,
+      "op": "add"
+    },
+    {
+      "a": 489,
+      "b": 232,
+      "c": 489,
+      "answer": 721,
+      "corrupt_answer": 721,
+      "op": "add"
+    },
+    {
+      "a": 464,
+      "b": 187,
+      "c": 464,
+      "answer": 651,
+      "corrupt_answer": 651,
+      "op": "add"
+    },
+    {
+      "a": 179,
+      "b": 53,
+      "c": 179,
+      "answer": 232,
+      "corrupt_answer": 232,
+      "op": "add"
+    },
+    {
+      "a": 249,
+      "b": 205,
+      "c": 249,
+      "answer": 454,
+      "corrupt_answer": 454,
+      "op": "add"
+    },
+    {
+      "a": 312,
+      "b": 111,
+      "c": 312,
+      "answer": 423,
+      "corrupt_answer": 423,
+      "op": "add"
+    },
+    {
+      "a": 157,
+      "b": 131,
+      "c": 157,
+      "answer": 288,
+      "corrupt_answer": 288,
+      "op": "add"
+    },
+    {
+      "a": 481,
+      "b": 347,
+      "c": 481,
+      "answer": 828,
+      "corrupt_answer": 828,
+      "op": "add"
+    },
+    {
+      "a": 411,
+      "b": 332,
+      "c": 411,
+      "answer": 743,
+      "corrupt_answer": 743,
+      "op": "add"
+    },
+    {
+      "a": 411,
+      "b": 302,
+      "c": 411,
+      "answer": 713,
+      "corrupt_answer": 713,
+      "op": "add"
+    },
+    {
+      "a": 436,
+      "b": 253,
+      "c": 436,
+      "answer": 689,
+      "corrupt_answer": 689,
+      "op": "add"
+    },
+    {
+      "a": 210,
+      "b": 209,
+      "c": 210,
+      "answer": 419,
+      "corrupt_answer": 419,
+      "op": "add"
+    },
+    {
+      "a": 397,
+      "b": 44,
+      "c": 397,
+      "answer": 441,
+      "corrupt_answer": 441,
+      "op": "add"
+    },
+    {
+      "a": 293,
+      "b": 287,
+      "c": 293,
+      "answer": 580,
+      "corrupt_answer": 580,
+      "op": "add"
+    },
+    {
+      "a": 470,
+      "b": 65,
+      "c": 470,
+      "answer": 535,
+      "corrupt_answer": 535,
+      "op": "add"
+    },
+    {
+      "a": 204,
+      "b": 34,
+      "c": 204,
+      "answer": 238,
+      "corrupt_answer": 238,
+      "op": "add"
+    },
+    {
+      "a": 350,
+      "b": 340,
+      "c": 350,
+      "answer": 690,
+      "corrupt_answer": 690,
+      "op": "add"
+    },
+    {
+      "a": 319,
+      "b": 236,
+      "c": 319,
+      "answer": 555,
+      "corrupt_answer": 555,
+      "op": "add"
+    },
+    {
+      "a": 295,
+      "b": 222,
+      "c": 295,
+      "answer": 517,
+      "corrupt_answer": 517,
+      "op": "add"
+    },
+    {
+      "a": 404,
+      "b": 109,
+      "c": 404,
+      "answer": 513,
+      "corrupt_answer": 513,
+      "op": "add"
+    },
+    {
+      "a": 486,
+      "b": 367,
+      "c": 486,
+      "answer": 853,
+      "corrupt_answer": 853,
+      "op": "add"
+    },
+    {
+      "a": 433,
+      "b": 31,
+      "c": 433,
+      "answer": 464,
+      "corrupt_answer": 464,
+      "op": "add"
+    },
+    {
+      "a": 459,
+      "b": 53,
+      "c": 459,
+      "answer": 512,
+      "corrupt_answer": 512,
+      "op": "add"
+    },
+    {
+      "a": 447,
+      "b": 329,
+      "c": 447,
+      "answer": 776,
+      "corrupt_answer": 776,
+      "op": "add"
+    },
+    {
+      "a": 425,
+      "b": 51,
+      "c": 425,
+      "answer": 476,
+      "corrupt_answer": 476,
+      "op": "add"
+    },
+    {
+      "a": 478,
+      "b": 396,
+      "c": 478,
+      "answer": 874,
+      "corrupt_answer": 874,
+      "op": "add"
+    },
+    {
+      "a": 219,
+      "b": 160,
+      "c": 219,
+      "answer": 379,
+      "corrupt_answer": 379,
+      "op": "add"
+    },
+    {
+      "a": 378,
+      "b": 31,
+      "c": 378,
+      "answer": 409,
+      "corrupt_answer": 409,
+      "op": "add"
+    },
+    {
+      "a": 328,
+      "b": 153,
+      "c": 328,
+      "answer": 481,
+      "corrupt_answer": 481,
+      "op": "add"
+    },
+    {
+      "a": 417,
+      "b": 376,
+      "c": 417,
+      "answer": 793,
+      "corrupt_answer": 793,
+      "op": "add"
+    },
+    {
+      "a": 307,
+      "b": 155,
+      "c": 307,
+      "answer": 462,
+      "corrupt_answer": 462,
+      "op": "add"
+    },
+    {
+      "a": 454,
+      "b": 140,
+      "c": 454,
+      "answer": 594,
+      "corrupt_answer": 594,
+      "op": "add"
+    },
+    {
+      "a": 418,
+      "b": 306,
+      "c": 418,
+      "answer": 724,
+      "corrupt_answer": 724,
+      "op": "add"
+    },
+    {
+      "a": 288,
+      "b": 40,
+      "c": 288,
+      "answer": 328,
+      "corrupt_answer": 328,
+      "op": "add"
+    },
+    {
+      "a": 406,
+      "b": 401,
+      "c": 406,
+      "answer": 807,
+      "corrupt_answer": 807,
+      "op": "add"
+    },
+    {
+      "a": 389,
+      "b": 136,
+      "c": 389,
+      "answer": 525,
+      "corrupt_answer": 525,
+      "op": "add"
+    },
+    {
+      "a": 337,
+      "b": 166,
+      "c": 337,
+      "answer": 503,
+      "corrupt_answer": 503,
+      "op": "add"
+    },
+    {
+      "a": 391,
+      "b": 300,
+      "c": 391,
+      "answer": 691,
+      "corrupt_answer": 691,
+      "op": "add"
+    },
+    {
+      "a": 351,
+      "b": 29,
+      "c": 351,
+      "answer": 380,
+      "corrupt_answer": 380,
+      "op": "add"
+    },
+    {
+      "a": 370,
+      "b": 37,
+      "c": 370,
+      "answer": 407,
+      "corrupt_answer": 407,
+      "op": "add"
+    },
+    {
+      "a": 405,
+      "b": 385,
+      "c": 405,
+      "answer": 790,
+      "corrupt_answer": 790,
+      "op": "add"
+    },
+    {
+      "a": 409,
+      "b": 141,
+      "c": 409,
+      "answer": 550,
+      "corrupt_answer": 550,
+      "op": "add"
+    },
+    {
+      "a": 205,
+      "b": 138,
+      "c": 205,
+      "answer": 343,
+      "corrupt_answer": 343,
+      "op": "add"
+    },
+    {
+      "a": 317,
+      "b": 162,
+      "c": 317,
+      "answer": 479,
+      "corrupt_answer": 479,
+      "op": "add"
+    },
+    {
+      "a": 465,
+      "b": 229,
+      "c": 465,
+      "answer": 694,
+      "corrupt_answer": 694,
+      "op": "add"
+    },
+    {
+      "a": 245,
+      "b": 29,
+      "c": 245,
+      "answer": 274,
+      "corrupt_answer": 274,
+      "op": "add"
+    },
+    {
+      "a": 375,
+      "b": 23,
+      "c": 375,
+      "answer": 398,
+      "corrupt_answer": 398,
+      "op": "add"
+    },
+    {
+      "a": 146,
+      "b": 24,
+      "c": 146,
+      "answer": 170,
+      "corrupt_answer": 170,
+      "op": "add"
+    },
+    {
+      "a": 489,
+      "b": 465,
+      "c": 489,
+      "answer": 954,
+      "corrupt_answer": 954,
+      "op": "add"
+    },
+    {
+      "a": 368,
+      "b": 111,
+      "c": 368,
+      "answer": 479,
+      "corrupt_answer": 479,
+      "op": "add"
+    },
+    {
+      "a": 475,
+      "b": 266,
+      "c": 475,
+      "answer": 741,
+      "corrupt_answer": 741,
+      "op": "add"
+    },
+    {
+      "a": 208,
+      "b": 82,
+      "c": 208,
+      "answer": 290,
+      "corrupt_answer": 290,
+      "op": "add"
+    },
+    {
+      "a": 453,
+      "b": 414,
+      "c": 453,
+      "answer": 867,
+      "corrupt_answer": 867,
+      "op": "add"
+    },
+    {
+      "a": 321,
+      "b": 71,
+      "c": 321,
+      "answer": 392,
+      "corrupt_answer": 392,
+      "op": "add"
+    },
+    {
+      "a": 211,
+      "b": 26,
+      "c": 211,
+      "answer": 237,
+      "corrupt_answer": 237,
+      "op": "add"
+    },
+    {
+      "a": 428,
+      "b": 164,
+      "c": 428,
+      "answer": 592,
+      "corrupt_answer": 592,
+      "op": "add"
+    },
+    {
+      "a": 373,
+      "b": 128,
+      "c": 373,
+      "answer": 501,
+      "corrupt_answer": 501,
+      "op": "add"
+    },
+    {
+      "a": 497,
+      "b": 365,
+      "c": 497,
+      "answer": 862,
+      "corrupt_answer": 862,
+      "op": "add"
+    },
+    {
+      "a": 433,
+      "b": 432,
+      "c": 433,
+      "answer": 865,
+      "corrupt_answer": 865,
+      "op": "add"
+    },
+    {
+      "a": 219,
+      "b": 166,
+      "c": 219,
+      "answer": 385,
+      "corrupt_answer": 385,
+      "op": "add"
+    },
+    {
+      "a": 217,
+      "b": 125,
+      "c": 217,
+      "answer": 342,
+      "corrupt_answer": 342,
+      "op": "add"
+    },
+    {
+      "a": 216,
+      "b": 177,
+      "c": 216,
+      "answer": 393,
+      "corrupt_answer": 393,
+      "op": "add"
+    },
+    {
+      "a": 442,
+      "b": 78,
+      "c": 442,
+      "answer": 520,
+      "corrupt_answer": 520,
+      "op": "add"
+    },
+    {
+      "a": 463,
+      "b": 154,
+      "c": 463,
+      "answer": 617,
+      "corrupt_answer": 617,
+      "op": "add"
+    },
+    {
+      "a": 378,
+      "b": 87,
+      "c": 378,
+      "answer": 465,
+      "corrupt_answer": 465,
+      "op": "add"
+    },
+    {
+      "a": 378,
+      "b": 155,
+      "c": 378,
+      "answer": 533,
+      "corrupt_answer": 533,
+      "op": "add"
+    },
+    {
+      "a": 320,
+      "b": 85,
+      "c": 320,
+      "answer": 405,
+      "corrupt_answer": 405,
+      "op": "add"
+    },
+    {
+      "a": 320,
+      "b": 32,
+      "c": 320,
+      "answer": 352,
+      "corrupt_answer": 352,
+      "op": "add"
+    },
+    {
+      "a": 486,
+      "b": 186,
+      "c": 486,
+      "answer": 672,
+      "corrupt_answer": 672,
+      "op": "add"
+    },
+    {
+      "a": 396,
+      "b": 114,
+      "c": 396,
+      "answer": 510,
+      "corrupt_answer": 510,
+      "op": "add"
+    },
+    {
+      "a": 399,
+      "b": 331,
+      "c": 399,
+      "answer": 730,
+      "corrupt_answer": 730,
+      "op": "add"
+    },
+    {
+      "a": 455,
+      "b": 253,
+      "c": 455,
+      "answer": 708,
+      "corrupt_answer": 708,
+      "op": "add"
+    },
+    {
+      "a": 499,
+      "b": 185,
+      "c": 499,
+      "answer": 684,
+      "corrupt_answer": 684,
+      "op": "add"
+    },
+    {
+      "a": 114,
+      "b": 52,
+      "c": 114,
+      "answer": 166,
+      "corrupt_answer": 166,
+      "op": "add"
+    },
+    {
+      "a": 203,
+      "b": 159,
+      "c": 203,
+      "answer": 362,
+      "corrupt_answer": 362,
+      "op": "add"
+    },
+    {
+      "a": 111,
+      "b": 79,
+      "c": 111,
+      "answer": 190,
+      "corrupt_answer": 190,
+      "op": "add"
+    },
+    {
+      "a": 358,
+      "b": 306,
+      "c": 358,
+      "answer": 664,
+      "corrupt_answer": 664,
+      "op": "add"
+    },
+    {
+      "a": 440,
+      "b": 74,
+      "c": 440,
+      "answer": 514,
+      "corrupt_answer": 514,
+      "op": "add"
+    },
+    {
+      "a": 499,
+      "b": 366,
+      "c": 499,
+      "answer": 865,
+      "corrupt_answer": 865,
+      "op": "add"
+    },
+    {
+      "a": 476,
+      "b": 165,
+      "c": 476,
+      "answer": 641,
+      "corrupt_answer": 641,
+      "op": "add"
+    },
+    {
+      "a": 212,
+      "b": 135,
+      "c": 212,
+      "answer": 347,
+      "corrupt_answer": 347,
+      "op": "add"
+    },
+    {
+      "a": 238,
+      "b": 217,
+      "c": 238,
+      "answer": 455,
+      "corrupt_answer": 455,
+      "op": "add"
+    },
+    {
+      "a": 203,
+      "b": 124,
+      "c": 203,
+      "answer": 327,
+      "corrupt_answer": 327,
+      "op": "add"
+    },
+    {
+      "a": 442,
+      "b": 115,
+      "c": 442,
+      "answer": 557,
+      "corrupt_answer": 557,
+      "op": "add"
+    },
+    {
+      "a": 314,
+      "b": 78,
+      "c": 314,
+      "answer": 392,
+      "corrupt_answer": 392,
+      "op": "add"
+    },
+    {
+      "a": 424,
+      "b": 47,
+      "c": 424,
+      "answer": 471,
+      "corrupt_answer": 471,
+      "op": "add"
+    },
+    {
+      "a": 116,
+      "b": 44,
+      "c": 116,
+      "answer": 160,
+      "corrupt_answer": 160,
+      "op": "add"
+    },
+    {
+      "a": 367,
+      "b": 72,
+      "c": 367,
+      "answer": 439,
+      "corrupt_answer": 439,
+      "op": "add"
+    },
+    {
+      "a": 226,
+      "b": 59,
+      "c": 226,
+      "answer": 285,
+      "corrupt_answer": 285,
+      "op": "add"
+    },
+    {
+      "a": 255,
+      "b": 160,
+      "c": 255,
+      "answer": 415,
+      "corrupt_answer": 415,
+      "op": "add"
+    },
+    {
+      "a": 278,
+      "b": 201,
+      "c": 278,
+      "answer": 479,
+      "corrupt_answer": 479,
+      "op": "add"
+    },
+    {
+      "a": 231,
+      "b": 228,
+      "c": 231,
+      "answer": 459,
+      "corrupt_answer": 459,
+      "op": "add"
+    },
+    {
+      "a": 474,
+      "b": 310,
+      "c": 474,
+      "answer": 784,
+      "corrupt_answer": 784,
+      "op": "add"
+    },
+    {
+      "a": 210,
+      "b": 205,
+      "c": 210,
+      "answer": 415,
+      "corrupt_answer": 415,
+      "op": "add"
+    },
+    {
+      "a": 323,
+      "b": 33,
+      "c": 323,
+      "answer": 356,
+      "corrupt_answer": 356,
+      "op": "add"
+    },
+    {
+      "a": 242,
+      "b": 109,
+      "c": 242,
+      "answer": 351,
+      "corrupt_answer": 351,
+      "op": "add"
+    },
+    {
+      "a": 462,
+      "b": 437,
+      "c": 462,
+      "answer": 899,
+      "corrupt_answer": 899,
+      "op": "add"
+    },
+    {
+      "a": 440,
+      "b": 43,
+      "c": 440,
+      "answer": 483,
+      "corrupt_answer": 483,
+      "op": "add"
+    },
+    {
+      "a": 322,
+      "b": 238,
+      "c": 322,
+      "answer": 560,
+      "corrupt_answer": 560,
+      "op": "add"
+    },
+    {
+      "a": 292,
+      "b": 76,
+      "c": 292,
+      "answer": 368,
+      "corrupt_answer": 368,
+      "op": "add"
+    },
+    {
+      "a": 329,
+      "b": 190,
+      "c": 329,
+      "answer": 519,
+      "corrupt_answer": 519,
+      "op": "add"
+    },
+    {
+      "a": 284,
+      "b": 27,
+      "c": 284,
+      "answer": 311,
+      "corrupt_answer": 311,
+      "op": "add"
+    },
+    {
+      "a": 470,
+      "b": 329,
+      "c": 470,
+      "answer": 799,
+      "corrupt_answer": 799,
+      "op": "add"
+    },
+    {
+      "a": 398,
+      "b": 90,
+      "c": 398,
+      "answer": 488,
+      "corrupt_answer": 488,
+      "op": "add"
+    },
+    {
+      "a": 102,
+      "b": 42,
+      "c": 102,
+      "answer": 144,
+      "corrupt_answer": 144,
+      "op": "add"
+    },
+    {
+      "a": 394,
+      "b": 220,
+      "c": 394,
+      "answer": 614,
+      "corrupt_answer": 614,
+      "op": "add"
+    },
+    {
+      "a": 483,
+      "b": 332,
+      "c": 483,
+      "answer": 815,
+      "corrupt_answer": 815,
+      "op": "add"
+    },
+    {
+      "a": 310,
+      "b": 276,
+      "c": 310,
+      "answer": 586,
+      "corrupt_answer": 586,
+      "op": "add"
+    },
+    {
+      "a": 375,
+      "b": 181,
+      "c": 375,
+      "answer": 556,
+      "corrupt_answer": 556,
+      "op": "add"
+    },
+    {
+      "a": 167,
+      "b": 121,
+      "c": 167,
+      "answer": 288,
+      "corrupt_answer": 288,
+      "op": "add"
+    },
+    {
+      "a": 78,
+      "b": 30,
+      "c": 78,
+      "answer": 108,
+      "corrupt_answer": 108,
+      "op": "add"
+    },
+    {
+      "a": 440,
+      "b": 226,
+      "c": 440,
+      "answer": 666,
+      "corrupt_answer": 666,
+      "op": "add"
+    },
+    {
+      "a": 366,
+      "b": 270,
+      "c": 366,
+      "answer": 636,
+      "corrupt_answer": 636,
+      "op": "add"
+    },
+    {
+      "a": 467,
+      "b": 284,
+      "c": 467,
+      "answer": 751,
+      "corrupt_answer": 751,
+      "op": "add"
+    },
+    {
+      "a": 290,
+      "b": 35,
+      "c": 290,
+      "answer": 325,
+      "corrupt_answer": 325,
+      "op": "add"
+    },
+    {
+      "a": 86,
+      "b": 58,
+      "c": 86,
+      "answer": 144,
+      "corrupt_answer": 144,
+      "op": "add"
+    },
+    {
+      "a": 435,
+      "b": 154,
+      "c": 435,
+      "answer": 589,
+      "corrupt_answer": 589,
+      "op": "add"
+    },
+    {
+      "a": 449,
+      "b": 161,
+      "c": 449,
+      "answer": 610,
+      "corrupt_answer": 610,
+      "op": "add"
+    },
+    {
+      "a": 352,
+      "b": 142,
+      "c": 352,
+      "answer": 494,
+      "corrupt_answer": 494,
+      "op": "add"
+    },
+    {
+      "a": 397,
+      "b": 63,
+      "c": 397,
+      "answer": 460,
+      "corrupt_answer": 460,
+      "op": "add"
+    },
+    {
+      "a": 128,
+      "b": 10,
+      "c": 128,
+      "answer": 138,
+      "corrupt_answer": 138,
+      "op": "add"
+    },
+    {
+      "a": 480,
+      "b": 400,
+      "c": 480,
+      "answer": 880,
+      "corrupt_answer": 880,
+      "op": "add"
+    },
+    {
+      "a": 437,
+      "b": 63,
+      "c": 437,
+      "answer": 500,
+      "corrupt_answer": 500,
+      "op": "add"
+    },
+    {
+      "a": 296,
+      "b": 216,
+      "c": 296,
+      "answer": 512,
+      "corrupt_answer": 512,
+      "op": "add"
+    },
+    {
+      "a": 215,
+      "b": 165,
+      "c": 215,
+      "answer": 380,
+      "corrupt_answer": 380,
+      "op": "add"
+    },
+    {
+      "a": 341,
+      "b": 30,
+      "c": 341,
+      "answer": 371,
+      "corrupt_answer": 371,
+      "op": "add"
+    },
+    {
+      "a": 467,
+      "b": 93,
+      "c": 467,
+      "answer": 560,
+      "corrupt_answer": 560,
+      "op": "add"
+    },
+    {
+      "a": 498,
+      "b": 400,
+      "c": 498,
+      "answer": 898,
+      "corrupt_answer": 898,
+      "op": "add"
+    },
+    {
+      "a": 369,
+      "b": 172,
+      "c": 369,
+      "answer": 541,
+      "corrupt_answer": 541,
+      "op": "add"
+    },
+    {
+      "a": 362,
+      "b": 104,
+      "c": 362,
+      "answer": 466,
+      "corrupt_answer": 466,
+      "op": "add"
+    },
+    {
+      "a": 440,
+      "b": 198,
+      "c": 440,
+      "answer": 638,
+      "corrupt_answer": 638,
+      "op": "add"
+    },
+    {
+      "a": 292,
+      "b": 103,
+      "c": 292,
+      "answer": 395,
+      "corrupt_answer": 395,
+      "op": "add"
+    },
+    {
+      "a": 484,
+      "b": 248,
+      "c": 484,
+      "answer": 732,
+      "corrupt_answer": 732,
+      "op": "add"
+    },
+    {
+      "a": 143,
+      "b": 77,
+      "c": 143,
+      "answer": 220,
+      "corrupt_answer": 220,
+      "op": "add"
+    },
+    {
+      "a": 477,
+      "b": 383,
+      "c": 477,
+      "answer": 860,
+      "corrupt_answer": 860,
+      "op": "add"
+    },
+    {
+      "a": 418,
+      "b": 27,
+      "c": 418,
+      "answer": 445,
+      "corrupt_answer": 445,
+      "op": "add"
+    },
+    {
+      "a": 213,
+      "b": 185,
+      "c": 213,
+      "answer": 398,
+      "corrupt_answer": 398,
+      "op": "add"
+    },
+    {
+      "a": 109,
+      "b": 53,
+      "c": 109,
+      "answer": 162,
+      "corrupt_answer": 162,
+      "op": "add"
+    },
+    {
+      "a": 435,
+      "b": 40,
+      "c": 435,
+      "answer": 475,
+      "corrupt_answer": 475,
+      "op": "add"
+    },
+    {
+      "a": 474,
+      "b": 311,
+      "c": 474,
+      "answer": 785,
+      "corrupt_answer": 785,
+      "op": "add"
+    },
+    {
+      "a": 431,
+      "b": 255,
+      "c": 431,
+      "answer": 686,
+      "corrupt_answer": 686,
+      "op": "add"
+    },
+    {
+      "a": 366,
+      "b": 25,
+      "c": 366,
+      "answer": 391,
+      "corrupt_answer": 391,
+      "op": "add"
+    },
+    {
+      "a": 315,
+      "b": 12,
+      "c": 315,
+      "answer": 327,
+      "corrupt_answer": 327,
+      "op": "add"
+    },
+    {
+      "a": 446,
+      "b": 294,
+      "c": 446,
+      "answer": 740,
+      "corrupt_answer": 740,
+      "op": "add"
+    },
+    {
+      "a": 264,
+      "b": 234,
+      "c": 264,
+      "answer": 498,
+      "corrupt_answer": 498,
+      "op": "add"
+    },
+    {
+      "a": 364,
+      "b": 223,
+      "c": 364,
+      "answer": 587,
+      "corrupt_answer": 587,
+      "op": "add"
+    },
+    {
+      "a": 308,
+      "b": 53,
+      "c": 308,
+      "answer": 361,
+      "corrupt_answer": 361,
+      "op": "add"
+    },
+    {
+      "a": 308,
+      "b": 271,
+      "c": 308,
+      "answer": 579,
+      "corrupt_answer": 579,
+      "op": "add"
+    },
+    {
+      "a": 303,
+      "b": 66,
+      "c": 303,
+      "answer": 369,
+      "corrupt_answer": 369,
+      "op": "add"
+    },
+    {
+      "a": 273,
+      "b": 21,
+      "c": 273,
+      "answer": 294,
+      "corrupt_answer": 294,
+      "op": "add"
+    },
+    {
+      "a": 411,
+      "b": 362,
+      "c": 411,
+      "answer": 773,
+      "corrupt_answer": 773,
+      "op": "add"
+    },
+    {
+      "a": 197,
+      "b": 70,
+      "c": 197,
+      "answer": 267,
+      "corrupt_answer": 267,
+      "op": "add"
+    },
+    {
+      "a": 311,
+      "b": 265,
+      "c": 311,
+      "answer": 576,
+      "corrupt_answer": 576,
+      "op": "add"
+    },
+    {
+      "a": 223,
+      "b": 33,
+      "c": 223,
+      "answer": 256,
+      "corrupt_answer": 256,
+      "op": "add"
+    },
+    {
+      "a": 324,
+      "b": 45,
+      "c": 324,
+      "answer": 369,
+      "corrupt_answer": 369,
+      "op": "add"
+    },
+    {
+      "a": 494,
+      "b": 72,
+      "c": 494,
+      "answer": 566,
+      "corrupt_answer": 566,
+      "op": "add"
+    },
+    {
+      "a": 391,
+      "b": 168,
+      "c": 391,
+      "answer": 559,
+      "corrupt_answer": 559,
+      "op": "add"
+    },
+    {
+      "a": 354,
+      "b": 230,
+      "c": 354,
+      "answer": 584,
+      "corrupt_answer": 584,
+      "op": "add"
+    },
+    {
+      "a": 475,
+      "b": 93,
+      "c": 475,
+      "answer": 568,
+      "corrupt_answer": 568,
+      "op": "add"
+    },
+    {
+      "a": 405,
+      "b": 304,
+      "c": 405,
+      "answer": 709,
+      "corrupt_answer": 709,
+      "op": "add"
+    },
+    {
+      "a": 174,
+      "b": 102,
+      "c": 174,
+      "answer": 276,
+      "corrupt_answer": 276,
+      "op": "add"
+    },
+    {
+      "a": 275,
+      "b": 131,
+      "c": 275,
+      "answer": 406,
+      "corrupt_answer": 406,
+      "op": "add"
+    },
+    {
+      "a": 196,
+      "b": 124,
+      "c": 196,
+      "answer": 320,
+      "corrupt_answer": 320,
+      "op": "add"
+    },
+    {
+      "a": 213,
+      "b": 22,
+      "c": 213,
+      "answer": 235,
+      "corrupt_answer": 235,
+      "op": "add"
+    },
+    {
+      "a": 426,
+      "b": 398,
+      "c": 426,
+      "answer": 824,
+      "corrupt_answer": 824,
+      "op": "add"
+    },
+    {
+      "a": 312,
+      "b": 303,
+      "c": 312,
+      "answer": 615,
+      "corrupt_answer": 615,
+      "op": "add"
+    },
+    {
+      "a": 352,
+      "b": 25,
+      "c": 352,
+      "answer": 377,
+      "corrupt_answer": 377,
+      "op": "add"
+    },
+    {
+      "a": 398,
+      "b": 302,
+      "c": 398,
+      "answer": 700,
+      "corrupt_answer": 700,
+      "op": "add"
+    },
+    {
+      "a": 298,
+      "b": 223,
+      "c": 298,
+      "answer": 521,
+      "corrupt_answer": 521,
+      "op": "add"
+    },
+    {
+      "a": 495,
+      "b": 152,
+      "c": 495,
+      "answer": 647,
+      "corrupt_answer": 647,
+      "op": "add"
+    },
+    {
+      "a": 435,
+      "b": 174,
+      "c": 435,
+      "answer": 609,
+      "corrupt_answer": 609,
+      "op": "add"
+    },
+    {
+      "a": 323,
+      "b": 37,
+      "c": 323,
+      "answer": 360,
+      "corrupt_answer": 360,
+      "op": "add"
+    },
+    {
+      "a": 450,
+      "b": 137,
+      "c": 450,
+      "answer": 587,
+      "corrupt_answer": 587,
+      "op": "add"
+    },
+    {
+      "a": 250,
+      "b": 235,
+      "c": 250,
+      "answer": 485,
+      "corrupt_answer": 485,
+      "op": "add"
+    },
+    {
+      "a": 417,
+      "b": 285,
+      "c": 417,
+      "answer": 702,
+      "corrupt_answer": 702,
+      "op": "add"
+    },
+    {
+      "a": 236,
+      "b": 118,
+      "c": 236,
+      "answer": 354,
+      "corrupt_answer": 354,
+      "op": "add"
+    },
+    {
+      "a": 264,
+      "b": 218,
+      "c": 264,
+      "answer": 482,
+      "corrupt_answer": 482,
+      "op": "add"
+    },
+    {
+      "a": 464,
+      "b": 119,
+      "c": 464,
+      "answer": 583,
+      "corrupt_answer": 583,
+      "op": "add"
+    },
+    {
+      "a": 115,
+      "b": 43,
+      "c": 115,
+      "answer": 158,
+      "corrupt_answer": 158,
+      "op": "add"
+    },
+    {
+      "a": 462,
+      "b": 73,
+      "c": 462,
+      "answer": 535,
+      "corrupt_answer": 535,
+      "op": "add"
+    },
+    {
+      "a": 194,
+      "b": 12,
+      "c": 194,
+      "answer": 206,
+      "corrupt_answer": 206,
+      "op": "add"
+    },
+    {
+      "a": 129,
+      "b": 94,
+      "c": 129,
+      "answer": 223,
+      "corrupt_answer": 223,
+      "op": "add"
+    },
+    {
+      "a": 90,
+      "b": 15,
+      "c": 90,
+      "answer": 105,
+      "corrupt_answer": 105,
+      "op": "add"
+    },
+    {
+      "a": 393,
+      "b": 143,
+      "c": 393,
+      "answer": 536,
+      "corrupt_answer": 536,
+      "op": "add"
+    },
+    {
+      "a": 188,
+      "b": 18,
+      "c": 188,
+      "answer": 206,
+      "corrupt_answer": 206,
+      "op": "add"
+    },
+    {
+      "a": 92,
+      "b": 60,
+      "c": 92,
+      "answer": 152,
+      "corrupt_answer": 152,
+      "op": "add"
+    },
+    {
+      "a": 464,
+      "b": 51,
+      "c": 464,
+      "answer": 515,
+      "corrupt_answer": 515,
+      "op": "add"
+    },
+    {
+      "a": 158,
+      "b": 68,
+      "c": 158,
+      "answer": 226,
+      "corrupt_answer": 226,
+      "op": "add"
+    },
+    {
+      "a": 276,
+      "b": 84,
+      "c": 276,
+      "answer": 360,
+      "corrupt_answer": 360,
+      "op": "add"
+    },
+    {
+      "a": 199,
+      "b": 81,
+      "c": 199,
+      "answer": 280,
+      "corrupt_answer": 280,
+      "op": "add"
+    },
+    {
+      "a": 249,
+      "b": 172,
+      "c": 249,
+      "answer": 421,
+      "corrupt_answer": 421,
+      "op": "add"
+    },
+    {
+      "a": 117,
+      "b": 11,
+      "c": 117,
+      "answer": 128,
+      "corrupt_answer": 128,
+      "op": "add"
+    },
+    {
+      "a": 447,
+      "b": 406,
+      "c": 447,
+      "answer": 853,
+      "corrupt_answer": 853,
+      "op": "add"
+    },
+    {
+      "a": 146,
+      "b": 20,
+      "c": 146,
+      "answer": 166,
+      "corrupt_answer": 166,
+      "op": "add"
+    },
+    {
+      "a": 410,
+      "b": 342,
+      "c": 410,
+      "answer": 752,
+      "corrupt_answer": 752,
+      "op": "add"
+    },
+    {
+      "a": 390,
+      "b": 376,
+      "c": 390,
+      "answer": 766,
+      "corrupt_answer": 766,
+      "op": "add"
+    },
+    {
+      "a": 414,
+      "b": 257,
+      "c": 414,
+      "answer": 671,
+      "corrupt_answer": 671,
+      "op": "add"
+    },
+    {
+      "a": 341,
+      "b": 26,
+      "c": 341,
+      "answer": 367,
+      "corrupt_answer": 367,
+      "op": "add"
+    },
+    {
+      "a": 96,
+      "b": 94,
+      "c": 96,
+      "answer": 190,
+      "corrupt_answer": 190,
+      "op": "add"
+    },
+    {
+      "a": 467,
+      "b": 88,
+      "c": 467,
+      "answer": 555,
+      "corrupt_answer": 555,
+      "op": "add"
+    },
+    {
+      "a": 384,
+      "b": 307,
+      "c": 384,
+      "answer": 691,
+      "corrupt_answer": 691,
+      "op": "add"
+    },
+    {
+      "a": 428,
+      "b": 33,
+      "c": 428,
+      "answer": 461,
+      "corrupt_answer": 461,
+      "op": "add"
+    },
+    {
+      "a": 474,
+      "b": 222,
+      "c": 474,
+      "answer": 696,
+      "corrupt_answer": 696,
+      "op": "add"
+    },
+    {
+      "a": 322,
+      "b": 235,
+      "c": 322,
+      "answer": 557,
+      "corrupt_answer": 557,
+      "op": "add"
+    },
+    {
+      "a": 230,
+      "b": 24,
+      "c": 230,
+      "answer": 254,
+      "corrupt_answer": 254,
+      "op": "add"
+    },
+    {
+      "a": 129,
+      "b": 116,
+      "c": 129,
+      "answer": 245,
+      "corrupt_answer": 245,
+      "op": "add"
+    },
+    {
+      "a": 410,
+      "b": 121,
+      "c": 410,
+      "answer": 531,
+      "corrupt_answer": 531,
+      "op": "add"
+    },
+    {
+      "a": 353,
+      "b": 78,
+      "c": 353,
+      "answer": 431,
+      "corrupt_answer": 431,
+      "op": "add"
+    },
+    {
+      "a": 202,
+      "b": 177,
+      "c": 202,
+      "answer": 379,
+      "corrupt_answer": 379,
+      "op": "add"
+    },
+    {
+      "a": 407,
+      "b": 229,
+      "c": 407,
+      "answer": 636,
+      "corrupt_answer": 636,
+      "op": "add"
+    },
+    {
+      "a": 144,
+      "b": 97,
+      "c": 144,
+      "answer": 241,
+      "corrupt_answer": 241,
+      "op": "add"
+    },
+    {
+      "a": 491,
+      "b": 423,
+      "c": 491,
+      "answer": 914,
+      "corrupt_answer": 914,
+      "op": "add"
+    },
+    {
+      "a": 167,
+      "b": 151,
+      "c": 167,
+      "answer": 318,
+      "corrupt_answer": 318,
+      "op": "add"
+    },
+    {
+      "a": 455,
+      "b": 72,
+      "c": 455,
+      "answer": 527,
+      "corrupt_answer": 527,
+      "op": "add"
+    },
+    {
+      "a": 425,
+      "b": 337,
+      "c": 425,
+      "answer": 762,
+      "corrupt_answer": 762,
+      "op": "add"
+    },
+    {
+      "a": 229,
+      "b": 96,
+      "c": 229,
+      "answer": 325,
+      "corrupt_answer": 325,
+      "op": "add"
+    },
+    {
+      "a": 418,
+      "b": 380,
+      "c": 418,
+      "answer": 798,
+      "corrupt_answer": 798,
+      "op": "add"
+    },
+    {
+      "a": 394,
+      "b": 183,
+      "c": 394,
+      "answer": 577,
+      "corrupt_answer": 577,
+      "op": "add"
+    },
+    {
+      "a": 314,
+      "b": 22,
+      "c": 314,
+      "answer": 336,
+      "corrupt_answer": 336,
+      "op": "add"
+    },
+    {
+      "a": 318,
+      "b": 23,
+      "c": 318,
+      "answer": 341,
+      "corrupt_answer": 341,
+      "op": "add"
+    },
+    {
+      "a": 351,
+      "b": 334,
+      "c": 351,
+      "answer": 685,
+      "corrupt_answer": 685,
+      "op": "add"
+    },
+    {
+      "a": 470,
+      "b": 26,
+      "c": 470,
+      "answer": 496,
+      "corrupt_answer": 496,
+      "op": "add"
+    },
+    {
+      "a": 317,
+      "b": 269,
+      "c": 317,
+      "answer": 586,
+      "corrupt_answer": 586,
+      "op": "add"
+    },
+    {
+      "a": 340,
+      "b": 196,
+      "c": 340,
+      "answer": 536,
+      "corrupt_answer": 536,
+      "op": "add"
+    },
+    {
+      "a": 267,
+      "b": 138,
+      "c": 267,
+      "answer": 405,
+      "corrupt_answer": 405,
+      "op": "add"
+    },
+    {
+      "a": 459,
+      "b": 315,
+      "c": 459,
+      "answer": 774,
+      "corrupt_answer": 774,
+      "op": "add"
+    },
+    {
+      "a": 376,
+      "b": 259,
+      "c": 376,
+      "answer": 635,
+      "corrupt_answer": 635,
+      "op": "add"
+    },
+    {
+      "a": 335,
+      "b": 239,
+      "c": 335,
+      "answer": 574,
+      "corrupt_answer": 574,
+      "op": "add"
+    },
+    {
+      "a": 446,
+      "b": 421,
+      "c": 446,
+      "answer": 867,
+      "corrupt_answer": 867,
+      "op": "add"
+    },
+    {
+      "a": 461,
+      "b": 193,
+      "c": 461,
+      "answer": 654,
+      "corrupt_answer": 654,
+      "op": "add"
+    },
+    {
+      "a": 327,
+      "b": 224,
+      "c": 327,
+      "answer": 551,
+      "corrupt_answer": 551,
+      "op": "add"
+    },
+    {
+      "a": 181,
+      "b": 177,
+      "c": 181,
+      "answer": 358,
+      "corrupt_answer": 358,
+      "op": "add"
+    },
+    {
+      "a": 470,
+      "b": 189,
+      "c": 470,
+      "answer": 659,
+      "corrupt_answer": 659,
+      "op": "add"
+    },
+    {
+      "a": 345,
+      "b": 18,
+      "c": 345,
+      "answer": 363,
+      "corrupt_answer": 363,
+      "op": "add"
+    },
+    {
+      "a": 156,
+      "b": 149,
+      "c": 156,
+      "answer": 305,
+      "corrupt_answer": 305,
+      "op": "add"
+    },
+    {
+      "a": 478,
+      "b": 311,
+      "c": 478,
+      "answer": 789,
+      "corrupt_answer": 789,
+      "op": "add"
+    },
+    {
+      "a": 378,
+      "b": 132,
+      "c": 378,
+      "answer": 510,
+      "corrupt_answer": 510,
+      "op": "add"
+    },
+    {
+      "a": 266,
+      "b": 72,
+      "c": 266,
+      "answer": 338,
+      "corrupt_answer": 338,
+      "op": "add"
+    },
+    {
+      "a": 355,
+      "b": 326,
+      "c": 355,
+      "answer": 681,
+      "corrupt_answer": 681,
+      "op": "add"
+    },
+    {
+      "a": 414,
+      "b": 197,
+      "c": 414,
+      "answer": 611,
+      "corrupt_answer": 611,
+      "op": "add"
+    },
+    {
+      "a": 273,
+      "b": 206,
+      "c": 273,
+      "answer": 479,
+      "corrupt_answer": 479,
+      "op": "add"
+    },
+    {
+      "a": 462,
+      "b": 407,
+      "c": 462,
+      "answer": 869,
+      "corrupt_answer": 869,
+      "op": "add"
+    },
+    {
+      "a": 428,
+      "b": 90,
+      "c": 428,
+      "answer": 518,
+      "corrupt_answer": 518,
+      "op": "add"
+    },
+    {
+      "a": 262,
+      "b": 58,
+      "c": 262,
+      "answer": 320,
+      "corrupt_answer": 320,
+      "op": "add"
+    },
+    {
+      "a": 370,
+      "b": 43,
+      "c": 370,
+      "answer": 413,
+      "corrupt_answer": 413,
+      "op": "add"
+    },
+    {
+      "a": 402,
+      "b": 147,
+      "c": 402,
+      "answer": 549,
+      "corrupt_answer": 549,
+      "op": "add"
+    },
+    {
+      "a": 311,
+      "b": 175,
+      "c": 311,
+      "answer": 486,
+      "corrupt_answer": 486,
+      "op": "add"
+    },
+    {
+      "a": 166,
+      "b": 125,
+      "c": 166,
+      "answer": 291,
+      "corrupt_answer": 291,
+      "op": "add"
+    },
+    {
+      "a": 415,
+      "b": 50,
+      "c": 415,
+      "answer": 465,
+      "corrupt_answer": 465,
+      "op": "add"
+    },
+    {
+      "a": 458,
+      "b": 306,
+      "c": 458,
+      "answer": 764,
+      "corrupt_answer": 764,
+      "op": "add"
+    },
+    {
+      "a": 226,
+      "b": 138,
+      "c": 226,
+      "answer": 364,
+      "corrupt_answer": 364,
+      "op": "add"
+    },
+    {
+      "a": 456,
+      "b": 249,
+      "c": 456,
+      "answer": 705,
+      "corrupt_answer": 705,
+      "op": "add"
+    },
+    {
+      "a": 323,
+      "b": 220,
+      "c": 323,
+      "answer": 543,
+      "corrupt_answer": 543,
+      "op": "add"
+    },
+    {
+      "a": 287,
+      "b": 111,
+      "c": 287,
+      "answer": 398,
+      "corrupt_answer": 398,
+      "op": "add"
+    },
+    {
+      "a": 476,
+      "b": 181,
+      "c": 476,
+      "answer": 657,
+      "corrupt_answer": 657,
+      "op": "add"
+    },
+    {
+      "a": 214,
+      "b": 102,
+      "c": 214,
+      "answer": 316,
+      "corrupt_answer": 316,
+      "op": "add"
+    },
+    {
+      "a": 378,
+      "b": 68,
+      "c": 378,
+      "answer": 446,
+      "corrupt_answer": 446,
+      "op": "add"
+    },
+    {
+      "a": 495,
+      "b": 348,
+      "c": 495,
+      "answer": 843,
+      "corrupt_answer": 843,
+      "op": "add"
+    },
+    {
+      "a": 495,
+      "b": 296,
+      "c": 495,
+      "answer": 791,
+      "corrupt_answer": 791,
+      "op": "add"
+    },
+    {
+      "a": 246,
+      "b": 131,
+      "c": 246,
+      "answer": 377,
+      "corrupt_answer": 377,
+      "op": "add"
+    },
+    {
+      "a": 362,
+      "b": 166,
+      "c": 362,
+      "answer": 528,
+      "corrupt_answer": 528,
+      "op": "add"
+    },
+    {
+      "a": 328,
+      "b": 127,
+      "c": 328,
+      "answer": 455,
+      "corrupt_answer": 455,
+      "op": "add"
+    },
+    {
+      "a": 409,
+      "b": 227,
+      "c": 409,
+      "answer": 636,
+      "corrupt_answer": 636,
+      "op": "add"
+    },
+    {
+      "a": 291,
+      "b": 64,
+      "c": 291,
+      "answer": 355,
+      "corrupt_answer": 355,
+      "op": "add"
+    },
+    {
+      "a": 230,
+      "b": 169,
+      "c": 230,
+      "answer": 399,
+      "corrupt_answer": 399,
+      "op": "add"
+    },
+    {
+      "a": 314,
+      "b": 181,
+      "c": 314,
+      "answer": 495,
+      "corrupt_answer": 495,
+      "op": "add"
+    },
+    {
+      "a": 315,
+      "b": 44,
+      "c": 315,
+      "answer": 359,
+      "corrupt_answer": 359,
+      "op": "add"
+    },
+    {
+      "a": 255,
+      "b": 89,
+      "c": 255,
+      "answer": 344,
+      "corrupt_answer": 344,
+      "op": "add"
+    },
+    {
+      "a": 406,
+      "b": 291,
+      "c": 406,
+      "answer": 697,
+      "corrupt_answer": 697,
+      "op": "add"
+    },
+    {
+      "a": 400,
+      "b": 43,
+      "c": 400,
+      "answer": 443,
+      "corrupt_answer": 443,
+      "op": "add"
+    },
+    {
+      "a": 424,
+      "b": 221,
+      "c": 424,
+      "answer": 645,
+      "corrupt_answer": 645,
+      "op": "add"
+    },
+    {
+      "a": 457,
+      "b": 238,
+      "c": 457,
+      "answer": 695,
+      "corrupt_answer": 695,
+      "op": "add"
+    },
+    {
+      "a": 479,
+      "b": 80,
+      "c": 479,
+      "answer": 559,
+      "corrupt_answer": 559,
+      "op": "add"
+    },
+    {
+      "a": 392,
+      "b": 377,
+      "c": 392,
+      "answer": 769,
+      "corrupt_answer": 769,
+      "op": "add"
+    },
+    {
+      "a": 409,
+      "b": 53,
+      "c": 409,
+      "answer": 462,
+      "corrupt_answer": 462,
+      "op": "add"
+    },
+    {
+      "a": 296,
+      "b": 66,
+      "c": 296,
+      "answer": 362,
+      "corrupt_answer": 362,
+      "op": "add"
+    },
+    {
+      "a": 308,
+      "b": 153,
+      "c": 308,
+      "answer": 461,
+      "corrupt_answer": 461,
+      "op": "add"
+    },
+    {
+      "a": 342,
+      "b": 318,
+      "c": 342,
+      "answer": 660,
+      "corrupt_answer": 660,
+      "op": "add"
+    },
+    {
+      "a": 364,
+      "b": 95,
+      "c": 364,
+      "answer": 459,
+      "corrupt_answer": 459,
+      "op": "add"
+    },
+    {
+      "a": 475,
+      "b": 184,
+      "c": 475,
+      "answer": 659,
+      "corrupt_answer": 659,
+      "op": "add"
+    },
+    {
+      "a": 498,
+      "b": 372,
+      "c": 498,
+      "answer": 870,
+      "corrupt_answer": 870,
+      "op": "add"
+    },
+    {
+      "a": 421,
+      "b": 378,
+      "c": 421,
+      "answer": 799,
+      "corrupt_answer": 799,
+      "op": "add"
+    },
+    {
+      "a": 488,
+      "b": 297,
+      "c": 488,
+      "answer": 785,
+      "corrupt_answer": 785,
+      "op": "add"
+    },
+    {
+      "a": 474,
+      "b": 378,
+      "c": 474,
+      "answer": 852,
+      "corrupt_answer": 852,
+      "op": "add"
+    },
+    {
+      "a": 433,
+      "b": 408,
+      "c": 433,
+      "answer": 841,
+      "corrupt_answer": 841,
+      "op": "add"
+    },
+    {
+      "a": 361,
+      "b": 179,
+      "c": 361,
+      "answer": 540,
+      "corrupt_answer": 540,
+      "op": "add"
+    },
+    {
+      "a": 379,
+      "b": 184,
+      "c": 379,
+      "answer": 563,
+      "corrupt_answer": 563,
+      "op": "add"
+    },
+    {
+      "a": 435,
+      "b": 126,
+      "c": 435,
+      "answer": 561,
+      "corrupt_answer": 561,
+      "op": "add"
+    },
+    {
+      "a": 479,
+      "b": 332,
+      "c": 479,
+      "answer": 811,
+      "corrupt_answer": 811,
+      "op": "add"
+    },
+    {
+      "a": 385,
+      "b": 125,
+      "c": 385,
+      "answer": 510,
+      "corrupt_answer": 510,
+      "op": "add"
+    },
+    {
+      "a": 458,
+      "b": 80,
+      "c": 458,
+      "answer": 538,
+      "corrupt_answer": 538,
+      "op": "add"
+    },
+    {
+      "a": 477,
+      "b": 268,
+      "c": 477,
+      "answer": 745,
+      "corrupt_answer": 745,
+      "op": "add"
+    },
+    {
+      "a": 455,
+      "b": 56,
+      "c": 455,
+      "answer": 511,
+      "corrupt_answer": 511,
+      "op": "add"
+    },
+    {
+      "a": 474,
+      "b": 427,
+      "c": 474,
+      "answer": 901,
+      "corrupt_answer": 901,
+      "op": "add"
+    },
+    {
+      "a": 326,
+      "b": 93,
+      "c": 326,
+      "answer": 419,
+      "corrupt_answer": 419,
+      "op": "add"
+    },
+    {
+      "a": 138,
+      "b": 103,
+      "c": 138,
+      "answer": 241,
+      "corrupt_answer": 241,
+      "op": "add"
+    },
+    {
+      "a": 488,
+      "b": 370,
+      "c": 488,
+      "answer": 858,
+      "corrupt_answer": 858,
+      "op": "add"
+    },
+    {
+      "a": 308,
+      "b": 275,
+      "c": 308,
+      "answer": 583,
+      "corrupt_answer": 583,
+      "op": "add"
+    },
+    {
+      "a": 436,
+      "b": 53,
+      "c": 436,
+      "answer": 489,
+      "corrupt_answer": 489,
+      "op": "add"
+    },
+    {
+      "a": 361,
+      "b": 149,
+      "c": 361,
+      "answer": 510,
+      "corrupt_answer": 510,
+      "op": "add"
+    },
+    {
+      "a": 426,
+      "b": 129,
+      "c": 426,
+      "answer": 555,
+      "corrupt_answer": 555,
+      "op": "add"
+    },
+    {
+      "a": 247,
+      "b": 109,
+      "c": 247,
+      "answer": 356,
+      "corrupt_answer": 356,
+      "op": "add"
+    },
+    {
+      "a": 245,
+      "b": 238,
+      "c": 245,
+      "answer": 483,
+      "corrupt_answer": 483,
+      "op": "add"
+    },
+    {
+      "a": 494,
+      "b": 23,
+      "c": 494,
+      "answer": 517,
+      "corrupt_answer": 517,
+      "op": "add"
+    },
+    {
+      "a": 222,
+      "b": 123,
+      "c": 222,
+      "answer": 345,
+      "corrupt_answer": 345,
+      "op": "add"
+    },
+    {
+      "a": 117,
+      "b": 34,
+      "c": 117,
+      "answer": 151,
+      "corrupt_answer": 151,
+      "op": "add"
+    },
+    {
+      "a": 327,
+      "b": 145,
+      "c": 327,
+      "answer": 472,
+      "corrupt_answer": 472,
+      "op": "add"
+    },
+    {
+      "a": 382,
+      "b": 103,
+      "c": 382,
+      "answer": 485,
+      "corrupt_answer": 485,
+      "op": "add"
+    },
+    {
+      "a": 256,
+      "b": 189,
+      "c": 256,
+      "answer": 445,
+      "corrupt_answer": 445,
+      "op": "add"
+    },
+    {
+      "a": 447,
+      "b": 358,
+      "c": 447,
+      "answer": 805,
+      "corrupt_answer": 805,
+      "op": "add"
+    },
+    {
+      "a": 193,
+      "b": 56,
+      "c": 193,
+      "answer": 249,
+      "corrupt_answer": 249,
+      "op": "add"
+    },
+    {
+      "a": 469,
+      "b": 311,
+      "c": 469,
+      "answer": 780,
+      "corrupt_answer": 780,
+      "op": "add"
+    },
+    {
+      "a": 126,
+      "b": 87,
+      "c": 126,
+      "answer": 213,
+      "corrupt_answer": 213,
+      "op": "add"
+    },
+    {
+      "a": 416,
+      "b": 77,
+      "c": 416,
+      "answer": 493,
+      "corrupt_answer": 493,
+      "op": "add"
+    },
+    {
+      "a": 410,
+      "b": 56,
+      "c": 410,
+      "answer": 466,
+      "corrupt_answer": 466,
+      "op": "add"
+    },
+    {
+      "a": 482,
+      "b": 95,
+      "c": 482,
+      "answer": 577,
+      "corrupt_answer": 577,
+      "op": "add"
+    },
+    {
+      "a": 238,
+      "b": 66,
+      "c": 238,
+      "answer": 304,
+      "corrupt_answer": 304,
+      "op": "add"
+    },
+    {
+      "a": 143,
+      "b": 102,
+      "c": 143,
+      "answer": 245,
+      "corrupt_answer": 245,
+      "op": "add"
+    },
+    {
+      "a": 251,
+      "b": 82,
+      "c": 251,
+      "answer": 333,
+      "corrupt_answer": 333,
+      "op": "add"
+    },
+    {
+      "a": 376,
+      "b": 165,
+      "c": 376,
+      "answer": 541,
+      "corrupt_answer": 541,
+      "op": "add"
+    },
+    {
+      "a": 252,
+      "b": 214,
+      "c": 252,
+      "answer": 466,
+      "corrupt_answer": 466,
+      "op": "add"
+    },
+    {
+      "a": 251,
+      "b": 179,
+      "c": 251,
+      "answer": 430,
+      "corrupt_answer": 430,
+      "op": "add"
+    },
+    {
+      "a": 80,
+      "b": 25,
+      "c": 80,
+      "answer": 105,
+      "corrupt_answer": 105,
+      "op": "add"
+    },
+    {
+      "a": 195,
+      "b": 86,
+      "c": 195,
+      "answer": 281,
+      "corrupt_answer": 281,
+      "op": "add"
+    },
+    {
+      "a": 170,
+      "b": 45,
+      "c": 170,
+      "answer": 215,
+      "corrupt_answer": 215,
+      "op": "add"
+    },
+    {
+      "a": 479,
+      "b": 392,
+      "c": 479,
+      "answer": 871,
+      "corrupt_answer": 871,
+      "op": "add"
+    },
+    {
+      "a": 455,
+      "b": 179,
+      "c": 455,
+      "answer": 634,
+      "corrupt_answer": 634,
+      "op": "add"
+    },
+    {
+      "a": 339,
+      "b": 162,
+      "c": 339,
+      "answer": 501,
+      "corrupt_answer": 501,
+      "op": "add"
+    },
+    {
+      "a": 473,
+      "b": 125,
+      "c": 473,
+      "answer": 598,
+      "corrupt_answer": 598,
+      "op": "add"
+    },
+    {
+      "a": 76,
+      "b": 43,
+      "c": 76,
+      "answer": 119,
+      "corrupt_answer": 119,
+      "op": "add"
+    },
+    {
+      "a": 472,
+      "b": 400,
+      "c": 472,
+      "answer": 872,
+      "corrupt_answer": 872,
+      "op": "add"
+    },
+    {
+      "a": 354,
+      "b": 288,
+      "c": 354,
+      "answer": 642,
+      "corrupt_answer": 642,
+      "op": "add"
+    },
+    {
+      "a": 281,
+      "b": 89,
+      "c": 281,
+      "answer": 370,
+      "corrupt_answer": 370,
+      "op": "add"
+    },
+    {
+      "a": 356,
+      "b": 101,
+      "c": 356,
+      "answer": 457,
+      "corrupt_answer": 457,
+      "op": "add"
+    },
+    {
+      "a": 464,
+      "b": 255,
+      "c": 464,
+      "answer": 719,
+      "corrupt_answer": 719,
+      "op": "add"
+    },
+    {
+      "a": 364,
+      "b": 14,
+      "c": 364,
+      "answer": 378,
+      "corrupt_answer": 378,
+      "op": "add"
+    },
+    {
+      "a": 488,
+      "b": 110,
+      "c": 488,
+      "answer": 598,
+      "corrupt_answer": 598,
+      "op": "add"
+    },
+    {
+      "a": 367,
+      "b": 77,
+      "c": 367,
+      "answer": 444,
+      "corrupt_answer": 444,
+      "op": "add"
+    },
+    {
+      "a": 125,
+      "b": 120,
+      "c": 125,
+      "answer": 245,
+      "corrupt_answer": 245,
+      "op": "add"
+    },
+    {
+      "a": 465,
+      "b": 93,
+      "c": 465,
+      "answer": 558,
+      "corrupt_answer": 558,
+      "op": "add"
+    },
+    {
+      "a": 494,
+      "b": 201,
+      "c": 494,
+      "answer": 695,
+      "corrupt_answer": 695,
+      "op": "add"
+    },
+    {
+      "a": 330,
+      "b": 284,
+      "c": 330,
+      "answer": 614,
+      "corrupt_answer": 614,
+      "op": "add"
+    },
+    {
+      "a": 465,
+      "b": 178,
+      "c": 465,
+      "answer": 643,
+      "corrupt_answer": 643,
+      "op": "add"
+    },
+    {
+      "a": 406,
+      "b": 146,
+      "c": 406,
+      "answer": 552,
+      "corrupt_answer": 552,
+      "op": "add"
+    },
+    {
+      "a": 247,
+      "b": 29,
+      "c": 247,
+      "answer": 276,
+      "corrupt_answer": 276,
+      "op": "add"
+    },
+    {
+      "a": 463,
+      "b": 306,
+      "c": 463,
+      "answer": 769,
+      "corrupt_answer": 769,
+      "op": "add"
+    },
+    {
+      "a": 416,
+      "b": 262,
+      "c": 416,
+      "answer": 678,
+      "corrupt_answer": 678,
+      "op": "add"
+    },
+    {
+      "a": 462,
+      "b": 326,
+      "c": 462,
+      "answer": 788,
+      "corrupt_answer": 788,
+      "op": "add"
+    },
+    {
+      "a": 340,
+      "b": 277,
+      "c": 340,
+      "answer": 617,
+      "corrupt_answer": 617,
+      "op": "add"
+    },
+    {
+      "a": 335,
+      "b": 272,
+      "c": 335,
+      "answer": 607,
+      "corrupt_answer": 607,
+      "op": "add"
+    },
+    {
+      "a": 471,
+      "b": 182,
+      "c": 471,
+      "answer": 653,
+      "corrupt_answer": 653,
+      "op": "add"
+    },
+    {
+      "a": 442,
+      "b": 40,
+      "c": 442,
+      "answer": 482,
+      "corrupt_answer": 482,
+      "op": "add"
+    },
+    {
+      "a": 467,
+      "b": 216,
+      "c": 467,
+      "answer": 683,
+      "corrupt_answer": 683,
+      "op": "add"
+    },
+    {
+      "a": 147,
+      "b": 117,
+      "c": 147,
+      "answer": 264,
+      "corrupt_answer": 264,
+      "op": "add"
+    },
+    {
+      "a": 107,
+      "b": 41,
+      "c": 107,
+      "answer": 148,
+      "corrupt_answer": 148,
+      "op": "add"
+    },
+    {
+      "a": 321,
+      "b": 106,
+      "c": 321,
+      "answer": 427,
+      "corrupt_answer": 427,
+      "op": "add"
+    },
+    {
+      "a": 400,
+      "b": 106,
+      "c": 400,
+      "answer": 506,
+      "corrupt_answer": 506,
+      "op": "add"
+    },
+    {
+      "a": 419,
+      "b": 322,
+      "c": 419,
+      "answer": 741,
+      "corrupt_answer": 741,
+      "op": "add"
+    },
+    {
+      "a": 485,
+      "b": 116,
+      "c": 485,
+      "answer": 601,
+      "corrupt_answer": 601,
+      "op": "add"
+    },
+    {
+      "a": 384,
+      "b": 215,
+      "c": 384,
+      "answer": 599,
+      "corrupt_answer": 599,
+      "op": "add"
+    },
+    {
+      "a": 251,
+      "b": 11,
+      "c": 251,
+      "answer": 262,
+      "corrupt_answer": 262,
+      "op": "add"
+    },
+    {
+      "a": 150,
+      "b": 57,
+      "c": 150,
+      "answer": 207,
+      "corrupt_answer": 207,
+      "op": "add"
+    },
+    {
+      "a": 369,
+      "b": 85,
+      "c": 369,
+      "answer": 454,
+      "corrupt_answer": 454,
+      "op": "add"
+    },
+    {
+      "a": 341,
+      "b": 187,
+      "c": 341,
+      "answer": 528,
+      "corrupt_answer": 528,
+      "op": "add"
+    },
+    {
+      "a": 408,
+      "b": 180,
+      "c": 408,
+      "answer": 588,
+      "corrupt_answer": 588,
+      "op": "add"
+    },
+    {
+      "a": 415,
+      "b": 90,
+      "c": 415,
+      "answer": 505,
+      "corrupt_answer": 505,
+      "op": "add"
+    },
+    {
+      "a": 172,
+      "b": 116,
+      "c": 172,
+      "answer": 288,
+      "corrupt_answer": 288,
+      "op": "add"
+    },
+    {
+      "a": 153,
+      "b": 57,
+      "c": 153,
+      "answer": 210,
+      "corrupt_answer": 210,
+      "op": "add"
+    },
+    {
+      "a": 86,
+      "b": 70,
+      "c": 86,
+      "answer": 156,
+      "corrupt_answer": 156,
+      "op": "add"
+    },
+    {
+      "a": 479,
+      "b": 85,
+      "c": 479,
+      "answer": 564,
+      "corrupt_answer": 564,
+      "op": "add"
+    },
+    {
+      "a": 372,
+      "b": 340,
+      "c": 372,
+      "answer": 712,
+      "corrupt_answer": 712,
+      "op": "add"
+    },
+    {
+      "a": 405,
+      "b": 82,
+      "c": 405,
+      "answer": 487,
+      "corrupt_answer": 487,
+      "op": "add"
+    },
+    {
+      "a": 135,
+      "b": 53,
+      "c": 135,
+      "answer": 188,
+      "corrupt_answer": 188,
+      "op": "add"
+    },
+    {
+      "a": 412,
+      "b": 72,
+      "c": 412,
+      "answer": 484,
+      "corrupt_answer": 484,
+      "op": "add"
+    },
+    {
+      "a": 250,
+      "b": 232,
+      "c": 250,
+      "answer": 482,
+      "corrupt_answer": 482,
+      "op": "add"
+    },
+    {
+      "a": 100,
+      "b": 19,
+      "c": 100,
+      "answer": 119,
+      "corrupt_answer": 119,
+      "op": "add"
+    },
+    {
+      "a": 395,
+      "b": 54,
+      "c": 395,
+      "answer": 449,
+      "corrupt_answer": 449,
+      "op": "add"
+    },
+    {
+      "a": 218,
+      "b": 41,
+      "c": 218,
+      "answer": 259,
+      "corrupt_answer": 259,
+      "op": "add"
+    },
+    {
+      "a": 429,
+      "b": 92,
+      "c": 429,
+      "answer": 521,
+      "corrupt_answer": 521,
+      "op": "add"
+    },
+    {
+      "a": 394,
+      "b": 305,
+      "c": 394,
+      "answer": 699,
+      "corrupt_answer": 699,
+      "op": "add"
+    },
+    {
+      "a": 345,
+      "b": 255,
+      "c": 345,
+      "answer": 600,
+      "corrupt_answer": 600,
+      "op": "add"
+    },
+    {
+      "a": 159,
+      "b": 32,
+      "c": 159,
+      "answer": 191,
+      "corrupt_answer": 191,
+      "op": "add"
+    },
+    {
+      "a": 396,
+      "b": 306,
+      "c": 396,
+      "answer": 702,
+      "corrupt_answer": 702,
+      "op": "add"
+    },
+    {
+      "a": 292,
+      "b": 207,
+      "c": 292,
+      "answer": 499,
+      "corrupt_answer": 499,
+      "op": "add"
+    },
+    {
+      "a": 320,
+      "b": 224,
+      "c": 320,
+      "answer": 544,
+      "corrupt_answer": 544,
+      "op": "add"
+    },
+    {
+      "a": 157,
+      "b": 122,
+      "c": 157,
+      "answer": 279,
+      "corrupt_answer": 279,
+      "op": "add"
+    },
+    {
+      "a": 459,
+      "b": 357,
+      "c": 459,
+      "answer": 816,
+      "corrupt_answer": 816,
+      "op": "add"
+    },
+    {
+      "a": 367,
+      "b": 195,
+      "c": 367,
+      "answer": 562,
+      "corrupt_answer": 562,
+      "op": "add"
+    },
+    {
+      "a": 234,
+      "b": 24,
+      "c": 234,
+      "answer": 258,
+      "corrupt_answer": 258,
+      "op": "add"
+    },
+    {
+      "a": 404,
+      "b": 185,
+      "c": 404,
+      "answer": 589,
+      "corrupt_answer": 589,
+      "op": "add"
+    },
+    {
+      "a": 197,
+      "b": 61,
+      "c": 197,
+      "answer": 258,
+      "corrupt_answer": 258,
+      "op": "add"
+    },
+    {
+      "a": 347,
+      "b": 263,
+      "c": 347,
+      "answer": 610,
+      "corrupt_answer": 610,
+      "op": "add"
+    },
+    {
+      "a": 331,
+      "b": 92,
+      "c": 331,
+      "answer": 423,
+      "corrupt_answer": 423,
+      "op": "add"
+    },
+    {
+      "a": 339,
+      "b": 272,
+      "c": 339,
+      "answer": 611,
+      "corrupt_answer": 611,
+      "op": "add"
+    },
+    {
+      "a": 234,
+      "b": 126,
+      "c": 234,
+      "answer": 360,
+      "corrupt_answer": 360,
+      "op": "add"
+    },
+    {
+      "a": 443,
+      "b": 418,
+      "c": 443,
+      "answer": 861,
+      "corrupt_answer": 861,
+      "op": "add"
+    },
+    {
+      "a": 485,
+      "b": 315,
+      "c": 485,
+      "answer": 800,
+      "corrupt_answer": 800,
+      "op": "add"
+    },
+    {
+      "a": 220,
+      "b": 66,
+      "c": 220,
+      "answer": 286,
+      "corrupt_answer": 286,
+      "op": "add"
+    },
+    {
+      "a": 268,
+      "b": 264,
+      "c": 268,
+      "answer": 532,
+      "corrupt_answer": 532,
+      "op": "add"
+    },
+    {
+      "a": 274,
+      "b": 273,
+      "c": 274,
+      "answer": 547,
+      "corrupt_answer": 547,
+      "op": "add"
+    },
+    {
+      "a": 325,
+      "b": 75,
+      "c": 325,
+      "answer": 400,
+      "corrupt_answer": 400,
+      "op": "add"
+    },
+    {
+      "a": 483,
+      "b": 212,
+      "c": 483,
+      "answer": 695,
+      "corrupt_answer": 695,
+      "op": "add"
+    },
+    {
+      "a": 227,
+      "b": 108,
+      "c": 227,
+      "answer": 335,
+      "corrupt_answer": 335,
+      "op": "add"
+    },
+    {
+      "a": 328,
+      "b": 324,
+      "c": 328,
+      "answer": 652,
+      "corrupt_answer": 652,
+      "op": "add"
+    },
+    {
+      "a": 369,
+      "b": 303,
+      "c": 369,
+      "answer": 672,
+      "corrupt_answer": 672,
+      "op": "add"
+    },
+    {
+      "a": 345,
+      "b": 244,
+      "c": 345,
+      "answer": 589,
+      "corrupt_answer": 589,
+      "op": "add"
+    },
+    {
+      "a": 279,
+      "b": 206,
+      "c": 279,
+      "answer": 485,
+      "corrupt_answer": 485,
+      "op": "add"
+    },
+    {
+      "a": 433,
+      "b": 333,
+      "c": 433,
+      "answer": 766,
+      "corrupt_answer": 766,
+      "op": "add"
+    },
+    {
+      "a": 441,
+      "b": 217,
+      "c": 441,
+      "answer": 658,
+      "corrupt_answer": 658,
+      "op": "add"
+    },
+    {
+      "a": 499,
+      "b": 332,
+      "c": 499,
+      "answer": 831,
+      "corrupt_answer": 831,
+      "op": "add"
+    },
+    {
+      "a": 109,
+      "b": 32,
+      "c": 109,
+      "answer": 141,
+      "corrupt_answer": 141,
+      "op": "add"
+    },
+    {
+      "a": 266,
+      "b": 96,
+      "c": 266,
+      "answer": 362,
+      "corrupt_answer": 362,
+      "op": "add"
+    },
+    {
+      "a": 170,
+      "b": 166,
+      "c": 170,
+      "answer": 336,
+      "corrupt_answer": 336,
+      "op": "add"
+    },
+    {
+      "a": 489,
+      "b": 477,
+      "c": 489,
+      "answer": 966,
+      "corrupt_answer": 966,
+      "op": "add"
+    },
+    {
+      "a": 300,
+      "b": 207,
+      "c": 300,
+      "answer": 507,
+      "corrupt_answer": 507,
+      "op": "add"
+    },
+    {
+      "a": 265,
+      "b": 78,
+      "c": 265,
+      "answer": 343,
+      "corrupt_answer": 343,
+      "op": "add"
+    },
+    {
+      "a": 396,
+      "b": 276,
+      "c": 396,
+      "answer": 672,
+      "corrupt_answer": 672,
+      "op": "add"
+    },
+    {
+      "a": 191,
+      "b": 104,
+      "c": 191,
+      "answer": 295,
+      "corrupt_answer": 295,
+      "op": "add"
+    },
+    {
+      "a": 295,
+      "b": 244,
+      "c": 295,
+      "answer": 539,
+      "corrupt_answer": 539,
+      "op": "add"
+    },
+    {
+      "a": 401,
+      "b": 258,
+      "c": 401,
+      "answer": 659,
+      "corrupt_answer": 659,
+      "op": "add"
+    },
+    {
+      "a": 307,
+      "b": 225,
+      "c": 307,
+      "answer": 532,
+      "corrupt_answer": 532,
+      "op": "add"
+    },
+    {
+      "a": 479,
+      "b": 310,
+      "c": 479,
+      "answer": 789,
+      "corrupt_answer": 789,
+      "op": "add"
+    },
+    {
+      "a": 464,
+      "b": 12,
+      "c": 464,
+      "answer": 476,
+      "corrupt_answer": 476,
+      "op": "add"
+    },
+    {
+      "a": 351,
+      "b": 347,
+      "c": 351,
+      "answer": 698,
+      "corrupt_answer": 698,
+      "op": "add"
+    },
+    {
+      "a": 383,
+      "b": 149,
+      "c": 383,
+      "answer": 532,
+      "corrupt_answer": 532,
+      "op": "add"
+    },
+    {
+      "a": 259,
+      "b": 236,
+      "c": 259,
+      "answer": 495,
+      "corrupt_answer": 495,
+      "op": "add"
+    },
+    {
+      "a": 422,
+      "b": 346,
+      "c": 422,
+      "answer": 768,
+      "corrupt_answer": 768,
+      "op": "add"
+    },
+    {
+      "a": 324,
+      "b": 90,
+      "c": 324,
+      "answer": 414,
+      "corrupt_answer": 414,
+      "op": "add"
+    },
+    {
+      "a": 318,
+      "b": 127,
+      "c": 318,
+      "answer": 445,
+      "corrupt_answer": 445,
+      "op": "add"
+    },
+    {
+      "a": 498,
+      "b": 126,
+      "c": 498,
+      "answer": 624,
+      "corrupt_answer": 624,
+      "op": "add"
+    },
+    {
+      "a": 351,
+      "b": 223,
+      "c": 351,
+      "answer": 574,
+      "corrupt_answer": 574,
+      "op": "add"
+    },
+    {
+      "a": 62,
+      "b": 59,
+      "c": 62,
+      "answer": 121,
+      "corrupt_answer": 121,
+      "op": "add"
+    },
+    {
+      "a": 407,
+      "b": 373,
+      "c": 407,
+      "answer": 780,
+      "corrupt_answer": 780,
+      "op": "add"
+    },
+    {
+      "a": 95,
+      "b": 35,
+      "c": 95,
+      "answer": 130,
+      "corrupt_answer": 130,
+      "op": "add"
+    },
+    {
+      "a": 328,
+      "b": 305,
+      "c": 328,
+      "answer": 633,
+      "corrupt_answer": 633,
+      "op": "add"
+    },
+    {
+      "a": 370,
+      "b": 195,
+      "c": 370,
+      "answer": 565,
+      "corrupt_answer": 565,
+      "op": "add"
+    },
+    {
+      "a": 439,
+      "b": 44,
+      "c": 439,
+      "answer": 483,
+      "corrupt_answer": 483,
+      "op": "add"
+    },
+    {
+      "a": 403,
+      "b": 373,
+      "c": 403,
+      "answer": 776,
+      "corrupt_answer": 776,
+      "op": "add"
+    },
+    {
+      "a": 441,
+      "b": 297,
+      "c": 441,
+      "answer": 738,
+      "corrupt_answer": 738,
+      "op": "add"
+    },
+    {
+      "a": 321,
+      "b": 159,
+      "c": 321,
+      "answer": 480,
+      "corrupt_answer": 480,
+      "op": "add"
+    },
+    {
+      "a": 358,
+      "b": 112,
+      "c": 358,
+      "answer": 470,
+      "corrupt_answer": 470,
+      "op": "add"
+    },
+    {
+      "a": 411,
+      "b": 188,
+      "c": 411,
+      "answer": 599,
+      "corrupt_answer": 599,
+      "op": "add"
+    },
+    {
+      "a": 396,
+      "b": 220,
+      "c": 396,
+      "answer": 616,
+      "corrupt_answer": 616,
+      "op": "add"
+    },
+    {
+      "a": 321,
+      "b": 155,
+      "c": 321,
+      "answer": 476,
+      "corrupt_answer": 476,
+      "op": "add"
+    },
+    {
+      "a": 416,
+      "b": 416,
+      "c": 416,
+      "answer": 832,
+      "corrupt_answer": 832,
+      "op": "add"
+    },
+    {
+      "a": 158,
+      "b": 66,
+      "c": 158,
+      "answer": 224,
+      "corrupt_answer": 224,
+      "op": "add"
+    },
+    {
+      "a": 456,
+      "b": 58,
+      "c": 456,
+      "answer": 514,
+      "corrupt_answer": 514,
+      "op": "add"
+    },
+    {
+      "a": 162,
+      "b": 93,
+      "c": 162,
+      "answer": 255,
+      "corrupt_answer": 255,
+      "op": "add"
+    },
+    {
+      "a": 360,
+      "b": 155,
+      "c": 360,
+      "answer": 515,
+      "corrupt_answer": 515,
+      "op": "add"
+    },
+    {
+      "a": 485,
+      "b": 458,
+      "c": 485,
+      "answer": 943,
+      "corrupt_answer": 943,
+      "op": "add"
+    },
+    {
+      "a": 166,
+      "b": 148,
+      "c": 166,
+      "answer": 314,
+      "corrupt_answer": 314,
+      "op": "add"
+    },
+    {
+      "a": 371,
+      "b": 171,
+      "c": 371,
+      "answer": 542,
+      "corrupt_answer": 542,
+      "op": "add"
+    },
+    {
+      "a": 479,
+      "b": 171,
+      "c": 479,
+      "answer": 650,
+      "corrupt_answer": 650,
+      "op": "add"
+    },
+    {
+      "a": 445,
+      "b": 111,
+      "c": 445,
+      "answer": 556,
+      "corrupt_answer": 556,
+      "op": "add"
+    },
+    {
+      "a": 71,
+      "b": 46,
+      "c": 71,
+      "answer": 117,
+      "corrupt_answer": 117,
+      "op": "add"
+    },
+    {
+      "a": 281,
+      "b": 200,
+      "c": 281,
+      "answer": 481,
+      "corrupt_answer": 481,
+      "op": "add"
+    },
+    {
+      "a": 230,
+      "b": 45,
+      "c": 230,
+      "answer": 275,
+      "corrupt_answer": 275,
+      "op": "add"
+    },
+    {
+      "a": 269,
+      "b": 110,
+      "c": 269,
+      "answer": 379,
+      "corrupt_answer": 379,
+      "op": "add"
+    },
+    {
+      "a": 357,
+      "b": 141,
+      "c": 357,
+      "answer": 498,
+      "corrupt_answer": 498,
+      "op": "add"
+    },
+    {
+      "a": 468,
+      "b": 74,
+      "c": 468,
+      "answer": 542,
+      "corrupt_answer": 542,
+      "op": "add"
+    },
+    {
+      "a": 381,
+      "b": 352,
+      "c": 381,
+      "answer": 733,
+      "corrupt_answer": 733,
+      "op": "add"
+    },
+    {
+      "a": 155,
+      "b": 154,
+      "c": 155,
+      "answer": 309,
+      "corrupt_answer": 309,
+      "op": "add"
+    },
+    {
+      "a": 490,
+      "b": 242,
+      "c": 490,
+      "answer": 732,
+      "corrupt_answer": 732,
+      "op": "add"
+    },
+    {
+      "a": 282,
+      "b": 14,
+      "c": 282,
+      "answer": 296,
+      "corrupt_answer": 296,
+      "op": "add"
+    },
+    {
+      "a": 343,
+      "b": 157,
+      "c": 343,
+      "answer": 500,
+      "corrupt_answer": 500,
+      "op": "add"
+    },
+    {
+      "a": 260,
+      "b": 103,
+      "c": 260,
+      "answer": 363,
+      "corrupt_answer": 363,
+      "op": "add"
+    },
+    {
+      "a": 161,
+      "b": 132,
+      "c": 161,
+      "answer": 293,
+      "corrupt_answer": 293,
+      "op": "add"
+    },
+    {
+      "a": 497,
+      "b": 356,
+      "c": 497,
+      "answer": 853,
+      "corrupt_answer": 853,
+      "op": "add"
+    },
+    {
+      "a": 375,
+      "b": 86,
+      "c": 375,
+      "answer": 461,
+      "corrupt_answer": 461,
+      "op": "add"
+    },
+    {
+      "a": 294,
+      "b": 179,
+      "c": 294,
+      "answer": 473,
+      "corrupt_answer": 473,
+      "op": "add"
+    },
+    {
+      "a": 194,
+      "b": 76,
+      "c": 194,
+      "answer": 270,
+      "corrupt_answer": 270,
+      "op": "add"
+    },
+    {
+      "a": 116,
+      "b": 41,
+      "c": 116,
+      "answer": 157,
+      "corrupt_answer": 157,
+      "op": "add"
+    },
+    {
+      "a": 342,
+      "b": 217,
+      "c": 342,
+      "answer": 559,
+      "corrupt_answer": 559,
+      "op": "add"
+    },
+    {
+      "a": 442,
+      "b": 157,
+      "c": 442,
+      "answer": 599,
+      "corrupt_answer": 599,
+      "op": "add"
+    },
+    {
+      "a": 342,
+      "b": 312,
+      "c": 342,
+      "answer": 654,
+      "corrupt_answer": 654,
+      "op": "add"
+    },
+    {
+      "a": 479,
+      "b": 382,
+      "c": 479,
+      "answer": 861,
+      "corrupt_answer": 861,
+      "op": "add"
+    },
+    {
+      "a": 499,
+      "b": 25,
+      "c": 499,
+      "answer": 524,
+      "corrupt_answer": 524,
+      "op": "add"
+    },
+    {
+      "a": 408,
+      "b": 305,
+      "c": 408,
+      "answer": 713,
+      "corrupt_answer": 713,
+      "op": "add"
+    },
+    {
+      "a": 313,
+      "b": 217,
+      "c": 313,
+      "answer": 530,
+      "corrupt_answer": 530,
+      "op": "add"
+    },
+    {
+      "a": 133,
+      "b": 128,
+      "c": 133,
+      "answer": 261,
+      "corrupt_answer": 261,
+      "op": "add"
+    },
+    {
+      "a": 432,
+      "b": 388,
+      "c": 432,
+      "answer": 820,
+      "corrupt_answer": 820,
+      "op": "add"
+    },
+    {
+      "a": 433,
+      "b": 329,
+      "c": 433,
+      "answer": 762,
+      "corrupt_answer": 762,
+      "op": "add"
+    },
+    {
+      "a": 171,
+      "b": 41,
+      "c": 171,
+      "answer": 212,
+      "corrupt_answer": 212,
+      "op": "add"
+    },
+    {
+      "a": 250,
+      "b": 149,
+      "c": 250,
+      "answer": 399,
+      "corrupt_answer": 399,
+      "op": "add"
+    },
+    {
+      "a": 250,
+      "b": 10,
+      "c": 250,
+      "answer": 260,
+      "corrupt_answer": 260,
+      "op": "add"
+    },
+    {
+      "a": 499,
+      "b": 232,
+      "c": 499,
+      "answer": 731,
+      "corrupt_answer": 731,
+      "op": "add"
+    },
+    {
+      "a": 335,
+      "b": 41,
+      "c": 335,
+      "answer": 376,
+      "corrupt_answer": 376,
+      "op": "add"
+    },
+    {
+      "a": 318,
+      "b": 211,
+      "c": 318,
+      "answer": 529,
+      "corrupt_answer": 529,
+      "op": "add"
+    },
+    {
+      "a": 376,
+      "b": 306,
+      "c": 376,
+      "answer": 682,
+      "corrupt_answer": 682,
+      "op": "add"
+    },
+    {
+      "a": 164,
+      "b": 38,
+      "c": 164,
+      "answer": 202,
+      "corrupt_answer": 202,
+      "op": "add"
+    },
+    {
+      "a": 260,
+      "b": 208,
+      "c": 260,
+      "answer": 468,
+      "corrupt_answer": 468,
+      "op": "add"
+    },
+    {
+      "a": 158,
+      "b": 24,
+      "c": 158,
+      "answer": 182,
+      "corrupt_answer": 182,
+      "op": "add"
+    },
+    {
+      "a": 414,
+      "b": 246,
+      "c": 414,
+      "answer": 660,
+      "corrupt_answer": 660,
+      "op": "add"
+    },
+    {
+      "a": 387,
+      "b": 35,
+      "c": 387,
+      "answer": 422,
+      "corrupt_answer": 422,
+      "op": "add"
+    },
+    {
+      "a": 181,
+      "b": 80,
+      "c": 181,
+      "answer": 261,
+      "corrupt_answer": 261,
+      "op": "add"
+    },
+    {
+      "a": 173,
+      "b": 43,
+      "c": 173,
+      "answer": 216,
+      "corrupt_answer": 216,
+      "op": "add"
+    },
+    {
+      "a": 398,
+      "b": 325,
+      "c": 398,
+      "answer": 723,
+      "corrupt_answer": 723,
+      "op": "add"
+    },
+    {
+      "a": 165,
+      "b": 159,
+      "c": 165,
+      "answer": 324,
+      "corrupt_answer": 324,
+      "op": "add"
+    },
+    {
+      "a": 414,
+      "b": 154,
+      "c": 414,
+      "answer": 568,
+      "corrupt_answer": 568,
+      "op": "add"
+    },
+    {
+      "a": 86,
+      "b": 35,
+      "c": 86,
+      "answer": 121,
+      "corrupt_answer": 121,
+      "op": "add"
+    },
+    {
+      "a": 428,
+      "b": 402,
+      "c": 428,
+      "answer": 830,
+      "corrupt_answer": 830,
+      "op": "add"
+    },
+    {
+      "a": 231,
+      "b": 191,
+      "c": 231,
+      "answer": 422,
+      "corrupt_answer": 422,
+      "op": "add"
+    },
+    {
+      "a": 454,
+      "b": 144,
+      "c": 454,
+      "answer": 598,
+      "corrupt_answer": 598,
+      "op": "add"
+    },
+    {
+      "a": 486,
+      "b": 29,
+      "c": 486,
+      "answer": 515,
+      "corrupt_answer": 515,
+      "op": "add"
+    },
+    {
+      "a": 422,
+      "b": 185,
+      "c": 422,
+      "answer": 607,
+      "corrupt_answer": 607,
+      "op": "add"
+    },
+    {
+      "a": 432,
+      "b": 234,
+      "c": 432,
+      "answer": 666,
+      "corrupt_answer": 666,
+      "op": "add"
+    },
+    {
+      "a": 368,
+      "b": 34,
+      "c": 368,
+      "answer": 402,
+      "corrupt_answer": 402,
+      "op": "add"
+    },
+    {
+      "a": 163,
+      "b": 130,
+      "c": 163,
+      "answer": 293,
+      "corrupt_answer": 293,
+      "op": "add"
+    },
+    {
+      "a": 202,
+      "b": 35,
+      "c": 202,
+      "answer": 237,
+      "corrupt_answer": 237,
+      "op": "add"
+    },
+    {
+      "a": 336,
+      "b": 127,
+      "c": 336,
+      "answer": 463,
+      "corrupt_answer": 463,
+      "op": "add"
+    },
+    {
+      "a": 311,
+      "b": 86,
+      "c": 311,
+      "answer": 397,
+      "corrupt_answer": 397,
+      "op": "add"
+    },
+    {
+      "a": 386,
+      "b": 286,
+      "c": 386,
+      "answer": 672,
+      "corrupt_answer": 672,
+      "op": "add"
+    },
+    {
+      "a": 417,
+      "b": 266,
+      "c": 417,
+      "answer": 683,
+      "corrupt_answer": 683,
+      "op": "add"
+    },
+    {
+      "a": 407,
+      "b": 268,
+      "c": 407,
+      "answer": 675,
+      "corrupt_answer": 675,
+      "op": "add"
+    },
+    {
+      "a": 307,
+      "b": 43,
+      "c": 307,
+      "answer": 350,
+      "corrupt_answer": 350,
+      "op": "add"
+    },
+    {
+      "a": 317,
+      "b": 268,
+      "c": 317,
+      "answer": 585,
+      "corrupt_answer": 585,
+      "op": "add"
+    },
+    {
+      "a": 374,
+      "b": 98,
+      "c": 374,
+      "answer": 472,
+      "corrupt_answer": 472,
+      "op": "add"
+    },
+    {
+      "a": 390,
+      "b": 157,
+      "c": 390,
+      "answer": 547,
+      "corrupt_answer": 547,
+      "op": "add"
+    },
+    {
+      "a": 282,
+      "b": 217,
+      "c": 282,
+      "answer": 499,
+      "corrupt_answer": 499,
+      "op": "add"
+    },
+    {
+      "a": 182,
+      "b": 141,
+      "c": 182,
+      "answer": 323,
+      "corrupt_answer": 323,
+      "op": "add"
+    },
+    {
+      "a": 449,
+      "b": 257,
+      "c": 449,
+      "answer": 706,
+      "corrupt_answer": 706,
+      "op": "add"
+    },
+    {
+      "a": 251,
+      "b": 190,
+      "c": 251,
+      "answer": 441,
+      "corrupt_answer": 441,
+      "op": "add"
+    },
+    {
+      "a": 241,
+      "b": 106,
+      "c": 241,
+      "answer": 347,
+      "corrupt_answer": 347,
+      "op": "add"
+    },
+    {
+      "a": 237,
+      "b": 210,
+      "c": 237,
+      "answer": 447,
+      "corrupt_answer": 447,
+      "op": "add"
+    },
+    {
+      "a": 220,
+      "b": 29,
+      "c": 220,
+      "answer": 249,
+      "corrupt_answer": 249,
+      "op": "add"
+    },
+    {
+      "a": 434,
+      "b": 357,
+      "c": 434,
+      "answer": 791,
+      "corrupt_answer": 791,
+      "op": "add"
+    },
+    {
+      "a": 479,
+      "b": 364,
+      "c": 479,
+      "answer": 843,
+      "corrupt_answer": 843,
+      "op": "add"
+    },
+    {
+      "a": 403,
+      "b": 239,
+      "c": 403,
+      "answer": 642,
+      "corrupt_answer": 642,
+      "op": "add"
+    },
+    {
+      "a": 445,
+      "b": 334,
+      "c": 445,
+      "answer": 779,
+      "corrupt_answer": 779,
+      "op": "add"
+    },
+    {
+      "a": 170,
+      "b": 116,
+      "c": 170,
+      "answer": 286,
+      "corrupt_answer": 286,
+      "op": "add"
+    },
+    {
+      "a": 284,
+      "b": 188,
+      "c": 284,
+      "answer": 472,
+      "corrupt_answer": 472,
+      "op": "add"
+    },
+    {
+      "a": 302,
+      "b": 28,
+      "c": 302,
+      "answer": 330,
+      "corrupt_answer": 330,
+      "op": "add"
+    },
+    {
+      "a": 309,
+      "b": 137,
+      "c": 309,
+      "answer": 446,
+      "corrupt_answer": 446,
+      "op": "add"
+    },
+    {
+      "a": 237,
+      "b": 46,
+      "c": 237,
+      "answer": 283,
+      "corrupt_answer": 283,
+      "op": "add"
+    },
+    {
+      "a": 494,
+      "b": 157,
+      "c": 494,
+      "answer": 651,
+      "corrupt_answer": 651,
+      "op": "add"
+    },
+    {
+      "a": 425,
+      "b": 133,
+      "c": 425,
+      "answer": 558,
+      "corrupt_answer": 558,
+      "op": "add"
+    },
+    {
+      "a": 233,
+      "b": 219,
+      "c": 233,
+      "answer": 452,
+      "corrupt_answer": 452,
+      "op": "add"
+    },
+    {
+      "a": 217,
+      "b": 108,
+      "c": 217,
+      "answer": 325,
+      "corrupt_answer": 325,
+      "op": "add"
+    },
+    {
+      "a": 299,
+      "b": 266,
+      "c": 299,
+      "answer": 565,
+      "corrupt_answer": 565,
+      "op": "add"
+    },
+    {
+      "a": 264,
+      "b": 233,
+      "c": 264,
+      "answer": 497,
+      "corrupt_answer": 497,
+      "op": "add"
+    },
+    {
+      "a": 374,
+      "b": 244,
+      "c": 374,
+      "answer": 618,
+      "corrupt_answer": 618,
+      "op": "add"
+    },
+    {
+      "a": 251,
+      "b": 75,
+      "c": 251,
+      "answer": 326,
+      "corrupt_answer": 326,
+      "op": "add"
+    },
+    {
+      "a": 494,
+      "b": 155,
+      "c": 494,
+      "answer": 649,
+      "corrupt_answer": 649,
+      "op": "add"
+    },
+    {
+      "a": 181,
+      "b": 20,
+      "c": 181,
+      "answer": 201,
+      "corrupt_answer": 201,
+      "op": "add"
+    },
+    {
+      "a": 285,
+      "b": 56,
+      "c": 285,
+      "answer": 341,
+      "corrupt_answer": 341,
+      "op": "add"
+    },
+    {
+      "a": 162,
+      "b": 27,
+      "c": 162,
+      "answer": 189,
+      "corrupt_answer": 189,
+      "op": "add"
+    },
+    {
+      "a": 50,
+      "b": 49,
+      "c": 50,
+      "answer": 99,
+      "corrupt_answer": 99,
+      "op": "add"
+    },
+    {
+      "a": 497,
+      "b": 295,
+      "c": 497,
+      "answer": 792,
+      "corrupt_answer": 792,
+      "op": "add"
+    },
+    {
+      "a": 383,
+      "b": 145,
+      "c": 383,
+      "answer": 528,
+      "corrupt_answer": 528,
+      "op": "add"
+    },
+    {
+      "a": 430,
+      "b": 163,
+      "c": 430,
+      "answer": 593,
+      "corrupt_answer": 593,
+      "op": "add"
+    },
+    {
+      "a": 193,
+      "b": 104,
+      "c": 193,
+      "answer": 297,
+      "corrupt_answer": 297,
+      "op": "add"
+    },
+    {
+      "a": 444,
+      "b": 349,
+      "c": 444,
+      "answer": 793,
+      "corrupt_answer": 793,
+      "op": "add"
+    },
+    {
+      "a": 300,
+      "b": 266,
+      "c": 300,
+      "answer": 566,
+      "corrupt_answer": 566,
+      "op": "add"
+    },
+    {
+      "a": 185,
+      "b": 37,
+      "c": 185,
+      "answer": 222,
+      "corrupt_answer": 222,
+      "op": "add"
+    },
+    {
+      "a": 371,
+      "b": 305,
+      "c": 371,
+      "answer": 676,
+      "corrupt_answer": 676,
+      "op": "add"
+    },
+    {
+      "a": 82,
+      "b": 25,
+      "c": 82,
+      "answer": 107,
+      "corrupt_answer": 107,
+      "op": "add"
+    },
+    {
+      "a": 250,
+      "b": 186,
+      "c": 250,
+      "answer": 436,
+      "corrupt_answer": 436,
+      "op": "add"
+    },
+    {
+      "a": 419,
+      "b": 383,
+      "c": 419,
+      "answer": 802,
+      "corrupt_answer": 802,
+      "op": "add"
+    },
+    {
+      "a": 495,
+      "b": 26,
+      "c": 495,
+      "answer": 521,
+      "corrupt_answer": 521,
+      "op": "add"
+    },
+    {
+      "a": 361,
+      "b": 340,
+      "c": 361,
+      "answer": 701,
+      "corrupt_answer": 701,
+      "op": "add"
+    },
+    {
+      "a": 468,
+      "b": 451,
+      "c": 468,
+      "answer": 919,
+      "corrupt_answer": 919,
+      "op": "add"
+    },
+    {
+      "a": 429,
+      "b": 393,
+      "c": 429,
+      "answer": 822,
+      "corrupt_answer": 822,
+      "op": "add"
+    },
+    {
+      "a": 437,
+      "b": 76,
+      "c": 437,
+      "answer": 513,
+      "corrupt_answer": 513,
+      "op": "add"
+    },
+    {
+      "a": 460,
+      "b": 270,
+      "c": 460,
+      "answer": 730,
+      "corrupt_answer": 730,
+      "op": "add"
+    },
+    {
+      "a": 444,
+      "b": 406,
+      "c": 444,
+      "answer": 850,
+      "corrupt_answer": 850,
+      "op": "add"
+    },
+    {
+      "a": 495,
+      "b": 445,
+      "c": 495,
+      "answer": 940,
+      "corrupt_answer": 940,
+      "op": "add"
+    },
+    {
+      "a": 147,
+      "b": 136,
+      "c": 147,
+      "answer": 283,
+      "corrupt_answer": 283,
+      "op": "add"
+    },
+    {
+      "a": 446,
+      "b": 345,
+      "c": 446,
+      "answer": 791,
+      "corrupt_answer": 791,
+      "op": "add"
+    },
+    {
+      "a": 390,
+      "b": 96,
+      "c": 390,
+      "answer": 486,
+      "corrupt_answer": 486,
+      "op": "add"
+    },
+    {
+      "a": 250,
+      "b": 199,
+      "c": 250,
+      "answer": 449,
+      "corrupt_answer": 449,
+      "op": "add"
+    },
+    {
+      "a": 386,
+      "b": 162,
+      "c": 386,
+      "answer": 548,
+      "corrupt_answer": 548,
+      "op": "add"
+    },
+    {
+      "a": 368,
+      "b": 266,
+      "c": 368,
+      "answer": 634,
+      "corrupt_answer": 634,
+      "op": "add"
+    },
+    {
+      "a": 159,
+      "b": 110,
+      "c": 159,
+      "answer": 269,
+      "corrupt_answer": 269,
+      "op": "add"
+    },
+    {
+      "a": 369,
+      "b": 131,
+      "c": 369,
+      "answer": 500,
+      "corrupt_answer": 500,
+      "op": "add"
+    },
+    {
+      "a": 394,
+      "b": 86,
+      "c": 394,
+      "answer": 480,
+      "corrupt_answer": 480,
+      "op": "add"
+    },
+    {
+      "a": 496,
+      "b": 441,
+      "c": 496,
+      "answer": 937,
+      "corrupt_answer": 937,
+      "op": "add"
+    },
+    {
+      "a": 212,
+      "b": 100,
+      "c": 212,
+      "answer": 312,
+      "corrupt_answer": 312,
+      "op": "add"
+    },
+    {
+      "a": 385,
+      "b": 92,
+      "c": 385,
+      "answer": 477,
+      "corrupt_answer": 477,
+      "op": "add"
+    },
+    {
+      "a": 465,
+      "b": 420,
+      "c": 465,
+      "answer": 885,
+      "corrupt_answer": 885,
+      "op": "add"
+    },
+    {
+      "a": 204,
+      "b": 52,
+      "c": 204,
+      "answer": 256,
+      "corrupt_answer": 256,
+      "op": "add"
+    },
+    {
+      "a": 150,
+      "b": 126,
+      "c": 150,
+      "answer": 276,
+      "corrupt_answer": 276,
+      "op": "add"
+    },
+    {
+      "a": 246,
+      "b": 217,
+      "c": 246,
+      "answer": 463,
+      "corrupt_answer": 463,
+      "op": "add"
+    },
+    {
+      "a": 492,
+      "b": 385,
+      "c": 492,
+      "answer": 877,
+      "corrupt_answer": 877,
+      "op": "add"
+    },
+    {
+      "a": 484,
+      "b": 197,
+      "c": 484,
+      "answer": 681,
+      "corrupt_answer": 681,
+      "op": "add"
+    },
+    {
+      "a": 493,
+      "b": 61,
+      "c": 493,
+      "answer": 554,
+      "corrupt_answer": 554,
+      "op": "add"
+    },
+    {
+      "a": 387,
+      "b": 114,
+      "c": 387,
+      "answer": 501,
+      "corrupt_answer": 501,
+      "op": "add"
+    },
+    {
+      "a": 114,
+      "b": 27,
+      "c": 114,
+      "answer": 141,
+      "corrupt_answer": 141,
+      "op": "add"
+    },
+    {
+      "a": 377,
+      "b": 276,
+      "c": 377,
+      "answer": 653,
+      "corrupt_answer": 653,
+      "op": "add"
+    },
+    {
+      "a": 234,
+      "b": 190,
+      "c": 234,
+      "answer": 424,
+      "corrupt_answer": 424,
+      "op": "add"
+    },
+    {
+      "a": 300,
+      "b": 42,
+      "c": 300,
+      "answer": 342,
+      "corrupt_answer": 342,
+      "op": "add"
+    },
+    {
+      "a": 282,
+      "b": 44,
+      "c": 282,
+      "answer": 326,
+      "corrupt_answer": 326,
+      "op": "add"
+    },
+    {
+      "a": 255,
+      "b": 142,
+      "c": 255,
+      "answer": 397,
+      "corrupt_answer": 397,
+      "op": "add"
+    },
+    {
+      "a": 455,
+      "b": 392,
+      "c": 455,
+      "answer": 847,
+      "corrupt_answer": 847,
+      "op": "add"
+    },
+    {
+      "a": 252,
+      "b": 150,
+      "c": 252,
+      "answer": 402,
+      "corrupt_answer": 402,
+      "op": "add"
+    },
+    {
+      "a": 204,
+      "b": 184,
+      "c": 204,
+      "answer": 388,
+      "corrupt_answer": 388,
+      "op": "add"
+    },
+    {
+      "a": 223,
+      "b": 98,
+      "c": 223,
+      "answer": 321,
+      "corrupt_answer": 321,
+      "op": "add"
+    },
+    {
+      "a": 131,
+      "b": 63,
+      "c": 131,
+      "answer": 194,
+      "corrupt_answer": 194,
+      "op": "add"
+    },
+    {
+      "a": 424,
+      "b": 36,
+      "c": 424,
+      "answer": 460,
+      "corrupt_answer": 460,
+      "op": "add"
+    },
+    {
+      "a": 71,
+      "b": 53,
+      "c": 71,
+      "answer": 124,
+      "corrupt_answer": 124,
+      "op": "add"
+    },
+    {
+      "a": 335,
+      "b": 88,
+      "c": 335,
+      "answer": 423,
+      "corrupt_answer": 423,
+      "op": "add"
+    },
+    {
+      "a": 295,
+      "b": 229,
+      "c": 295,
+      "answer": 524,
+      "corrupt_answer": 524,
+      "op": "add"
+    },
+    {
+      "a": 273,
+      "b": 61,
+      "c": 273,
+      "answer": 334,
+      "corrupt_answer": 334,
+      "op": "add"
+    }
+  ],
+  "both_operands": [
+    {
+      "a": 355,
+      "b": 333,
+      "c": 290,
+      "corrupt_b": 174,
+      "answer": 688,
+      "corrupt_answer": 464,
+      "op": "add"
+    },
+    {
+      "a": 359,
+      "b": 332,
+      "c": 482,
+      "corrupt_b": 416,
+      "answer": 691,
+      "corrupt_answer": 898,
+      "op": "add"
+    },
+    {
+      "a": 353,
+      "b": 255,
+      "c": 443,
+      "corrupt_b": 73,
+      "answer": 608,
+      "corrupt_answer": 516,
+      "op": "add"
+    },
+    {
+      "a": 415,
+      "b": 109,
+      "c": 397,
+      "corrupt_b": 369,
+      "answer": 524,
+      "corrupt_answer": 766,
+      "op": "add"
+    },
+    {
+      "a": 467,
+      "b": 250,
+      "c": 331,
+      "corrupt_b": 88,
+      "answer": 717,
+      "corrupt_answer": 419,
+      "op": "add"
+    },
+    {
+      "a": 83,
+      "b": 70,
+      "c": 302,
+      "corrupt_b": 123,
+      "answer": 153,
+      "corrupt_answer": 425,
+      "op": "add"
+    },
+    {
+      "a": 427,
+      "b": 62,
+      "c": 296,
+      "corrupt_b": 86,
+      "answer": 489,
+      "corrupt_answer": 382,
+      "op": "add"
+    },
+    {
+      "a": 322,
+      "b": 116,
+      "c": 400,
+      "corrupt_b": 255,
+      "answer": 438,
+      "corrupt_answer": 655,
+      "op": "add"
+    },
+    {
+      "a": 417,
+      "b": 223,
+      "c": 210,
+      "corrupt_b": 139,
+      "answer": 640,
+      "corrupt_answer": 349,
+      "op": "add"
+    },
+    {
+      "a": 416,
+      "b": 188,
+      "c": 472,
+      "corrupt_b": 57,
+      "answer": 604,
+      "corrupt_answer": 529,
+      "op": "add"
+    },
+    {
+      "a": 493,
+      "b": 323,
+      "c": 297,
+      "corrupt_b": 154,
+      "answer": 816,
+      "corrupt_answer": 451,
+      "op": "add"
+    },
+    {
+      "a": 446,
+      "b": 288,
+      "c": 140,
+      "corrupt_b": 35,
+      "answer": 734,
+      "corrupt_answer": 175,
+      "op": "add"
+    },
+    {
+      "a": 320,
+      "b": 297,
+      "c": 473,
+      "corrupt_b": 354,
+      "answer": 617,
+      "corrupt_answer": 827,
+      "op": "add"
+    },
+    {
+      "a": 485,
+      "b": 434,
+      "c": 270,
+      "corrupt_b": 63,
+      "answer": 919,
+      "corrupt_answer": 333,
+      "op": "add"
+    },
+    {
+      "a": 479,
+      "b": 342,
+      "c": 141,
+      "corrupt_b": 54,
+      "answer": 821,
+      "corrupt_answer": 195,
+      "op": "add"
+    },
+    {
+      "a": 403,
+      "b": 159,
+      "c": 490,
+      "corrupt_b": 471,
+      "answer": 562,
+      "corrupt_answer": 961,
+      "op": "add"
+    },
+    {
+      "a": 369,
+      "b": 322,
+      "c": 412,
+      "corrupt_b": 152,
+      "answer": 691,
+      "corrupt_answer": 564,
+      "op": "add"
+    },
+    {
+      "a": 454,
+      "b": 354,
+      "c": 230,
+      "corrupt_b": 56,
+      "answer": 808,
+      "corrupt_answer": 286,
+      "op": "add"
+    },
+    {
+      "a": 485,
+      "b": 398,
+      "c": 360,
+      "corrupt_b": 93,
+      "answer": 883,
+      "corrupt_answer": 453,
+      "op": "add"
+    },
+    {
+      "a": 450,
+      "b": 441,
+      "c": 471,
+      "corrupt_b": 224,
+      "answer": 891,
+      "corrupt_answer": 695,
+      "op": "add"
+    },
+    {
+      "a": 473,
+      "b": 396,
+      "c": 495,
+      "corrupt_b": 154,
+      "answer": 869,
+      "corrupt_answer": 649,
+      "op": "add"
+    },
+    {
+      "a": 362,
+      "b": 357,
+      "c": 330,
+      "corrupt_b": 100,
+      "answer": 719,
+      "corrupt_answer": 430,
+      "op": "add"
+    },
+    {
+      "a": 447,
+      "b": 110,
+      "c": 308,
+      "corrupt_b": 25,
+      "answer": 557,
+      "corrupt_answer": 333,
+      "op": "add"
+    },
+    {
+      "a": 139,
+      "b": 134,
+      "c": 451,
+      "corrupt_b": 100,
+      "answer": 273,
+      "corrupt_answer": 551,
+      "op": "add"
+    },
+    {
+      "a": 56,
+      "b": 45,
+      "c": 270,
+      "corrupt_b": 169,
+      "answer": 101,
+      "corrupt_answer": 439,
+      "op": "add"
+    },
+    {
+      "a": 257,
+      "b": 155,
+      "c": 334,
+      "corrupt_b": 179,
+      "answer": 412,
+      "corrupt_answer": 513,
+      "op": "add"
+    },
+    {
+      "a": 162,
+      "b": 19,
+      "c": 456,
+      "corrupt_b": 35,
+      "answer": 181,
+      "corrupt_answer": 491,
+      "op": "add"
+    },
+    {
+      "a": 410,
+      "b": 153,
+      "c": 425,
+      "corrupt_b": 362,
+      "answer": 563,
+      "corrupt_answer": 787,
+      "op": "add"
+    },
+    {
+      "a": 343,
+      "b": 297,
+      "c": 276,
+      "corrupt_b": 14,
+      "answer": 640,
+      "corrupt_answer": 290,
+      "op": "add"
+    },
+    {
+      "a": 356,
+      "b": 156,
+      "c": 396,
+      "corrupt_b": 83,
+      "answer": 512,
+      "corrupt_answer": 479,
+      "op": "add"
+    },
+    {
+      "a": 453,
+      "b": 301,
+      "c": 363,
+      "corrupt_b": 11,
+      "answer": 754,
+      "corrupt_answer": 374,
+      "op": "add"
+    },
+    {
+      "a": 424,
+      "b": 200,
+      "c": 403,
+      "corrupt_b": 323,
+      "answer": 624,
+      "corrupt_answer": 726,
+      "op": "add"
+    },
+    {
+      "a": 247,
+      "b": 88,
+      "c": 373,
+      "corrupt_b": 159,
+      "answer": 335,
+      "corrupt_answer": 532,
+      "op": "add"
+    },
+    {
+      "a": 399,
+      "b": 42,
+      "c": 206,
+      "corrupt_b": 58,
+      "answer": 441,
+      "corrupt_answer": 264,
+      "op": "add"
+    },
+    {
+      "a": 167,
+      "b": 86,
+      "c": 357,
+      "corrupt_b": 232,
+      "answer": 253,
+      "corrupt_answer": 589,
+      "op": "add"
+    },
+    {
+      "a": 280,
+      "b": 160,
+      "c": 118,
+      "corrupt_b": 14,
+      "answer": 440,
+      "corrupt_answer": 132,
+      "op": "add"
+    },
+    {
+      "a": 387,
+      "b": 39,
+      "c": 214,
+      "corrupt_b": 44,
+      "answer": 426,
+      "corrupt_answer": 258,
+      "op": "add"
+    },
+    {
+      "a": 310,
+      "b": 244,
+      "c": 305,
+      "corrupt_b": 60,
+      "answer": 554,
+      "corrupt_answer": 365,
+      "op": "add"
+    },
+    {
+      "a": 360,
+      "b": 257,
+      "c": 408,
+      "corrupt_b": 117,
+      "answer": 617,
+      "corrupt_answer": 525,
+      "op": "add"
+    },
+    {
+      "a": 326,
+      "b": 293,
+      "c": 486,
+      "corrupt_b": 81,
+      "answer": 619,
+      "corrupt_answer": 567,
+      "op": "add"
+    },
+    {
+      "a": 418,
+      "b": 164,
+      "c": 460,
+      "corrupt_b": 162,
+      "answer": 582,
+      "corrupt_answer": 622,
+      "op": "add"
+    },
+    {
+      "a": 195,
+      "b": 146,
+      "c": 114,
+      "corrupt_b": 90,
+      "answer": 341,
+      "corrupt_answer": 204,
+      "op": "add"
+    },
+    {
+      "a": 210,
+      "b": 119,
+      "c": 484,
+      "corrupt_b": 450,
+      "answer": 329,
+      "corrupt_answer": 934,
+      "op": "add"
+    },
+    {
+      "a": 448,
+      "b": 20,
+      "c": 267,
+      "corrupt_b": 54,
+      "answer": 468,
+      "corrupt_answer": 321,
+      "op": "add"
+    },
+    {
+      "a": 246,
+      "b": 144,
+      "c": 401,
+      "corrupt_b": 166,
+      "answer": 390,
+      "corrupt_answer": 567,
+      "op": "add"
+    },
+    {
+      "a": 428,
+      "b": 143,
+      "c": 388,
+      "corrupt_b": 307,
+      "answer": 571,
+      "corrupt_answer": 695,
+      "op": "add"
+    },
+    {
+      "a": 313,
+      "b": 266,
+      "c": 265,
+      "corrupt_b": 129,
+      "answer": 579,
+      "corrupt_answer": 394,
+      "op": "add"
+    },
+    {
+      "a": 356,
+      "b": 168,
+      "c": 427,
+      "corrupt_b": 401,
+      "answer": 524,
+      "corrupt_answer": 828,
+      "op": "add"
+    },
+    {
+      "a": 87,
+      "b": 76,
+      "c": 479,
+      "corrupt_b": 397,
+      "answer": 163,
+      "corrupt_answer": 876,
+      "op": "add"
+    },
+    {
+      "a": 238,
+      "b": 70,
+      "c": 409,
+      "corrupt_b": 37,
+      "answer": 308,
+      "corrupt_answer": 446,
+      "op": "add"
+    },
+    {
+      "a": 330,
+      "b": 286,
+      "c": 399,
+      "corrupt_b": 301,
+      "answer": 616,
+      "corrupt_answer": 700,
+      "op": "add"
+    },
+    {
+      "a": 101,
+      "b": 49,
+      "c": 320,
+      "corrupt_b": 47,
+      "answer": 150,
+      "corrupt_answer": 367,
+      "op": "add"
+    },
+    {
+      "a": 171,
+      "b": 141,
+      "c": 225,
+      "corrupt_b": 27,
+      "answer": 312,
+      "corrupt_answer": 252,
+      "op": "add"
+    },
+    {
+      "a": 159,
+      "b": 34,
+      "c": 452,
+      "corrupt_b": 139,
+      "answer": 193,
+      "corrupt_answer": 591,
+      "op": "add"
+    },
+    {
+      "a": 442,
+      "b": 301,
+      "c": 296,
+      "corrupt_b": 250,
+      "answer": 743,
+      "corrupt_answer": 546,
+      "op": "add"
+    },
+    {
+      "a": 235,
+      "b": 81,
+      "c": 457,
+      "corrupt_b": 249,
+      "answer": 316,
+      "corrupt_answer": 706,
+      "op": "add"
+    },
+    {
+      "a": 164,
+      "b": 34,
+      "c": 228,
+      "corrupt_b": 111,
+      "answer": 198,
+      "corrupt_answer": 339,
+      "op": "add"
+    },
+    {
+      "a": 205,
+      "b": 32,
+      "c": 251,
+      "corrupt_b": 193,
+      "answer": 237,
+      "corrupt_answer": 444,
+      "op": "add"
+    },
+    {
+      "a": 484,
+      "b": 374,
+      "c": 299,
+      "corrupt_b": 284,
+      "answer": 858,
+      "corrupt_answer": 583,
+      "op": "add"
+    },
+    {
+      "a": 496,
+      "b": 15,
+      "c": 105,
+      "corrupt_b": 91,
+      "answer": 511,
+      "corrupt_answer": 196,
+      "op": "add"
+    },
+    {
+      "a": 225,
+      "b": 204,
+      "c": 475,
+      "corrupt_b": 471,
+      "answer": 429,
+      "corrupt_answer": 946,
+      "op": "add"
+    },
+    {
+      "a": 180,
+      "b": 49,
+      "c": 481,
+      "corrupt_b": 315,
+      "answer": 229,
+      "corrupt_answer": 796,
+      "op": "add"
+    },
+    {
+      "a": 99,
+      "b": 27,
+      "c": 294,
+      "corrupt_b": 116,
+      "answer": 126,
+      "corrupt_answer": 410,
+      "op": "add"
+    },
+    {
+      "a": 342,
+      "b": 235,
+      "c": 183,
+      "corrupt_b": 115,
+      "answer": 577,
+      "corrupt_answer": 298,
+      "op": "add"
+    },
+    {
+      "a": 371,
+      "b": 40,
+      "c": 105,
+      "corrupt_b": 10,
+      "answer": 411,
+      "corrupt_answer": 115,
+      "op": "add"
+    },
+    {
+      "a": 313,
+      "b": 119,
+      "c": 183,
+      "corrupt_b": 24,
+      "answer": 432,
+      "corrupt_answer": 207,
+      "op": "add"
+    },
+    {
+      "a": 323,
+      "b": 49,
+      "c": 404,
+      "corrupt_b": 114,
+      "answer": 372,
+      "corrupt_answer": 518,
+      "op": "add"
+    },
+    {
+      "a": 396,
+      "b": 117,
+      "c": 484,
+      "corrupt_b": 230,
+      "answer": 513,
+      "corrupt_answer": 714,
+      "op": "add"
+    },
+    {
+      "a": 411,
+      "b": 198,
+      "c": 283,
+      "corrupt_b": 98,
+      "answer": 609,
+      "corrupt_answer": 381,
+      "op": "add"
+    },
+    {
+      "a": 448,
+      "b": 32,
+      "c": 361,
+      "corrupt_b": 306,
+      "answer": 480,
+      "corrupt_answer": 667,
+      "op": "add"
+    },
+    {
+      "a": 268,
+      "b": 124,
+      "c": 350,
+      "corrupt_b": 100,
+      "answer": 392,
+      "corrupt_answer": 450,
+      "op": "add"
+    },
+    {
+      "a": 159,
+      "b": 73,
+      "c": 473,
+      "corrupt_b": 235,
+      "answer": 232,
+      "corrupt_answer": 708,
+      "op": "add"
+    },
+    {
+      "a": 457,
+      "b": 162,
+      "c": 339,
+      "corrupt_b": 106,
+      "answer": 619,
+      "corrupt_answer": 445,
+      "op": "add"
+    },
+    {
+      "a": 381,
+      "b": 219,
+      "c": 235,
+      "corrupt_b": 154,
+      "answer": 600,
+      "corrupt_answer": 389,
+      "op": "add"
+    },
+    {
+      "a": 375,
+      "b": 374,
+      "c": 278,
+      "corrupt_b": 261,
+      "answer": 749,
+      "corrupt_answer": 539,
+      "op": "add"
+    },
+    {
+      "a": 339,
+      "b": 223,
+      "c": 130,
+      "corrupt_b": 20,
+      "answer": 562,
+      "corrupt_answer": 150,
+      "op": "add"
+    },
+    {
+      "a": 339,
+      "b": 34,
+      "c": 427,
+      "corrupt_b": 25,
+      "answer": 373,
+      "corrupt_answer": 452,
+      "op": "add"
+    },
+    {
+      "a": 288,
+      "b": 166,
+      "c": 108,
+      "corrupt_b": 50,
+      "answer": 454,
+      "corrupt_answer": 158,
+      "op": "add"
+    },
+    {
+      "a": 466,
+      "b": 41,
+      "c": 437,
+      "corrupt_b": 391,
+      "answer": 507,
+      "corrupt_answer": 828,
+      "op": "add"
+    },
+    {
+      "a": 423,
+      "b": 399,
+      "c": 224,
+      "corrupt_b": 120,
+      "answer": 822,
+      "corrupt_answer": 344,
+      "op": "add"
+    },
+    {
+      "a": 295,
+      "b": 155,
+      "c": 128,
+      "corrupt_b": 107,
+      "answer": 450,
+      "corrupt_answer": 235,
+      "op": "add"
+    },
+    {
+      "a": 136,
+      "b": 108,
+      "c": 353,
+      "corrupt_b": 148,
+      "answer": 244,
+      "corrupt_answer": 501,
+      "op": "add"
+    },
+    {
+      "a": 457,
+      "b": 211,
+      "c": 254,
+      "corrupt_b": 101,
+      "answer": 668,
+      "corrupt_answer": 355,
+      "op": "add"
+    },
+    {
+      "a": 101,
+      "b": 76,
+      "c": 258,
+      "corrupt_b": 228,
+      "answer": 177,
+      "corrupt_answer": 486,
+      "op": "add"
+    },
+    {
+      "a": 431,
+      "b": 428,
+      "c": 274,
+      "corrupt_b": 270,
+      "answer": 859,
+      "corrupt_answer": 544,
+      "op": "add"
+    },
+    {
+      "a": 485,
+      "b": 97,
+      "c": 388,
+      "corrupt_b": 358,
+      "answer": 582,
+      "corrupt_answer": 746,
+      "op": "add"
+    },
+    {
+      "a": 413,
+      "b": 267,
+      "c": 205,
+      "corrupt_b": 94,
+      "answer": 680,
+      "corrupt_answer": 299,
+      "op": "add"
+    },
+    {
+      "a": 336,
+      "b": 61,
+      "c": 475,
+      "corrupt_b": 456,
+      "answer": 397,
+      "corrupt_answer": 931,
+      "op": "add"
+    },
+    {
+      "a": 438,
+      "b": 261,
+      "c": 232,
+      "corrupt_b": 11,
+      "answer": 699,
+      "corrupt_answer": 243,
+      "op": "add"
+    },
+    {
+      "a": 443,
+      "b": 365,
+      "c": 367,
+      "corrupt_b": 152,
+      "answer": 808,
+      "corrupt_answer": 519,
+      "op": "add"
+    },
+    {
+      "a": 466,
+      "b": 98,
+      "c": 489,
+      "corrupt_b": 427,
+      "answer": 564,
+      "corrupt_answer": 916,
+      "op": "add"
+    },
+    {
+      "a": 293,
+      "b": 103,
+      "c": 328,
+      "corrupt_b": 175,
+      "answer": 396,
+      "corrupt_answer": 503,
+      "op": "add"
+    },
+    {
+      "a": 465,
+      "b": 413,
+      "c": 117,
+      "corrupt_b": 30,
+      "answer": 878,
+      "corrupt_answer": 147,
+      "op": "add"
+    },
+    {
+      "a": 367,
+      "b": 189,
+      "c": 244,
+      "corrupt_b": 71,
+      "answer": 556,
+      "corrupt_answer": 315,
+      "op": "add"
+    },
+    {
+      "a": 380,
+      "b": 64,
+      "c": 343,
+      "corrupt_b": 33,
+      "answer": 444,
+      "corrupt_answer": 376,
+      "op": "add"
+    },
+    {
+      "a": 372,
+      "b": 315,
+      "c": 386,
+      "corrupt_b": 142,
+      "answer": 687,
+      "corrupt_answer": 528,
+      "op": "add"
+    },
+    {
+      "a": 480,
+      "b": 236,
+      "c": 359,
+      "corrupt_b": 95,
+      "answer": 716,
+      "corrupt_answer": 454,
+      "op": "add"
+    },
+    {
+      "a": 461,
+      "b": 277,
+      "c": 475,
+      "corrupt_b": 165,
+      "answer": 738,
+      "corrupt_answer": 640,
+      "op": "add"
+    },
+    {
+      "a": 258,
+      "b": 170,
+      "c": 155,
+      "corrupt_b": 59,
+      "answer": 428,
+      "corrupt_answer": 214,
+      "op": "add"
+    },
+    {
+      "a": 458,
+      "b": 315,
+      "c": 187,
+      "corrupt_b": 127,
+      "answer": 773,
+      "corrupt_answer": 314,
+      "op": "add"
+    },
+    {
+      "a": 244,
+      "b": 27,
+      "c": 434,
+      "corrupt_b": 51,
+      "answer": 271,
+      "corrupt_answer": 485,
+      "op": "add"
+    },
+    {
+      "a": 219,
+      "b": 84,
+      "c": 433,
+      "corrupt_b": 397,
+      "answer": 303,
+      "corrupt_answer": 830,
+      "op": "add"
+    },
+    {
+      "a": 382,
+      "b": 198,
+      "c": 268,
+      "corrupt_b": 227,
+      "answer": 580,
+      "corrupt_answer": 495,
+      "op": "add"
+    },
+    {
+      "a": 313,
+      "b": 167,
+      "c": 478,
+      "corrupt_b": 245,
+      "answer": 480,
+      "corrupt_answer": 723,
+      "op": "add"
+    },
+    {
+      "a": 438,
+      "b": 131,
+      "c": 411,
+      "corrupt_b": 255,
+      "answer": 569,
+      "corrupt_answer": 666,
+      "op": "add"
+    },
+    {
+      "a": 421,
+      "b": 275,
+      "c": 142,
+      "corrupt_b": 98,
+      "answer": 696,
+      "corrupt_answer": 240,
+      "op": "add"
+    },
+    {
+      "a": 425,
+      "b": 198,
+      "c": 156,
+      "corrupt_b": 148,
+      "answer": 623,
+      "corrupt_answer": 304,
+      "op": "add"
+    },
+    {
+      "a": 462,
+      "b": 187,
+      "c": 452,
+      "corrupt_b": 371,
+      "answer": 649,
+      "corrupt_answer": 823,
+      "op": "add"
+    },
+    {
+      "a": 472,
+      "b": 74,
+      "c": 330,
+      "corrupt_b": 130,
+      "answer": 546,
+      "corrupt_answer": 460,
+      "op": "add"
+    },
+    {
+      "a": 371,
+      "b": 252,
+      "c": 338,
+      "corrupt_b": 162,
+      "answer": 623,
+      "corrupt_answer": 500,
+      "op": "add"
+    },
+    {
+      "a": 212,
+      "b": 95,
+      "c": 328,
+      "corrupt_b": 117,
+      "answer": 307,
+      "corrupt_answer": 445,
+      "op": "add"
+    },
+    {
+      "a": 374,
+      "b": 320,
+      "c": 314,
+      "corrupt_b": 120,
+      "answer": 694,
+      "corrupt_answer": 434,
+      "op": "add"
+    },
+    {
+      "a": 74,
+      "b": 65,
+      "c": 392,
+      "corrupt_b": 129,
+      "answer": 139,
+      "corrupt_answer": 521,
+      "op": "add"
+    },
+    {
+      "a": 225,
+      "b": 219,
+      "c": 446,
+      "corrupt_b": 401,
+      "answer": 444,
+      "corrupt_answer": 847,
+      "op": "add"
+    },
+    {
+      "a": 486,
+      "b": 117,
+      "c": 388,
+      "corrupt_b": 160,
+      "answer": 603,
+      "corrupt_answer": 548,
+      "op": "add"
+    },
+    {
+      "a": 404,
+      "b": 404,
+      "c": 394,
+      "corrupt_b": 295,
+      "answer": 808,
+      "corrupt_answer": 689,
+      "op": "add"
+    },
+    {
+      "a": 441,
+      "b": 132,
+      "c": 199,
+      "corrupt_b": 160,
+      "answer": 573,
+      "corrupt_answer": 359,
+      "op": "add"
+    },
+    {
+      "a": 229,
+      "b": 227,
+      "c": 218,
+      "corrupt_b": 71,
+      "answer": 456,
+      "corrupt_answer": 289,
+      "op": "add"
+    },
+    {
+      "a": 348,
+      "b": 280,
+      "c": 166,
+      "corrupt_b": 157,
+      "answer": 628,
+      "corrupt_answer": 323,
+      "op": "add"
+    },
+    {
+      "a": 278,
+      "b": 83,
+      "c": 432,
+      "corrupt_b": 62,
+      "answer": 361,
+      "corrupt_answer": 494,
+      "op": "add"
+    },
+    {
+      "a": 441,
+      "b": 237,
+      "c": 436,
+      "corrupt_b": 377,
+      "answer": 678,
+      "corrupt_answer": 813,
+      "op": "add"
+    },
+    {
+      "a": 391,
+      "b": 158,
+      "c": 481,
+      "corrupt_b": 151,
+      "answer": 549,
+      "corrupt_answer": 632,
+      "op": "add"
+    },
+    {
+      "a": 386,
+      "b": 39,
+      "c": 464,
+      "corrupt_b": 372,
+      "answer": 425,
+      "corrupt_answer": 836,
+      "op": "add"
+    },
+    {
+      "a": 305,
+      "b": 232,
+      "c": 411,
+      "corrupt_b": 300,
+      "answer": 537,
+      "corrupt_answer": 711,
+      "op": "add"
+    },
+    {
+      "a": 410,
+      "b": 272,
+      "c": 309,
+      "corrupt_b": 111,
+      "answer": 682,
+      "corrupt_answer": 420,
+      "op": "add"
+    },
+    {
+      "a": 147,
+      "b": 92,
+      "c": 280,
+      "corrupt_b": 187,
+      "answer": 239,
+      "corrupt_answer": 467,
+      "op": "add"
+    },
+    {
+      "a": 467,
+      "b": 142,
+      "c": 457,
+      "corrupt_b": 26,
+      "answer": 609,
+      "corrupt_answer": 483,
+      "op": "add"
+    },
+    {
+      "a": 431,
+      "b": 51,
+      "c": 328,
+      "corrupt_b": 53,
+      "answer": 482,
+      "corrupt_answer": 381,
+      "op": "add"
+    },
+    {
+      "a": 431,
+      "b": 73,
+      "c": 429,
+      "corrupt_b": 261,
+      "answer": 504,
+      "corrupt_answer": 690,
+      "op": "add"
+    },
+    {
+      "a": 266,
+      "b": 11,
+      "c": 380,
+      "corrupt_b": 49,
+      "answer": 277,
+      "corrupt_answer": 429,
+      "op": "add"
+    },
+    {
+      "a": 414,
+      "b": 91,
+      "c": 129,
+      "corrupt_b": 101,
+      "answer": 505,
+      "corrupt_answer": 230,
+      "op": "add"
+    },
+    {
+      "a": 195,
+      "b": 90,
+      "c": 220,
+      "corrupt_b": 139,
+      "answer": 285,
+      "corrupt_answer": 359,
+      "op": "add"
+    },
+    {
+      "a": 243,
+      "b": 206,
+      "c": 362,
+      "corrupt_b": 26,
+      "answer": 449,
+      "corrupt_answer": 388,
+      "op": "add"
+    },
+    {
+      "a": 103,
+      "b": 35,
+      "c": 344,
+      "corrupt_b": 63,
+      "answer": 138,
+      "corrupt_answer": 407,
+      "op": "add"
+    },
+    {
+      "a": 339,
+      "b": 74,
+      "c": 305,
+      "corrupt_b": 242,
+      "answer": 413,
+      "corrupt_answer": 547,
+      "op": "add"
+    },
+    {
+      "a": 259,
+      "b": 86,
+      "c": 466,
+      "corrupt_b": 451,
+      "answer": 345,
+      "corrupt_answer": 917,
+      "op": "add"
+    },
+    {
+      "a": 392,
+      "b": 96,
+      "c": 299,
+      "corrupt_b": 66,
+      "answer": 488,
+      "corrupt_answer": 365,
+      "op": "add"
+    },
+    {
+      "a": 361,
+      "b": 42,
+      "c": 329,
+      "corrupt_b": 242,
+      "answer": 403,
+      "corrupt_answer": 571,
+      "op": "add"
+    },
+    {
+      "a": 183,
+      "b": 73,
+      "c": 414,
+      "corrupt_b": 388,
+      "answer": 256,
+      "corrupt_answer": 802,
+      "op": "add"
+    },
+    {
+      "a": 305,
+      "b": 281,
+      "c": 474,
+      "corrupt_b": 401,
+      "answer": 586,
+      "corrupt_answer": 875,
+      "op": "add"
+    },
+    {
+      "a": 180,
+      "b": 117,
+      "c": 339,
+      "corrupt_b": 281,
+      "answer": 297,
+      "corrupt_answer": 620,
+      "op": "add"
+    },
+    {
+      "a": 370,
+      "b": 310,
+      "c": 453,
+      "corrupt_b": 405,
+      "answer": 680,
+      "corrupt_answer": 858,
+      "op": "add"
+    },
+    {
+      "a": 493,
+      "b": 388,
+      "c": 470,
+      "corrupt_b": 85,
+      "answer": 881,
+      "corrupt_answer": 555,
+      "op": "add"
+    },
+    {
+      "a": 472,
+      "b": 160,
+      "c": 391,
+      "corrupt_b": 171,
+      "answer": 632,
+      "corrupt_answer": 562,
+      "op": "add"
+    },
+    {
+      "a": 133,
+      "b": 34,
+      "c": 429,
+      "corrupt_b": 275,
+      "answer": 167,
+      "corrupt_answer": 704,
+      "op": "add"
+    },
+    {
+      "a": 269,
+      "b": 235,
+      "c": 459,
+      "corrupt_b": 215,
+      "answer": 504,
+      "corrupt_answer": 674,
+      "op": "add"
+    },
+    {
+      "a": 446,
+      "b": 281,
+      "c": 434,
+      "corrupt_b": 17,
+      "answer": 727,
+      "corrupt_answer": 451,
+      "op": "add"
+    },
+    {
+      "a": 400,
+      "b": 271,
+      "c": 456,
+      "corrupt_b": 124,
+      "answer": 671,
+      "corrupt_answer": 580,
+      "op": "add"
+    },
+    {
+      "a": 265,
+      "b": 28,
+      "c": 271,
+      "corrupt_b": 80,
+      "answer": 293,
+      "corrupt_answer": 351,
+      "op": "add"
+    },
+    {
+      "a": 456,
+      "b": 342,
+      "c": 412,
+      "corrupt_b": 125,
+      "answer": 798,
+      "corrupt_answer": 537,
+      "op": "add"
+    },
+    {
+      "a": 494,
+      "b": 224,
+      "c": 372,
+      "corrupt_b": 218,
+      "answer": 718,
+      "corrupt_answer": 590,
+      "op": "add"
+    },
+    {
+      "a": 339,
+      "b": 202,
+      "c": 478,
+      "corrupt_b": 170,
+      "answer": 541,
+      "corrupt_answer": 648,
+      "op": "add"
+    },
+    {
+      "a": 466,
+      "b": 30,
+      "c": 310,
+      "corrupt_b": 57,
+      "answer": 496,
+      "corrupt_answer": 367,
+      "op": "add"
+    },
+    {
+      "a": 340,
+      "b": 263,
+      "c": 182,
+      "corrupt_b": 158,
+      "answer": 603,
+      "corrupt_answer": 340,
+      "op": "add"
+    },
+    {
+      "a": 309,
+      "b": 73,
+      "c": 442,
+      "corrupt_b": 47,
+      "answer": 382,
+      "corrupt_answer": 489,
+      "op": "add"
+    },
+    {
+      "a": 365,
+      "b": 334,
+      "c": 389,
+      "corrupt_b": 104,
+      "answer": 699,
+      "corrupt_answer": 493,
+      "op": "add"
+    },
+    {
+      "a": 451,
+      "b": 241,
+      "c": 263,
+      "corrupt_b": 122,
+      "answer": 692,
+      "corrupt_answer": 385,
+      "op": "add"
+    },
+    {
+      "a": 212,
+      "b": 92,
+      "c": 164,
+      "corrupt_b": 129,
+      "answer": 304,
+      "corrupt_answer": 293,
+      "op": "add"
+    },
+    {
+      "a": 414,
+      "b": 155,
+      "c": 480,
+      "corrupt_b": 449,
+      "answer": 569,
+      "corrupt_answer": 929,
+      "op": "add"
+    },
+    {
+      "a": 403,
+      "b": 363,
+      "c": 263,
+      "corrupt_b": 134,
+      "answer": 766,
+      "corrupt_answer": 397,
+      "op": "add"
+    },
+    {
+      "a": 425,
+      "b": 132,
+      "c": 271,
+      "corrupt_b": 201,
+      "answer": 557,
+      "corrupt_answer": 472,
+      "op": "add"
+    },
+    {
+      "a": 456,
+      "b": 450,
+      "c": 295,
+      "corrupt_b": 144,
+      "answer": 906,
+      "corrupt_answer": 439,
+      "op": "add"
+    },
+    {
+      "a": 194,
+      "b": 104,
+      "c": 376,
+      "corrupt_b": 18,
+      "answer": 298,
+      "corrupt_answer": 394,
+      "op": "add"
+    },
+    {
+      "a": 440,
+      "b": 438,
+      "c": 322,
+      "corrupt_b": 59,
+      "answer": 878,
+      "corrupt_answer": 381,
+      "op": "add"
+    },
+    {
+      "a": 156,
+      "b": 62,
+      "c": 324,
+      "corrupt_b": 97,
+      "answer": 218,
+      "corrupt_answer": 421,
+      "op": "add"
+    },
+    {
+      "a": 76,
+      "b": 35,
+      "c": 317,
+      "corrupt_b": 178,
+      "answer": 111,
+      "corrupt_answer": 495,
+      "op": "add"
+    },
+    {
+      "a": 497,
+      "b": 472,
+      "c": 286,
+      "corrupt_b": 260,
+      "answer": 969,
+      "corrupt_answer": 546,
+      "op": "add"
+    },
+    {
+      "a": 160,
+      "b": 27,
+      "c": 333,
+      "corrupt_b": 258,
+      "answer": 187,
+      "corrupt_answer": 591,
+      "op": "add"
+    },
+    {
+      "a": 401,
+      "b": 124,
+      "c": 471,
+      "corrupt_b": 312,
+      "answer": 525,
+      "corrupt_answer": 783,
+      "op": "add"
+    },
+    {
+      "a": 281,
+      "b": 118,
+      "c": 201,
+      "corrupt_b": 90,
+      "answer": 399,
+      "corrupt_answer": 291,
+      "op": "add"
+    },
+    {
+      "a": 480,
+      "b": 279,
+      "c": 157,
+      "corrupt_b": 152,
+      "answer": 759,
+      "corrupt_answer": 309,
+      "op": "add"
+    },
+    {
+      "a": 461,
+      "b": 399,
+      "c": 130,
+      "corrupt_b": 92,
+      "answer": 860,
+      "corrupt_answer": 222,
+      "op": "add"
+    },
+    {
+      "a": 456,
+      "b": 184,
+      "c": 361,
+      "corrupt_b": 351,
+      "answer": 640,
+      "corrupt_answer": 712,
+      "op": "add"
+    },
+    {
+      "a": 316,
+      "b": 206,
+      "c": 228,
+      "corrupt_b": 223,
+      "answer": 522,
+      "corrupt_answer": 451,
+      "op": "add"
+    },
+    {
+      "a": 472,
+      "b": 120,
+      "c": 428,
+      "corrupt_b": 241,
+      "answer": 592,
+      "corrupt_answer": 669,
+      "op": "add"
+    },
+    {
+      "a": 485,
+      "b": 361,
+      "c": 477,
+      "corrupt_b": 428,
+      "answer": 846,
+      "corrupt_answer": 905,
+      "op": "add"
+    },
+    {
+      "a": 333,
+      "b": 60,
+      "c": 478,
+      "corrupt_b": 81,
+      "answer": 393,
+      "corrupt_answer": 559,
+      "op": "add"
+    },
+    {
+      "a": 182,
+      "b": 109,
+      "c": 323,
+      "corrupt_b": 262,
+      "answer": 291,
+      "corrupt_answer": 585,
+      "op": "add"
+    },
+    {
+      "a": 494,
+      "b": 273,
+      "c": 381,
+      "corrupt_b": 145,
+      "answer": 767,
+      "corrupt_answer": 526,
+      "op": "add"
+    },
+    {
+      "a": 481,
+      "b": 444,
+      "c": 134,
+      "corrupt_b": 53,
+      "answer": 925,
+      "corrupt_answer": 187,
+      "op": "add"
+    },
+    {
+      "a": 491,
+      "b": 100,
+      "c": 219,
+      "corrupt_b": 143,
+      "answer": 591,
+      "corrupt_answer": 362,
+      "op": "add"
+    },
+    {
+      "a": 257,
+      "b": 80,
+      "c": 305,
+      "corrupt_b": 274,
+      "answer": 337,
+      "corrupt_answer": 579,
+      "op": "add"
+    },
+    {
+      "a": 395,
+      "b": 362,
+      "c": 462,
+      "corrupt_b": 30,
+      "answer": 757,
+      "corrupt_answer": 492,
+      "op": "add"
+    },
+    {
+      "a": 444,
+      "b": 329,
+      "c": 233,
+      "corrupt_b": 147,
+      "answer": 773,
+      "corrupt_answer": 380,
+      "op": "add"
+    },
+    {
+      "a": 241,
+      "b": 36,
+      "c": 305,
+      "corrupt_b": 109,
+      "answer": 277,
+      "corrupt_answer": 414,
+      "op": "add"
+    },
+    {
+      "a": 488,
+      "b": 301,
+      "c": 412,
+      "corrupt_b": 224,
+      "answer": 789,
+      "corrupt_answer": 636,
+      "op": "add"
+    },
+    {
+      "a": 404,
+      "b": 234,
+      "c": 371,
+      "corrupt_b": 27,
+      "answer": 638,
+      "corrupt_answer": 398,
+      "op": "add"
+    },
+    {
+      "a": 328,
+      "b": 25,
+      "c": 226,
+      "corrupt_b": 198,
+      "answer": 353,
+      "corrupt_answer": 424,
+      "op": "add"
+    },
+    {
+      "a": 473,
+      "b": 169,
+      "c": 261,
+      "corrupt_b": 158,
+      "answer": 642,
+      "corrupt_answer": 419,
+      "op": "add"
+    },
+    {
+      "a": 350,
+      "b": 236,
+      "c": 319,
+      "corrupt_b": 126,
+      "answer": 586,
+      "corrupt_answer": 445,
+      "op": "add"
+    },
+    {
+      "a": 352,
+      "b": 102,
+      "c": 313,
+      "corrupt_b": 15,
+      "answer": 454,
+      "corrupt_answer": 328,
+      "op": "add"
+    },
+    {
+      "a": 334,
+      "b": 331,
+      "c": 378,
+      "corrupt_b": 22,
+      "answer": 665,
+      "corrupt_answer": 400,
+      "op": "add"
+    },
+    {
+      "a": 311,
+      "b": 191,
+      "c": 416,
+      "corrupt_b": 273,
+      "answer": 502,
+      "corrupt_answer": 689,
+      "op": "add"
+    },
+    {
+      "a": 417,
+      "b": 339,
+      "c": 338,
+      "corrupt_b": 17,
+      "answer": 756,
+      "corrupt_answer": 355,
+      "op": "add"
+    },
+    {
+      "a": 450,
+      "b": 131,
+      "c": 251,
+      "corrupt_b": 178,
+      "answer": 581,
+      "corrupt_answer": 429,
+      "op": "add"
+    },
+    {
+      "a": 238,
+      "b": 142,
+      "c": 439,
+      "corrupt_b": 330,
+      "answer": 380,
+      "corrupt_answer": 769,
+      "op": "add"
+    },
+    {
+      "a": 473,
+      "b": 310,
+      "c": 481,
+      "corrupt_b": 70,
+      "answer": 783,
+      "corrupt_answer": 551,
+      "op": "add"
+    },
+    {
+      "a": 247,
+      "b": 60,
+      "c": 382,
+      "corrupt_b": 65,
+      "answer": 307,
+      "corrupt_answer": 447,
+      "op": "add"
+    },
+    {
+      "a": 195,
+      "b": 14,
+      "c": 434,
+      "corrupt_b": 89,
+      "answer": 209,
+      "corrupt_answer": 523,
+      "op": "add"
+    },
+    {
+      "a": 192,
+      "b": 55,
+      "c": 407,
+      "corrupt_b": 344,
+      "answer": 247,
+      "corrupt_answer": 751,
+      "op": "add"
+    },
+    {
+      "a": 230,
+      "b": 125,
+      "c": 366,
+      "corrupt_b": 336,
+      "answer": 355,
+      "corrupt_answer": 702,
+      "op": "add"
+    },
+    {
+      "a": 270,
+      "b": 243,
+      "c": 105,
+      "corrupt_b": 98,
+      "answer": 513,
+      "corrupt_answer": 203,
+      "op": "add"
+    },
+    {
+      "a": 185,
+      "b": 113,
+      "c": 480,
+      "corrupt_b": 308,
+      "answer": 298,
+      "corrupt_answer": 788,
+      "op": "add"
+    },
+    {
+      "a": 453,
+      "b": 91,
+      "c": 254,
+      "corrupt_b": 207,
+      "answer": 544,
+      "corrupt_answer": 461,
+      "op": "add"
+    },
+    {
+      "a": 361,
+      "b": 192,
+      "c": 284,
+      "corrupt_b": 117,
+      "answer": 553,
+      "corrupt_answer": 401,
+      "op": "add"
+    },
+    {
+      "a": 386,
+      "b": 303,
+      "c": 134,
+      "corrupt_b": 47,
+      "answer": 689,
+      "corrupt_answer": 181,
+      "op": "add"
+    },
+    {
+      "a": 386,
+      "b": 14,
+      "c": 443,
+      "corrupt_b": 229,
+      "answer": 400,
+      "corrupt_answer": 672,
+      "op": "add"
+    },
+    {
+      "a": 428,
+      "b": 288,
+      "c": 390,
+      "corrupt_b": 131,
+      "answer": 716,
+      "corrupt_answer": 521,
+      "op": "add"
+    },
+    {
+      "a": 160,
+      "b": 81,
+      "c": 423,
+      "corrupt_b": 420,
+      "answer": 241,
+      "corrupt_answer": 843,
+      "op": "add"
+    },
+    {
+      "a": 150,
+      "b": 142,
+      "c": 294,
+      "corrupt_b": 200,
+      "answer": 292,
+      "corrupt_answer": 494,
+      "op": "add"
+    },
+    {
+      "a": 139,
+      "b": 64,
+      "c": 478,
+      "corrupt_b": 283,
+      "answer": 203,
+      "corrupt_answer": 761,
+      "op": "add"
+    },
+    {
+      "a": 474,
+      "b": 431,
+      "c": 419,
+      "corrupt_b": 284,
+      "answer": 905,
+      "corrupt_answer": 703,
+      "op": "add"
+    },
+    {
+      "a": 378,
+      "b": 335,
+      "c": 325,
+      "corrupt_b": 235,
+      "answer": 713,
+      "corrupt_answer": 560,
+      "op": "add"
+    },
+    {
+      "a": 148,
+      "b": 141,
+      "c": 456,
+      "corrupt_b": 260,
+      "answer": 289,
+      "corrupt_answer": 716,
+      "op": "add"
+    },
+    {
+      "a": 359,
+      "b": 261,
+      "c": 257,
+      "corrupt_b": 231,
+      "answer": 620,
+      "corrupt_answer": 488,
+      "op": "add"
+    },
+    {
+      "a": 370,
+      "b": 121,
+      "c": 302,
+      "corrupt_b": 68,
+      "answer": 491,
+      "corrupt_answer": 370,
+      "op": "add"
+    },
+    {
+      "a": 442,
+      "b": 119,
+      "c": 435,
+      "corrupt_b": 206,
+      "answer": 561,
+      "corrupt_answer": 641,
+      "op": "add"
+    },
+    {
+      "a": 496,
+      "b": 20,
+      "c": 70,
+      "corrupt_b": 30,
+      "answer": 516,
+      "corrupt_answer": 100,
+      "op": "add"
+    },
+    {
+      "a": 121,
+      "b": 63,
+      "c": 349,
+      "corrupt_b": 184,
+      "answer": 184,
+      "corrupt_answer": 533,
+      "op": "add"
+    },
+    {
+      "a": 460,
+      "b": 50,
+      "c": 343,
+      "corrupt_b": 332,
+      "answer": 510,
+      "corrupt_answer": 675,
+      "op": "add"
+    },
+    {
+      "a": 208,
+      "b": 171,
+      "c": 323,
+      "corrupt_b": 212,
+      "answer": 379,
+      "corrupt_answer": 535,
+      "op": "add"
+    },
+    {
+      "a": 480,
+      "b": 264,
+      "c": 497,
+      "corrupt_b": 421,
+      "answer": 744,
+      "corrupt_answer": 918,
+      "op": "add"
+    },
+    {
+      "a": 448,
+      "b": 224,
+      "c": 398,
+      "corrupt_b": 14,
+      "answer": 672,
+      "corrupt_answer": 412,
+      "op": "add"
+    },
+    {
+      "a": 493,
+      "b": 63,
+      "c": 390,
+      "corrupt_b": 212,
+      "answer": 556,
+      "corrupt_answer": 602,
+      "op": "add"
+    },
+    {
+      "a": 416,
+      "b": 360,
+      "c": 420,
+      "corrupt_b": 408,
+      "answer": 776,
+      "corrupt_answer": 828,
+      "op": "add"
+    },
+    {
+      "a": 484,
+      "b": 434,
+      "c": 309,
+      "corrupt_b": 56,
+      "answer": 918,
+      "corrupt_answer": 365,
+      "op": "add"
+    },
+    {
+      "a": 442,
+      "b": 284,
+      "c": 397,
+      "corrupt_b": 93,
+      "answer": 726,
+      "corrupt_answer": 490,
+      "op": "add"
+    },
+    {
+      "a": 183,
+      "b": 49,
+      "c": 307,
+      "corrupt_b": 70,
+      "answer": 232,
+      "corrupt_answer": 377,
+      "op": "add"
+    },
+    {
+      "a": 417,
+      "b": 221,
+      "c": 452,
+      "corrupt_b": 33,
+      "answer": 638,
+      "corrupt_answer": 485,
+      "op": "add"
+    },
+    {
+      "a": 388,
+      "b": 42,
+      "c": 305,
+      "corrupt_b": 210,
+      "answer": 430,
+      "corrupt_answer": 515,
+      "op": "add"
+    },
+    {
+      "a": 175,
+      "b": 166,
+      "c": 311,
+      "corrupt_b": 98,
+      "answer": 341,
+      "corrupt_answer": 409,
+      "op": "add"
+    },
+    {
+      "a": 231,
+      "b": 169,
+      "c": 261,
+      "corrupt_b": 78,
+      "answer": 400,
+      "corrupt_answer": 339,
+      "op": "add"
+    },
+    {
+      "a": 453,
+      "b": 153,
+      "c": 297,
+      "corrupt_b": 198,
+      "answer": 606,
+      "corrupt_answer": 495,
+      "op": "add"
+    },
+    {
+      "a": 352,
+      "b": 80,
+      "c": 128,
+      "corrupt_b": 11,
+      "answer": 432,
+      "corrupt_answer": 139,
+      "op": "add"
+    },
+    {
+      "a": 343,
+      "b": 279,
+      "c": 91,
+      "corrupt_b": 85,
+      "answer": 622,
+      "corrupt_answer": 176,
+      "op": "add"
+    },
+    {
+      "a": 419,
+      "b": 95,
+      "c": 371,
+      "corrupt_b": 289,
+      "answer": 514,
+      "corrupt_answer": 660,
+      "op": "add"
+    },
+    {
+      "a": 294,
+      "b": 276,
+      "c": 105,
+      "corrupt_b": 46,
+      "answer": 570,
+      "corrupt_answer": 151,
+      "op": "add"
+    },
+    {
+      "a": 321,
+      "b": 87,
+      "c": 421,
+      "corrupt_b": 272,
+      "answer": 408,
+      "corrupt_answer": 693,
+      "op": "add"
+    },
+    {
+      "a": 499,
+      "b": 86,
+      "c": 475,
+      "corrupt_b": 398,
+      "answer": 585,
+      "corrupt_answer": 873,
+      "op": "add"
+    },
+    {
+      "a": 384,
+      "b": 368,
+      "c": 151,
+      "corrupt_b": 125,
+      "answer": 752,
+      "corrupt_answer": 276,
+      "op": "add"
+    },
+    {
+      "a": 230,
+      "b": 106,
+      "c": 499,
+      "corrupt_b": 235,
+      "answer": 336,
+      "corrupt_answer": 734,
+      "op": "add"
+    },
+    {
+      "a": 366,
+      "b": 205,
+      "c": 492,
+      "corrupt_b": 137,
+      "answer": 571,
+      "corrupt_answer": 629,
+      "op": "add"
+    },
+    {
+      "a": 458,
+      "b": 304,
+      "c": 320,
+      "corrupt_b": 202,
+      "answer": 762,
+      "corrupt_answer": 522,
+      "op": "add"
+    },
+    {
+      "a": 448,
+      "b": 343,
+      "c": 446,
+      "corrupt_b": 410,
+      "answer": 791,
+      "corrupt_answer": 856,
+      "op": "add"
+    },
+    {
+      "a": 347,
+      "b": 234,
+      "c": 485,
+      "corrupt_b": 216,
+      "answer": 581,
+      "corrupt_answer": 701,
+      "op": "add"
+    },
+    {
+      "a": 385,
+      "b": 231,
+      "c": 95,
+      "corrupt_b": 64,
+      "answer": 616,
+      "corrupt_answer": 159,
+      "op": "add"
+    },
+    {
+      "a": 429,
+      "b": 20,
+      "c": 402,
+      "corrupt_b": 102,
+      "answer": 449,
+      "corrupt_answer": 504,
+      "op": "add"
+    },
+    {
+      "a": 226,
+      "b": 114,
+      "c": 256,
+      "corrupt_b": 184,
+      "answer": 340,
+      "corrupt_answer": 440,
+      "op": "add"
+    },
+    {
+      "a": 333,
+      "b": 237,
+      "c": 325,
+      "corrupt_b": 23,
+      "answer": 570,
+      "corrupt_answer": 348,
+      "op": "add"
+    },
+    {
+      "a": 94,
+      "b": 51,
+      "c": 482,
+      "corrupt_b": 112,
+      "answer": 145,
+      "corrupt_answer": 594,
+      "op": "add"
+    },
+    {
+      "a": 335,
+      "b": 26,
+      "c": 388,
+      "corrupt_b": 184,
+      "answer": 361,
+      "corrupt_answer": 572,
+      "op": "add"
+    },
+    {
+      "a": 482,
+      "b": 101,
+      "c": 433,
+      "corrupt_b": 296,
+      "answer": 583,
+      "corrupt_answer": 729,
+      "op": "add"
+    },
+    {
+      "a": 283,
+      "b": 14,
+      "c": 425,
+      "corrupt_b": 163,
+      "answer": 297,
+      "corrupt_answer": 588,
+      "op": "add"
+    },
+    {
+      "a": 325,
+      "b": 186,
+      "c": 337,
+      "corrupt_b": 292,
+      "answer": 511,
+      "corrupt_answer": 629,
+      "op": "add"
+    },
+    {
+      "a": 455,
+      "b": 210,
+      "c": 400,
+      "corrupt_b": 385,
+      "answer": 665,
+      "corrupt_answer": 785,
+      "op": "add"
+    },
+    {
+      "a": 378,
+      "b": 376,
+      "c": 466,
+      "corrupt_b": 452,
+      "answer": 754,
+      "corrupt_answer": 918,
+      "op": "add"
+    }
+  ]
+}

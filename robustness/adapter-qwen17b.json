@@ -1,0 +1,58 @@
+{
+  "model": {
+    "id": "Qwen/Qwen3-1.7B",
+    "revision": "70d244cc86ccca08cf5af4e1e306ecf908b1ad5e"
+  },
+  "device": "NVIDIA H100 80GB HBM3",
+  "standalone_mlp_output_and_gradient_bitwise_equal": true,
+  "restoration_logits_bitwise_equal": true,
+  "contrast_first_tokens_distinct": true,
+  "test_outputs_collected": false,
+  "training_smoke_examples": [
+    {
+      "operation": "add",
+      "training_answers": [
+        826,
+        869,
+        335,
+        462
+      ],
+      "generated": [
+        "826.",
+        "869.",
+        "335.",
+        "462."
+      ]
+    },
+    {
+      "operation": "multiply",
+      "training_answers": [
+        14595,
+        8976,
+        14260,
+        3255
+      ],
+      "generated": [
+        "14,445.",
+        "8856.",
+        "14,260.",
+        "3255."
+      ]
+    },
+    {
+      "operation": "divide",
+      "training_answers": [
+        122,
+        459,
+        388,
+        318
+      ],
+      "generated": [
+        "122.0.",
+        "458.75.",
+        "388.0.",
+        "318. So, 17808 \u00f7 5"
+      ]
+    }
+  ]
+}
