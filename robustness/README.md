@@ -12,6 +12,14 @@ The optional [generation prefill driver](gemma/GENERATION_EXECUTION.md) also
 reuses unchanged layers across repeated head evaluations, with exact native
 decoding and saved-cohort checks.
 
+[Gemma multiplication's primary cohort](gemma/primary-multiplication.json) also
+passes the scalar fidelity criteria: EML response NRMSE is 0.0717, and original
+and EML answer accuracy are both 88.90%. Its paired EML–SiLU comparison remains
+inconclusive. The constant baseline has 89.00% observed accuracy and response
+NRMSE one, illustrating why accuracy alone misses lost input sensitivity.
+This is a primary-cohort result; seed, stress, and decoding suites
+are still pending for the complete multiplication cell.
+
 The user requested **Gemma 4 E2B IT in place of SmolLM2**. See [the amendment](GEMMA_AMENDMENT.md). Completed SmolLM2 artifacts are preserved as an incomplete, superseded arm. Gemma uses a separate pinned backend; the original Qwen environment and running evaluations continue unchanged.
 
 Read [the scalar protocol](PROTOCOL.md), [the whole-block protocol](WHOLE_BLOCK_PROTOCOL.md), [evaluation details](EVALUATION_DETAILS.md), and [related work](RELATED_WORK.md). Append-only source snapshots record the original implementation, normalization-folding repair, and Gemma adapter/execution amendment. Run `python verify_sources.py` to verify them together.

@@ -178,6 +178,15 @@ def main():
                         "comparisons"
                     ][PRIMARY],
                     "ordinary": data["ordinary"]["ordinary-test-known-formats"][PRIMARY],
+                    "baselines": {
+                        kind: {
+                            "accuracy": data["ordinary"]["ordinary-test-known-formats"][kind][
+                                "accuracy"
+                            ],
+                            "nrmse": causal[kind]["nrmse"],
+                        }
+                        for kind in ["mean", "linear", "sparse16", "sparse_selected"]
+                    },
                     "unconditioned": data["ordinary"]["ordinary-unconditioned"][PRIMARY],
                     "all_tokens": data["ordinary"]["ordinary-all-tokens-unconditioned"][PRIMARY],
                     "new_formats": data["ordinary"]["ordinary-test-new-formats"][PRIMARY],
@@ -243,6 +252,19 @@ def main():
         )
     lines += [
         "",
+        "A constant coefficient can sometimes retain answer accuracy while losing the original intervention response. The following baseline table reports both metrics. Each entry is strict answer accuracy / response NRMSE. The selected native-neuron control may use more coefficients; the 16-neuron control approximates the primary predictor's total storage.",
+        "",
+        "| Model / operation | Constant mean | Selected linear | 16 native neurons | Selected native neurons |",
+        "|---|---:|---:|---:|---:|",
+    ]
+    for c in cells:
+        values = [
+            f"{100 * row['accuracy']:.2f}% / {number(row['nrmse'])}"
+            for row in c["baselines"].values()
+        ]
+        lines.append(f"| {LABELS[c['model']]} / {c['operation']} | " + " | ".join(values) + " |")
+    lines += [
+        "",
         "Every primary-family training seed is included below. These are observed minimum–maximum response NRMSE values across seeds 101, 211, 307, 401, and 503, not confidence intervals. All seeds use the same test operands. The validation-selected seed remains the primary result regardless of its position in this range.",
         "",
         "| Model / operation | EML five-seed range | SiLU five-seed range |",
@@ -297,8 +319,6 @@ def main():
         "",
         "The [interactive explorer](explorer.html) includes all feature/loss controls, every fitted seed, held-out formats, shifted operands, carry patterns, both-operand edits, and ambient/nullspace diagnostics. Primary success does not imply unrestricted equivalence under arbitrary input edits.",
         "",
-        "Accuracy bounds in the smaller stress cohorts have limited resolution. With three prompt formats and the frozen nine-cell adjustment, even zero regressions give an upper loss bound of 1.22 percentage points for 512 operand groups and 2.43 points for 256 groups. Failure to certify one-point retention in these cohorts is not evidence that the actual loss exceeds one point. Stress results do not redefine the primary decision.",
-        "",
         "## Held-out prompt formats",
         "",
         "These four formats were excluded from fitting. Complete-answer accuracy uses the same strict numeric parser as the primary cohort, so extra prose and nonnumeric outputs count as errors. Low replacement error can coexist with low teacher accuracy: preserving a component's response does not repair the teacher's arithmetic or formatting failures.",
@@ -318,7 +338,7 @@ def main():
         "Each response entry is EML / SiLU NRMSE for the validation-selected primary-family heads. Each suite normalizes by its own original margin-response RMS. Ambient and nullspace diagnostics edit the MLP input outside the natural clean–corrupted interpolation path. A predictor that only sees the retained features cannot in general reproduce sensitivity to omitted directions. Relative error near one can still correspond to a small absolute margin change; the original response RMS values provide that scale. These diagnostics do not redefine the primary acceptance criteria; their complete intervals remain in the explorer.",
         "The [fixed-feature bound](../RELATED_WORK.md#a-fixed-feature-projection-imposes-a-separate-limit) explains why depth alone cannot recover an omitted direction: an exactly unchanged feature vector produces zero student response, hence NRMSE one when the original response is nonzero. This limits the representation shared by the primary EML and SiLU heads, rather than ranking their activations.",
         "",
-        "The smaller stress cohorts cannot certify a one-percentage-point accuracy loss under the frozen conservative bound. Even with zero observed regressions, its minimum upper loss is 1.2213 points for the 512-group shifted/carry cohorts and 2.4277 points for the 256-group both-operand cohorts. The zero-regression case needs at least 627 groups with three formats and the nine-cell adjustment. Matching observed accuracy alone is therefore insufficient; the primary cohorts have 1,024 groups. These sample sizes and criteria remain fixed.",
+        "The smaller stress cohorts cannot certify a one-percentage-point accuracy loss under the frozen conservative bound. Even with zero observed regressions, its minimum upper loss is 1.2213 points for the 512-group shifted/carry cohorts and 2.4277 points for the 256-group both-operand cohorts. The zero-regression case needs at least 627 groups with three formats and the nine-cell adjustment. Matching observed accuracy alone is therefore insufficient; the primary cohorts have 1,024 groups. Failure to certify this bound does not establish that the actual loss exceeds one point. These sample sizes and criteria remain fixed.",
         "",
         "| Model / operation | Larger operands | Both operands edited | Ambient directions | Nullspace directions | Original response RMS: ambient / nullspace | Shifted answer accuracy: original → EML | Shifted upper loss (pp) |",
         "|---|---:|---:|---:|---:|---:|---:|---:|",
