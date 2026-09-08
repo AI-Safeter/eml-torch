@@ -1,0 +1,35 @@
+{
+  "source": "Qwen3-4B CUDA validation traces; no held-out outputs used",
+  "checked": {
+    "ordinary-validation-audit.json": {
+      "methods": 12,
+      "unique_conditions_per_method": 12
+    },
+    "ordinary-all-tokens-validation.json": {
+      "methods": 12,
+      "unique_conditions_per_method": 12
+    },
+    "interventions-validation-audit.json": {
+      "methods": 12,
+      "unique_conditions_per_method": 72
+    },
+    "coordinate-validation.json": {
+      "methods": 12,
+      "unique_conditions_per_method": 144
+    },
+    "geometry-ambient-validation.json": {
+      "methods": 12,
+      "unique_conditions_per_method": 60
+    },
+    "geometry-nullspace-validation.json": {
+      "methods": 12,
+      "unique_conditions_per_method": 60
+    }
+  },
+  "corruptions_rejected": [
+    "duplicate problem",
+    "missing control",
+    "nonfinite output",
+    "restoration mismatch"
+  ]
+}

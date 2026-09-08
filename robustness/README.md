@@ -29,6 +29,7 @@ Use one GPU per model where memory permits. Actual free memory on shared hardwar
 
 ```bash
 CUDA_VISIBLE_DEVICES=0 python run_collection.py qwen17b --output ../../emltorch-robustness-runs/qwen17b
+CUDA_VISIBLE_DEVICES=0 python validate_generation.py qwen17b
 CUDA_VISIBLE_DEVICES=0 python run_fits.py qwen17b
 CUDA_VISIBLE_DEVICES=0 python run_evaluation.py qwen17b
 ```
@@ -73,6 +74,8 @@ CUDA_VISIBLE_DEVICES=0 python audit.py
 python report.py
 ```
 
-The audit checks required cohorts and controls and recomputes saved validation objectives on CUDA. The report refuses to render without the complete audit. It creates `results/REPORT.md`, a figure in PNG/PDF, and an interactive explorer with every model/operation cell, per-format results, controls, and seeds. Reporting code does not alter checkpoint selection or the primary criteria.
+The audit checks exact problem/edit identities, duplicate conditions, required controls, finite values, and restoration traces, and recomputes saved validation objectives on CUDA. The trace checker was verified against real Qwen3-4B validation traces and deliberately corrupted copies (`trace-audit-validation.json`). Generation checks on all three models verify exact restoration and execution during decoding; they are implementation checks, not held-out performance results.
+
+The report refuses to render without the complete audit. It creates `results/REPORT.md`, a figure in PNG/PDF, and an interactive explorer with every model/operation cell, per-format results, controls, and seeds. Reporting code does not alter checkpoint selection or the primary criteria.
 
 After committing the completed report, `python bundle.py create --path /absolute/path/to/new-bundle` packages the tracked source, raw test traces, all candidate checkpoints, and validation tensors. It creates a manifest and ZIP with a SHA-256 delivery record. Large training activations and pretrained model weights are regenerated from the pinned inputs. The bundle includes instructions to verify, unpack, and run the GPU audit independently. Raw traces and large checkpoint collections need not be added to Git.

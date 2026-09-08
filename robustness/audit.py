@@ -8,10 +8,11 @@ from verify_sources import main as verify_sources
 
 def main():
     configure("qwen17b")
-    from data import save
+    from data import STYLES, save
     from evaluate_heads import digest
-    from model_io import setup
+    from model_io import expand, setup
     from scalar_checkpoint_audit import validate as validate_scalar_checkpoints
+    from trace_audit import check as check_traces
 
     setup()
     verify_sources()
@@ -26,6 +27,36 @@ def main():
             assert (out / "problems.json").read_bytes() == (
                 HERE / "data" / op / "problems.json"
             ).read_bytes()
+            assert (out / "extra-problems.json").read_bytes() == (
+                HERE / "data" / op / "extra-problems.json"
+            ).read_bytes()
+            problems = json.loads((out / "problems.json").read_text())
+            extra = json.loads((out / "extra-problems.json").read_text())
+            kinds = [
+                "original",
+                "restore",
+                "mean",
+                *selected["heads"],
+                *selected["sparse"],
+                *selected["linear"],
+            ]
+            seeds = ["original"] + [
+                f"{directory}/{family}-seed-{seed}"
+                for directory in directories
+                for family in ["eml_square", "silu_two"]
+                for seed in [101, 211, 307, 401, 503]
+            ]
+            cohort = {
+                "test-known-formats": expand(problems["test"], STYLES),
+                "test-new-formats": expand(
+                    problems["test"], ["completion", "named", "reversed", "distractor"]
+                ),
+                "shift": expand(problems["shift"], STYLES),
+                "both-operands": expand(extra["both_operands"], STYLES),
+                "all-seeds": expand(problems["test"], STYLES),
+            }
+            if op == "add":
+                cohort["carry"] = expand(problems["carry"], STYLES)
             fits = 0
             failed = []
             for directory in directories:
@@ -78,6 +109,14 @@ def main():
                     data = json.loads((out / filename).read_text())
                     assert all(len(rows) == count * multiplier for rows in data.values()), filename
                     assert "original" in data and len(data) >= 7
+                    check_traces(
+                        data,
+                        cohort[suite],
+                        seeds if suite == "all-seeds" else kinds,
+                        alphas=[0.0, 0.125, 0.375, 0.625, 0.875, 1.0]
+                        if category == "interventions"
+                        else None,
+                    )
                     file_counts[filename] = {
                         "models": len(data),
                         "rows_per_model": count * multiplier,
@@ -89,6 +128,13 @@ def main():
             ]:
                 data = json.loads((out / f"{name}.json").read_text())
                 assert all(len(rows) == 3072 for rows in data.values())
+                check_traces(
+                    data,
+                    expand(extra["ordinary"], STYLES)
+                    if "unconditioned" in name
+                    else cohort["test-known-formats"],
+                    kinds,
+                )
                 if "all-tokens" in name:
                     assert all(any(r["patched_calls"] > 1 for r in rows) for rows in data.values())
             for filename, count in [
@@ -99,6 +145,29 @@ def main():
             ]:
                 data = json.loads((out / filename).read_text())
                 assert all(len(rows) == count for rows in data.values()), filename
+                if filename == "coordinate-interventions.json":
+                    check_traces(
+                        data,
+                        expand(problems["test"][:32], STYLES),
+                        kinds,
+                        alphas=[0.0, -0.25, 0.25],
+                        features=[0, 1, 7, 31],
+                    )
+                elif filename == "interventions-extrapolation.json":
+                    check_traces(
+                        data,
+                        expand(problems["test"][:128], STYLES),
+                        kinds,
+                        alphas=[0.0, -0.25, 1.25],
+                    )
+                else:
+                    check_traces(
+                        data,
+                        expand(problems["test"][:32], STYLES),
+                        kinds,
+                        alphas=[0.0, -0.1, -0.01, 0.01, 0.1],
+                        geometry=filename.removeprefix("geometry-").removesuffix(".json"),
+                    )
             assert (out / "robust-results.json").exists()
             per_style = json.loads((out / "per-style-results.json").read_text())
             assert len(per_style["ordinary"]) == len(per_style["interventions"]) == 7
@@ -107,6 +176,7 @@ def main():
                 "failed": failed,
                 "validation_objectives_recomputed_on_gpu": True,
                 "primary_and_stress_counts": file_counts,
+                "raw_conditions_controls_and_restoration_verified": True,
             }
     whole = RUNS / "whole-block"
     audit["independent_feature_replays"] = {}
