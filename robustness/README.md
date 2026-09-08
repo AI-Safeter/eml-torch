@@ -1,0 +1,56 @@
+# Component robustness study
+
+Status: experiments in progress. Training/validation results are not held-out findings. The earlier exploratory release remains under `../research/`; its manifest is unchanged. The small `emltorch` package is unchanged by this study.
+
+Read [the scalar protocol](PROTOCOL.md), [the whole-block protocol](WHOLE_BLOCK_PROTOCOL.md), [evaluation details](EVALUATION_DETAILS.md), and [related work](RELATED_WORK.md). Four source snapshots record the implementation and the documented normalization-folding repair. Run `python verify_sources.py` to verify them together.
+
+## Environment and data
+
+The recorded environment uses Python 3.10, PyTorch 2.5.0a0 (NVIDIA CUDA 12.6 build), Transformers 4.51.3, NumPy 1.24.4, SciPy 1.14.0, safetensors 0.4.5, huggingface-hub 0.36.2, and PyArrow. CUDA validation uses H100 GPUs. Install the core package from this checkout. Research additionally needs Transformers, SciPy, PyArrow, safetensors and huggingface-hub. Model snapshots are pinned in `models.json`; the language corpus revision is pinned in `WHOLE_BLOCK_PROTOCOL.md` and `language-freeze.json`.
+
+From this directory:
+
+```bash
+python make_data.py --output /tmp/eml-fresh-data
+python prepare_models.py qwen17b
+python prepare_models.py qwen4b
+python prepare_models.py smollm
+python prepare_language.py
+CUDA_VISIBLE_DEVICES=0 python validate_adapter.py qwen17b
+CUDA_VISIBLE_DEVICES=0 python robust_statistics.py
+CUDA_VISIBLE_DEVICES=0 python validate_extensions.py
+```
+
+`make_data.py` checks all split overlaps and bundled historical exclusions. Regeneration must match the committed arithmetic data exactly. `prepare_language.py` fetches the official WikiText-2 source and reconstructs the frozen token blocks; its text retains CC BY-SA 3.0 / GFDL licensing. Test tokenization is permitted; no model test outputs are used during preparation or fitting.
+
+## Scalar study
+
+Use one GPU per model where memory permits. Actual free memory on shared hardware matters; the 4B model is loaded in float32. Activations, checkpoints, and raw results live in the sibling directory `emltorch-robustness-runs/`, keeping them separate from the core library.
+
+```bash
+CUDA_VISIBLE_DEVICES=0 python run_collection.py qwen17b --output ../../emltorch-robustness-runs/qwen17b
+CUDA_VISIBLE_DEVICES=0 python run_fits.py qwen17b
+CUDA_VISIBLE_DEVICES=0 python run_evaluation.py qwen17b
+```
+
+For this checkout layout, pass the absolute sibling run directory to `--output` (or `../../emltorch-robustness-runs/qwen17b` when starting inside `robustness/`). `run_fits.py` and `run_evaluation.py` use the location defined in `runtime.py`. Repeat for `qwen4b` and `smollm` on other GPUs. The evaluator checks that all ten candidates per operation/method have finished, creates missing sparse/linear controls, validates restoration and all-token hooks, then evaluates every selected head and every seed. It does not choose a model on test performance.
+
+The primary result is `MODEL/OPERATION/robust-results.json`. Original dense MLPs still execute in scalar replacement. This path cannot demonstrate full-block compression or a model speedup.
+
+## Whole-block study
+
+Wait for Qwen3-1.7B addition localization before collection. Run these stages sequentially on an available GPU:
+
+```bash
+CUDA_VISIBLE_DEVICES=0 python whole_collect.py
+CUDA_VISIBLE_DEVICES=0 python whole_fit.py
+CUDA_VISIBLE_DEVICES=0 python whole_evaluate.py --validation-only
+CUDA_VISIBLE_DEVICES=0 python whole_evaluate.py
+CUDA_VISIBLE_DEVICES=0 python whole_fidelity.py
+CUDA_VISIBLE_DEVICES=0 python whole_benchmark.py
+CUDA_VISIBLE_DEVICES=0 python block_latency.py
+```
+
+The teacher MLP is actually replaced in downstream evaluation, with a guard against accidentally calling it. Deployment folds normalization into affine weights. Validation-selected EML, SwiGLU and factorized-linear students receive the same tests. `utility-results.json` reports the predeclared retention and storage criteria. `latency.json` reports actual prefill and fixed-token decode timings; `block-latency.json` is a separate standalone measurement. A fast but inaccurate replacement does not meet the utility criteria.
+
+Do not run this reproduction into a directory containing different experiments. Existing matching artifacts are preserved; completed files are not a substitute for checking process exit status, source hashes, and the final study audit.
