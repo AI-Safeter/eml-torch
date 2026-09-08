@@ -32,7 +32,10 @@ def main():
     with torch.inference_mode():
         native_result = model(**inp, use_cache=True, logits_to_keep=1)
         host_result = host(**inp, use_cache=True, logits_to_keep=1)
-        assert torch.equal(native_result.logits, host_result.logits)
+        assert torch.equal(
+            native_result.logits.contiguous().view(torch.uint8),
+            host_result.logits.contiguous().view(torch.uint8),
+        )
         mask = inp.attention_mask
         for _ in range(3):
             ids = native_result.logits[:, -1].argmax(-1, keepdim=True)
@@ -51,7 +54,10 @@ def main():
                 use_cache=True,
                 logits_to_keep=1,
             )
-            assert torch.equal(native_result.logits, host_result.logits)
+            assert torch.equal(
+                native_result.logits.contiguous().view(torch.uint8),
+                host_result.logits.contiguous().view(torch.uint8),
+            )
     checks.append(
         "Host PLE and fully resident native BF16 model have bitwise equal prefill/three-step cached logits"
     )

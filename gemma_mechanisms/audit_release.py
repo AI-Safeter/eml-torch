@@ -34,6 +34,32 @@ def main():
     data = read(out / "data/freeze.json")
     for name, sha in data["files"].items():
         assert digest(out / "data" / name) == sha
+    used = {op: set() for op in SPEC["arithmetic"]["operations"]}
+    for split, count in SPEC["arithmetic"]["counts_per_operation"].items():
+        rows = read(out / "data" / f"arithmetic-{split}.json")
+        assert len(rows) == 3 * count and len({r["id"] for r in rows}) == len(rows)
+        for op in used:
+            selected = [r for r in rows if r["op"] == op]
+            assert len(selected) == count
+            numbers = torch.tensor([[r["a"], r["b"], r["answer"]] for r in selected], device="cuda")
+            a, b, answer = numbers.unbind(-1)
+            expected = (
+                a + b
+                if op == "add"
+                else a * b
+                if op == "multiply"
+                else torch.div(a, b, rounding_mode="floor")
+            )
+            assert torch.equal(expected, answer)
+            for row in selected:
+                pair = (
+                    (row["a"], row["b"]) if op == "divide" else tuple(sorted([row["a"], row["b"]]))
+                )
+                assert pair not in used[op], "Duplicate operands across fresh splits"
+                used[op].add(pair)
+    assert not {(573, 846), (582, 736)}.intersection(used["add"]), (
+        "Smoke prompts must not expose held-out operand groups"
+    )
     source_check(read(out / "collection/freeze.json"))
     training = read(out / "training/freeze.json")
     source_check(training)
@@ -118,6 +144,18 @@ def main():
         ]
         assert torch.isfinite(torch.tensor(values, device="cuda", dtype=torch.float64)).all()
         assert all(v > 0 for v in values)
+    micro = read(out / "microbenchmark.json")
+    assert micro["source_sha256"] == digest(HERE / "microbenchmark.py")
+    assert micro["input_sha256"] == digest(out / "collection/language-selection.pt")
+    assert micro["selection_sha256"] == digest(out / "training/selection.json")
+    assert len(micro["records"]) == 5 * sum(name.endswith("-s1103") for name in names)
+    for record in micro["records"]:
+        assert len(record["samples"]) == 50
+        values = [
+            v for pair in record["samples"] for timing in pair.values() for v in timing.values()
+        ]
+        tensor = torch.tensor(values, device="cuda")
+        assert torch.isfinite(tensor).all() and (tensor > 0).all()
     for split in ["gate", "shift"]:
         for style in ["known", "new"]:
             name = f"{split}-256-{style}"

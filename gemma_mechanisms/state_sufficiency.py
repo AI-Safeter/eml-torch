@@ -235,7 +235,7 @@ def main():
             targets = torch.tensor(target_tokens, device="cuda")
             idx = torch.arange(len(batch), device="cuda")
             for kind, (logits, state) in variants.items():
-                same_logits = (logits == donor_logits).all(-1)
+                same_logits = (logits.view(torch.int32) == donor_logits.view(torch.int32)).all(-1)
                 target_log_probability = logits.log_softmax(-1)[idx, targets]
                 hidden_error = (state["target"].float() - donor["target"].float()).square().mean(-1)
                 decoded = {

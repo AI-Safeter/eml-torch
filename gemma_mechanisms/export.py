@@ -69,7 +69,10 @@ def main():
     with torch.inference_mode():
         for block in data.split(512):
             x = block.cuda()
-            assert torch.equal(student(x), reloaded(x)), "Export changed deployed BF16 computation"
+            assert torch.equal(
+                student(x).contiguous().view(torch.uint8),
+                reloaded(x).contiguous().view(torch.uint8),
+            ), "Export changed deployed BF16 computation"
             count += len(x)
     print(
         json.dumps(

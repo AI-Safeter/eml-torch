@@ -23,6 +23,11 @@ type, keys/values, last/earlier values, same-carry donors, and matched-norm rand
 KV edits. Report exact counts and operand-clustered 95% uncertainty. A cache
 content intervention does not identify a symbolic carry variable.
 
+The confirmation comparison uses the underlying FP32 logit words, including
+signed-zero bits. Early selection checks used numerical equality. This stricter
+verification was fixed before confirmation and does not change interventions,
+candidate equations, or acceptance thresholds.
+
 Retest the frozen operand-orthogonal carry direction at layer 26 against a
 matched-norm random direction. After the donor-value intervention, restore the
 layer-32 carry readout to the recipient value; compare a matched random block.
