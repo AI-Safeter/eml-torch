@@ -74,3 +74,5 @@ python report.py
 ```
 
 The audit checks required cohorts and controls and recomputes saved validation objectives on CUDA. The report refuses to render without the complete audit. It creates `results/REPORT.md`, a figure in PNG/PDF, and an interactive explorer with every model/operation cell, per-format results, controls, and seeds. Reporting code does not alter checkpoint selection or the primary criteria.
+
+After committing the completed report, `python bundle.py create --path /absolute/path/to/new-bundle` packages the tracked source, raw test traces, all candidate checkpoints, and validation tensors. It creates a manifest and ZIP with a SHA-256 delivery record. Large training activations and pretrained model weights are regenerated from the pinned inputs. The bundle includes instructions to verify, unpack, and run the GPU audit independently. Raw traces and large checkpoint collections need not be added to Git.

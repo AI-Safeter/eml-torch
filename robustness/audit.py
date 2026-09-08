@@ -2,7 +2,6 @@
 
 import json
 
-import torch
 from runtime import HERE, RUNS, configure
 from verify_sources import main as verify_sources
 
@@ -11,8 +10,8 @@ def main():
     configure("qwen17b")
     from data import save
     from evaluate_heads import digest
-    from heads import Head, objective
     from model_io import setup
+    from scalar_checkpoint_audit import validate as validate_scalar_checkpoints
 
     setup()
     verify_sources()
@@ -32,7 +31,15 @@ def main():
             for directory in directories:
                 folder = out / directory
                 protocol = json.loads((folder / "protocol.json").read_text())
+                assert protocol["features"] == ("pls" if directory == "heads" else "active")
+                assert protocol["gradient_weight"] == (0.1 if directory.endswith("g0.1") else 0.0)
+                assert protocol["steps_max"] == 20000 and protocol["rank"] == 32
                 records = json.loads((folder / "candidates.json").read_text())
+                assert all(
+                    r["steps"] <= 20000 and r["selected_step"] % 100 == 0
+                    for r in records
+                    if r["status"] == "complete"
+                )
                 assert {
                     (r["kind"], r["width"], r["seed"], r["response_weight"]) for r in records
                 } == {
@@ -40,30 +47,11 @@ def main():
                     for kind in ["eml_square", "silu_two"]
                     for seed in [101, 211, 307, 401, 503]
                 }
-                filename = (
-                    "features-active.pt" if protocol["features"] == "active" else "features.pt"
+                validate_scalar_checkpoints(out, directory)
+                fits += len(records)
+                failed.extend(
+                    f"{directory}/{r['name']}" for r in records if r["status"] != "complete"
                 )
-                data = torch.load(out / filename, weights_only=True)["validation"]
-                x, y = data["x"].cuda(), data["y"].cuda()
-                for record in records:
-                    fits += 1
-                    if record["status"] != "complete":
-                        failed.append(f"{directory}/{record['name']}")
-                        continue
-                    head = Head(record["kind"], 32, 32).cuda()
-                    head.load_state_dict(
-                        torch.load(folder / f"{record['name']}.pt", weights_only=True)
-                    )
-                    with torch.no_grad():
-                        value, absolute, response = objective(head(x), y, data["cases"], 4.0)
-                    for actual, name in [
-                        (value, "validation_objective"),
-                        (absolute, "validation_mse"),
-                        (response, "validation_response_mse"),
-                    ]:
-                        assert (
-                            abs(float(actual) - record[name]) <= 1e-7 + abs(record[name]) * 1e-5
-                        ), (model, op, record["name"], name)
                 for family, prefix in [("eml", "eml"), ("neural", "silu")]:
                     candidates = [
                         r
@@ -121,6 +109,17 @@ def main():
                 "primary_and_stress_counts": file_counts,
             }
     whole = RUNS / "whole-block"
+    audit["independent_feature_replays"] = {}
+    for model in ["qwen17b", "smollm"]:
+        replay = json.loads((HERE / f"replay-{model}.json").read_text())
+        assert len(replay["archives"]) == 24
+        for item in replay["archives"]:
+            assert item["tensor_values_bitwise_equal_on_gpu"] and item["archive_bytes_identical"]
+            path = RUNS / model / item["path"]
+            # Large input tensors are regenerated, and may be omitted from a bundle.
+            if path.exists():
+                assert digest(path) == item["sha256"]
+        audit["independent_feature_replays"][model] = {"tensor_archives_bitwise_equal": 24}
     from whole_checkpoint_audit import validate as validate_whole_checkpoints
 
     validate_whole_checkpoints()
