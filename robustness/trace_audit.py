@@ -25,6 +25,8 @@ def identity(row):
 
 
 def check(data, rows, kinds, *, alphas=None, features=None, geometry=None):
+    from evaluate_heads import parse_answer
+
     assert set(data) == set(kinds), (set(data) - set(kinds), set(kinds) - set(data))
     expected = Counter(
         identity({**row, "alpha": alpha, "feature": feature, "geometry": geometry})
@@ -41,6 +43,12 @@ def check(data, rows, kinds, *, alphas=None, features=None, geometry=None):
             original = baseline[identity(row)]
             assert row["true_coefficient"] == original["true_coefficient"], kind
             if alphas is None:
+                parsed = parse_answer(row["text"])
+                original_parsed = parse_answer(original["text"])
+                assert row["correct"] == (parsed == row["answer"]), kind
+                assert row["answer_agreement"] == (
+                    parsed is not None and parsed == original_parsed
+                ), kind
                 assert row["base_text"] == original["text"]
                 assert row["base_correct"] == original["correct"]
                 assert row["exact_text_agreement"] == (row["text"] == original["text"])

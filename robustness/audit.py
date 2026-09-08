@@ -8,6 +8,52 @@ from runtime import HERE, RUNS, configure
 from verify_sources import main as verify_sources
 
 
+def audit_selection(out, selected):
+    """Verify frozen components, control selection, and completion before selection."""
+    from evaluate_heads import digest
+
+    assert set(selected["component_sha256"]) == {"component.pt", "component-active.pt"}
+    for name, expected in selected["component_sha256"].items():
+        assert digest(out / name) == expected, name
+    for category in ["heads", "sparse", "linear"]:
+        for spec in selected[category].values():
+            assert digest(out / spec["checkpoint"]) == spec["sha256"], spec["checkpoint"]
+    for directory, status in selected["searches"].items():
+        assert status == json.loads((out / directory / "completed.json").read_text())
+        assert status["status"] == "complete_grid"
+        assert status["finished_epoch"] <= selected["frozen_epoch"]
+    sparse = json.loads((out / "sparse-neurons.json").read_text())
+    assert sparse["completed_epoch"] <= selected["frozen_epoch"]
+    assert sparse["test_data_used"] is False
+    candidates = sparse["candidates"]
+    assert len(candidates) == 5 and {r["neurons"] for r in candidates} == {4, 8, 16, 32, 64}
+    best = min(candidates, key=lambda r: r["validation_objective"])
+    assert sparse["selected_neurons"] == best["neurons"]
+    assert set(selected["sparse"]) == {"sparse16", "sparse_selected"}
+    for label, neurons in [("sparse16", 16), ("sparse_selected", best["neurons"])]:
+        spec = selected["sparse"][label]
+        record = next(r for r in candidates if r["neurons"] == neurons)
+        assert all(spec[key] == value for key, value in record.items()), label
+        assert spec["checkpoint"] == f"neurons-{neurons}.pt"
+    linear = json.loads((out / "linear-controls.json").read_text())
+    assert linear["completed_epoch"] <= selected["frozen_epoch"]
+    assert linear["test_outputs_used_to_fit"] is False
+    assert len(linear["candidates"]) == 10
+    assert {(r["feature"], r["rank"]) for r in linear["candidates"]} == {
+        (feature, rank) for feature in ["pls", "active"] for rank in [2, 4, 8, 16, 32]
+    }
+    best = min(linear["candidates"], key=lambda r: r["validation_objective"])
+    assert linear["selected"] == best and set(selected["linear"]) == {"linear"}
+    spec = selected["linear"]["linear"]
+    assert all(spec[key] == value for key, value in best.items())
+    assert spec["checkpoint"] == best["name"] + ".pt"
+    return {
+        "component_and_checkpoint_hashes_verified": True,
+        "control_grids_and_validation_selection_verified": True,
+        "fits_and_controls_completed_before_selection": True,
+    }
+
+
 def audit_whole():
     """Audit the completed whole-block arm independently of pending scalar tests."""
     configure("qwen17b")
@@ -89,6 +135,7 @@ def main():
         for op in ["add", "multiply", "divide"]:
             out = RUNS / model / op
             selected = json.loads((out / "selection.json").read_text())
+            selection_audit = audit_selection(out, selected)
             assert digest(out / "problems.json") == selected["problems_sha256"]
             assert digest(out / "extra-problems.json") == selected["extra_problems_sha256"]
             assert (out / "problems.json").read_bytes() == (
@@ -159,6 +206,7 @@ def main():
                     best = min(candidates, key=lambda r: r["validation_objective"])
                     spec = selected["heads"][f"{directory}/{family}"]
                     assert spec["name"] == best["name"]
+                    assert all(spec[key] == value for key, value in best.items())
                     assert digest(out / spec["checkpoint"]) == spec["sha256"]
             expected = {
                 "test-known-formats": 3072,
@@ -244,6 +292,7 @@ def main():
                 "validation_objectives_recomputed_on_gpu": True,
                 "primary_and_stress_counts": file_counts,
                 "raw_conditions_controls_and_restoration_verified": True,
+                "selection": selection_audit,
             }
     assert set(audit["scalar"]) == {
         f"{model}/{op}"
@@ -265,6 +314,7 @@ def main():
             path = out / "ordinary-test-known-formats.json"
             if path.exists():
                 selected = json.loads((out / "selection.json").read_text())
+                audit_selection(out, selected)
                 problems = json.loads((out / "problems.json").read_text())
                 raw = json.loads(path.read_text())
                 check_traces(

@@ -134,6 +134,10 @@ def main():
                     "ordinary": data["ordinary"]["ordinary-test-known-formats"][PRIMARY],
                     "unconditioned": data["ordinary"]["ordinary-unconditioned"][PRIMARY],
                     "all_tokens": data["ordinary"]["ordinary-all-tokens-unconditioned"][PRIMARY],
+                    "new_formats": data["ordinary"]["ordinary-test-new-formats"][PRIMARY],
+                    "new_formats_response": data["interventions"]["interventions-test-new-formats"][
+                        "models"
+                    ][PRIMARY],
                     "gradient_capture": json.loads(
                         (RUNS / model / op / "gradient-audit.json").read_text()
                     )["feature_gradient_energy_fraction"],
@@ -232,6 +236,20 @@ def main():
     lines += [
         "",
         "The [interactive explorer](explorer.html) includes all feature/loss controls, every fitted seed, held-out formats, shifted operands, carry patterns, both-operand edits, and ambient/nullspace diagnostics. Primary success does not imply unrestricted equivalence under arbitrary input edits.",
+        "",
+        "## Held-out prompt formats",
+        "",
+        "These four formats were excluded from fitting. Complete-answer accuracy uses the same strict numeric parser as the primary cohort, so extra prose and nonnumeric outputs count as errors. Low replacement error can coexist with low teacher accuracy: preserving a component's response does not repair the teacher's arithmetic or formatting failures.",
+        "",
+        "| Model / operation | Original answer accuracy | EML answer accuracy | EML response NRMSE |",
+        "|---|---:|---:|---:|",
+    ]
+    for c in cells:
+        normal, causal = c["new_formats"], c["new_formats_response"]
+        lines.append(
+            f"| {LABELS[c['model']]} / {c['operation']} | {100 * normal['original_accuracy']:.2f}% | {100 * normal['accuracy']:.2f}% | {number(causal['nrmse'])} |"
+        )
+    lines += [
         "",
         "## Whole-block utility",
         "",
