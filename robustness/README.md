@@ -2,6 +2,12 @@
 
 Status: experiments in progress. Training/validation results are not held-out findings. Earlier exploratory evidence remains under `../research/`; its retired executables and complete manifest can be reproduced from [commit 51cb441](https://github.com/AI-Safeter/eml-torch/tree/51cb441c80ef6eef5b2fe4480b1c6b45ec896cf5/research). This study's frozen sources remain intact. The small `emltorch` package is unchanged by this study.
 
+The [audited Gemma addition cohort](gemma/PRIMARY_ADDITION.md) passes the primary
+scalar fidelity criteria; its EML-versus-SiLU comparison is inconclusive. The
+remaining cells and stress/seed evaluations are still required. A separate
+[Gemma execution driver](gemma/HOST_EXECUTION.md) keeps the 8.75 GiB per-layer
+embedding table on CPU to resume FP32 evaluation on shared GPUs.
+
 The user requested **Gemma 4 E2B IT in place of SmolLM2**. See [the amendment](GEMMA_AMENDMENT.md). Completed SmolLM2 artifacts are preserved as an incomplete, superseded arm. Gemma uses a separate pinned backend; the original Qwen environment and running evaluations continue unchanged.
 
 Read [the scalar protocol](PROTOCOL.md), [the whole-block protocol](WHOLE_BLOCK_PROTOCOL.md), [evaluation details](EVALUATION_DETAILS.md), and [related work](RELATED_WORK.md). Append-only source snapshots record the original implementation, normalization-folding repair, and Gemma adapter/execution amendment. Run `python verify_sources.py` to verify them together.

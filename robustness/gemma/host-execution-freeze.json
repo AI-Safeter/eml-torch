@@ -1,0 +1,26 @@
+{
+  "epoch": 1788855081.819005,
+  "stage": "Enable verified FP32 CPU embedding lookup and Gemma prefix reuse after exact native validation and full primary replay",
+  "partial_test_outputs_precede_amendment": true,
+  "model_or_selection_changes": false,
+  "files": {
+    "gemma/host_embeddings.py": "90585687a08eb1aef72dfc274f2992a178845f997bdf6f24c63d88e16adad3cd",
+    "gemma/validate_host_embeddings.py": "78cf63c5c3f94e583509595b1207556d11c6c9d90976d054341760200a715e7c",
+    "gemma/replay_host_prefix.py": "588f186daaed691f326e19e672d506d67405fd86c3aa6ad2c6ad524327c54c85",
+    "gemma/host_execute.py": "ac278c2836b4c58b68514ab32c59115d1ddd58e13a81294d0f4271eb67bb678a",
+    "gemma/host-validation.json": "5736d0a7f5c7c5f2cfd64aa35c931d2b9557fe95a1408060a46934eaf628ec88",
+    "gemma/host-prefix-replay.json": "053b7c5cca4e524a786368bd6a3212bd0a4c5dd1ec9418e69ca0cbd87019c0c4",
+    "gemma/HOST_EXECUTION.md": "6c6cb8f9c2949756b847793377d90e196a96bbd336e6250be9d92485388124f7",
+    "gemma/adapter.py": "63a4be329753aa9b99c66eb99fa92b2b3217fb230afa5da967fabded4adc5e46",
+    "gemma/prefix_cache.py": "dd617046ecee2bb57c0e5a036ef302c06c593f7d49d889216a5da2e69562747f",
+    "prefix_cache.py": "b7cc10f5b9c0724c6a0a8f9190ec791aa533a9312dc0bf64852f9d9339a478f6",
+    "prefix_execution.py": "42dd0beb7f39473fd39566590dc10cc4c583e6f4940efe2d4ccd7ccd86294bcd",
+    "runtime.py": "d1e4767017df3cce2f5cfd6674e3ee8f24a1d9c24915f97fea9c913d72767e05",
+    "run_evaluation.py": "85358e9283899220e969bdd9d2228195ba3e23000237f98f4345919a8c8a0827",
+    "seed_evaluate.py": "b7cf70372de633646ea1bcaf4cc631067dc4ab290b7f807f633023705fa2dfdb",
+    "geometry_evaluate.py": "f5bca6414748ed08493afcec10300176ed29c4ee09fff5c171656924e3a879b0",
+    "src/evaluate_heads.py": "c44b42d08f8028e74fddda0d4cb9270a7cc1014bf5827b896201c8420c42a8b1",
+    "src/model_io.py": "e0ef813e342687ed5530f236ff80d634773b37744d245a1b283221c47681dc9f",
+    "verify_sources.py": "f4f0a64a6c35c383bef46a12e0446a7f0280cd296f0dce9871a5bbf1f5978b06"
+  }
+}

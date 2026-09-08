@@ -1,0 +1,649 @@
+{
+  "scope": "Gemma addition primary cohort only; remaining operations, seeds and stress evaluations incomplete",
+  "selection_audit": {
+    "component_and_checkpoint_hashes_verified": true,
+    "control_grids_and_validation_selection_verified": true,
+    "fits_and_controls_completed_before_selection": true
+  },
+  "sources": {
+    "ordinary-test-known-formats.json": "e3f02329b8a58a1c2683b08de5157a8f8d56fa42fda927a3c67e0066cacf1048",
+    "interventions-test-known-formats.json": "26561694f492f1c2dc70fae6977e6de07385ab283f78e722ad6b2070c5b41c37"
+  },
+  "ordinary": {
+    "trace_audit": {
+      "methods": 12,
+      "unique_conditions_per_method": 3072
+    },
+    "metrics": {
+      "original": {
+        "original_accuracy": 0.9957682291666666,
+        "accuracy": 0.9957682291666666,
+        "operand_groups": 1024,
+        "formats": 3,
+        "simultaneous_cells": 9,
+        "alpha": 0.05,
+        "loss_threshold_counts": [
+          0,
+          0,
+          0
+        ],
+        "threshold_upper_bounds": [
+          0.006125274038492533,
+          0.006125274038492533,
+          0.006125274038492533
+        ],
+        "accuracy_loss_pp": 0.0,
+        "accuracy_loss_upper_pp": 0.6125274038492533,
+        "passes_one_percentage_point_bound": true,
+        "assumption": "Independent sampled operand groups; formats within each group may depend.",
+        "answer_agreement": 1.0,
+        "mean_first_token_kl": 0.0
+      },
+      "restore": {
+        "original_accuracy": 0.9957682291666666,
+        "accuracy": 0.9957682291666666,
+        "operand_groups": 1024,
+        "formats": 3,
+        "simultaneous_cells": 9,
+        "alpha": 0.05,
+        "loss_threshold_counts": [
+          0,
+          0,
+          0
+        ],
+        "threshold_upper_bounds": [
+          0.006125274038492533,
+          0.006125274038492533,
+          0.006125274038492533
+        ],
+        "accuracy_loss_pp": 0.0,
+        "accuracy_loss_upper_pp": 0.6125274038492533,
+        "passes_one_percentage_point_bound": true,
+        "assumption": "Independent sampled operand groups; formats within each group may depend.",
+        "answer_agreement": 1.0,
+        "mean_first_token_kl": 0.0
+      },
+      "mean": {
+        "original_accuracy": 0.9957682291666666,
+        "accuracy": 0.9742838541666666,
+        "operand_groups": 1024,
+        "formats": 3,
+        "simultaneous_cells": 9,
+        "alpha": 0.05,
+        "loss_threshold_counts": [
+          31,
+          21,
+          14
+        ],
+        "threshold_upper_bounds": [
+          0.04922743750555806,
+          0.03689604422589417,
+          0.027851893814010854
+        ],
+        "accuracy_loss_pp": 2.1484375,
+        "accuracy_loss_upper_pp": 3.7991791848487693,
+        "passes_one_percentage_point_bound": false,
+        "assumption": "Independent sampled operand groups; formats within each group may depend.",
+        "answer_agreement": 0.978515625,
+        "mean_first_token_kl": 0.228629242291984
+      },
+      "heads/eml": {
+        "original_accuracy": 0.9957682291666666,
+        "accuracy": 0.9954427083333333,
+        "operand_groups": 1024,
+        "formats": 3,
+        "simultaneous_cells": 9,
+        "alpha": 0.05,
+        "loss_threshold_counts": [
+          1,
+          0,
+          0
+        ],
+        "threshold_upper_bounds": [
+          0.008316851896908657,
+          0.006125274038492533,
+          0.006125274038492533
+        ],
+        "accuracy_loss_pp": 0.03255208333333333,
+        "accuracy_loss_upper_pp": 0.6855799991297907,
+        "passes_one_percentage_point_bound": true,
+        "assumption": "Independent sampled operand groups; formats within each group may depend.",
+        "answer_agreement": 0.9993489583333334,
+        "mean_first_token_kl": 0.001440186968764583
+      },
+      "heads/neural": {
+        "original_accuracy": 0.9957682291666666,
+        "accuracy": 0.99609375,
+        "operand_groups": 1024,
+        "formats": 3,
+        "simultaneous_cells": 9,
+        "alpha": 0.05,
+        "loss_threshold_counts": [
+          0,
+          0,
+          0
+        ],
+        "threshold_upper_bounds": [
+          0.006125274038492533,
+          0.006125274038492533,
+          0.006125274038492533
+        ],
+        "accuracy_loss_pp": -0.03255208333333333,
+        "accuracy_loss_upper_pp": 0.6125274038492533,
+        "passes_one_percentage_point_bound": true,
+        "assumption": "Independent sampled operand groups; formats within each group may depend.",
+        "answer_agreement": 0.9993489583333334,
+        "mean_first_token_kl": 0.0010112954540005884
+      },
+      "heads-active-r32-g0/eml": {
+        "original_accuracy": 0.9957682291666666,
+        "accuracy": 0.9957682291666666,
+        "operand_groups": 1024,
+        "formats": 3,
+        "simultaneous_cells": 9,
+        "alpha": 0.05,
+        "loss_threshold_counts": [
+          0,
+          0,
+          0
+        ],
+        "threshold_upper_bounds": [
+          0.006125274038492533,
+          0.006125274038492533,
+          0.006125274038492533
+        ],
+        "accuracy_loss_pp": 0.0,
+        "accuracy_loss_upper_pp": 0.6125274038492533,
+        "passes_one_percentage_point_bound": true,
+        "assumption": "Independent sampled operand groups; formats within each group may depend.",
+        "answer_agreement": 0.9996744791666666,
+        "mean_first_token_kl": 4.5244623252191504e-05
+      },
+      "heads-active-r32-g0/neural": {
+        "original_accuracy": 0.9957682291666666,
+        "accuracy": 0.9957682291666666,
+        "operand_groups": 1024,
+        "formats": 3,
+        "simultaneous_cells": 9,
+        "alpha": 0.05,
+        "loss_threshold_counts": [
+          0,
+          0,
+          0
+        ],
+        "threshold_upper_bounds": [
+          0.006125274038492533,
+          0.006125274038492533,
+          0.006125274038492533
+        ],
+        "accuracy_loss_pp": 0.0,
+        "accuracy_loss_upper_pp": 0.6125274038492533,
+        "passes_one_percentage_point_bound": true,
+        "assumption": "Independent sampled operand groups; formats within each group may depend.",
+        "answer_agreement": 0.9996744791666666,
+        "mean_first_token_kl": 1.7487664165330132e-05
+      },
+      "heads-active-r32-g0.1/eml": {
+        "original_accuracy": 0.9957682291666666,
+        "accuracy": 0.9957682291666666,
+        "operand_groups": 1024,
+        "formats": 3,
+        "simultaneous_cells": 9,
+        "alpha": 0.05,
+        "loss_threshold_counts": [
+          0,
+          0,
+          0
+        ],
+        "threshold_upper_bounds": [
+          0.006125274038492533,
+          0.006125274038492533,
+          0.006125274038492533
+        ],
+        "accuracy_loss_pp": 0.0,
+        "accuracy_loss_upper_pp": 0.6125274038492533,
+        "passes_one_percentage_point_bound": true,
+        "assumption": "Independent sampled operand groups; formats within each group may depend.",
+        "answer_agreement": 0.9996744791666666,
+        "mean_first_token_kl": 3.531447632832517e-05
+      },
+      "heads-active-r32-g0.1/neural": {
+        "original_accuracy": 0.9957682291666666,
+        "accuracy": 0.9954427083333333,
+        "operand_groups": 1024,
+        "formats": 3,
+        "simultaneous_cells": 9,
+        "alpha": 0.05,
+        "loss_threshold_counts": [
+          1,
+          0,
+          0
+        ],
+        "threshold_upper_bounds": [
+          0.008316851896908657,
+          0.006125274038492533,
+          0.006125274038492533
+        ],
+        "accuracy_loss_pp": 0.03255208333333333,
+        "accuracy_loss_upper_pp": 0.6855799991297907,
+        "passes_one_percentage_point_bound": true,
+        "assumption": "Independent sampled operand groups; formats within each group may depend.",
+        "answer_agreement": 0.9996744791666666,
+        "mean_first_token_kl": 7.055258924724206e-06
+      },
+      "sparse16": {
+        "original_accuracy": 0.9957682291666666,
+        "accuracy": 0.99609375,
+        "operand_groups": 1024,
+        "formats": 3,
+        "simultaneous_cells": 9,
+        "alpha": 0.05,
+        "loss_threshold_counts": [
+          0,
+          0,
+          0
+        ],
+        "threshold_upper_bounds": [
+          0.006125274038492533,
+          0.006125274038492533,
+          0.006125274038492533
+        ],
+        "accuracy_loss_pp": -0.03255208333333333,
+        "accuracy_loss_upper_pp": 0.6125274038492533,
+        "passes_one_percentage_point_bound": true,
+        "assumption": "Independent sampled operand groups; formats within each group may depend.",
+        "answer_agreement": 0.9996744791666666,
+        "mean_first_token_kl": 0.0009723228061076611
+      },
+      "sparse_selected": {
+        "original_accuracy": 0.9957682291666666,
+        "accuracy": 0.9954427083333333,
+        "operand_groups": 1024,
+        "formats": 3,
+        "simultaneous_cells": 9,
+        "alpha": 0.05,
+        "loss_threshold_counts": [
+          1,
+          0,
+          0
+        ],
+        "threshold_upper_bounds": [
+          0.008316851896908657,
+          0.006125274038492533,
+          0.006125274038492533
+        ],
+        "accuracy_loss_pp": 0.03255208333333333,
+        "accuracy_loss_upper_pp": 0.6855799991297907,
+        "passes_one_percentage_point_bound": true,
+        "assumption": "Independent sampled operand groups; formats within each group may depend.",
+        "answer_agreement": 0.9996744791666666,
+        "mean_first_token_kl": 6.160707370104193e-05
+      },
+      "linear": {
+        "original_accuracy": 0.9957682291666666,
+        "accuracy": 0.99609375,
+        "operand_groups": 1024,
+        "formats": 3,
+        "simultaneous_cells": 9,
+        "alpha": 0.05,
+        "loss_threshold_counts": [
+          0,
+          0,
+          0
+        ],
+        "threshold_upper_bounds": [
+          0.006125274038492533,
+          0.006125274038492533,
+          0.006125274038492533
+        ],
+        "accuracy_loss_pp": -0.03255208333333333,
+        "accuracy_loss_upper_pp": 0.6125274038492533,
+        "passes_one_percentage_point_bound": true,
+        "assumption": "Independent sampled operand groups; formats within each group may depend.",
+        "answer_agreement": 0.9993489583333334,
+        "mean_first_token_kl": 0.0006450615661950375
+      }
+    }
+  },
+  "interventions": {
+    "trace_audit": {
+      "methods": 12,
+      "unique_conditions_per_method": 18432
+    },
+    "metrics": {
+      "models": {
+        "original": {
+          "operand_groups": 1024,
+          "response_rms": 5.976622098165578,
+          "nrmse": 0.0,
+          "correlation": 1.0,
+          "bootstrap_draws": 20000,
+          "bootstrap_seed": 20260926,
+          "simultaneous_cells": 9,
+          "nrmse_ci95": [
+            0.0,
+            0.0
+          ],
+          "correlation_ci95": [
+            1.0,
+            1.0
+          ],
+          "nrmse_simultaneous_ci95": [
+            0.0,
+            0.0
+          ],
+          "correlation_simultaneous_ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "restore": {
+          "operand_groups": 1024,
+          "response_rms": 5.976622098165578,
+          "nrmse": 0.0,
+          "correlation": 1.0,
+          "bootstrap_draws": 20000,
+          "bootstrap_seed": 20260926,
+          "simultaneous_cells": 9,
+          "nrmse_ci95": [
+            0.0,
+            0.0
+          ],
+          "correlation_ci95": [
+            1.0,
+            1.0
+          ],
+          "nrmse_simultaneous_ci95": [
+            0.0,
+            0.0
+          ],
+          "correlation_simultaneous_ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "mean": {
+          "operand_groups": 1024,
+          "response_rms": 5.976622098165578,
+          "nrmse": 1.0,
+          "correlation": null,
+          "bootstrap_draws": 20000,
+          "bootstrap_seed": 20260926,
+          "simultaneous_cells": 9,
+          "nrmse_ci95": [
+            1.0,
+            1.0
+          ],
+          "correlation_ci95": null,
+          "nrmse_simultaneous_ci95": [
+            1.0,
+            1.0
+          ],
+          "correlation_simultaneous_ci95": null
+        },
+        "heads/eml": {
+          "operand_groups": 1024,
+          "response_rms": 5.976622098165578,
+          "nrmse": 0.09987478851249035,
+          "correlation": 0.9946659374169351,
+          "bootstrap_draws": 20000,
+          "bootstrap_seed": 20260926,
+          "simultaneous_cells": 9,
+          "nrmse_ci95": [
+            0.0816202767275997,
+            0.1194944536693602
+          ],
+          "correlation_ci95": [
+            0.9923797020573774,
+            0.9964466866186956
+          ],
+          "nrmse_simultaneous_ci95": [
+            0.07434095370661209,
+            0.12908161472268126
+          ],
+          "correlation_simultaneous_ci95": [
+            0.9911309848733755,
+            0.9970480809123486
+          ]
+        },
+        "heads/neural": {
+          "operand_groups": 1024,
+          "response_rms": 5.976622098165578,
+          "nrmse": 0.10560564269486479,
+          "correlation": 0.9940482611323107,
+          "bootstrap_draws": 20000,
+          "bootstrap_seed": 20260926,
+          "simultaneous_cells": 9,
+          "nrmse_ci95": [
+            0.08639301615579735,
+            0.12651705861085302
+          ],
+          "correlation_ci95": [
+            0.9915271108401571,
+            0.9960080476008557
+          ],
+          "nrmse_simultaneous_ci95": [
+            0.07980840891278511,
+            0.13571161207546542
+          ],
+          "correlation_simultaneous_ci95": [
+            0.9902800857378207,
+            0.9965860928406223
+          ]
+        },
+        "heads-active-r32-g0/eml": {
+          "operand_groups": 1024,
+          "response_rms": 5.976622098165578,
+          "nrmse": 0.018624673220999772,
+          "correlation": 0.999814058912681,
+          "bootstrap_draws": 20000,
+          "bootstrap_seed": 20260926,
+          "simultaneous_cells": 9,
+          "nrmse_ci95": [
+            0.014686355055184126,
+            0.023475090554905147
+          ],
+          "correlation_ci95": [
+            0.9997064659158984,
+            0.9998845703447784
+          ],
+          "nrmse_simultaneous_ci95": [
+            0.013683461613946436,
+            0.02573238755667392
+          ],
+          "correlation_simultaneous_ci95": [
+            0.9996484617225301,
+            0.9999000956580337
+          ]
+        },
+        "heads-active-r32-g0/neural": {
+          "operand_groups": 1024,
+          "response_rms": 5.976622098165578,
+          "nrmse": 0.023744366681539657,
+          "correlation": 0.9996981729318941,
+          "bootstrap_draws": 20000,
+          "bootstrap_seed": 20260926,
+          "simultaneous_cells": 9,
+          "nrmse_ci95": [
+            0.01951922692524959,
+            0.028100648283158343
+          ],
+          "correlation_ci95": [
+            0.9995790199968076,
+            0.9997964517963275
+          ],
+          "nrmse_simultaneous_ci95": [
+            0.017894079182304106,
+            0.030023643101285323
+          ],
+          "correlation_simultaneous_ci95": [
+            0.9995205697506624,
+            0.9998287455067723
+          ]
+        },
+        "heads-active-r32-g0.1/eml": {
+          "operand_groups": 1024,
+          "response_rms": 5.976622098165578,
+          "nrmse": 0.019071637148874422,
+          "correlation": 0.9998064229728092,
+          "bootstrap_draws": 20000,
+          "bootstrap_seed": 20260926,
+          "simultaneous_cells": 9,
+          "nrmse_ci95": [
+            0.015674373467561495,
+            0.022550336984648308
+          ],
+          "correlation_ci95": [
+            0.9997307532509961,
+            0.9998694524076664
+          ],
+          "nrmse_simultaneous_ci95": [
+            0.014458351111917282,
+            0.024008899488185763
+          ],
+          "correlation_simultaneous_ci95": [
+            0.9996959756113414,
+            0.9998889962635658
+          ]
+        },
+        "heads-active-r32-g0.1/neural": {
+          "operand_groups": 1024,
+          "response_rms": 5.976622098165578,
+          "nrmse": 0.018852522286849024,
+          "correlation": 0.9998112249562054,
+          "bootstrap_draws": 20000,
+          "bootstrap_seed": 20260926,
+          "simultaneous_cells": 9,
+          "nrmse_ci95": [
+            0.01562153119517496,
+            0.0223778679914632
+          ],
+          "correlation_ci95": [
+            0.9997352754340908,
+            0.9998706299567165
+          ],
+          "nrmse_simultaneous_ci95": [
+            0.014251304034442368,
+            0.02391859913017426
+          ],
+          "correlation_simultaneous_ci95": [
+            0.9996978438424894,
+            0.9998926349615259
+          ]
+        },
+        "sparse16": {
+          "operand_groups": 1024,
+          "response_rms": 5.976622098165578,
+          "nrmse": 0.13388587535013857,
+          "correlation": 0.9903502702546623,
+          "bootstrap_draws": 20000,
+          "bootstrap_seed": 20260926,
+          "simultaneous_cells": 9,
+          "nrmse_ci95": [
+            0.10253628617122902,
+            0.16614064394477848
+          ],
+          "correlation_ci95": [
+            0.9851350417483686,
+            0.9943635764746505
+          ],
+          "nrmse_simultaneous_ci95": [
+            0.09112535428957198,
+            0.18164913110834147
+          ],
+          "correlation_simultaneous_ci95": [
+            0.9822843719432143,
+            0.9955610291161068
+          ]
+        },
+        "sparse_selected": {
+          "operand_groups": 1024,
+          "response_rms": 5.976622098165578,
+          "nrmse": 0.027018201961057642,
+          "correlation": 0.9996122462109494,
+          "bootstrap_draws": 20000,
+          "bootstrap_seed": 20260926,
+          "simultaneous_cells": 9,
+          "nrmse_ci95": [
+            0.021872725976589003,
+            0.032567330231493385
+          ],
+          "correlation_ci95": [
+            0.999442770828163,
+            0.9997450660035283
+          ],
+          "nrmse_simultaneous_ci95": [
+            0.020157230407619006,
+            0.03486103866220026
+          ],
+          "correlation_simultaneous_ci95": [
+            0.9993627879180784,
+            0.9997828133899019
+          ]
+        },
+        "linear": {
+          "operand_groups": 1024,
+          "response_rms": 5.976622098165578,
+          "nrmse": 0.28476924051176594,
+          "correlation": 0.9558878783670965,
+          "bootstrap_draws": 20000,
+          "bootstrap_seed": 20260926,
+          "simultaneous_cells": 9,
+          "nrmse_ci95": [
+            0.24292132495828683,
+            0.32894493175815454
+          ],
+          "correlation_ci95": [
+            0.9409491009434368,
+            0.968132070404445
+          ],
+          "nrmse_simultaneous_ci95": [
+            0.22891714914806668,
+            0.34881740804355527
+          ],
+          "correlation_simultaneous_ci95": [
+            0.9334372875865348,
+            0.971715971877149
+          ]
+        }
+      },
+      "comparisons": {
+        "heads/eml": {
+          "control": "heads/neural",
+          "eml_minus_control_response_mse": -0.042063113822813886,
+          "paired_difference_ci95": [
+            -0.180414989117172,
+            0.09124700069514524
+          ]
+        },
+        "heads-active-r32-g0/eml": {
+          "control": "heads-active-r32-g0/neural",
+          "eml_minus_control_response_mse": -0.007748259794488354,
+          "paired_difference_ci95": [
+            -0.015904754919352306,
+            0.0008683618690446729
+          ]
+        },
+        "heads-active-r32-g0.1/eml": {
+          "control": "heads-active-r32-g0.1/neural",
+          "eml_minus_control_response_mse": 0.00029682425874895954,
+          "paired_difference_ci95": [
+            -0.0038357817664478955,
+            0.004529311957645604
+          ]
+        }
+      },
+      "strengths": [
+        0.125,
+        0.375,
+        0.625,
+        0.875
+      ]
+    }
+  },
+  "primary_checks": {
+    "accuracy_bound": true,
+    "nrmse_bound": true,
+    "correlation_bound": true
+  }
+}

@@ -1,0 +1,146 @@
+{
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "torch": "2.9.0+cu128",
+  "model": {
+    "id": "google/gemma-4-E2B-it",
+    "revision": "3e22461f65e89153144f8adb70e3b8c2cc9845a7",
+    "torch": "2.9.0+cu128",
+    "transformers": "5.16.1",
+    "precision": "float32"
+  },
+  "host_table_bytes": 9395240960,
+  "gpu_parameter_bytes": 11021949056,
+  "registered_parameter_count_unchanged": true,
+  "sampled_native_gpu_lookup_bitwise_equal": true,
+  "source_hashes": {
+    "host_embeddings.py": "90585687a08eb1aef72dfc274f2992a178845f997bdf6f24c63d88e16adad3cd",
+    "validate_host_embeddings.py": "78cf63c5c3f94e583509595b1207556d11c6c9d90976d054341760200a715e7c"
+  },
+  "input_checks": [
+    {
+      "operation": "add",
+      "split": "train",
+      "layer": 26,
+      "cases": 192,
+      "bitwise_equal": true,
+      "reference_sha256": "a8cfa7eabe839a5a4d6c9cd89bc64fea1228e4483aff816b21a0f713ee010b34"
+    },
+    {
+      "operation": "add",
+      "split": "validation",
+      "layer": 26,
+      "cases": 192,
+      "bitwise_equal": true,
+      "reference_sha256": "ac91d88cdafb936b685412bcde6b332fb612129e36aa0f5f618b6f4d05573296"
+    },
+    {
+      "operation": "multiply",
+      "split": "train",
+      "layer": 26,
+      "cases": 192,
+      "bitwise_equal": true,
+      "reference_sha256": "b32e2cb05e854fabcfe86232e216b6848d86b0737613821da8290dfb00dbb6b6"
+    },
+    {
+      "operation": "multiply",
+      "split": "validation",
+      "layer": 26,
+      "cases": 192,
+      "bitwise_equal": true,
+      "reference_sha256": "dab3b75286c07e2b4be78a4fb04710eb1f98a9b21207c72ef52b1d30b8637f71"
+    },
+    {
+      "operation": "divide",
+      "split": "train",
+      "layer": 33,
+      "cases": 192,
+      "bitwise_equal": true,
+      "reference_sha256": "f3356bdbc85664804e6affc018a8644642df5dc575516cfe123680a83263b67c"
+    },
+    {
+      "operation": "divide",
+      "split": "validation",
+      "layer": 33,
+      "cases": 192,
+      "bitwise_equal": true,
+      "reference_sha256": "73888785aafd629a2d2b6d2328941b471784f2ea21bb2a6a3f64e2282d977a8f"
+    }
+  ],
+  "generation_checks": [
+    {
+      "operation": "add",
+      "generated": [
+        "826.",
+        "869.",
+        "335.",
+        "462."
+      ],
+      "identical": true
+    },
+    {
+      "operation": "multiply",
+      "generated": [
+        "14595.",
+        "8976.",
+        "14260.",
+        "3255."
+      ],
+      "identical": true
+    },
+    {
+      "operation": "divide",
+      "generated": [
+        "250.642857142857",
+        "29376 / 64.\n\nWe can perform the division",
+        "270.352941176470",
+        "282.285714285714"
+      ],
+      "identical": true
+    }
+  ],
+  "cohort_checks": [
+    {
+      "file": "ordinary-validation-audit.json",
+      "all_records_exactly_equal": true,
+      "reference_sha256": "1da0350bbfad6ab4ad77c0cab67b616de4aca0990724fda9a82337998aa9e69e",
+      "records": 144
+    },
+    {
+      "file": "interventions-validation-audit.json",
+      "all_records_exactly_equal": true,
+      "reference_sha256": "dd790e769faabbe59984a2413818d2abcb433109e45508d8bb7cde30af67b6a2",
+      "records": 864
+    },
+    {
+      "file": "ordinary-all-tokens-validation.json",
+      "all_records_exactly_equal": true,
+      "reference_sha256": "5a4be5c3d40738df9d4624b7ba12e98f90e1787245d020511889069c53e4838a",
+      "records": 144
+    },
+    {
+      "file": "coordinate-validation.json",
+      "all_records_exactly_equal": true,
+      "reference_sha256": "958bd3ddec18782d14481120eb5da4841852a755e18610d481f7d6e061ca766e",
+      "records": 1728
+    }
+  ],
+  "native_gpu_lookup_logit_checks": [
+    {
+      "operation": "add",
+      "logits_compared": 3145728,
+      "bitwise_equal": true
+    },
+    {
+      "operation": "multiply",
+      "logits_compared": 3145728,
+      "bitwise_equal": true
+    },
+    {
+      "operation": "divide",
+      "logits_compared": 3145728,
+      "bitwise_equal": true
+    }
+  ],
+  "peak_allocated_gib": 10.505520820617676,
+  "passed": true
+}
