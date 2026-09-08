@@ -183,6 +183,8 @@ def main():
     for path in benchmark_paths:
         record = read(path)
         assert record["freeze_sha256"] == digest(out / "benchmark/freeze.json")
+        assert set(record["student_module_accounting"]["by_device"]) == {"cuda"}
+        assert set(record["original_accounting"]["by_device"]) == {"cuda"}
         assert len(record["samples"]) == 50
         values = [
             v

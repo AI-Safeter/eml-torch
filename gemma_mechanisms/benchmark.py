@@ -160,7 +160,6 @@ def main():
 
     for method in methods:
         student = load_deployed(out / "training" / f"{method}.pt", device="cpu")
-        student_accounting = accounting(student)
 
         def activate(name, student=student):
             if name == "original":
@@ -184,6 +183,9 @@ def main():
             isolated_memory = {}
             for name in ["original", method]:
                 activate(name)
+                if name == method:
+                    student_accounting = accounting(student)
+                    assert set(student_accounting["by_device"]) == {"cuda"}
                 torch.cuda.empty_cache()
                 first = workload(model, ids, decode)
                 isolated_memory[name] = {
