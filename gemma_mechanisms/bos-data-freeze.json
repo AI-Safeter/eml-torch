@@ -1,0 +1,57 @@
+{
+  "protocol_sha256": "6b8f66b9cf4d129ee216935ab5bf42f7ebaafba32422fdef69d91b40fd8a7fe1",
+  "arithmetic": {
+    "historical_excluded": {
+      "add": 10736,
+      "multiply": 9636,
+      "divide": 9728
+    },
+    "seed": 2026090837
+  },
+  "language": {
+    "source_sha256": "b1ba7b2ce4cb5ea6ef42dca40263eabb85f37700d01693a68e9b30a31d78e871",
+    "scanned_rows": 5632,
+    "counts": {
+      "train": 2048,
+      "selection": 256,
+      "gate": 512,
+      "final": 1024
+    }
+  },
+  "arc": {
+    "source_sha256": {
+      "validation": "ed890ff1e4cef7a7140d3a30dcea3ed2c9d467c6458f447ad9ef0176d8dcbb74",
+      "test": "4160597d618ae851c7eb04e281574f3f654776216ac6b6641588d64527b47177"
+    },
+    "counts": {
+      "selection": 570,
+      "gate": 1220,
+      "final": 1156
+    }
+  },
+  "files": {
+    "arc-final.json": "24d44f44fea6a489dbe0ff94bb0a2fbc57b9d4e90d09d218fe2294fe7dc32364",
+    "arc-gate.json": "453f68d193a1082220a90380c283b59aa1786b18c9a95ea1df072f622b27ec23",
+    "arc-selection.json": "ed7d64efb826268c3040063fb0843e2a16d930e7681b600a7bfd06a552d1db39",
+    "arithmetic-final.json": "427b037def28bc232337b88a15c67887960d983b76a97796c9adfb3025308fc6",
+    "arithmetic-gate.json": "417ccdaccae4afc742d9177297c99eac01a44bc298fd4653504025c1e34eed7f",
+    "arithmetic-selection.json": "97fa57f82698326f9b39ebb7dd8d60718222d288f246e3d5c886238851cb9234",
+    "arithmetic-shift.json": "afa08fef4c986f03230b415f06dd60e434078282b8a1baaadeaf07b74a08576e",
+    "arithmetic-train.json": "090de5fc014d6767ec27a78e75ee04defd3d55d4d67320e50bf71260a2d9319a",
+    "bos-amendment.json": "6b30d184537392a69fc7e04ff2f6c11f6a193277b07ed519e9726b814b4f5927",
+    "language-documents.json": "ae177dde267ecb1414170c45bbe7c7deb087b8ab648c835213cc148fa892da9d",
+    "language-final.pt": "1614b4e3e8efefa6f4393b1afc99103449a280bbf06a2143c261ff48881361dc",
+    "language-gate.pt": "12efa678f30e8fcde796de46c68cf4c75dc63b0fd18ab97d522aa4f2c1d47c5b",
+    "language-selection.pt": "05436e8cde946026f1019412f076701837f5f14b5ccf719b61a37650381b6bac",
+    "language-train.pt": "762f56597034186bb5360d64cc28a9ab760e0358e679505f47cd8470eab42b8d"
+  },
+  "bos_amendment": {
+    "original_data_freeze_sha256": "70c6997e584ea715b9c316aa41acc6568a150e75102f8c69c3d1cdb97ddb99a9",
+    "source_sha256": "c9383eb40fa2c47af7c7eb58efca55ee5f1c4fe02756a825237daaab5a2e07b7",
+    "amendment_sha256": "8da42b0733be18adddd73ec0d3c1f5ab35dafe77d83aa555933eedce65ff8a57",
+    "bos_token_id": 2,
+    "text_tokens_per_document": 256,
+    "input_tokens_per_document": 257,
+    "gate_and_final_model_outputs_unopened": true
+  }
+}

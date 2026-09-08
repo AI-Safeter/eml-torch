@@ -1,22 +1,19 @@
-# Gemma complete-MLP replacement study
+# Gemma complete-MLP replacement and arithmetic interventions
 
-This is a new prospective experiment. Its integration checks demonstrate actual MLP removal, **not retained model quality or a recovered arithmetic algorithm**. The earlier scalar study remains independently frozen under `robustness/`.
+This study installs a compact EML network in place of an entire native Gemma MLP. The original block is removed from the registered model and its forward is poisoned during evaluation and timing. Teacher activations supervise offline training; they are not inputs to replacement inference.
 
-Read [PROTOCOL.md](PROTOCOL.md) for the hypotheses, stopping gates, accounting rules, and protected final evaluation. [model-identity.json](model-identity.json) verifies the exact local checkpoint. The 3M/6M coefficient grid compares EML and SiLU at nonlinear depths 1/2/4 and includes factorized linear controls, with three seeds. Training targets include the full MLP output and its native normalized residual contribution.
+Read [the protocol](PROTOCOL.md), [BOS correction](BOS_AMENDMENT.md), [evaluation criteria](EVALUATION_PLAN.md), and [causal confirmation plan](CAUSAL_CONFIRMATION.md). The completed comparison is written to `results/REPORT.md`. A working replacement path does not establish preserved quality or a recovered arithmetic algorithm. [COMMANDS.md](COMMANDS.md) provides reproduction and export commands.
 
-From this checkout, use the pinned Gemma environment. Commands write to a separate run directory; pretrained weights and corpus text are not committed. Check GPU availability before assigning a device. Collection and full-model validation need about 6–8 GiB free when the PLE table is on CPU. Offline fitting uses CPU-resident targets and a much smaller CUDA working set.
+The exact checkpoint is **google/gemma-4-E2B-it**, revision `3e22461f65e89153144f8adb70e3b8c2cc9845a7`. It has **5,104,297,504 unique parameters**, including embeddings and multimodal components. E2B is an effective-size designation. The layer-26 MLP has 56,623,104 parameters. A single compact replacement removes about 1% of total parameters, so it cannot meet the 20% deployment target on its own.
 
-```bash
-PY=/home/ubuntu/samuel/emltorch-gemma-env/bin/python
-$PY -m gemma_mechanisms.identity
-$PY -m gemma_mechanisms.prepare
-CUDA_VISIBLE_DEVICES=1 $PY -m gemma_mechanisms.validate --full-model
-CUDA_VISIBLE_DEVICES=1 $PY -m gemma_mechanisms.collect
-CUDA_VISIBLE_DEVICES=2 $PY -m gemma_mechanisms.train
-```
+The study compares EML and SiLU at depths 1/2/4, coefficient ceilings 3M/6M, bottlenecks 256/512, and three seeds, plus linear controls: 42 fits. Every encoder, nonlinear projection, decoder, bias, norm, and statistic counts. Deployment folds affine statistics and collapses linear factors when that is cheaper. The surrounding native norms and all other model components remain counted.
 
-Default results: `/home/ubuntu/samuel/emltorch-gemma-replacement-runs`. Override with `--output` or `EML_GEMMA_MECHANISMS_RUNS`. Training has no teacher-model dependency. `train --candidate eml-b3000000-d1-s1103` runs one unchanged grid member, which the full-grid command later preserves. A fit failure is recorded and cannot silently disappear from selection.
+`runtime.setup` enforces torch 2.9.0+cu128 and transformers 5.16.1; [environment.json](environment.json) records supporting packages. Model weights must already be available at the pinned Hugging Face snapshot. Dataset IDs, revisions, seeds, splits, training budgets and acceptance criteria are fixed in `protocol.json`. `prepare.py` now includes native BOS for each document.
 
-The loaded model has 5,104,297,504 unique parameters; the target MLP has 56,623,104. A 3M replacement removes about 1.05% of total parameters. The 20% deployment target requires many blocks to pass fresh gates. CPU offload is memory placement, not compression, and will be applied equally to timing baselines.
+The local diagnostic root is `/home/ubuntu/samuel/emltorch-gemma-replacement-runs`; the corrected replacement root appends `-bos`. Use a fresh directory for a new reproduction. The original 42 fits are retained as diagnostics after the BOS correction; they are not the accepted replacement experiment. `prepare_corrected.py` reproduces that amendment from original 256-token files. Do not apply it to already corrected 257-token inputs.
 
-The causal branch starts with addition unit carry and digit hypotheses. Collection includes candidate layer states at last-prompt and answer-prefix positions. Feature predictability alone will not be reported as mediation. No multiplication/division mechanism claim follows from an addition experiment.
+Quality evaluation uses native BF16 scoring with the PLE table on CPU, identically for all methods and validated against a fully resident model. Timing uses the fully GPU-resident model, native eager SDPA, 10 warm-ups and 50 alternating paired repetitions. Prefill, decoding, throughput, allocated/reserved memory, CUDA timing and model end-to-end latency are reported separately. Loading, tokenization and service queuing are outside this declared workload. Other users share the H100s; CPU offloading is memory placement, not parameter compression.
+
+The causal branch tests carry and digit hypotheses under controlled residual/KV interventions. The equations consume decoded internal quantities, never operand labels or downstream teacher states. Probe accuracy and observational fits do not establish mediation. Fixed-prefix interventions remain distinct from unconditional generated-answer quality; addition evidence does not establish multiplication or division mechanisms.
+
+Source, protocols, compact results and hashes are committed. Raw traces, checkpoints and activation tensors remain in the external run roots. A compact export stores only the folded BF16 student and verifies a bitwise CUDA reload. It still requires the pinned base model, but no teacher activations at inference. Consult held-out quality before using an experimental export in an application.
