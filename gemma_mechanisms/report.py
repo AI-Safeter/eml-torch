@@ -355,6 +355,13 @@ def main():
         "benchmark_comparison_cpu_reference_mlp_bytes": 56623104 * 2,
         "comparison_reference_note": "Held outside the registered model only for alternating benchmarks/evaluation; absent from exported inference. CPU staging and transfers are outside measured execution.",
     }
+    eml_training = [r for r in training if r["kind"] == "eml"]
+    stability = {
+        "gradient_clip_fraction": mean(r["gradient_clip_fraction"] for r in eml_training),
+        "sampled_exponent_clamps": sum(r["exponent_clamps"] for r in eml_training),
+        "sampled_exponent_arguments": sum(r["exponent_arguments_sampled"] for r in eml_training),
+    }
+    failure_analysis["eml_training_stability"] = stability
     summary = {
         "selection": selection,
         "gate": gate,
@@ -456,6 +463,22 @@ def main():
         "The covariance-tail floor applies to raw MLP outputs confined to an affine decoder subspace of the stated rank. It bounds any such decoder on this training distribution, regardless of nonlinear depth; it does not bound EML architectures generally or the normalized residual contribution. The JSON also reports clipping, sampled exponent clamps, precision conversion, and actual CUDA memory peaks.",
         "",
         f"For the selected EML configuration, the raw training MSE is {chosen_training['training_raw_mse_mean']:.5f} and its rank floor is {chosen_training['rank_floor']:.5f}. The floor is {100 * failure_analysis['raw_training_error_fraction_at_rank_floor']:.1f}% of the observed raw error. Deeper nonlinear stages cannot remove that affine-output-rank constraint. Residual error above the floor, domain-specific errors, clipping and seed spread remain separate capacity/optimization diagnostics; they do not identify a universal EML limitation.",
+        "",
+        f"Across the EML primary grid, gradient clipping occurred on {100 * stability['gradient_clip_fraction']:.4f}% of updates, and telemetry found {stability['sampled_exponent_clamps']} clamped exponent arguments among {stability['sampled_exponent_arguments']:,} sampled arguments. These observations do not support widespread exponential saturation as the main measured failure. They do not establish convergence or rule out difficult optimization geometry.",
+        "",
+        "| Selected EML domain | Train raw MSE | Selection raw MSE | Train contribution MSE | Selection contribution MSE |",
+        "|---|---:|---:|---:|---:|",
+    ]
+    for domain in ["arithmetic", "language"]:
+        cells = [
+            mean(audits[name][split][domain][metric] for name in chosen["checkpoints"])
+            for metric in ["raw_mse", "contribution_mse"]
+            for split in ["train", "selection"]
+        ]
+        lines.append(f"| {domain} | " + " | ".join(f"{v:.5f}" for v in cells) + " |")
+    lines += [
+        "",
+        "Domain errors use the training scales of the fitted objective; differences can reflect both target variation and approximation quality. Teacher-forced activation fit also differs from free generation after the replacement changes a token. The final/new-format/shift tables test behavior under distribution changes; this study does not isolate every source of rollout error.",
         "",
         "All 36 nonlinear primary fits reached the 12,000-update cap and selected their best checkpoint within the last 1,000 updates. Optimization was therefore not demonstrated to converge. A separate diagnostic restarted the selected EML architecture and matched-depth SiLU for 24,000 updates, with the same initialization and minibatch stream. These weights were never substituted into the frozen held-out roster.",
         "",
