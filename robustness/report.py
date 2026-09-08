@@ -237,6 +237,8 @@ def main():
         "",
         "The [interactive explorer](explorer.html) includes all feature/loss controls, every fitted seed, held-out formats, shifted operands, carry patterns, both-operand edits, and ambient/nullspace diagnostics. Primary success does not imply unrestricted equivalence under arbitrary input edits.",
         "",
+        "Accuracy bounds in the smaller stress cohorts have limited resolution. With three prompt formats and the frozen nine-cell adjustment, even zero regressions give an upper loss bound of 1.22 percentage points for 512 operand groups and 2.43 points for 256 groups. Failure to certify one-point retention in these cohorts is not evidence that the actual loss exceeds one point. Stress results do not redefine the primary decision.",
+        "",
         "## Held-out prompt formats",
         "",
         "These four formats were excluded from fitting. Complete-answer accuracy uses the same strict numeric parser as the primary cohort, so extra prose and nonnumeric outputs count as errors. Low replacement error can coexist with low teacher accuracy: preserving a component's response does not repair the teacher's arithmetic or formatting failures.",
