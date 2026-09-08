@@ -44,7 +44,7 @@ def carry_readouts(by_kind):
         )
         for kind, rs in rows.items()
     }
-    result = {"native_accuracy": {}, "edits": {}}
+    result = {"native_accuracy": {}, "native_label_baselines": {}, "edits": {}}
     for kind, operand in [("recipient", "a"), ("donor", "donor_a")]:
         truth = torch.tensor(
             [r[operand] % 10 + r["b"] % 10 >= 10 for r in rows[kind]], device="cuda"
@@ -52,6 +52,19 @@ def carry_readouts(by_kind):
         result["native_accuracy"][kind] = (
             ((decoded[kind] >= 0.5) == truth[:, None]).float().mean(0).tolist()
         )
+        prevalence = float(truth.float().mean())
+        correct = (decoded[kind] >= 0.5) == truth[:, None]
+        result["native_label_baselines"][kind] = {
+            "carry_prevalence": prevalence,
+            "majority_class_accuracy": max(prevalence, 1 - prevalence),
+            "balanced_accuracy_by_layer": torch.stack(
+                [correct[truth == label].float().mean(0) for label in [False, True]]
+            )
+            .mean(0)
+            .tolist()
+            if truth.any() and (~truth).any()
+            else None,
+        }
     for kind, reference, column in [
         ("carry_direction", "donor", 0),
         ("values_then_carry_block", "recipient", 1),
@@ -141,13 +154,45 @@ def main():
             }
         )
     methods = ["original", *final["methods"]]
-    diagnostics, matched = {}, {}
+    diagnostics, matched, format_diagnostics = {}, {}, {}
     for split in ["final", "shift"]:
         raw = {
             name: read(out / "evaluation" / split / f"{name}.json")["results"] for name in methods
         }
         diagnostics[split] = {}
         matched[split] = {}
+        format_diagnostics[split] = {}
+        for name in methods:
+            styles = collections.defaultdict(list)
+            for field in ["arithmetic", "new_formats"]:
+                for row in raw[name][field]:
+                    styles[f"{row['op']}/{row['style']}"].append(row)
+            records = {}
+            for key, rows in styles.items():
+                valid = [r for r in rows if r["prediction"] is not None]
+                records[key] = {
+                    "cases": len(rows),
+                    "parseable_cases": len(valid),
+                    "parseable_fraction": len(valid) / len(rows),
+                    "unconditional_accuracy": mean(r["correct"] for r in rows),
+                    "accuracy_given_parseable": mean(r["correct"] for r in valid)
+                    if valid
+                    else None,
+                    "scope": "Conditional accuracy is a diagnostic on a method-dependent subset, never an acceptance metric.",
+                }
+                if name != "original":
+                    op, style = key.split("/")
+                    teacher = [
+                        r
+                        for field in ["arithmetic", "new_formats"]
+                        for r in raw["original"][field]
+                        if r["op"] == op and r["style"] == style
+                    ]
+                    records[key]["paired_comparison"] = accuracy(teacher, rows, 0.05, True)
+                    records[key]["paired_interval_scope"] = (
+                        "Descriptive unadjusted 95% intervals; no acceptance decision uses per-style comparisons."
+                    )
+            format_diagnostics[split][name] = records
         selected_eml = selection["families"]["eml"]
         for seed in SPEC["replacement"]["seeds"]:
             eml_name = f"eml-b{selected_eml['budget']}-d{selected_eml['depth']}-s{seed}"
@@ -389,6 +434,7 @@ def main():
         "training": training,
         "deployment_validation": deployed,
         "diagnostics": diagnostics,
+        "format_diagnostics": format_diagnostics,
         "matched_eml_silu": matched,
         "timing": timing,
         "routing": routing,
@@ -481,9 +527,24 @@ def main():
                 )
     lines += [
         "",
+        "Larger operands also change output-format compliance. The next table separates integer-only parsing from unconditional correctness for every shifted prompt style. Prose and worked calculations remain errors under the frozen contract; no parser or generation budget was changed. A weak original baseline cannot establish arithmetic retention. Conditional accuracy among parseable outputs is available in the JSON, but uses a method-dependent subset and is not an acceptance metric.",
+        "",
+        "| Shift task / style | Original parseable % | Original correct % | EML parseable %, mean of 3 seeds | EML correct %, mean [seed range] |",
+        "|---|---:|---:|---:|---|",
+    ]
+    for key, baseline in format_diagnostics["shift"]["original"].items():
+        rows = [format_diagnostics["shift"][name][key] for name in chosen["checkpoints"]]
+        values = [100 * r["unconditional_accuracy"] for r in rows]
+        lines.append(
+            f"| {key} | {100 * baseline['parseable_fraction']:.2f} | {100 * baseline['unconditional_accuracy']:.2f} | {100 * mean(r['parseable_fraction'] for r in rows):.2f} | {mean(values):.2f} [{min(values):.2f}, {max(values):.2f}] |"
+        )
+    lines += [
+        "",
         "## Depth, capacity, and training cost",
         "",
         "Budgets count every encoder, nonlinear argument/readout projection, decoder, bias, norm, and statistic. EML/SiLU comparisons match sequential nonlinear depth and coefficient ceilings. Deployment folds affine statistics; the cheapest linear factorization is collapsed to one affine map. Native surrounding norms and all other model components remain counted.",
+        "",
+        "The linear controls are trained low-rank affine surrogates of the whole MLP, including a full-rank member at the larger training budget. They do not retain the native gated-GELU computation. This study therefore makes no superiority claim over methods that factorize the native MLP's individual weight matrices.",
         "",
         "| Family | Budget | Depth | Output rank | Selection objective, mean of 3 seeds | Train raw MSE | Rank floor | Fit minutes, 3 seeds |",
         "|---|---:|---:|---:|---:|---:|---:|---:|",
@@ -652,10 +713,10 @@ def main():
         "",
         "The four cohorts contain 2,048 prompt cases but 512 distinct operand groups: known/new formats reuse each split's 256 groups. Exact-logit failure bounds therefore group formats by operand pair. With zero failures in a 256-group cohort, the one-sided 95% binomial upper bound is about 1.16%, rather than treating every logit or prompt as independent evidence.",
         "",
-        "The edit-efficacy check separates the probe readout from behavior. The upstream edit nearly matches the donor's carry readout; the downstream carry block restores the recipient's thresholded readout in every case. The next table reports native decoding accuracy and the paired behavioral effect of blocking, including uncertainty clustered by operand group. Near-chance upstream decoding on shifted operands further limits its interpretation as a general carry variable.",
+        "The edit-efficacy check separates the probe readout from behavior. The upstream edit nearly matches the donor's carry readout; the downstream carry block restores the recipient's thresholded readout in every case. The next table reports native decoding accuracy and the paired behavioral effect of blocking, including uncertainty clustered by operand group. On shifted operands, upstream threshold accuracy falls below the 75% majority-class baseline. The JSON also reports balanced accuracy; threshold miscalibration and representational failure are not separated by ordinary accuracy alone.",
         "",
-        "| Cohort | Native recipient carry accuracy at 26 / 32 % | Upstream edit: donor readout class match % | Downstream block: recipient readout class match % | Blocking effect on donor-digit accuracy pp [95% CI] |",
-        "|---|---|---:|---:|---|",
+        "| Cohort | Majority baseline % | Native recipient carry accuracy at 26 / 32 % | Upstream edit: donor readout class match % | Downstream block: recipient readout class match % | Blocking effect on donor-digit accuracy pp [95% CI] |",
+        "|---|---:|---|---:|---:|---|",
     ]
     for name, r in routing.items():
         c = r["carry_readouts"]
@@ -664,7 +725,7 @@ def main():
         lo, hi = effect["two_sided_95"]
         native = " / ".join(f"{100 * v:.2f}" for v in c["native_accuracy"]["recipient"])
         lines.append(
-            f"| {name} | {native} | {100 * c['edits']['carry_direction']['threshold_class_agreement']:.2f} | {100 * edit['threshold_class_agreement']:.2f} | {100 * effect['mean']:+.2f} [{100 * lo:+.2f}, {100 * hi:+.2f}] |"
+            f"| {name} | {100 * c['native_label_baselines']['recipient']['majority_class_accuracy']:.2f} | {native} | {100 * c['edits']['carry_direction']['threshold_class_agreement']:.2f} | {100 * edit['threshold_class_agreement']:.2f} | {100 * effect['mean']:+.2f} [{100 * lo:+.2f}, {100 * hi:+.2f}] |"
         )
     lines += [
         "",
