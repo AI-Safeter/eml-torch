@@ -9,6 +9,7 @@ from contextlib import contextmanager
 import torch
 from robust_statistics import loss_bound
 from runtime import HERE, RUNS, configure
+from whole_deploy import FoldedStudent
 from whole_student import Student
 
 
@@ -61,7 +62,7 @@ def students(out, selected):
         stats = {k: state[k] for k in ["xmean", "xstd", "ymean", "yscale"]}
         student = Student(len(state["xmean"]), spec["width"], kind, stats).cuda()
         student.load_state_dict(state)
-        models[kind] = student.eval().requires_grad_(False)
+        models[kind] = FoldedStudent(student).eval().requires_grad_(False)
     return models
 
 

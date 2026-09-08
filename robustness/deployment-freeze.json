@@ -1,0 +1,13 @@
+{
+  "epoch": 1788830773.478092,
+  "test_model_outputs_unseen": true,
+  "files": {
+    "whole_deploy.py": "c9c2074ce54b79465e64f458343af98ae01963dcf2c9fcce6f6bf773452b7f2d",
+    "whole_evaluate.py": "34f7877936d4fb08acae322fba559152d2df90fa3d33db9a2a44bcb8366e4eb6",
+    "folding-validation.json": "47a57665c37dbcf324f07c2d3be527d126d6665bfc90120890108c8debd6605b"
+  },
+  "supersedes": {
+    "whole_evaluate.py": "b8322808aebeb99ac39f9d88f74bf2db0184b17f39ad63b5fbd335c8e672f9a1"
+  },
+  "reason": "Complete the protocol requirement to fold affine normalization for deployment. Selected fits and objectives are unchanged. Every downstream and timing evaluation uses the folded student. GPU checks on 1024 validation activations showed maximum absolute output difference below 0.0001 for each family."
+}

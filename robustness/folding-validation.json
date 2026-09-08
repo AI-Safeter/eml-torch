@@ -1,0 +1,20 @@
+[
+  {
+    "kind": "eml",
+    "maximum_absolute_error": 9.1552734375e-05,
+    "raw_coefficients": 794881,
+    "deployment_coefficients": 788736
+  },
+  {
+    "kind": "swiglu",
+    "maximum_absolute_error": 9.1552734375e-05,
+    "raw_coefficients": 794881,
+    "deployment_coefficients": 788736
+  },
+  {
+    "kind": "linear",
+    "maximum_absolute_error": 6.103515625e-05,
+    "raw_coefficients": 794817,
+    "deployment_coefficients": 788672
+  }
+]
