@@ -42,6 +42,7 @@ def main():
         run("seed_evaluate.py", args.model, op)
         run("geometry_evaluate.py", args.model, op)
         run("analyze.py", args.model, op)
+        run("per_style.py", args.model, op)
     print("COMPLETE SCALAR EVALUATION", args.model, flush=True)
 
 

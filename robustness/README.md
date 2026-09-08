@@ -54,3 +54,14 @@ CUDA_VISIBLE_DEVICES=0 python block_latency.py
 The teacher MLP is actually replaced in downstream evaluation, with a guard against accidentally calling it. Deployment folds normalization into affine weights. Validation-selected EML, SwiGLU and factorized-linear students receive the same tests. `utility-results.json` reports the predeclared retention and storage criteria. `latency.json` reports actual prefill and fixed-token decode timings; `block-latency.json` is a separate standalone measurement. A fast but inaccurate replacement does not meet the utility criteria.
 
 Do not run this reproduction into a directory containing different experiments. Existing matching artifacts are preserved; completed files are not a substitute for checking process exit status, source hashes, and the final study audit.
+
+## Final audit and report
+
+After all scalar and whole-block stages have completed:
+
+```bash
+CUDA_VISIBLE_DEVICES=0 python audit.py
+python report.py
+```
+
+The audit checks required cohorts and controls and recomputes saved validation objectives on CUDA. The report refuses to render without the complete audit. It creates `results/REPORT.md`, a figure in PNG/PDF, and an interactive explorer with every model/operation cell, per-format results, controls, and seeds. Reporting code does not alter checkpoint selection or the primary criteria.

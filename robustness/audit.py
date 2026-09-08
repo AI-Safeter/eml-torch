@@ -112,6 +112,8 @@ def main():
                 data = json.loads((out / filename).read_text())
                 assert all(len(rows) == count for rows in data.values()), filename
             assert (out / "robust-results.json").exists()
+            per_style = json.loads((out / "per-style-results.json").read_text())
+            assert len(per_style["ordinary"]) == len(per_style["interventions"]) == 7
             audit["scalar"][f"{model}/{op}"] = {
                 "fits": fits,
                 "failed": failed,
