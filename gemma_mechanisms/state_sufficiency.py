@@ -6,6 +6,8 @@ import time
 
 import torch
 
+from .causal import directions
+from .equations import quantities
 from .prepare import content
 from .runtime import HERE, digest, load, prompt, root, save, setup, text_layers, tokenizer
 
@@ -19,7 +21,7 @@ def main():
     setup(73)
     out = root()
     if args.split != "selection":
-        assert (out / "training/selection.json").exists(), (
+        assert root(str(out) + "-bos").joinpath("training/selection.json").exists(), (
             "Freeze replacements before exposing shared gate operands"
         )
     pairs = json.loads((out / "residual/mechanism/donor-pairs.json").read_text())[args.split]
@@ -27,11 +29,25 @@ def main():
     assert len(eligible) == args.groups
     styles = ["reversed", "code"] if args.new_formats else ["symbolic", "prose"]
     rows = [{**row, "style": style} for row in eligible for style in styles]
-    directory = out / "state-sufficiency" / "v2"
+    directory = out / "state-sufficiency" / "v3"
     directory.mkdir(parents=True, exist_ok=True)
     name = f"{args.split}-{args.groups}-{'new' if args.new_formats else 'known'}"
     freeze = {
         "source_sha256": digest(HERE / "state_sufficiency.py"),
+        "support_sources": {
+            p: digest(HERE / p)
+            for p in [
+                "runtime.py",
+                "prepare.py",
+                "causal.py",
+                "equations.py",
+                "CAUSAL_CONFIRMATION.md",
+            ]
+        },
+        "equations": {p.name: digest(p) for p in sorted((out / "residual/equations").glob("*.pt"))},
+        "probes": {
+            str(k): digest(out / "residual/mechanism" / f"layer{k}-prefix2.pt") for k in [26, 32]
+        },
         "split": args.split,
         "groups": args.groups,
         "styles": styles,
@@ -52,6 +68,10 @@ def main():
             "sliding_last_value",
             "sliding_other_values",
             "matched_random_sliding_kv",
+            "carry_direction",
+            "random_carry_direction",
+            "values_then_carry_block",
+            "values_then_random_block",
         ],
         "prediction": "Exactly matching the last-token residual and both reused KV tensors should restore donor logits; matching residual alone may not.",
         "pair_source_sha256": digest(out / "residual/mechanism/donor-pairs.json"),
@@ -67,6 +87,11 @@ def main():
         return
     model, tok = load(), tokenizer()
     layers = text_layers(model)
+    probes = {
+        k: torch.load(out / "residual/mechanism" / f"layer{k}-prefix2.pt", weights_only=True)
+        for k in [26, 32]
+    }
+    coords = {k: directions(probes[k], k) for k in probes}
     records = []
     started = time.perf_counter()
     with torch.inference_mode():
@@ -100,7 +125,7 @@ def main():
                 for x in inputs.values()
             )
 
-            def run(inp, hidden=None, kv=None):
+            def run(inp, hidden=None, kv=None, block=None):
                 captured = {}
 
                 def source_hook(module, args, kwargs):
@@ -120,7 +145,19 @@ def main():
                     return (state,) + args[1:], kwargs
 
                 def target_hook(module, args):
-                    captured["target"] = args[0][:, -1].clone()
+                    state = args[0]
+                    if block is not None:
+                        state = state.clone()
+                        c = coords[32]
+                        delta_score = (
+                            native["recipient"][1]["target"].float() - state[:, -1].float()
+                        ) @ c["carry"]
+                        q = c["q"] if block == "carry" else c["random"]
+                        state[:, -1] = (
+                            state[:, -1].float() + delta_score[:, None] / c["denominator"] * q
+                        ).to(state.dtype)
+                    captured["target"] = state[:, -1].clone()
+                    return (state,) + args[1:]
 
                 handles = [
                     layers[26].register_forward_pre_hook(source_hook, with_kwargs=True),
@@ -180,6 +217,18 @@ def main():
             variants["matched_random_sliding_kv"] = run(
                 inputs["recipient"], kv={"sliding_attention": random_kv}
             )
+            c = coords[26]
+            base_hidden = native["recipient"][1]["hidden"]
+            delta = (donor["hidden"].float() - base_hidden.float()) @ c["carry"]
+            for kind, q in [("carry_direction", c["q"]), ("random_carry_direction", c["random"])]:
+                changed = (base_hidden.float() + delta[:, None] / c["denominator"] * q).to(
+                    base_hidden.dtype
+                )
+                variants[kind] = run(inputs["recipient"], hidden=changed)
+            for kind in ["carry", "random"]:
+                variants[f"values_then_{kind}_block"] = run(
+                    inputs["recipient"], kv={"sliding_attention": (rk, dv)}, block=kind
+                )
             assert torch.equal(variants["hidden_only"][1]["hidden"], donor["hidden"])
             assert torch.equal(variants["both"][1]["hidden"], donor["hidden"])
             # Record failures of the prospective sufficiency prediction; do not manufacture equality.
@@ -189,12 +238,27 @@ def main():
                 same_logits = (logits == donor_logits).all(-1)
                 target_log_probability = logits.log_softmax(-1)[idx, targets]
                 hidden_error = (state["target"].float() - donor["target"].float()).square().mean(-1)
+                decoded = {
+                    "26": quantities(state["hidden"], probes[26]).tolist(),
+                    "32": quantities(state["target"], probes[32]).tolist(),
+                }
+                edit_norm = sum(
+                    (a.float() - b.float()).square().flatten(1).sum(-1)
+                    for a, b in zip(state["kv"]["sliding_attention"], [rk, rv])
+                ).sqrt()
                 for i, row in enumerate(batch):
                     records.append(
                         {
                             "id": row["recipient"]["id"],
                             "style": row["style"],
                             "kind": kind,
+                            "a": row["recipient"]["a"],
+                            "b": row["recipient"]["b"],
+                            "donor_a": row["donor_a"],
+                            "prefix_consistent_with_donor": str(row["recipient"]["answer"])[:-2]
+                            == str(row["donor_a"] + row["recipient"]["b"])[:-2],
+                            "quantities": {k: v[i] for k, v in decoded.items()},
+                            "sliding_kv_edit_norm": float(edit_norm[i]),
                             "target_digit_correct": bool(logits[i].argmax() == targets[i]),
                             "donor_top_token_match": bool(
                                 logits[i].argmax() == donor_logits[i].argmax()
