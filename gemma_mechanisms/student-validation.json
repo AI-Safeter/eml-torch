@@ -1,0 +1,206 @@
+{
+  "checks": [
+    "All matched budgets/depths within 0.1%; every nonlinear stage receives finite nonzero CUDA gradients",
+    "Contribution objective is bitwise equal to native Gemma4 RMSNorm in FP32 and BF16"
+  ],
+  "grid": [
+    {
+      "dimension": 1536,
+      "budget": 3000000,
+      "width": 256,
+      "depth": 1,
+      "kind": "eml",
+      "parameters": 2995042,
+      "parameter_bytes": 11980168,
+      "buffers": 4609,
+      "buffer_bytes": 18436,
+      "coefficients": 2999651,
+      "by_device": {
+        "cuda": 11998604
+      }
+    },
+    {
+      "dimension": 1536,
+      "budget": 3000000,
+      "width": 256,
+      "depth": 1,
+      "kind": "silu",
+      "parameters": 2994892,
+      "parameter_bytes": 11979568,
+      "buffers": 4609,
+      "buffer_bytes": 18436,
+      "coefficients": 2999501,
+      "by_device": {
+        "cuda": 11998004
+      }
+    },
+    {
+      "dimension": 1536,
+      "budget": 3000000,
+      "width": 256,
+      "depth": 2,
+      "kind": "eml",
+      "parameters": 2995040,
+      "parameter_bytes": 11980160,
+      "buffers": 4609,
+      "buffer_bytes": 18436,
+      "coefficients": 2999649,
+      "by_device": {
+        "cuda": 11998596
+      }
+    },
+    {
+      "dimension": 1536,
+      "budget": 3000000,
+      "width": 256,
+      "depth": 2,
+      "kind": "silu",
+      "parameters": 2994634,
+      "parameter_bytes": 11978536,
+      "buffers": 4609,
+      "buffer_bytes": 18436,
+      "coefficients": 2999243,
+      "by_device": {
+        "cuda": 11996972
+      }
+    },
+    {
+      "dimension": 1536,
+      "budget": 3000000,
+      "width": 256,
+      "depth": 4,
+      "kind": "eml",
+      "parameters": 2993496,
+      "parameter_bytes": 11973984,
+      "buffers": 4609,
+      "buffer_bytes": 18436,
+      "coefficients": 2998105,
+      "by_device": {
+        "cuda": 11992420
+      }
+    },
+    {
+      "dimension": 1536,
+      "budget": 3000000,
+      "width": 256,
+      "depth": 4,
+      "kind": "silu",
+      "parameters": 2995144,
+      "parameter_bytes": 11980576,
+      "buffers": 4609,
+      "buffer_bytes": 18436,
+      "coefficients": 2999753,
+      "by_device": {
+        "cuda": 11999012
+      }
+    },
+    {
+      "dimension": 1536,
+      "budget": 6000000,
+      "width": 512,
+      "depth": 1,
+      "kind": "eml",
+      "parameters": 5995122,
+      "parameter_bytes": 23980488,
+      "buffers": 4609,
+      "buffer_bytes": 18436,
+      "coefficients": 5999731,
+      "by_device": {
+        "cuda": 23998924
+      }
+    },
+    {
+      "dimension": 1536,
+      "budget": 6000000,
+      "width": 512,
+      "depth": 1,
+      "kind": "silu",
+      "parameters": 5995223,
+      "parameter_bytes": 23980892,
+      "buffers": 4609,
+      "buffer_bytes": 18436,
+      "coefficients": 5999832,
+      "by_device": {
+        "cuda": 23999328
+      }
+    },
+    {
+      "dimension": 1536,
+      "budget": 6000000,
+      "width": 512,
+      "depth": 2,
+      "kind": "eml",
+      "parameters": 5995120,
+      "parameter_bytes": 23980480,
+      "buffers": 4609,
+      "buffer_bytes": 18436,
+      "coefficients": 5999729,
+      "by_device": {
+        "cuda": 23998916
+      }
+    },
+    {
+      "dimension": 1536,
+      "budget": 6000000,
+      "width": 512,
+      "depth": 2,
+      "kind": "silu",
+      "parameters": 5993684,
+      "parameter_bytes": 23974736,
+      "buffers": 4609,
+      "buffer_bytes": 18436,
+      "coefficients": 5998293,
+      "by_device": {
+        "cuda": 23993172
+      }
+    },
+    {
+      "dimension": 1536,
+      "budget": 6000000,
+      "width": 512,
+      "depth": 4,
+      "kind": "eml",
+      "parameters": 5992040,
+      "parameter_bytes": 23968160,
+      "buffers": 4609,
+      "buffer_bytes": 18436,
+      "coefficients": 5996649,
+      "by_device": {
+        "cuda": 23986596
+      }
+    },
+    {
+      "dimension": 1536,
+      "budget": 6000000,
+      "width": 512,
+      "depth": 4,
+      "kind": "silu",
+      "parameters": 5992656,
+      "parameter_bytes": 23970624,
+      "buffers": 4609,
+      "buffer_bytes": 18436,
+      "coefficients": 5997265,
+      "by_device": {
+        "cuda": 23989060
+      }
+    }
+  ],
+  "full_model": null,
+  "seconds": 9.028007563203573,
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "torch": "2.9.0+cu128",
+  "peak_allocated_bytes": 181871104,
+  "peak_reserved_bytes": 195035136,
+  "sources": {
+    "__init__.py": "cba982ceaf274221f1a79b2ad3ceb6b0473b183e16080f33538988385b015fb7",
+    "identity.py": "ae3f4f19604ac1231dbf64c68fbd83e935c8765842ac770b38448e209ecaf193",
+    "prepare.py": "a4e8691eefff16dad1152155cb095054e38f4795f06a859e1e505b643bb9ee4c",
+    "runtime.py": "863ead9ca0178a1b5b5feb5ad3ec33faf3fa2b21067c5cc24efa187fe1dab9d0",
+    "student.py": "3e9d2bd814a86ae2a96c7fbdcbfa1ae01ec6b19fc5b042056700ce283c4331db",
+    "validate.py": "506c3e6faff34adebe4772abb719d90b352f366e9219cc8f74694ddd27d72de4",
+    "protocol.json": "6b8f66b9cf4d129ee216935ab5bf42f7ebaafba32422fdef69d91b40fd8a7fe1",
+    "PROTOCOL.md": "e1715d2550353faa1e51a14b5bbc37ab48becab332af1dc055b67f1b1416fdf6",
+    "../emltorch/operator.py": "03d92ec3bbe02256c1785e46f85d97bb1f990c08410bd2d4e78eb8d699a8a0d8"
+  },
+  "quality_evaluation": false
+}

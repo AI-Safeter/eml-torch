@@ -1,0 +1,31 @@
+{
+  "model": {
+    "id": "google/gemma-4-E2B-it",
+    "revision": "3e22461f65e89153144f8adb70e3b8c2cc9845a7",
+    "torch": "2.9.0+cu128",
+    "transformers": "5.16.1",
+    "inference_dtype": "bfloat16",
+    "training_dtype": "float32",
+    "attention": "sdpa"
+  },
+  "config_sha256": "1b28f3d2c3100f6c594754b81107428bd7b822a7f48272ca681dae9d2ec38330",
+  "safetensors_header_sha256": "74e51188bf4d249f9d8ae43909ee684701278e0f009398e08b19193db931ce75",
+  "architecture": [
+    "Gemma4ForConditionalGeneration"
+  ],
+  "hidden_size": 1536,
+  "layers": 35,
+  "kv_shared_layers": 20,
+  "parameter_groups": {
+    "multimodal_and_other": 475728160,
+    "text_embeddings_and_final_norm": 2765227776,
+    "text_layer_other": 306206208,
+    "text_mlp": 1557135360
+  },
+  "parameters": 5104297504,
+  "registered_buffers": 2289,
+  "native_mlp_parameters": 56623104,
+  "native_pre_post_norm_parameters": 3072,
+  "tie_word_embeddings": true,
+  "notes": "Meta-device architecture count includes all modalities and embeddings; buffer count is separate."
+}

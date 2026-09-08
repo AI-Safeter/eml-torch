@@ -1,0 +1,90 @@
+{
+  "version": 1,
+  "model": {
+    "id": "google/gemma-4-E2B-it",
+    "revision": "3e22461f65e89153144f8adb70e3b8c2cc9845a7",
+    "torch": "2.9.0+cu128",
+    "transformers": "5.16.1",
+    "inference_dtype": "bfloat16",
+    "training_dtype": "float32",
+    "attention": "sdpa"
+  },
+  "data_seed": 2026090837,
+  "arithmetic": {
+    "operations": ["add", "multiply", "divide"],
+    "counts_per_operation": {"train": 2048, "selection": 256, "gate": 1024, "final": 2048, "shift": 1024},
+    "formats": ["symbolic", "prose"],
+    "new_formats": ["reversed", "code"],
+    "max_new_tokens": 24
+  },
+  "language": {
+    "id": "HuggingFaceFW/fineweb-edu",
+    "revision": "87f09149ef4734204d70ed1d046ddc9ca3f2b8f9",
+    "file": "sample/10BT/000_00000.parquet",
+    "counts": {"train": 2048, "selection": 256, "gate": 512, "final": 1024},
+    "tokens_per_document": 256,
+    "split_unit": "URL hostname; duplicate text hashes excluded"
+  },
+  "general_qa": {
+    "id": "allenai/ai2_arc",
+    "revision": "210d026faf9955653af8916fad021475a3f00453",
+    "config": "ARC-Easy",
+    "selection_split": "validation",
+    "gate_and_final_source": "test",
+    "gate_fraction": 0.5,
+    "scoring": "zero-shot chat, length-normalized answer-text conditional likelihood"
+  },
+  "replacement": {
+    "layer": 26,
+    "depths": [1, 2, 4],
+    "budgets": [{"coefficients": 3000000, "bottleneck": 256}, {"coefficients": 6000000, "bottleneck": 512}],
+    "families": ["eml", "silu", "linear"],
+    "seeds": [1103, 2207, 3301],
+    "max_steps": 12000,
+    "minimum_steps": 3000,
+    "patience_steps": 1500,
+    "validation_interval": 100,
+    "batch_per_domain": 256,
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "clip_gradient_norm": 1.0,
+    "tokens_per_domain": {"train": 131072, "selection": 16384},
+    "loss": "equal domains; normalized raw MLP MSE plus normalized post-MLP residual contribution MSE",
+    "exp_clamp": 12.0,
+    "next_layers": [25, 27, 24, 28, 23, 29, 22, 30, 21, 31, 20, 32, 19, 33, 18, 34, 17, 16, 15, 14]
+  },
+  "mechanism": {
+    "operation": "add",
+    "candidate_layers": [8, 14, 20, 26, 32],
+    "candidate_variables": ["a_units", "b_units", "a_tens", "b_tens", "carry_units", "carry_tens", "sum_units", "sum_tens"],
+    "ridge_penalties": [0.001, 0.01, 0.1, 1.0, 10.0],
+    "equation_depths": [1, 2, 4],
+    "equation_budget": 2048,
+    "intervention_strengths": [0.0, 0.5, 1.0, 1.5],
+    "controls": ["same-variable donor", "matched-norm random subspace", "shuffled donor labels", "full donor activation"],
+    "minimum_interchange_accuracy": 0.5,
+    "minimum_effect_over_random_lower_ci": 0.0,
+    "maximum_response_nrmse": 0.2
+  },
+  "acceptance": {
+    "alpha": 0.05,
+    "bootstrap_replicates": 10000,
+    "accuracy_loss_upper_bound": 0.01,
+    "language_ce_increase_upper_bound_nats": 0.02,
+    "block_storage_reduction_minimum": 4.0,
+    "deployment_total_parameter_reduction": 0.2,
+    "deployment_end_to_end_latency_reduction": 0.1,
+    "expand_only_after_all_seed_gate_passes": true,
+    "eml_advantage_requires_paired_evidence_over_silu": true
+  },
+  "benchmark": {
+    "batch_sizes": [1, 8],
+    "prefill_lengths": [128, 512],
+    "decode_steps": 32,
+    "warmup": 10,
+    "paired_repeats": 50,
+    "optimization": "eager native SDPA for all; separately test equal torch.compile optimization when supported",
+    "primary_workload": "batch 8, prefill 512, 32 fixed cached decode steps",
+    "gpu_sharing_is_reported": true
+  }
+}
