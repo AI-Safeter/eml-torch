@@ -6,6 +6,7 @@ import json
 import statistics
 
 import matplotlib
+import torch
 from scipy.stats import beta
 
 from .quality_summary import accuracy, bootstrap
@@ -27,6 +28,56 @@ def carry_chain(a, b):
         longest = max(longest, run)
         a, b = a // 10, b // 10
     return longest
+
+
+def carry_readouts(by_kind):
+    """Check edit efficacy separately from the hypothesis of causal mediation."""
+    rows = {
+        kind: sorted(values, key=lambda r: (r["id"], r["style"]))
+        for kind, values in by_kind.items()
+    }
+    identities = [(r["id"], r["style"]) for r in rows["recipient"]]
+    assert all([(r["id"], r["style"]) for r in rs] == identities for rs in rows.values())
+    decoded = {
+        kind: torch.tensor(
+            [[r["quantities"][layer][4] for layer in ["26", "32"]] for r in rs], device="cuda"
+        )
+        for kind, rs in rows.items()
+    }
+    result = {"native_accuracy": {}, "edits": {}}
+    for kind, operand in [("recipient", "a"), ("donor", "donor_a")]:
+        truth = torch.tensor(
+            [r[operand] % 10 + r["b"] % 10 >= 10 for r in rows[kind]], device="cuda"
+        )
+        result["native_accuracy"][kind] = (
+            ((decoded[kind] >= 0.5) == truth[:, None]).float().mean(0).tolist()
+        )
+    for kind, reference, column in [
+        ("carry_direction", "donor", 0),
+        ("values_then_carry_block", "recipient", 1),
+        ("values_then_random_block", "recipient", 1),
+    ]:
+        value, target = decoded[kind][:, column], decoded[reference][:, column]
+        result["edits"][kind] = {
+            "layer": [26, 32][column],
+            "reference": reference,
+            "readout_mean_absolute_error": float((value - target).abs().mean()),
+            "readout_max_absolute_error": float((value - target).abs().max()),
+            "threshold_class_agreement": float(((value >= 0.5) == (target >= 0.5)).float().mean()),
+        }
+    for kind in ["values_then_carry_block", "values_then_random_block"]:
+        paired = collections.defaultdict(list)
+        for edited, base in zip(rows[kind], rows["sliding_values_only"]):
+            paired[base["id"]].append(
+                int(edited["target_digit_correct"]) - int(base["target_digit_correct"])
+            )
+        result["edits"][kind]["target_digit_accuracy_change"] = bootstrap(
+            [mean(v) for v in paired.values()]
+        )
+    result["scope"] = (
+        "Post hoc edit-efficacy diagnostics on fixed interventions. Readout equality does not imply equality of a causally meaningful variable; native readout accuracy is reported by distribution."
+    )
+    return result
 
 
 def main():
@@ -90,12 +141,49 @@ def main():
             }
         )
     methods = ["original", *final["methods"]]
-    diagnostics = {}
+    diagnostics, matched = {}, {}
     for split in ["final", "shift"]:
         raw = {
             name: read(out / "evaluation" / split / f"{name}.json")["results"] for name in methods
         }
         diagnostics[split] = {}
+        matched[split] = {}
+        selected_eml = selection["families"]["eml"]
+        for seed in SPEC["replacement"]["seeds"]:
+            eml_name = f"eml-b{selected_eml['budget']}-d{selected_eml['depth']}-s{seed}"
+            silu_name = f"silu-b{selected_eml['budget']}-d{selected_eml['depth']}-s{seed}"
+            comparison = {}
+            for field in ["arithmetic", "new_formats"]:
+                for op in SPEC["arithmetic"]["operations"]:
+                    s = [r for r in raw[silu_name][field] if r["op"] == op]
+                    e = [r for r in raw[eml_name][field] if r["op"] == op]
+                    value = accuracy(s, e, 0.05, True)
+                    lo, hi = value["net_loss_bootstrap"]["two_sided_95"]
+                    comparison[f"{field}/{op}"] = {
+                        "eml_accuracy_gain": -value["net_loss"],
+                        "gain_95ci": [-hi, -lo],
+                        "groups": value["groups"],
+                    }
+            if split == "final":
+                value = accuracy(raw[silu_name]["arc"], raw[eml_name]["arc"], 0.05)
+                lo, hi = value["net_loss_bootstrap"]["two_sided_95"]
+                comparison["arc"] = {
+                    "eml_accuracy_gain": -value["net_loss"],
+                    "gain_95ci": [-hi, -lo],
+                    "groups": value["groups"],
+                }
+                comparison["language_ce_eml_minus_silu"] = bootstrap(
+                    [
+                        e["ce_nats"] - s["ce_nats"]
+                        for e, s in zip(raw[eml_name]["language"], raw[silu_name]["language"])
+                    ]
+                )
+            matched[split][str(seed)] = {
+                "eml": eml_name,
+                "silu": silu_name,
+                "metrics": comparison,
+                "scope": "Descriptive paired 95% intervals, unadjusted. No model selection or acceptance decision uses these comparisons.",
+            }
         for name in methods[1:]:
             record = {}
             for field in ["arithmetic", "new_formats"]:
@@ -156,6 +244,14 @@ def main():
                     "peak_reserved_bytes",
                 ]
             }
+            entry[label]["isolated_memory"] = result["isolated_memory"][method]
+            entry[label]["peak_allocated_bytes"] = max(
+                result["isolated_memory"][method]["peak_allocated_bytes"],
+                max(s[method]["peak_allocated_bytes"] for s in samples),
+            )
+            entry[label]["peak_reserved_bytes"] = result["isolated_memory"][method][
+                "peak_reserved_bytes"
+            ]
         timing.append(entry)
     routing, equations = {}, {}
     for split in ["gate", "shift"]:
@@ -177,6 +273,7 @@ def main():
                 summary[kind] = {
                     "cases": len(rows),
                     "target_digit_accuracy": mean(r["target_digit_correct"] for r in rows),
+                    "donor_top_token_agreement": mean(r["donor_top_token_match"] for r in rows),
                     "target_digit_accuracy_bootstrap": bootstrap(
                         [mean(r["target_digit_correct"] for r in g) for g in per_group]
                     ),
@@ -196,6 +293,7 @@ def main():
                 }
             routing[cohort] = {
                 "variants": summary,
+                "carry_readouts": carry_readouts(by_kind),
                 "all_original_groups": data["all_original_groups"],
                 "eligible_original_groups": data["eligible_original_groups"],
                 "evaluated_groups": data["evaluated_groups"],
@@ -219,6 +317,10 @@ def main():
             }
         )
     chosen = selection["families"]["eml"]
+    extension = [read(p) for p in sorted((out / "optimization-extension").glob("*-b*-s*.json"))]
+    assert len(extension) == 6
+    superseded = [read(p) for p in sorted((mechanism / "training").glob("*-b*-s*.json"))]
+    assert not superseded or len(superseded) == 42
     chosen_training = next(
         r
         for r in training
@@ -256,11 +358,14 @@ def main():
         "training": training,
         "deployment_validation": deployed,
         "diagnostics": diagnostics,
+        "matched_eml_silu": matched,
         "timing": timing,
         "routing": routing,
         "equations": equations,
         "module_timing": module_timing,
         "failure_analysis": failure_analysis,
+        "optimization_extension": extension,
+        "superseded_bos_grid_fit_seconds": sum(r["training_seconds"] for r in superseded),
     }
     save(destination / "summary.json", summary)
     lines = [
@@ -294,9 +399,23 @@ def main():
         )
     lines += [
         "",
-        "Division uses the preregistered 24-token integer-only output contract. The original model often emits prose; a zero baseline is uninformative about preservation of division competence. No parser or generation-budget change was made after observing that problem.",
+        "Division uses the preregistered 24-token integer-only output contract. The original model often emits prose and has very low accuracy under this contract, providing weak evidence about preservation of division competence. No parser or generation-budget change was made after observing that problem.",
         "",
         "The initial grid omitted BOS from raw documents. A selection-only native check found 9.764632 versus 4.795804 nats/token without/with BOS. Those 42 fits were retained as diagnostics. The reported grid recollects language activations with BOS and retrains all 42 candidates; no replacement gate/final outputs were opened before the correction. Arithmetic chat tokenization already included BOS. See [BOS amendment](../BOS_AMENDMENT.md).",
+        "",
+        "Matched-depth EML versus SiLU on the final original-format tasks follows. Positive differences favor EML. Intervals resample operand groups (or ARC questions); they are descriptive unadjusted 95% intervals, not a post hoc selection rule.",
+        "",
+        "| Seed | Addition difference pp [95% CI] | Multiplication difference pp [95% CI] | Division difference pp [95% CI] | ARC difference pp [95% CI] |",
+        "|---|---|---|---|---|",
+    ]
+    for seed, row in matched["final"].items():
+        cells = []
+        for key in ["arithmetic/add", "arithmetic/multiply", "arithmetic/divide", "arc"]:
+            v = row["metrics"][key]
+            lo, hi = v["gain_95ci"]
+            cells.append(f"{100 * v['eml_accuracy_gain']:+.2f} [{100 * lo:+.2f}, {100 * hi:+.2f}]")
+        lines.append(f"| {seed} | " + " | ".join(cells) + " |")
+    lines += [
         "",
         "## Depth, capacity, and training cost",
         "",
@@ -316,6 +435,24 @@ def main():
         "The covariance-tail floor applies to raw MLP outputs confined to an affine decoder subspace of the stated rank. It bounds any such decoder on this training distribution, regardless of nonlinear depth; it does not bound EML architectures generally or the normalized residual contribution. The JSON also reports clipping, sampled exponent clamps, precision conversion, and actual CUDA memory peaks.",
         "",
         f"For the selected EML configuration, the raw training MSE is {chosen_training['training_raw_mse_mean']:.5f} and its rank floor is {chosen_training['rank_floor']:.5f}. The floor is {100 * failure_analysis['raw_training_error_fraction_at_rank_floor']:.1f}% of the observed raw error. Deeper nonlinear stages cannot remove that affine-output-rank constraint. Residual error above the floor, domain-specific errors, clipping and seed spread remain separate capacity/optimization diagnostics; they do not identify a universal EML limitation.",
+        "",
+        "All 36 nonlinear primary fits reached the 12,000-update cap and selected their best checkpoint within the last 1,000 updates. Optimization was therefore not demonstrated to converge. A separate diagnostic restarted the selected EML architecture and matched-depth SiLU for 24,000 updates, with the same initialization and minibatch stream. These weights were never substituted into the frozen held-out roster.",
+        "",
+        "| Diagnostic | Primary 12k objective | Best 24k objective | Best update | Extra run minutes |",
+        "|---|---:|---:|---:|---:|",
+    ]
+    for r in extension:
+        lines.append(
+            f"| {r['name']} | {r['prefix_replay']['primary_best_objective']:.5f} | {r['selection_objective']:.5f} | {r['selected_step']} | {r['training_seconds'] / 60:.1f} |"
+        )
+    lines += [
+        "",
+        (
+            f"The withdrawn BOS grid cost {sum(r['training_seconds'] for r in superseded) / 3600:.2f} additional device-hours of elapsed fit time. "
+            if superseded
+            else "The optional historical BOS diagnostic grid is absent from this reproduction. "
+        )
+        + f"The six doubled-budget diagnostic runs cost {sum(r['training_seconds'] for r in extension) / 3600:.2f} device-hours. They replayed the first 12k objective before continuing; their saved final objectives were independently replayed on CUDA. Improved activation fit on selection data does not establish improved held-out answer quality.",
         "",
         "Selected EML gate failures: "
         + "; ".join(
@@ -370,6 +507,22 @@ def main():
         )
     lines += [
         "",
+        "The edit-efficacy check separates the probe readout from behavior. The upstream edit nearly matches the donor's carry readout; the downstream carry block restores the recipient's thresholded readout in every case. The next table reports native decoding accuracy and the paired behavioral effect of blocking, including uncertainty clustered by operand group. Near-chance upstream decoding on shifted operands further limits its interpretation as a general carry variable.",
+        "",
+        "| Cohort | Native recipient carry accuracy at 26 / 32 % | Upstream edit: donor readout class match % | Downstream block: recipient readout class match % | Blocking effect on donor-digit accuracy pp [95% CI] |",
+        "|---|---|---:|---:|---|",
+    ]
+    for name, r in routing.items():
+        c = r["carry_readouts"]
+        edit = c["edits"]["values_then_carry_block"]
+        effect = edit["target_digit_accuracy_change"]
+        lo, hi = effect["two_sided_95"]
+        native = " / ".join(f"{100 * v:.2f}" for v in c["native_accuracy"]["recipient"])
+        lines.append(
+            f"| {name} | {native} | {100 * c['edits']['carry_direction']['threshold_class_agreement']:.2f} | {100 * edit['threshold_class_agreement']:.2f} | {100 * effect['mean']:+.2f} [{100 * lo:+.2f}, {100 * hi:+.2f}] |"
+        )
+    lines += [
+        "",
         "An exact match of the source residual can coexist with different downstream states and logits when reused KV differs. A deterministic equation of that residual alone therefore lacks a required input in these interventions. Each equation-response file quantifies the best possible average squared error on these conflicting-input pairs and tests the actual trained EML/SiLU, linear, symbolic, and identity equations. Cache-only interventions provide a direct test: unchanged equation inputs imply zero predicted change despite a nonzero native response.",
         "",
         "This is evidence about conditional causal routing and input sufficiency. It is not a recovered addition algorithm, an explanation of multiplication/division, or proof that EML cannot succeed with a different state representation. Failed carry mediation prevents using that interpretation to justify a mechanism-based replacement.",
@@ -421,6 +574,104 @@ def main():
         ylim=(0, 100),
     )
     axes[1].tick_params(axis="x", rotation=20)
+    fig.savefig(destination / "diagnostics.png", dpi=180)
+    fig.savefig(destination / "diagnostics.pdf")
+    plt.close(fig)
+    fig, axes = plt.subplots(1, 3, figsize=(17, 4.8), constrained_layout=True)
+    display = [
+        ("EML", list(chosen["checkpoints"]), "#007c91"),
+        (
+            f"SiLU d{chosen['depth']}",
+            [
+                f"silu-b{chosen['budget']}-d{chosen['depth']}-s{s}"
+                for s in SPEC["replacement"]["seeds"]
+            ],
+            "#d97922",
+        ),
+    ]
+    silu_selected = selection["families"]["silu"]
+    if silu_selected["depth"] != chosen["depth"]:
+        display.append(
+            (f"SiLU d{silu_selected['depth']}", list(silu_selected["checkpoints"]), "#925821")
+        )
+    display.append(
+        (
+            "Linear rank 974",
+            [f"linear-b3000000-d0-s{s}" for s in SPEC["replacement"]["seeds"]],
+            "#777777",
+        )
+    )
+    endpoints = ["add", "multiply", "divide", "arc"]
+    bar_width = 0.8 / len(display)
+    for j, (label, names, color) in enumerate(display):
+        values = [
+            [100 * final["methods"][name]["accuracy"][task]["net_loss"] for name in names]
+            for task in endpoints
+        ]
+        centers = [mean(v) for v in values]
+        errors = [
+            [c - min(v) for c, v in zip(centers, values)],
+            [max(v) - c for c, v in zip(centers, values)],
+        ]
+        positions = [i - 0.4 + bar_width / 2 + j * bar_width for i in range(4)]
+        axes[0].bar(positions, centers, bar_width, yerr=errors, color=color, label=label, capsize=2)
+    axes[0].axhline(1, color="black", linestyle="--", linewidth=1, label="1pp target")
+    axes[0].set(
+        xticks=range(4),
+        xticklabels=["Add", "Multiply", "Divide†", "ARC"],
+        ylabel="Final net accuracy loss (percentage points)",
+        title="Complete MLP replacement",
+    )
+    axes[0].legend(fontsize=8)
+    primary = [r for r in timing if r["batch"] == 8 and r["prefill_tokens"] == 512]
+    for j, r in enumerate(primary):
+        name = r["method"]
+        label = name.split("-b")[0].upper() + " " + name.split("-d")[1].split("-")[0]
+        if name.startswith("linear"):
+            label = "Linear " + ("974" if "b3000000" in name else "1536")
+        b = r["five_pair_block_speedup"]
+        center, (lo, hi) = 100 * b["mean"], [100 * v for v in b["two_sided_95"]]
+        axes[1].errorbar(
+            center,
+            j,
+            xerr=[[max(0, center - lo)], [max(0, hi - center)]],
+            fmt="o",
+            color="#007c91" if name.startswith("eml") else "#777777",
+            capsize=3,
+        )
+        axes[1].text(center, j + 0.12, label, fontsize=8, ha="center")
+    axes[1].axvline(0, color="black", linewidth=1)
+    axes[1].axvline(10, color="#245b35", linestyle="--", label="10% target")
+    axes[1].set(
+        yticks=[],
+        xlabel="Paired end-to-end speedup (%)",
+        title="Batch 8 / prefill 512 / decode 32",
+        ylim=(-0.5, len(primary) - 0.5),
+    )
+    axes[1].legend(fontsize=8)
+    cohorts = list(routing)
+    for j, (kind, label, color) in enumerate(
+        [
+            ("hidden_only", "Residual", "#888888"),
+            ("sliding_other_values", "Earlier sliding V", "#007c91"),
+            ("matched_random_sliding_kv", "Random KV", "#d97922"),
+            ("both", "Residual + KV", "#245b35"),
+        ]
+    ):
+        values = [100 * routing[c]["variants"][kind]["donor_top_token_agreement"] for c in cohorts]
+        axes[2].bar([i - 0.3 + j * 0.2 for i in range(4)], values, 0.2, color=color, label=label)
+    axes[2].set(
+        xticks=range(4),
+        xticklabels=["Gate\nknown", "Gate\nnew", "Shift\nknown", "Shift\nnew"],
+        ylabel="Donor top-token agreement (%)",
+        title="Original-model intervention response",
+        ylim=(0, 105),
+    )
+    axes[2].legend(fontsize=8, loc="lower right")
+    fig.suptitle(
+        "Quality bars: mean and range over three seeds. Timing: within-run block bootstrap. †Division has a weak original baseline.",
+        fontsize=10,
+    )
     fig.savefig(destination / "primary.png", dpi=180)
     fig.savefig(destination / "primary.pdf")
     plt.close(fig)
@@ -431,7 +682,14 @@ def main():
             "source_sha256": {p.name: digest(p) for p in sorted(HERE.glob("*.py"))},
             "files": {
                 name: digest(destination / name)
-                for name in ["REPORT.md", "summary.json", "primary.png", "primary.pdf"]
+                for name in [
+                    "REPORT.md",
+                    "summary.json",
+                    "primary.png",
+                    "primary.pdf",
+                    "diagnostics.png",
+                    "diagnostics.pdf",
+                ]
             },
         },
     )

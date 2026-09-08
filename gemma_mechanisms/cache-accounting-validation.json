@@ -1,0 +1,11 @@
+{
+  "alias_cycle_test_passed": true,
+  "native_cache": {
+    "cache_cuda_storage_bytes": 46176,
+    "cache_total_storage_bytes": 46176
+  },
+  "direct_key_value_storage_bytes": 46080,
+  "source_sha256": "e6cd26124aa0af98e32f828b5c232b7106989e3234e21a4386ed5c7c7dfa84c4",
+  "function_sha256": "e768e6ca4b41ff4681fec6c2c8bb400c7335cbeab1131e4a7855837d74a584e9",
+  "scope": "CUDA alias/cycle fixture and every instantiated native DynamicCache layer, synthetic 1x1x3x256 BF16 K/V. Metadata included."
+}

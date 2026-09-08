@@ -7,6 +7,8 @@ import torch
 
 from .evaluate import parse_answer, roster
 from .runtime import HERE, SPEC, digest, root, save, setup
+from .student import load_student
+from .train import evaluate, moments
 
 
 def main():
@@ -77,6 +79,38 @@ def main():
         assert audit["checkpoint_sha256"] == record["checkpoint_sha256"]
         assert audit["objective_replay_exact"]
         assert audit["training_raw_mse"] + 1e-6 >= audit["training_raw_mse_lower_bound"]
+    extension = read(out / "optimization-extension/freeze.json")
+    source_check(extension)
+    assert extension["selection_sha256"] == digest(out / "training/selection.json")
+    assert extension["training_freeze_sha256"] == digest(out / "training/freeze.json")
+    raw = {
+        split: {
+            domain: torch.load(out / "collection" / f"{domain}-{split}.pt", weights_only=True)
+            for domain in ["arithmetic", "language"]
+        }
+        for split in ["train", "selection"]
+    }
+    _, cscale = moments(raw["train"])
+    norm = torch.load(out / "collection/native-postnorm.pt", weights_only=True)
+    norm["weight"] = norm["weight"].cuda()
+    for seed in extension["seeds"]:
+        for kind in extension["families"]:
+            name = f"{kind}-b{extension['budget']}-d{extension['depth']}-s{seed}"
+            path = out / "optimization-extension" / f"{name}.json"
+            record = read(path)
+            assert record["freeze_sha256"] == digest(out / "optimization-extension/freeze.json")
+            assert digest(path.with_suffix(".pt")) == record["checkpoint_sha256"]
+            assert record["prefix_replay"]["absolute_difference"] < 1e-7
+            model = load_student(path.with_suffix(".pt"), dtype=torch.float32)
+            validation = evaluate(model, raw["selection"], norm, cscale)
+            assert (
+                sum(v["objective"] for v in validation.values()) / 2
+                == record["selection_objective"]
+            )
+            del model
+    del raw, norm, cscale
+    torch.cuda.empty_cache()
+    print("AUDITED OPTIMIZATION EXTENSION", flush=True)
     deployed = {r["name"]: r for r in read(out / "deployment-validation.json")["records"]}
     names = roster(out)
     for split in ["gate", "final", "shift"]:

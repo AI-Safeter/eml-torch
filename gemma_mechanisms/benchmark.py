@@ -23,6 +23,36 @@ def telemetry():
     return subprocess.check_output(command, text=True).strip().splitlines()
 
 
+def cache_accounting(cache):
+    """Count unique live tensor storages, including aliases and cache metadata."""
+    objects, storages = set(), {}
+
+    def visit(value):
+        if id(value) in objects:
+            return
+        objects.add(id(value))
+        if isinstance(value, torch.Tensor):
+            storage = value.untyped_storage()
+            key = (str(value.device), storage.data_ptr())
+            storages[key] = storage.nbytes()
+        elif isinstance(value, dict):
+            for item in value.values():
+                visit(item)
+        elif isinstance(value, (list, tuple)):
+            for item in value:
+                visit(item)
+        elif hasattr(value, "__dict__"):
+            visit(vars(value))
+
+    visit(cache)
+    return {
+        "cache_cuda_storage_bytes": sum(
+            size for (device, _), size in storages.items() if device.startswith("cuda")
+        ),
+        "cache_total_storage_bytes": sum(storages.values()),
+    }
+
+
 @torch.inference_mode()
 def workload(model, ids, forced):
     mask = torch.ones_like(ids)
@@ -66,6 +96,7 @@ def workload(model, ids, forced):
         "total_tokens_per_second": (ids.numel() + forced.numel()) / elapsed,
         "peak_allocated_bytes": torch.cuda.max_memory_allocated(),
         "peak_reserved_bytes": torch.cuda.max_memory_reserved(),
+        **cache_accounting(result.past_key_values),
     }
 
 
@@ -142,7 +173,6 @@ def main():
                 text_layers(model)[26].mlp = student.cuda()
                 assert not original_ids.intersection(id(p) for p in model.parameters())
             gc.collect()
-            torch.cuda.empty_cache()
 
         for batch, length in shapes:
             path = directory / f"{method}-b{batch}-p{length}.json"
@@ -151,9 +181,21 @@ def main():
                 continue
             ids, decode = tokens[:batch, :length].cuda(), forced[:batch]
             before = telemetry()
+            isolated_memory = {}
             for name in ["original", method]:
                 activate(name)
-                for _ in range(SPEC["benchmark"]["warmup"]):
+                torch.cuda.empty_cache()
+                first = workload(model, ids, decode)
+                isolated_memory[name] = {
+                    k: v
+                    for k, v in first.items()
+                    if k.startswith("peak_") or k.startswith("cache_")
+                }
+            # Ten warm-ups per path in total. Preserve the warmed allocator
+            # between later switches; clearing it would time artificial cold allocations.
+            for _ in range(SPEC["benchmark"]["warmup"] - 1):
+                for name in ["original", method]:
+                    activate(name)
                     workload(model, ids, decode)
             samples = []
             for repeat in range(SPEC["benchmark"]["paired_repeats"]):
@@ -173,6 +215,8 @@ def main():
                     "prefill_tokens": length,
                     "decode_steps": 32,
                     "samples": samples,
+                    "isolated_memory": isolated_memory,
+                    "allocator_policy": "First warm-up per path starts with an empty unused allocator cache and records isolated working memory. Nine interleaved warm-ups follow. No allocator clearing between timed switches; reserved memory in timed samples can retain comparison allocations.",
                     "telemetry_before": before,
                     "telemetry_after": telemetry(),
                     "cuda_visible_devices": os.environ.get("CUDA_VISIBLE_DEVICES"),

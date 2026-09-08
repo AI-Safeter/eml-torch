@@ -112,6 +112,12 @@ reusing the command elsewhere. It stops for a new protocol if the gate passes.
 ```bash
 "$GEMMA_PYTHON" -m gemma_mechanisms.run_confirmation \
   --output /path/to/fresh-study-bos --mechanisms-output /path/to/fresh-study
+CUDA_VISIBLE_DEVICES=2 EML_GEMMA_MECHANISMS_RUNS=/path/to/fresh-study-bos \
+  "$GEMMA_PYTHON" -m gemma_mechanisms.microbenchmark
+CUDA_VISIBLE_DEVICES=2 EML_GEMMA_MECHANISMS_RUNS=/path/to/fresh-study-bos \
+  "$GEMMA_PYTHON" -m gemma_mechanisms.longer_training
+CUDA_VISIBLE_DEVICES=2 "$GEMMA_PYTHON" -m gemma_mechanisms.audit_release \
+  --output /path/to/fresh-study-bos --mechanisms-output /path/to/fresh-study
 CUDA_VISIBLE_DEVICES=2 "$GEMMA_PYTHON" -m gemma_mechanisms.report \
   --output /path/to/fresh-study-bos --mechanisms-output /path/to/fresh-study
 ```

@@ -1,5 +1,6 @@
 """Diagnostic module timing; never substitute it for end-to-end model timing."""
 
+import json
 import os
 import time
 
@@ -34,6 +35,14 @@ def timed(module, x, repeats):
 def main():
     setup(73)
     out = root()
+    destination = out / "microbenchmark.json"
+    if destination.exists():
+        old = json.loads(destination.read_text())
+        assert old["source_sha256"] == digest(HERE / "microbenchmark.py")
+        assert old["selection_sha256"] == digest(out / "training/selection.json")
+        assert old["input_sha256"] == digest(out / "collection/language-selection.pt")
+        print("PRESERVE MODULE TIMINGS", flush=True)
+        return
     prefix = "model.language_model.layers.26.mlp."
     state = {}
     for path in SNAPSHOT.glob("*.safetensors"):

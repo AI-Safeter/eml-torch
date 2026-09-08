@@ -26,6 +26,15 @@ def main():
     out = root()
     directory = out / "residual/equations"
     source = out / "state-sufficiency/v3" / f"{args.cohort}.json"
+    destination = out / "equation-responses" / f"{args.cohort}.json"
+    checkpoint_hashes = {p.name: digest(p) for p in sorted(directory.glob("*.pt"))}
+    if destination.exists():
+        old = json.loads(destination.read_text())
+        assert old["source_data_sha256"] == digest(source)
+        assert old["source_sha256"] == digest(HERE / "equation_responses.py")
+        assert old["checkpoints"] == checkpoint_hashes
+        print("PRESERVE EQUATION RESPONSES", args.cohort, flush=True)
+        return
     data = json.loads(source.read_text())
     by_kind = collections.defaultdict(dict)
     for row in data["records"]:
@@ -52,7 +61,7 @@ def main():
         "symbolic": symbolic,
         "identity": lambda x: x,
     }
-    checkpoints = {}
+    checkpoints = dict(checkpoint_hashes)
     for path in sorted(directory.glob("*-d*-s*.pt")):
         checkpoint = torch.load(path, weights_only=True)
         stats = {k: checkpoint["state"][k] for k in ["xmean", "xstd", "ymean", "yscale"]}
