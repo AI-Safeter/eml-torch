@@ -1,0 +1,32 @@
+{
+  "scope": "Actual fitted Gemma heads and native GELU controls, validation prompts only; cached results exactly equal to the original uncached evaluation files",
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "torch": "2.9.0+cu128",
+  "files": {
+    "ordinary-validation-audit.json": {
+      "methods": 12,
+      "records_per_method": 12,
+      "native_source_sha256": "1da0350bbfad6ab4ad77c0cab67b616de4aca0990724fda9a82337998aa9e69e",
+      "all_raw_records_identical": true
+    },
+    "ordinary-all-tokens-validation.json": {
+      "methods": 12,
+      "records_per_method": 12,
+      "native_source_sha256": "5a4be5c3d40738df9d4624b7ba12e98f90e1787245d020511889069c53e4838a",
+      "all_raw_records_identical": true
+    },
+    "interventions-validation-audit.json": {
+      "methods": 12,
+      "records_per_method": 72,
+      "native_source_sha256": "dd790e769faabbe59984a2413818d2abcb433109e45508d8bb7cde30af67b6a2",
+      "all_raw_records_identical": true
+    },
+    "coordinate-validation.json": {
+      "methods": 12,
+      "records_per_method": 144,
+      "native_source_sha256": "958bd3ddec18782d14481120eb5da4841852a755e18610d481f7d6e061ca766e",
+      "all_raw_records_identical": true
+    }
+  },
+  "cache_source_sha256": "dd617046ecee2bb57c0e5a036ef302c06c593f7d49d889216a5da2e69562747f"
+}

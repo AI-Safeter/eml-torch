@@ -1,0 +1,19 @@
+{
+  "epoch": 1788846126.6402164,
+  "stage": "Gemma shared-attention-state cache prototype, not installed in live Gemma evaluation",
+  "full_gemma_primary_replay_pending": true,
+  "files": {
+    "prefix_cache.py": "b7cc10f5b9c0724c6a0a8f9190ec791aa533a9312dc0bf64852f9d9339a478f6",
+    "gemma/prefix_cache.py": "dd617046ecee2bb57c0e5a036ef302c06c593f7d49d889216a5da2e69562747f",
+    "gemma/validate_prefix.py": "50c9e903605c853d2e8b4578545eb897ff4099f4c8e7756bb84b32408cf3a817",
+    "gemma/validate_prefix_heads.py": "e25a9cd56de22d09d474885995ac822921f1fa91cd3e0b7a8b2fb5c88ac8def8",
+    "gemma/prefix-validation.json": "348ba12da7dea8020cb5eb48db26e10b7c1c2cad19f9894b0a4954d3a8070b40",
+    "gemma/prefix-head-validation.json": "e03f061d84adfd704966047eb847ae3423808ce3fcadbe065092281ed1982223",
+    "gemma/PREFIX_PROTOTYPE.md": "316b8739ecf3408e9a6ceee8d190c9055cb1ab66741dadb1f631450bb064ce9f",
+    "prefix-replay-qwen4b-add.json": "fcac6898823a6c89a137a5a13c77df73e54a9bf131887100ed34df81aab2943b",
+    "verify_sources.py": "f4f0a64a6c35c383bef46a12e0446a7f0280cd296f0dce9871a5bbf1f5978b06"
+  },
+  "supersedes": {
+    "verify_sources.py": "0ec29ed84586b389f1f9b81cd44ab7de0fa7c56a789b24c17452538a138d2938"
+  }
+}
