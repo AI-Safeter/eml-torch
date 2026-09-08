@@ -19,8 +19,10 @@ passes the scalar fidelity criteria: EML response NRMSE is 0.0717, and original
 and EML answer accuracy are both 88.90%. Its paired EML–SiLU comparison remains
 inconclusive. The constant baseline has 89.00% observed accuracy and response
 NRMSE one, illustrating why accuracy alone misses lost input sensitivity.
-This is a primary-cohort result; seed, stress, and decoding suites
-are still pending for the complete multiplication cell.
+The multiplication seed, stress, and decoding suites are now complete, with
+exact GPU metric replay. Seed ranges overlap. On unconditioned all-token
+decoding, observed EML accuracy loss is 0.033 percentage points, but its upper
+bound is 1.428 points, so the one-point retention criterion is not certified.
 
 [Gemma division's primary cohort](gemma/primary-division.json) passes the fidelity
 criteria but favors SiLU over EML: response NRMSE is 0.0128 versus 0.0145, with a

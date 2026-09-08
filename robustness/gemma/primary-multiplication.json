@@ -1,5 +1,5 @@
 {
-  "scope": "Primary Gemma multiplication cohort only; full cell and study remain incomplete",
+  "scope": "Primary Gemma multiplication cohort, with completed seed/stress/decoding review; final study audit pending",
   "model": {
     "id": "google/gemma-4-E2B-it",
     "revision": "3e22461f65e89153144f8adb70e3b8c2cc9845a7",
@@ -655,5 +655,86 @@
   },
   "source_commit": "37258a828707f86205ff5334b8a327b853200e67",
   "component_scope": "One scalar contribution; original dense MLP still runs. No whole-block compression or arithmetic-algorithm identification.",
-  "comparison_scope": "Matched head parameters and feature inputs; different depth/architecture. Paired EML-SiLU interval is per comparison and includes zero."
+  "comparison_scope": "Matched head parameters and feature inputs; different depth/architecture. Paired EML-SiLU interval is per comparison and includes zero.",
+  "completed_cell": {
+    "raw_method_condition_records": 1612032,
+    "exact_gpu_summary_and_per_style_replay": true,
+    "metric_audit_sha256": "972d40692dc586ee05519490629d9e5ee0484838a70b69d054e5f93bbd0e9491",
+    "primary_checks": {
+      "accuracy_bound": true,
+      "nrmse_bound": true,
+      "correlation_bound": true,
+      "all_pass": true
+    },
+    "seed_response_nrmse": [
+      {
+        "seed": 101,
+        "eml": 0.06927941426135659,
+        "silu": 0.07638681241782704
+      },
+      {
+        "seed": 211,
+        "eml": 0.07169921356925298,
+        "silu": 0.07072661214508397
+      },
+      {
+        "seed": 307,
+        "eml": 0.058391690444809415,
+        "silu": 0.0762712676865073
+      },
+      {
+        "seed": 401,
+        "eml": 0.07020657497658228,
+        "silu": 0.07902995216773621
+      },
+      {
+        "seed": 503,
+        "eml": 0.077781222937473,
+        "silu": 0.06550020410104017
+      }
+    ],
+    "all_token_decoding": {
+      "ordinary-all-tokens-test-known-formats": {
+        "original": {
+          "accuracy": 0.8889973958333333,
+          "accuracy_loss_pp": 0.0,
+          "accuracy_loss_upper_pp": 0.6125274038492533,
+          "passes_one_percentage_point_bound": true
+        },
+        "heads-active-r32-g0.1/eml": {
+          "accuracy": 0.8896484375,
+          "accuracy_loss_pp": -0.06510416666666666,
+          "accuracy_loss_upper_pp": 1.0616865263904942,
+          "passes_one_percentage_point_bound": false
+        },
+        "heads-active-r32-g0.1/neural": {
+          "accuracy": 0.8889973958333333,
+          "accuracy_loss_pp": 0.0,
+          "accuracy_loss_upper_pp": 1.2077917169515693,
+          "passes_one_percentage_point_bound": false
+        }
+      },
+      "ordinary-all-tokens-unconditioned": {
+        "original": {
+          "accuracy": 0.8033854166666666,
+          "accuracy_loss_pp": 0.0,
+          "accuracy_loss_upper_pp": 0.6125274038492533,
+          "passes_one_percentage_point_bound": true
+        },
+        "heads-active-r32-g0.1/eml": {
+          "accuracy": 0.8030598958333333,
+          "accuracy_loss_pp": 0.03255208333333333,
+          "accuracy_loss_upper_pp": 1.4281129357067117,
+          "passes_one_percentage_point_bound": false
+        },
+        "heads-active-r32-g0.1/neural": {
+          "accuracy": 0.8043619791666666,
+          "accuracy_loss_pp": -0.09765625,
+          "accuracy_loss_upper_pp": 1.3377213579125273,
+          "passes_one_percentage_point_bound": false
+        }
+      }
+    },
+    "scope": "All required multiplication suites are complete; seed ranges overlap, and one-point all-token retention is not certified. Full nine-cell evidence and portable bundle remain pending."
+  }
 }
