@@ -339,6 +339,10 @@ def main():
     compiler = [read(p) for p in sorted((out / "compiler-diagnostic").glob("*-b*-s*.json"))]
     if compiler:
         read(out / "compiler-diagnostic/freeze.json")
+    decoder = [read(p) for p in sorted((out / "decoder-error").glob("*-b*-s*.json"))]
+    if decoder:
+        assert len(decoder) == 12
+        read(out / "decoder-error/freeze.json")
     superseded = [read(p) for p in sorted((mechanism / "training").glob("*-b*-s*.json"))]
     assert not superseded or len(superseded) == 42
     chosen_training = next(
@@ -395,6 +399,7 @@ def main():
         "failure_analysis": failure_analysis,
         "optimization_extension": extension,
         "compiler_diagnostic": compiler,
+        "decoder_error_decomposition": decoder,
         "superseded_bos_grid_fit_seconds": sum(r["training_seconds"] for r in superseded),
     }
     save(destination / "summary.json", summary)
@@ -535,6 +540,40 @@ def main():
             for name, endpoints in failure_analysis["selected_eml_failed_gate_endpoints"].items()
         )
         + ". The detailed bounds distinguish measured net degradation from failure to certify a one-percentage-point limit.",
+    ]
+    if decoder:
+        lines += [
+            "",
+            "An exact error decomposition sharpens the capacity diagnosis. In normalized target coordinates, QR factorization of the learned decoder separates the target component outside its affine range from prediction error inside that range. The terms sum to the observed raw MSE; closure and agreement with the earlier fit audit are checked on CUDA. Each row averages three seeds at the selected depth and budget.",
+            "",
+            "| Family / updates | Train total | Train outside decoder | Train within decoder | Selection total | Selection outside | Selection within |",
+            "|---|---:|---:|---:|---:|---:|---:|",
+        ]
+        for phase in ["training", "optimization-extension"]:
+            for kind in ["eml", "silu"]:
+                rows = [
+                    r for r in decoder if r["phase"] == phase and r["name"].startswith(kind + "-")
+                ]
+                assert len(rows) == 3
+                values = [
+                    mean(r["balanced"][split][key] for r in rows)
+                    for split in ["train", "selection"]
+                    for key in [
+                        "raw_normalized_mse",
+                        "outside_learned_affine_decoder_mse",
+                        "within_decoder_prediction_mse",
+                    ]
+                ]
+                lines.append(
+                    f"| {kind} / {'12k' if phase == 'training' else '24k'} | "
+                    + " | ".join(f"{v:.5f}" for v in values)
+                    + " |"
+                )
+        lines += [
+            "",
+            "The learned decoder's irreducible error is close to the best rank-512 training floor. Longer training primarily reduces error within the representable subspace. That remaining term can include encoder information loss, limited nonlinear capacity, optimization and objective tradeoffs; this decomposition does not separate those causes. The outside term could change if the decoder learns a different subspace, but cannot cross the stated rank floor on these targets. Neither term alone determines answer accuracy.",
+        ]
+    lines += [
         "",
         "## Actual replacement inference cost",
         "",

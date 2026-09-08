@@ -119,6 +119,8 @@ CUDA_VISIBLE_DEVICES=2 EML_GEMMA_MECHANISMS_RUNS=/path/to/fresh-study-bos \
 TORCHINDUCTOR_COMPILE_THREADS=2 CUDA_VISIBLE_DEVICES=2 \
   EML_GEMMA_MECHANISMS_RUNS=/path/to/fresh-study-bos \
   "$GEMMA_PYTHON" -m gemma_mechanisms.compile_probe
+CUDA_VISIBLE_DEVICES=2 EML_GEMMA_MECHANISMS_RUNS=/path/to/fresh-study-bos \
+  "$GEMMA_PYTHON" -m gemma_mechanisms.decoder_error
 CUDA_VISIBLE_DEVICES=2 "$GEMMA_PYTHON" -m gemma_mechanisms.audit_release \
   --output /path/to/fresh-study-bos --mechanisms-output /path/to/fresh-study
 CUDA_VISIBLE_DEVICES=2 "$GEMMA_PYTHON" -m gemma_mechanisms.report \

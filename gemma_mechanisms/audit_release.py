@@ -123,6 +123,34 @@ def main():
     del raw, norm, cscale
     torch.cuda.empty_cache()
     print("AUDITED OPTIMIZATION EXTENSION", flush=True)
+    decoder = out / "decoder-error"
+    if decoder.exists():
+        frozen = read(decoder / "freeze.json")
+        source_check(frozen)
+        for name, sha in frozen["inputs"].items():
+            assert digest(out / name) == sha
+        paths = list(decoder.glob("*-b*-s*.json"))
+        assert len(paths) == len(frozen["checkpoints"]) == 12
+        seen = set()
+        for path in paths:
+            record = read(path)
+            assert record["freeze_sha256"] == digest(decoder / "freeze.json")
+            checkpoint = f"{record['phase']}/{record['name']}.pt"
+            assert checkpoint not in seen
+            seen.add(checkpoint)
+            assert digest(out / checkpoint) == frozen["checkpoints"][checkpoint]
+            for split in record["results"].values():
+                for values in split.values():
+                    numeric = torch.tensor(
+                        list(values.values()), device="cuda", dtype=torch.float64
+                    )
+                    assert torch.isfinite(numeric).all() and (numeric >= 0).all()
+                    assert values["pythagorean_closure_error"] < 1e-6
+            assert (
+                record["balanced"]["train"]["outside_learned_affine_decoder_mse"] + 1e-6
+                >= record["optimal_training_rank_floor"]
+            )
+        assert seen == set(frozen["checkpoints"])
     deployment = read(out / "deployment-validation.json")
     source_check(deployment)
     deployed = {r["name"]: r for r in deployment["records"]}
