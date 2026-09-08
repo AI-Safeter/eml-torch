@@ -1,0 +1,322 @@
+{
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "checks": [
+    {
+      "method": "lowrank",
+      "layer": 0,
+      "validation_mse": 0.22272905707359314,
+      "bank_v_bytes": 8536832,
+      "bank_v_budget_bytes": 8633856
+    },
+    {
+      "method": "lowrank",
+      "layer": 1,
+      "validation_mse": 0.30000633001327515,
+      "bank_v_bytes": 8536832,
+      "bank_v_budget_bytes": 8633856
+    },
+    {
+      "method": "lowrank",
+      "layer": 2,
+      "validation_mse": 0.34559759497642517,
+      "bank_v_bytes": 8536832,
+      "bank_v_budget_bytes": 8633856
+    },
+    {
+      "method": "lowrank",
+      "layer": 3,
+      "validation_mse": 0.2968428134918213,
+      "bank_v_bytes": 8536832,
+      "bank_v_budget_bytes": 8633856
+    },
+    {
+      "method": "lowrank",
+      "layer": 4,
+      "validation_mse": 0.3087901473045349,
+      "bank_v_bytes": 33949696,
+      "bank_v_budget_bytes": 34078720
+    },
+    {
+      "method": "lowrank",
+      "layer": 5,
+      "validation_mse": 0.35067373514175415,
+      "bank_v_bytes": 8536832,
+      "bank_v_budget_bytes": 8633856
+    },
+    {
+      "method": "lowrank",
+      "layer": 6,
+      "validation_mse": 0.24610260128974915,
+      "bank_v_bytes": 8536832,
+      "bank_v_budget_bytes": 8633856
+    },
+    {
+      "method": "lowrank",
+      "layer": 7,
+      "validation_mse": 0.2788131833076477,
+      "bank_v_bytes": 8536832,
+      "bank_v_budget_bytes": 8633856
+    },
+    {
+      "method": "lowrank",
+      "layer": 8,
+      "validation_mse": 0.29651379585266113,
+      "bank_v_bytes": 8536832,
+      "bank_v_budget_bytes": 8633856
+    },
+    {
+      "method": "lowrank",
+      "layer": 9,
+      "validation_mse": 0.26413485407829285,
+      "bank_v_bytes": 33949696,
+      "bank_v_budget_bytes": 34078720
+    },
+    {
+      "method": "lowrank",
+      "layer": 10,
+      "validation_mse": 0.22622203826904297,
+      "bank_v_bytes": 8536832,
+      "bank_v_budget_bytes": 8633856
+    },
+    {
+      "method": "lowrank",
+      "layer": 11,
+      "validation_mse": 0.19779421389102936,
+      "bank_v_bytes": 8536832,
+      "bank_v_budget_bytes": 8633856
+    },
+    {
+      "method": "lowrank",
+      "layer": 12,
+      "validation_mse": 0.21527579426765442,
+      "bank_v_bytes": 8536832,
+      "bank_v_budget_bytes": 8633856
+    },
+    {
+      "method": "lowrank",
+      "layer": 13,
+      "validation_mse": 0.3226262629032135,
+      "bank_v_bytes": 8536832,
+      "bank_v_budget_bytes": 8633856
+    },
+    {
+      "method": "lowrank",
+      "layer": 14,
+      "validation_mse": 0.35520675778388977,
+      "bank_v_bytes": 33949696,
+      "bank_v_budget_bytes": 34078720
+    },
+    {
+      "method": "silu",
+      "layer": 0,
+      "validation_mse": 0.2014847695827484,
+      "bank_v_bytes": 8595456,
+      "bank_v_budget_bytes": 8633856
+    },
+    {
+      "method": "silu",
+      "layer": 1,
+      "validation_mse": 0.268425315618515,
+      "bank_v_bytes": 8595456,
+      "bank_v_budget_bytes": 8633856
+    },
+    {
+      "method": "silu",
+      "layer": 2,
+      "validation_mse": 0.3131900131702423,
+      "bank_v_bytes": 8595456,
+      "bank_v_budget_bytes": 8633856
+    },
+    {
+      "method": "silu",
+      "layer": 3,
+      "validation_mse": 0.2712459862232208,
+      "bank_v_bytes": 8595456,
+      "bank_v_budget_bytes": 8633856
+    },
+    {
+      "method": "silu",
+      "layer": 4,
+      "validation_mse": 0.30270034074783325,
+      "bank_v_bytes": 33867904,
+      "bank_v_budget_bytes": 34078720
+    },
+    {
+      "method": "silu",
+      "layer": 5,
+      "validation_mse": 0.33596813678741455,
+      "bank_v_bytes": 8595456,
+      "bank_v_budget_bytes": 8633856
+    },
+    {
+      "method": "silu",
+      "layer": 6,
+      "validation_mse": 0.22756513953208923,
+      "bank_v_bytes": 8595456,
+      "bank_v_budget_bytes": 8633856
+    },
+    {
+      "method": "silu",
+      "layer": 7,
+      "validation_mse": 0.26349857449531555,
+      "bank_v_bytes": 8595456,
+      "bank_v_budget_bytes": 8633856
+    },
+    {
+      "method": "silu",
+      "layer": 8,
+      "validation_mse": 0.2835440933704376,
+      "bank_v_bytes": 8595456,
+      "bank_v_budget_bytes": 8633856
+    },
+    {
+      "method": "silu",
+      "layer": 9,
+      "validation_mse": 0.2611934244632721,
+      "bank_v_bytes": 33867904,
+      "bank_v_budget_bytes": 34078720
+    },
+    {
+      "method": "silu",
+      "layer": 10,
+      "validation_mse": 0.2127026617527008,
+      "bank_v_bytes": 8595456,
+      "bank_v_budget_bytes": 8633856
+    },
+    {
+      "method": "silu",
+      "layer": 11,
+      "validation_mse": 0.18843264877796173,
+      "bank_v_bytes": 8595456,
+      "bank_v_budget_bytes": 8633856
+    },
+    {
+      "method": "silu",
+      "layer": 12,
+      "validation_mse": 0.2040477991104126,
+      "bank_v_bytes": 8595456,
+      "bank_v_budget_bytes": 8633856
+    },
+    {
+      "method": "silu",
+      "layer": 13,
+      "validation_mse": 0.30604273080825806,
+      "bank_v_bytes": 8595456,
+      "bank_v_budget_bytes": 8633856
+    },
+    {
+      "method": "silu",
+      "layer": 14,
+      "validation_mse": 0.3480595350265503,
+      "bank_v_bytes": 33867904,
+      "bank_v_budget_bytes": 34078720
+    },
+    {
+      "method": "eml",
+      "layer": 0,
+      "validation_mse": 0.20230978727340698,
+      "bank_v_bytes": 8595456,
+      "bank_v_budget_bytes": 8633856
+    },
+    {
+      "method": "eml",
+      "layer": 1,
+      "validation_mse": 0.27188006043434143,
+      "bank_v_bytes": 8595456,
+      "bank_v_budget_bytes": 8633856
+    },
+    {
+      "method": "eml",
+      "layer": 2,
+      "validation_mse": 0.3169318437576294,
+      "bank_v_bytes": 8595456,
+      "bank_v_budget_bytes": 8633856
+    },
+    {
+      "method": "eml",
+      "layer": 3,
+      "validation_mse": 0.2725575566291809,
+      "bank_v_bytes": 8595456,
+      "bank_v_budget_bytes": 8633856
+    },
+    {
+      "method": "eml",
+      "layer": 4,
+      "validation_mse": 0.3041697144508362,
+      "bank_v_bytes": 33867904,
+      "bank_v_budget_bytes": 34078720
+    },
+    {
+      "method": "eml",
+      "layer": 5,
+      "validation_mse": 0.33773377537727356,
+      "bank_v_bytes": 8595456,
+      "bank_v_budget_bytes": 8633856
+    },
+    {
+      "method": "eml",
+      "layer": 6,
+      "validation_mse": 0.23014044761657715,
+      "bank_v_bytes": 8595456,
+      "bank_v_budget_bytes": 8633856
+    },
+    {
+      "method": "eml",
+      "layer": 7,
+      "validation_mse": 0.26550084352493286,
+      "bank_v_bytes": 8595456,
+      "bank_v_budget_bytes": 8633856
+    },
+    {
+      "method": "eml",
+      "layer": 8,
+      "validation_mse": 0.286053866147995,
+      "bank_v_bytes": 8595456,
+      "bank_v_budget_bytes": 8633856
+    },
+    {
+      "method": "eml",
+      "layer": 9,
+      "validation_mse": 0.2621784508228302,
+      "bank_v_bytes": 33867904,
+      "bank_v_budget_bytes": 34078720
+    },
+    {
+      "method": "eml",
+      "layer": 10,
+      "validation_mse": 0.21437032520771027,
+      "bank_v_bytes": 8595456,
+      "bank_v_budget_bytes": 8633856
+    },
+    {
+      "method": "eml",
+      "layer": 11,
+      "validation_mse": 0.18976104259490967,
+      "bank_v_bytes": 8595456,
+      "bank_v_budget_bytes": 8633856
+    },
+    {
+      "method": "eml",
+      "layer": 12,
+      "validation_mse": 0.20476838946342468,
+      "bank_v_bytes": 8595456,
+      "bank_v_budget_bytes": 8633856
+    },
+    {
+      "method": "eml",
+      "layer": 13,
+      "validation_mse": 0.30924510955810547,
+      "bank_v_bytes": 8595456,
+      "bank_v_budget_bytes": 8633856
+    },
+    {
+      "method": "eml",
+      "layer": 14,
+      "validation_mse": 0.3515564799308777,
+      "bank_v_bytes": 33867904,
+      "bank_v_budget_bytes": 34078720
+    }
+  ],
+  "packed_quantization": "passed",
+  "document_disjointness": "passed"
+}

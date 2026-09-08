@@ -1,0 +1,78 @@
+{
+  "sources": {
+    "train": {
+      "url": "https://rajpurkar.github.io/SQuAD-explorer/dataset/train-v1.1.json",
+      "sha256": "3527663986b8295af4f7fcdff1ba1ff3f72d07d61a20f487cb238a6ef92fd955"
+    },
+    "dev": {
+      "url": "https://rajpurkar.github.io/SQuAD-explorer/dataset/dev-v1.1.json",
+      "sha256": "95aa6a52d5d6a735563366753ca50492a658031da74f301ac5238b03966972c9"
+    }
+  },
+  "documents_sha256": "4745508a8f579841459f8de58ba8ec479a475bbceccbad1ac0da9d6526bf264f",
+  "protocol_sha256": "7029d1bd7f85269abb6ac38203b9003bb75331ed80eff4c232b5115faa488612",
+  "titles": {
+    "train": [
+      "Time",
+      "Ann_Arbor,_Michigan",
+      "IPod",
+      "Protestantism",
+      "Avicenna",
+      "Slavs",
+      "Flowering_plant",
+      "Guinea-Bissau",
+      "St._John%27s,_Newfoundland_and_Labrador",
+      "Red",
+      "USB",
+      "Anthropology",
+      "Insect",
+      "Qing_dynasty",
+      "Exhibition_game",
+      "Heian_period",
+      "Pesticide",
+      "Tajikistan",
+      "High-definition_television",
+      "Nintendo_Entertainment_System",
+      "Biodiversity",
+      "Montevideo",
+      "The_Bronx",
+      "Neolithic"
+    ],
+    "validation": [
+      "Nikola_Tesla",
+      "Intergovernmental_Panel_on_Climate_Change",
+      "Sky_(United_Kingdom)",
+      "Fresno,_California",
+      "Oxygen",
+      "Southern_California",
+      "Scottish_Parliament",
+      "Martin_Luther"
+    ],
+    "test": [
+      "Black_Death",
+      "Kenya",
+      "Civil_disobedience",
+      "Construction",
+      "European_Union_law",
+      "Imperialism",
+      "Doctor_Who",
+      "1973_oil_crisis",
+      "Private_school",
+      "Prime_number",
+      "Computational_complexity_theory",
+      "Rhine",
+      "French_and_Indian_War",
+      "Newcastle_upon_Tyne",
+      "Victoria_and_Albert_Museum",
+      "Amazon_rainforest",
+      "University_of_Chicago",
+      "Genghis_Khan",
+      "Islamism",
+      "Chloroplast",
+      "American_Broadcasting_Company",
+      "Normans",
+      "Packet_switching",
+      "Huguenot"
+    ]
+  }
+}

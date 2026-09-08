@@ -1,0 +1,57 @@
+[
+  {
+    "method": "original",
+    "original_kv_bytes_per_document": 12570624,
+    "unchanged_k_bytes_per_document": 6285312,
+    "packed_kv_bytes_per_document": 12570624,
+    "encoder_decoder_bytes": 0,
+    "reference_documents": 128,
+    "bank_total_bytes": 1609039872,
+    "total_kv_reduction": 1.0,
+    "v_reduction": 1.0
+  },
+  {
+    "method": "uint4",
+    "original_kv_bytes_per_document": 12570624,
+    "unchanged_k_bytes_per_document": 6285312,
+    "packed_kv_bytes_per_document": 7893456,
+    "encoder_decoder_bytes": 0,
+    "reference_documents": 128,
+    "bank_total_bytes": 1010362368,
+    "total_kv_reduction": 1.5925374132699288,
+    "v_reduction": 3.9084261110945286
+  },
+  {
+    "method": "lowrank",
+    "original_kv_bytes_per_document": 12570624,
+    "unchanged_k_bytes_per_document": 6285312,
+    "packed_kv_bytes_per_document": 7875048,
+    "encoder_decoder_bytes": 804864,
+    "reference_documents": 128,
+    "bank_total_bytes": 1008811008,
+    "total_kv_reduction": 1.5949864337721422,
+    "v_reduction": 3.938106193891821
+  },
+  {
+    "method": "silu",
+    "original_kv_bytes_per_document": 12570624,
+    "unchanged_k_bytes_per_document": 6285312,
+    "packed_kv_bytes_per_document": 7868904,
+    "encoder_decoder_bytes": 2049408,
+    "reference_documents": 128,
+    "bank_total_bytes": 1009269120,
+    "total_kv_reduction": 1.5942624619288857,
+    "v_reduction": 3.929294956311035
+  },
+  {
+    "method": "eml",
+    "original_kv_bytes_per_document": 12570624,
+    "unchanged_k_bytes_per_document": 6285312,
+    "packed_kv_bytes_per_document": 7868904,
+    "encoder_decoder_bytes": 2049408,
+    "reference_documents": 128,
+    "bank_total_bytes": 1009269120,
+    "total_kv_reduction": 1.5942624619288857,
+    "v_reduction": 3.929294956311035
+  }
+]

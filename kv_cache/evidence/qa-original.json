@@ -1,0 +1,1122 @@
+[
+  {
+    "title": "Black_Death",
+    "question_id": "57264684708984140094c123",
+    "method": "original",
+    "prediction": "arid plains of Central Asia",
+    "tokens": [
+      177133,
+      68440,
+      529,
+      8870,
+      11560,
+      106
+    ],
+    "references": [
+      "the arid plains of Central Asia",
+      "Central Asia",
+      "Central Asia"
+    ],
+    "em": 1.0,
+    "f1": 1.0
+  },
+  {
+    "title": "Black_Death",
+    "question_id": "57264a74708984140094c18b",
+    "method": "original",
+    "prediction": "Gasquet (1908)",
+    "tokens": [
+      47609,
+      13396,
+      568,
+      236770,
+      236819,
+      236771,
+      236828,
+      236768,
+      106
+    ],
+    "references": [
+      "Gasquet",
+      "Gasquet",
+      "Gasquet"
+    ],
+    "em": 0.0,
+    "f1": 0.6666666666666666
+  },
+  {
+    "title": "Kenya",
+    "question_id": "5728dab94b864d1900164f99",
+    "method": "original",
+    "prediction": "Tanzania",
+    "tokens": [
+      236774,
+      7180,
+      10096,
+      106
+    ],
+    "references": [
+      "Tanzania",
+      "Tanzania",
+      "Tanzania"
+    ],
+    "em": 1.0,
+    "f1": 1.0
+  },
+  {
+    "title": "Kenya",
+    "question_id": "5728f9cf4b864d1900165169",
+    "method": "original",
+    "prediction": "between June and September",
+    "tokens": [
+      19195,
+      5142,
+      532,
+      5857,
+      106
+    ],
+    "references": [
+      "between June and September",
+      "June and September",
+      "between June and September"
+    ],
+    "em": 1.0,
+    "f1": 1.0
+  },
+  {
+    "title": "Civil_disobedience",
+    "question_id": "5728d4c03acd2414000dffa2",
+    "method": "original",
+    "prediction": "unfair laws",
+    "tokens": [
+      208237,
+      9734,
+      106
+    ],
+    "references": [
+      "unfair laws",
+      "unfair laws",
+      "unfair laws.",
+      "unfair laws",
+      "what they deem to be unfair"
+    ],
+    "em": 1.0,
+    "f1": 1.0
+  },
+  {
+    "title": "Civil_disobedience",
+    "question_id": "5728d9403acd2414000e001d",
+    "method": "original",
+    "prediction": "head of government",
+    "tokens": [
+      2834,
+      529,
+      3251,
+      106
+    ],
+    "references": [
+      "head of government",
+      "public official",
+      "public official",
+      "public"
+    ],
+    "em": 1.0,
+    "f1": 1.0
+  },
+  {
+    "title": "Construction",
+    "question_id": "57273a465951b619008f8701",
+    "method": "original",
+    "prediction": "six to nine percent",
+    "tokens": [
+      34699,
+      531,
+      10155,
+      3591,
+      106
+    ],
+    "references": [
+      "six to nine percent",
+      "six to nine percent",
+      "six to nine percent"
+    ],
+    "em": 1.0,
+    "f1": 1.0
+  },
+  {
+    "title": "Construction",
+    "question_id": "572742bd5951b619008f8788",
+    "method": "original",
+    "prediction": "Cost of construction on a per square meter (or per square foot) basis for houses",
+    "tokens": [
+      23077,
+      529,
+      5431,
+      580,
+      496,
+      810,
+      6281,
+      19119,
+      568,
+      504,
+      810,
+      6281,
+      3998,
+      236768,
+      5150,
+      573,
+      11810,
+      106
+    ],
+    "references": [
+      "Cost of construction",
+      "Cost of construction",
+      "Cost of construction"
+    ],
+    "em": 0.0,
+    "f1": 0.35294117647058826
+  },
+  {
+    "title": "European_Union_law",
+    "question_id": "57268b43dd62a815002e88f1",
+    "method": "original",
+    "prediction": "The Treaties establishing the European Union.",
+    "tokens": [
+      818,
+      17079,
+      695,
+      23364,
+      506,
+      6693,
+      8927,
+      236761,
+      106
+    ],
+    "references": [
+      "the Treaties establishing the European Union",
+      "the Treaties establishing the European Union",
+      "the Treaties establishing the European Union",
+      "the Treaties establishing the European Union"
+    ],
+    "em": 1.0,
+    "f1": 1.0
+  },
+  {
+    "title": "European_Union_law",
+    "question_id": "5725ca4389a1e219009abeb7",
+    "method": "original",
+    "prediction": "if the Treaty provisions have a direct effect and they are sufficiently clear, precise and unconditional.",
+    "tokens": [
+      584,
+      506,
+      59295,
+      12786,
+      735,
+      496,
+      1982,
+      1763,
+      532,
+      901,
+      659,
+      19347,
+      3582,
+      236764,
+      18997,
+      532,
+      93961,
+      236761,
+      106
+    ],
+    "references": [
+      "if the Treaty provisions have a direct effect and they are sufficiently clear, precise and unconditional.",
+      "if the Treaty provisions have a direct effect and they are sufficiently clear, precise and unconditional",
+      "if the Treaty provisions have a direct effect and they are sufficiently clear, precise and unconditional",
+      "if the Treaty provisions have a direct effect and they are sufficiently clear, precise and unconditional"
+    ],
+    "em": 1.0,
+    "f1": 1.0
+  },
+  {
+    "title": "Imperialism",
+    "question_id": "573060b48ab72b1400f9c4c7",
+    "method": "original",
+    "prediction": "diplomacy or military force",
+    "tokens": [
+      158172,
+      542,
+      2693,
+      653,
+      7820,
+      4912,
+      106
+    ],
+    "references": [
+      "military force",
+      "colonization, use of military force, or other means",
+      "colonization, use of military force, or other means",
+      "colonization, use of military force, or other",
+      "colonization"
+    ],
+    "em": 0.0,
+    "f1": 0.6666666666666666
+  },
+  {
+    "title": "Imperialism",
+    "question_id": "573081c2069b531400832134",
+    "method": "original",
+    "prediction": "world systems theory",
+    "tokens": [
+      12392,
+      3797,
+      6073,
+      106
+    ],
+    "references": [
+      "the world systems theory",
+      "world systems theory",
+      "world systems theory.",
+      "world systems theory"
+    ],
+    "em": 1.0,
+    "f1": 1.0
+  },
+  {
+    "title": "Doctor_Who",
+    "question_id": "5727efabff5b5019007d98e5",
+    "method": "original",
+    "prediction": "a blue British police box",
+    "tokens": [
+      236746,
+      3730,
+      7222,
+      5589,
+      3673,
+      106
+    ],
+    "references": [
+      "a blue British police box",
+      "a blue British police box",
+      "blue British police box"
+    ],
+    "em": 1.0,
+    "f1": 1.0
+  },
+  {
+    "title": "Doctor_Who",
+    "question_id": "5727f3193acd2414000df0a8",
+    "method": "original",
+    "prediction": "His companions are usually humans.",
+    "tokens": [
+      15989,
+      47108,
+      659,
+      4781,
+      14464,
+      236761,
+      106
+    ],
+    "references": [
+      "humans",
+      "companions",
+      "usually humans"
+    ],
+    "em": 0.0,
+    "f1": 0.5714285714285714
+  },
+  {
+    "title": "1973_oil_crisis",
+    "question_id": "5725b33f6a3fe71400b89531",
+    "method": "original",
+    "prediction": "the members of the Organization of Arab Petroleum Exporting Countries (OAPEC, consisting of the Arab members of OPEC plus Egypt and Syria)",
+    "tokens": [
+      1437,
+      3295,
+      529,
+      506,
+      19922,
+      529,
+      10998,
+      50902,
+      43165,
+      522,
+      56967,
+      568,
+      236806,
+      2663,
+      5856,
+      236764,
+      17520,
+      529,
+      506,
+      10998,
+      3295,
+      529,
+      138817,
+      2915,
+      13547,
+      532,
+      34778,
+      236768,
+      106
+    ],
+    "references": [
+      "members of the Organization of Arab Petroleum Exporting Countries",
+      "members of the Organization of Arab Petroleum Exporting Countries",
+      "Organization of Arab Petroleum Exporting Countries",
+      "members of the Organization of Arab Petroleum Exporting Countries",
+      "OAPEC"
+    ],
+    "em": 0.0,
+    "f1": 0.5925925925925926
+  },
+  {
+    "title": "1973_oil_crisis",
+    "question_id": "5725bad5271a42140099d0bd",
+    "method": "original",
+    "prediction": "October 6, 1973",
+    "tokens": [
+      36817,
+      236743,
+      236825,
+      236764,
+      236743,
+      236770,
+      236819,
+      236832,
+      236800,
+      106
+    ],
+    "references": [
+      "On October 6, 1973",
+      "October 6, 1973",
+      "October 6, 1973",
+      "October 6, 1973",
+      "October 6, 1973"
+    ],
+    "em": 1.0,
+    "f1": 1.0
+  },
+  {
+    "title": "Private_school",
+    "question_id": "572746addd62a815002e9a61",
+    "method": "original",
+    "prediction": "retain the right to select their students",
+    "tokens": [
+      179848,
+      506,
+      1447,
+      531,
+      4864,
+      910,
+      3272,
+      106
+    ],
+    "references": [
+      "to select their students",
+      "select their students",
+      "select their students"
+    ],
+    "em": 0.0,
+    "f1": 0.8
+  },
+  {
+    "title": "Private_school",
+    "question_id": "57274a1edd62a815002e9a9a",
+    "method": "original",
+    "prediction": "Article 7, Paragraph 4 of the Grundgesetz",
+    "tokens": [
+      23977,
+      236743,
+      236832,
+      236764,
+      98460,
+      236743,
+      236812,
+      529,
+      506,
+      28977,
+      119047,
+      106
+    ],
+    "references": [
+      "7",
+      "7",
+      "7"
+    ],
+    "em": 0.0,
+    "f1": 0.2857142857142857
+  },
+  {
+    "title": "Prime_number",
+    "question_id": "57296d571d04691400779414",
+    "method": "original",
+    "prediction": "composite number",
+    "tokens": [
+      138061,
+      1548,
+      106
+    ],
+    "references": [
+      "composite number",
+      "composite number",
+      "composite number",
+      "primes"
+    ],
+    "em": 1.0,
+    "f1": 1.0
+  },
+  {
+    "title": "Prime_number",
+    "question_id": "57297547af94a219006aa45d",
+    "method": "original",
+    "prediction": "Leonhard Euler",
+    "tokens": [
+      73629,
+      15595,
+      51046,
+      106
+    ],
+    "references": [
+      "Leonhard Euler",
+      "Leonhard Euler",
+      "Leonhard Euler",
+      "Leonhard Euler",
+      "Leonhard Euler"
+    ],
+    "em": 1.0,
+    "f1": 1.0
+  },
+  {
+    "title": "Computational_complexity_theory",
+    "question_id": "56e16182e3433e1400422e2a",
+    "method": "original",
+    "prediction": "computational problem",
+    "tokens": [
+      15834,
+      1353,
+      2608,
+      106
+    ],
+    "references": [
+      "computational problems",
+      "A computational problem",
+      "computational problem"
+    ],
+    "em": 1.0,
+    "f1": 1.0
+  },
+  {
+    "title": "Computational_complexity_theory",
+    "question_id": "56e19724cd28a01900c679f6",
+    "method": "original",
+    "prediction": "a computational problem",
+    "tokens": [
+      236746,
+      32043,
+      2608,
+      106
+    ],
+    "references": [
+      "a computational problem",
+      "a computational problem",
+      "a computational problem"
+    ],
+    "em": 1.0,
+    "f1": 1.0
+  },
+  {
+    "title": "Rhine",
+    "question_id": "572fe1d404bcaa1900d76e37",
+    "method": "original",
+    "prediction": "begins in the Swiss canton of Graub\u00fcnden in the southeastern Swiss Alps",
+    "tokens": [
+      41742,
+      1365,
+      528,
+      506,
+      28215,
+      106439,
+      529,
+      14422,
+      709,
+      57668,
+      528,
+      506,
+      97040,
+      28215,
+      58414,
+      106
+    ],
+    "references": [
+      "Europe",
+      "Central and Western Europe",
+      "Germany",
+      "Germany"
+    ],
+    "em": 0.0,
+    "f1": 0.0
+  },
+  {
+    "title": "Rhine",
+    "question_id": "572fe53104bcaa1900d76e6a",
+    "method": "original",
+    "prediction": "near Diepoldsau",
+    "tokens": [
+      39952,
+      5915,
+      236758,
+      3601,
+      826,
+      106
+    ],
+    "references": [
+      "Diepoldsau",
+      "Diepoldsau",
+      "near Diepoldsau",
+      "Diepoldsau"
+    ],
+    "em": 1.0,
+    "f1": 1.0
+  },
+  {
+    "title": "French_and_Indian_War",
+    "question_id": "5733cf61d058e614000b62e9",
+    "method": "original",
+    "prediction": "1754\u20131763",
+    "tokens": [
+      236770,
+      236832,
+      236810,
+      236812,
+      236964,
+      236770,
+      236832,
+      236825,
+      236800,
+      106
+    ],
+    "references": [
+      "1754\u20131763",
+      "1754\u20131763",
+      "1754\u20131763",
+      "1754\u20131763",
+      "1754\u20131763"
+    ],
+    "em": 1.0,
+    "f1": 1.0
+  },
+  {
+    "title": "French_and_Indian_War",
+    "question_id": "5733d3cb4776f419006612eb",
+    "method": "original",
+    "prediction": "obscures the fact that Indians fought on both sides of the conflict, and that this was part of the Seven Years' War",
+    "tokens": [
+      147725,
+      1264,
+      506,
+      1707,
+      600,
+      29598,
+      25876,
+      580,
+      1800,
+      9174,
+      529,
+      506,
+      12160,
+      236764,
+      532,
+      600,
+      672,
+      691,
+      912,
+      529,
+      506,
+      35028,
+      25712,
+      236789,
+      5289,
+      106
+    ],
+    "references": [
+      "Indians fought on both sides of the conflict, and that this was part of the Seven Years' War",
+      "Indians fought on both sides of the conflict",
+      "obscures the fact that Indians fought on both sides of the conflict, and that this was part of the Seven Years' War",
+      "Seven Years' War",
+      "it obscures the fact that Indians fought on both sides of the conflict"
+    ],
+    "em": 1.0,
+    "f1": 1.0
+  },
+  {
+    "title": "Newcastle_upon_Tyne",
+    "question_id": "5726642f5951b619008f715a",
+    "method": "original",
+    "prediction": "Northumberland",
+    "tokens": [
+      25907,
+      68482,
+      106
+    ],
+    "references": [
+      "Northumberland",
+      "Northumberland",
+      "county of Northumberland"
+    ],
+    "em": 1.0,
+    "f1": 1.0
+  },
+  {
+    "title": "Newcastle_upon_Tyne",
+    "question_id": "57266783f1498d1400e8de88",
+    "method": "original",
+    "prediction": "a pointless pursuit",
+    "tokens": [
+      236746,
+      95698,
+      34865,
+      106
+    ],
+    "references": [
+      "a pointless pursuit",
+      "a pointless pursuit",
+      "a pointless pursuit"
+    ],
+    "em": 1.0,
+    "f1": 1.0
+  },
+  {
+    "title": "Victoria_and_Albert_Museum",
+    "question_id": "572680ac708984140094c83e",
+    "method": "original",
+    "prediction": "1852",
+    "tokens": [
+      236770,
+      236828,
+      236810,
+      236778,
+      106
+    ],
+    "references": [
+      "1852",
+      "1852",
+      "1852",
+      "1852"
+    ],
+    "em": 1.0,
+    "f1": 1.0
+  },
+  {
+    "title": "Victoria_and_Albert_Museum",
+    "question_id": "57268f2c708984140094ca28",
+    "method": "original",
+    "prediction": "the Festival of Britain",
+    "tokens": [
+      1437,
+      15467,
+      529,
+      15602,
+      106
+    ],
+    "references": [
+      "Festival of Britain",
+      "Festival of Britain",
+      "the Festival of Britain"
+    ],
+    "em": 1.0,
+    "f1": 1.0
+  },
+  {
+    "title": "Amazon_rainforest",
+    "question_id": "5725b81b271a42140099d098",
+    "method": "original",
+    "prediction": "5,500,000 square kilometres",
+    "tokens": [
+      236810,
+      236764,
+      236810,
+      236771,
+      236771,
+      236764,
+      236771,
+      236771,
+      236771,
+      6281,
+      51607,
+      106
+    ],
+    "references": [
+      "5,500,000 square kilometres (2,100,000 sq mi) are covered by the rainforest.",
+      "5,500,000",
+      "5,500,000"
+    ],
+    "em": 0.0,
+    "f1": 0.5
+  },
+  {
+    "title": "Amazon_rainforest",
+    "question_id": "5725c63438643c19005acca0",
+    "method": "original",
+    "prediction": "182 million tons",
+    "tokens": [
+      236770,
+      236828,
+      236778,
+      3625,
+      16480,
+      106
+    ],
+    "references": [
+      "182 million tons",
+      "182 million",
+      "an average 182 million"
+    ],
+    "em": 1.0,
+    "f1": 1.0
+  },
+  {
+    "title": "University_of_Chicago",
+    "question_id": "57283c464b864d19001647c9",
+    "method": "original",
+    "prediction": "established in 1890",
+    "tokens": [
+      48231,
+      528,
+      236743,
+      236770,
+      236828,
+      236819,
+      236771,
+      106
+    ],
+    "references": [
+      "1890",
+      "1890",
+      "1890",
+      "1890"
+    ],
+    "em": 0.0,
+    "f1": 0.5
+  },
+  {
+    "title": "University_of_Chicago",
+    "question_id": "57284142ff5b5019007da00b",
+    "method": "original",
+    "prediction": "Silas B. Cobb",
+    "tokens": [
+      21576,
+      527,
+      603,
+      236761,
+      85609,
+      106
+    ],
+    "references": [
+      "Silas B. Cobb",
+      "Silas B. Cobb",
+      "Silas B. Cobb",
+      "Silas B. Cobb"
+    ],
+    "em": 1.0,
+    "f1": 1.0
+  },
+  {
+    "title": "Genghis_Khan",
+    "question_id": "57269e8a5951b619008f77f5",
+    "method": "original",
+    "prediction": "Mongol Empire",
+    "tokens": [
+      132491,
+      551,
+      23436,
+      106
+    ],
+    "references": [
+      "the Mongol Empire",
+      "Mongol Empire",
+      "Mongol Empire"
+    ],
+    "em": 1.0,
+    "f1": 1.0
+  },
+  {
+    "title": "Genghis_Khan",
+    "question_id": "5726a784708984140094cd01",
+    "method": "original",
+    "prediction": "Chinese dynasties to the south",
+    "tokens": [
+      48308,
+      218235,
+      531,
+      506,
+      8710,
+      106
+    ],
+    "references": [
+      "the Chinese dynasties to the south",
+      "Chinese dynasties",
+      "Chinese dynasties to the south"
+    ],
+    "em": 1.0,
+    "f1": 1.0
+  },
+  {
+    "title": "Islamism",
+    "question_id": "572ff626947a6a140053ce8e",
+    "method": "original",
+    "prediction": "Islamism is an Islamic revival movement.",
+    "tokens": [
+      104057,
+      1929,
+      563,
+      614,
+      25680,
+      54761,
+      7296,
+      236761,
+      106
+    ],
+    "references": [
+      "Islamism",
+      "Islamism",
+      "Islamism"
+    ],
+    "em": 0.0,
+    "f1": 0.3333333333333333
+  },
+  {
+    "title": "Islamism",
+    "question_id": "572ffbaa947a6a140053cee8",
+    "method": "original",
+    "prediction": "more dangerous leftist/communist/nationalist insurgents/opposition",
+    "tokens": [
+      5576,
+      13588,
+      154619,
+      236786,
+      2131,
+      60696,
+      236786,
+      35896,
+      617,
+      150738,
+      236786,
+      169896,
+      106
+    ],
+    "references": [
+      "leftist/communist/nationalist insurgents/opposition",
+      "leftist/communist/nationalist insurgents/opposition",
+      "communist"
+    ],
+    "em": 0.0,
+    "f1": 0.6666666666666666
+  },
+  {
+    "title": "Chloroplast",
+    "question_id": "572953013f37b3190047824d",
+    "method": "original",
+    "prediction": "to conduct photosynthesis",
+    "tokens": [
+      1071,
+      4714,
+      93036,
+      106
+    ],
+    "references": [
+      "to conduct photosynthesis",
+      "conduct photosynthesis",
+      "conduct photosynthesis"
+    ],
+    "em": 1.0,
+    "f1": 1.0
+  },
+  {
+    "title": "Chloroplast",
+    "question_id": "572958cc6aef051400154d2b",
+    "method": "original",
+    "prediction": "a glaucophyte",
+    "tokens": [
+      236746,
+      2112,
+      20683,
+      144157,
+      106
+    ],
+    "references": [
+      "alga",
+      "alga",
+      "glaucophyte"
+    ],
+    "em": 1.0,
+    "f1": 1.0
+  },
+  {
+    "title": "American_Broadcasting_Company",
+    "question_id": "57267b755951b619008f7437",
+    "method": "original",
+    "prediction": "Disney Media Networks division",
+    "tokens": [
+      81679,
+      11701,
+      42879,
+      11247,
+      106
+    ],
+    "references": [
+      "Disney Media Networks",
+      "Disney Media Networks",
+      "Disney Media Networks"
+    ],
+    "em": 0.0,
+    "f1": 0.8571428571428571
+  },
+  {
+    "title": "American_Broadcasting_Company",
+    "question_id": "572684f5dd62a815002e87fc",
+    "method": "original",
+    "prediction": "Mark Woods",
+    "tokens": [
+      10666,
+      38476,
+      106
+    ],
+    "references": [
+      "Mark Woods",
+      "Mark Woods",
+      "Mark Woods"
+    ],
+    "em": 1.0,
+    "f1": 1.0
+  },
+  {
+    "title": "Normans",
+    "question_id": "56ddde6b9a695914005b962c",
+    "method": "original",
+    "prediction": "first half of the 10th century",
+    "tokens": [
+      6005,
+      3746,
+      529,
+      506,
+      236743,
+      236770,
+      236771,
+      594,
+      7691,
+      106
+    ],
+    "references": [
+      "10th century",
+      "the first half of the 10th century",
+      "10th",
+      "10th"
+    ],
+    "em": 1.0,
+    "f1": 1.0
+  },
+  {
+    "title": "Normans",
+    "question_id": "56dde27d9a695914005b9652",
+    "method": "original",
+    "prediction": "Normandy, a region in France.",
+    "tokens": [
+      29428,
+      20305,
+      236764,
+      496,
+      4128,
+      528,
+      7001,
+      236761,
+      106
+    ],
+    "references": [
+      "north",
+      "the north",
+      "north"
+    ],
+    "em": 0.0,
+    "f1": 0.0
+  },
+  {
+    "title": "Packet_switching",
+    "question_id": "5725d34089a1e219009abf50",
+    "method": "original",
+    "prediction": "Distributed Adaptive Message Block Switching",
+    "tokens": [
+      138163,
+      90060,
+      18394,
+      16110,
+      155011,
+      106
+    ],
+    "references": [
+      "Paul Baran developed the concept Distributed Adaptive Message Block Switching",
+      "the concept Distributed Adaptive Message Block Switching",
+      "Distributed Adaptive Message Block Switching"
+    ],
+    "em": 1.0,
+    "f1": 1.0
+  },
+  {
+    "title": "Packet_switching",
+    "question_id": "5726385e271a42140099d797",
+    "method": "original",
+    "prediction": "complete addressing information",
+    "tokens": [
+      17302,
+      25963,
+      1938,
+      106
+    ],
+    "references": [
+      "each packet includes complete addressing information",
+      "complete addressing information",
+      "complete addressing information"
+    ],
+    "em": 1.0,
+    "f1": 1.0
+  },
+  {
+    "title": "Huguenot",
+    "question_id": "57105da9a58dae1900cd69a1",
+    "method": "original",
+    "prediction": "Edict of Nantes",
+    "tokens": [
+      236788,
+      3074,
+      529,
+      121372,
+      106
+    ],
+    "references": [
+      "the Edict of Nantes",
+      "Edict of Nantes",
+      "the Edict of Nantes"
+    ],
+    "em": 1.0,
+    "f1": 1.0
+  },
+  {
+    "title": "Huguenot",
+    "question_id": "571077ecb654c5140001f90c",
+    "method": "original",
+    "prediction": "Dutch East India Company",
+    "tokens": [
+      115333,
+      7123,
+      4673,
+      6503,
+      106
+    ],
+    "references": [
+      "Dutch East India Company",
+      "Dutch East India Company",
+      "Dutch East India Company"
+    ],
+    "em": 1.0,
+    "f1": 1.0
+  }
+]

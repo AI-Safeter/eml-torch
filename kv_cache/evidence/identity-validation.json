@@ -1,0 +1,161 @@
+{
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "torch": "2.9.0+cu128",
+  "identity_logits_bitwise_equal": true,
+  "native_full_and_cached_answer_equal": true,
+  "answer": "1943",
+  "raw_cache_backing_bytes": 18874368,
+  "compacted_kv_bytes": 12570624,
+  "layers": [
+    {
+      "index": 0,
+      "shape": [
+        1,
+        1,
+        511,
+        256
+      ],
+      "length": 1024
+    },
+    {
+      "index": 1,
+      "shape": [
+        1,
+        1,
+        511,
+        256
+      ],
+      "length": 1024
+    },
+    {
+      "index": 2,
+      "shape": [
+        1,
+        1,
+        511,
+        256
+      ],
+      "length": 1024
+    },
+    {
+      "index": 3,
+      "shape": [
+        1,
+        1,
+        511,
+        256
+      ],
+      "length": 1024
+    },
+    {
+      "index": 4,
+      "shape": [
+        1,
+        1,
+        1024,
+        512
+      ],
+      "length": 1024
+    },
+    {
+      "index": 5,
+      "shape": [
+        1,
+        1,
+        511,
+        256
+      ],
+      "length": 1024
+    },
+    {
+      "index": 6,
+      "shape": [
+        1,
+        1,
+        511,
+        256
+      ],
+      "length": 1024
+    },
+    {
+      "index": 7,
+      "shape": [
+        1,
+        1,
+        511,
+        256
+      ],
+      "length": 1024
+    },
+    {
+      "index": 8,
+      "shape": [
+        1,
+        1,
+        511,
+        256
+      ],
+      "length": 1024
+    },
+    {
+      "index": 9,
+      "shape": [
+        1,
+        1,
+        1024,
+        512
+      ],
+      "length": 1024
+    },
+    {
+      "index": 10,
+      "shape": [
+        1,
+        1,
+        511,
+        256
+      ],
+      "length": 1024
+    },
+    {
+      "index": 11,
+      "shape": [
+        1,
+        1,
+        511,
+        256
+      ],
+      "length": 1024
+    },
+    {
+      "index": 12,
+      "shape": [
+        1,
+        1,
+        511,
+        256
+      ],
+      "length": 1024
+    },
+    {
+      "index": 13,
+      "shape": [
+        1,
+        1,
+        511,
+        256
+      ],
+      "length": 1024
+    },
+    {
+      "index": 14,
+      "shape": [
+        1,
+        1,
+        1024,
+        512
+      ],
+      "length": 1024
+    }
+  ]
+}
