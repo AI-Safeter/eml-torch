@@ -240,6 +240,33 @@ def main():
                         if split == "final" and field == "arithmetic"
                         else accuracy(t, s, 0.05, True)
                     )
+                    assert all((a["id"], a["style"]) == (b["id"], b["style"]) for a, b in zip(t, s))
+                    errors = {
+                        "cases": len(t),
+                        "original_correct_cases": sum(a["correct"] for a in t),
+                        "format_regressions": sum(
+                            a["correct"] and not b["correct"] and b["prediction"] is None
+                            for a, b in zip(t, s)
+                        ),
+                        "wrong_integer_regressions": sum(
+                            a["correct"] and not b["correct"] and b["prediction"] is not None
+                            for a, b in zip(t, s)
+                        ),
+                        "gains": sum(not a["correct"] and b["correct"] for a, b in zip(t, s)),
+                    }
+                    assert (
+                        abs(
+                            (
+                                errors["format_regressions"]
+                                + errors["wrong_integer_regressions"]
+                                - errors["gains"]
+                            )
+                            / len(t)
+                            - record[f"{field}/{op}"]["net_loss"]
+                        )
+                        < 1e-7
+                    )
+                    record[f"{field}/{op}"]["error_types"] = errors
                 for label, predicate in [
                     ("long_carry", lambda r: r["op"] == "add" and carry_chain(r["a"], r["b"]) >= 3),
                     ("no_carry", lambda r: r["op"] == "add" and carry_chain(r["a"], r["b"]) == 0),
@@ -494,6 +521,18 @@ def main():
             lo, hi = v["net_loss_bootstrap"]["two_sided_95"]
             cells.append(f"{100 * v['net_loss']:+.2f} [{100 * lo:+.2f}, {100 * hi:+.2f}]")
         lines.append(f"| {name.rsplit('-s', 1)[1]} | " + " | ".join(cells) + " |")
+    lines += [
+        "",
+        "The multiplication losses are mainly wrong integer outputs on cases the original answered correctly. This decomposition retains the unconditional score: regressions minus gains equal the reported net loss. It identifies the observed failure type, not the internal algorithm responsible.",
+        "",
+        "| EML seed | Correct original → unparseable | Correct original → wrong integer | Incorrect original → correct |",
+        "|---|---:|---:|---:|",
+    ]
+    for name in chosen["checkpoints"]:
+        r = diagnostics["final"][name]["arithmetic/multiply"]["error_types"]
+        lines.append(
+            f"| {name.rsplit('-s', 1)[1]} | {r['format_regressions']} | {r['wrong_integer_regressions']} | {r['gains']} |"
+        )
     lines += [
         "",
         "The initial grid omitted BOS from raw documents. A selection-only native check found 9.764632 versus 4.795804 nats/token without/with BOS. Those 42 fits were retained as diagnostics. The reported grid recollects language activations with BOS and retrains all 42 candidates; no replacement gate/final outputs were opened before the correction. Arithmetic chat tokenization already included BOS. See [BOS amendment](../BOS_AMENDMENT.md).",
