@@ -33,4 +33,8 @@ Quality evaluation uses native BF16 scoring with the PLE table on CPU, identical
 
 The causal branch tests carry and digit hypotheses under controlled residual/KV interventions. The equations consume decoded internal quantities, never operand labels or downstream teacher states. Probe accuracy and observational fits do not establish mediation. Fixed-prefix interventions remain distinct from unconditional generated-answer quality; addition evidence does not establish multiplication or division mechanisms.
 
+[Related work](RELATED_WORK.md) connects these tests to causal abstraction,
+Goodfire's feature interventions and parameter decomposition, and arithmetic
+heuristic research. Those connections do not imply a validated mechanism here.
+
 Source, protocols, compact results and hashes are committed. Raw traces, checkpoints and activation tensors remain in the external run roots. A compact export stores only the folded BF16 student and verifies a bitwise CUDA reload. It still requires the pinned base model, but no teacher activations at inference. Consult held-out quality before using an experimental export in an application.
