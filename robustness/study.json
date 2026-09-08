@@ -1,0 +1,20 @@
+{
+  "primary_models": {
+    "qwen17b": "Qwen3-1.7B",
+    "qwen4b": "Qwen3-4B",
+    "gemma": "Gemma 4 E2B IT"
+  },
+  "superseded_models": {
+    "smollm": {
+      "label": "SmolLM2-1.7B-Instruct",
+      "reason": "Replaced by Gemma E2B at the user's explicit request",
+      "completed_fits": 90,
+      "evaluation_status": "incomplete; completed traces retained"
+    }
+  },
+  "amendment": "GEMMA_AMENDMENT.md",
+  "primary_cells": 9,
+  "primary_scalar_candidates": 270,
+  "superseded_scalar_candidates": 90,
+  "whole_block_candidates": 27
+}

@@ -9,7 +9,7 @@ from runtime import RUNS, configure
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("model", choices=["qwen17b", "qwen4b", "smollm"])
+    parser.add_argument("model", choices=["qwen17b", "qwen4b", "smollm", "gemma"])
     parser.add_argument("operation", choices=["add", "multiply", "divide"])
     args = parser.parse_args()
     configure(args.model)

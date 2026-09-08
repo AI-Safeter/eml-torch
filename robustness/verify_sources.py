@@ -14,6 +14,8 @@ def main():
         "extension-freeze.json",
         "evaluation-freeze.json",
         "deployment-freeze.json",
+        "gemma/source-freeze.json",
+        "gemma/execution-freeze.json",
     ]:
         record = json.loads((HERE / name).read_text())
         for filename, digest in record["files"].items():

@@ -1,0 +1,27 @@
+{
+  "epoch": 1788839604.2857304,
+  "stage": "Gemma execution and amended primary roster before Gemma fitting and held-out evaluation",
+  "gemma_test_outputs_collected": false,
+  "other_model_partial_test_outputs_observed": true,
+  "files": {
+    "runtime.py": "d1e4767017df3cce2f5cfd6674e3ee8f24a1d9c24915f97fea9c913d72767e05",
+    "seed_evaluate.py": "1a182ab0b3f1d4110da76067fd33249bc24935d4f681dacbded296bcb1b9ff4a",
+    "geometry_evaluate.py": "b2443b0bf44211d2ed5eeba31ee85258ba4d15bf5592196ef36d3987c300635f",
+    "run_fits.py": "f00b3313a4f2b240a9b80feb70dd9b04d186a9779150a8e891cf3e6e92d7b248",
+    "run_evaluation.py": "85358e9283899220e969bdd9d2228195ba3e23000237f98f4345919a8c8a0827",
+    "study.json": "f3df70ff17eac1738c5981ff28f04bcace6acba0c51239fe28f8cd0efba2f81a",
+    "verify_sources.py": "6e95d5dee71c3a5716fd8ce384dc9d1c5c2c897cbef47b65e14ed9ac48b8dd1f",
+    "gemma/EXECUTION.md": "a46f016b42d695b655bacf48b4bee49946ded5dec39c74a5d3f22147367cf3ea",
+    "gemma/source-freeze.json": "32fa39e4e3c3d5760ae26ce6241bec114d7e7d12387ff695ca745e7906d7c05a",
+    "analyze.py": "ceca3fbaca7acb3c9649f8aeb0cb0d045e92b3a18aa492ec02118c7e0cfb3fc1",
+    "per_style.py": "1ff3fd1a0c15b454c8010995e49b3c9fa85298cbe3b2e8b8924f2ff7e9265fc8"
+  },
+  "supersedes": {
+    "runtime.py": "54d2f5726caa6dc227b1634e9c1740b8d78aa8da7a8f522a663d5b6210cab2c1",
+    "seed_evaluate.py": "7696f16a97f5a7693e43ff4966dfc4da0ab6175fc2dac1a97085827bc3359637",
+    "geometry_evaluate.py": "945345de12946b0e5eae8123d2f196dcb4933b347c3bf03e9441a7e6a82d4e07",
+    "run_fits.py": "7e994bf6d02d39cae619006a41678ef426e2d7971d6c912b606495b91647cce3",
+    "analyze.py": "e92d7121d3a13b33cebb729598eb31cf9ac96ea0adc57059bdc1d457e19b1fbd"
+  },
+  "reason": "User-requested Gemma substitution; routing and command-line choices only, as documented in gemma/EXECUTION.md."
+}

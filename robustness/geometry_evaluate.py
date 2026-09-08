@@ -63,7 +63,7 @@ def evaluate(model, tok, rep, rows, geometry):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("model", choices=["qwen17b", "qwen4b", "smollm"])
+    parser.add_argument("model", choices=["qwen17b", "qwen4b", "smollm", "gemma"])
     parser.add_argument("operation", choices=["add", "multiply", "divide"])
     parser.add_argument("--validation-only", action="store_true")
     args = parser.parse_args()

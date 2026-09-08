@@ -2,19 +2,14 @@
 
 import argparse
 import json
-import subprocess
-import sys
 
-from runtime import HERE, RUNS, configure
-
-
-def run(script, *args):
-    subprocess.run([sys.executable, str(HERE / script), *args], check=True)
+from runtime import RUNS, configure
+from runtime import run_stage as run
 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("model", choices=["qwen17b", "qwen4b", "smollm"])
+    parser.add_argument("model", choices=["qwen17b", "qwen4b", "smollm", "gemma"])
     args = parser.parse_args()
     configure(args.model)
     run("verify_sources.py")
