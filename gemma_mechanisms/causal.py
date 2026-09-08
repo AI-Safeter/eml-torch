@@ -100,11 +100,14 @@ def main():
         "--split", choices=["selection", "gate", "final", "shift"], default="selection"
     )
     parser.add_argument("--batch-size", type=int, default=8)
+    parser.add_argument("--site", choices=["mlp", "residual"], default="mlp")
     args = parser.parse_args()
     assert args.batch_size >= 4 and args.batch_size % 2 == 0
     setup(SPEC["data_seed"])
     out = root(args.output)
     directory = out / "mechanism"
+    if args.site == "residual":
+        assert json.loads((out / "collection/site.json").read_text())["site"] == "residual"
     assert (directory / "probes.json").exists()
     pairs = prepare_pairs(out)
     # Prefix 2 is immediately before the tens digit in the four-digit training answers.
@@ -115,7 +118,9 @@ def main():
             "Confirmatory interventions require a frozen equation/selection artifact; only selection is enabled"
         )
     candidate_layers = SPEC["mechanism"]["candidate_layers"]
-    source_layers = candidate_layers[:-1]
+    # The last candidate still provides a full-residual positive control, even
+    # though it has no later candidate mediator in this grid.
+    source_layers = candidate_layers
     probe_paths = {
         layer: directory / f"layer{layer}-prefix{prefix}.pt" for layer in candidate_layers
     }
@@ -130,6 +135,7 @@ def main():
         "probes": {str(layer): digest(path) for layer, path in probe_paths.items()},
         "answer_prefix_tokens": prefix,
         "batch_size": args.batch_size,
+        "site": args.site,
         "construction": {
             str(layer): {k: coords[layer][k] for k in ["operand_rank", "construction_leakage"]}
             for layer in candidate_layers
@@ -202,7 +208,8 @@ def main():
                         states[layer] = x[:, -1].clone()
                         return (x,) + values[1:]
 
-                    hooks.append(layers[layer].mlp.register_forward_pre_hook(prehook))
+                    module = layers[layer].mlp if args.site == "mlp" else layers[layer]
+                    hooks.append(module.register_forward_pre_hook(prehook))
                 try:
                     logits = model(**inp, use_cache=False, logits_to_keep=1).logits[:, -1].float()
                 finally:

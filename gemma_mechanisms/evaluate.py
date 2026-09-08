@@ -116,21 +116,21 @@ def arc(model, tok, rows):
         question = prompt(tok, row["question"] + " Answer the question concisely.")
         prefix_ids = tok.encode(question, add_special_tokens=False)
         choices = row["choices"]
-        inputs, answer_lengths = [], []
+        scores, answer_lengths = [], []
         for answer in choices["text"]:
             ids = tok.encode(question + answer, add_special_tokens=False)
             assert ids[: len(prefix_ids)] == prefix_ids
-            inputs.append(ids)
-            answer_lengths.append(len(ids) - len(prefix_ids))
-        assert min(answer_lengths) > 0
-        inp = tok.pad({"input_ids": inputs}, padding=True, return_tensors="pt").to("cuda")
-        maximum = max(answer_lengths)
-        logits = model(**inp, use_cache=False, logits_to_keep=maximum + 1).logits[:, :-1].float()
-        targets = inp.input_ids[:, -maximum:]
-        losses = torch.nn.functional.cross_entropy(
-            logits.flatten(0, 1), targets.flatten(), reduction="none"
-        ).view(len(inputs), -1)
-        scores = [-float(loss[-n:].mean()) for loss, n in zip(losses, answer_lengths)]
+            count = len(ids) - len(prefix_ids)
+            assert count > 0
+            answer_lengths.append(count)
+            # Fix both padding and logit projection shape. BF16 choice batching
+            # changed scores enough to fail the independent native check.
+            inp = torch.tensor([ids], device="cuda")
+            logits = (
+                model(input_ids=inp, use_cache=False).logits[0, len(prefix_ids) - 1 : -1].float()
+            )
+            loss = torch.nn.functional.cross_entropy(logits, inp[0, len(prefix_ids) :])
+            scores.append(-float(loss))
         assert torch.isfinite(torch.tensor(scores)).all()
         predicted = max(range(len(scores)), key=scores.__getitem__)
         correct = choices["label"][predicted] == row["answerKey"]
