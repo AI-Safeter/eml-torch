@@ -130,11 +130,13 @@ def main():
             )
     whole = json.loads((RUNS / "whole-block/utility-results.json").read_text())
     timing = json.loads((RUNS / "whole-block/latency.json").read_text())
+    block_timing = json.loads((RUNS / "whole-block/block-latency.json").read_text())
     storage = json.loads((RUNS / "whole-block/model-storage.json").read_text())
     summary = {
         "primary": cells,
         "whole_block": whole,
         "latency": timing,
+        "standalone_block_latency": block_timing,
         "model_storage": storage,
         "scalar_passed": sum(c["checks"]["all_pass"] for c in cells),
         "scalar_total": 9,
@@ -244,7 +246,23 @@ def main():
         )
     lines += [
         "",
-        "Ratios above one favor replacement. These are eager float32 measurements on shared H100 hardware, using alternating paired order and identical fixed token budgets. A speed gain does not compensate for a failed fidelity criterion. Standalone block timings are stored separately and are not LLM speedups.",
+        "Ratios above one favor replacement. These are eager float32 measurements on shared H100 hardware, using alternating paired order and identical fixed token budgets. A speed gain does not compensate for a failed fidelity criterion.",
+        "",
+        "Standalone block timing is a separate measurement:",
+        "",
+        "| Student | Batch | Sequence length | Original µs/call | Replacement µs/call | Block speed ratio |",
+        "|---|---:|---:|---:|---:|---:|",
+    ]
+    for r in block_timing["records"]:
+        pairs = r["paired_microseconds_per_call"]
+        base = sum(p["original"] for p in pairs) / len(pairs)
+        replacement = sum(p["replacement"] for p in pairs) / len(pairs)
+        lines.append(
+            f"| {r['student']} | {r['batch']} | {r['sequence_length']} | {base:.2f} | {replacement:.2f} | {r['ratio_of_means']:.3f} |"
+        )
+    lines += [
+        "",
+        "A block can be faster on a large token batch while being slower for a single decode token. Neither result determines whole-model latency; the end-to-end measurements above include all remaining layers.",
         "",
         "## Evidence and limits",
         "",

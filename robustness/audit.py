@@ -121,33 +121,9 @@ def main():
                 "primary_and_stress_counts": file_counts,
             }
     whole = RUNS / "whole-block"
-    candidates = json.loads((whole / "candidates.json").read_text())
-    assert len(candidates) == 27
-    from whole_student import Student
+    from whole_checkpoint_audit import validate as validate_whole_checkpoints
 
-    validation = {
-        domain: torch.load(whole / f"activations-{domain}-validation.pt", weights_only=True)
-        for domain in ["arithmetic", "language"]
-    }
-    for row in candidates:
-        if row["status"] != "complete":
-            continue
-        state = torch.load(whole / f"{row['name']}.pt", weights_only=True)
-        stats = {k: state[k] for k in ["xmean", "xstd", "ymean", "yscale"]}
-        student = Student(len(stats["xmean"]), row["width"], row["kind"], stats).cuda()
-        student.load_state_dict(state)
-        for domain, values in validation.items():
-            x = ((values["x"] - stats["xmean"]) / stats["xstd"]).cuda()
-            y = ((values["y"] - stats["ymean"]) / stats["yscale"]).cuda()
-            with torch.no_grad():
-                actual = (
-                    sum(
-                        (student.normalized(a) - b).square().sum()
-                        for a, b in zip(x.split(1024), y.split(1024))
-                    )
-                    / y.numel()
-                )
-            assert abs(float(actual) - row["validation_domain_mse"][domain]) < 1e-6, row["name"]
+    validate_whole_checkpoints()
     for kind in ["original", "eml", "swiglu", "linear"]:
         data = json.loads((whole / f"evaluation-test-{kind}.json").read_text())
         assert len(data["language"]) == 256

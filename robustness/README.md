@@ -37,6 +37,14 @@ For this checkout layout, pass the absolute sibling run directory to `--output` 
 
 The primary result is `MODEL/OPERATION/robust-results.json`. Original dense MLPs still execute in scalar replacement. This path cannot demonstrate full-block compression or a model speedup.
 
+An independent feature-pipeline replay can be run after collection:
+
+```bash
+CUDA_VISIBLE_DEVICES=0 python replay_collection.py smollm --output /tmp/eml-smollm-replay
+```
+
+This recollects training/validation activations and recomputes the projections and derivatives. It compares all 24 tensor archives on GPU and records file-byte equality separately. Use a different output directory from the original run.
+
 ## Whole-block study
 
 Wait for Qwen3-1.7B addition localization before collection. Run these stages sequentially on an available GPU:
