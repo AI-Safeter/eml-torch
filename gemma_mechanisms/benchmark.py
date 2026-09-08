@@ -3,6 +3,7 @@
 import argparse
 import gc
 import json
+import os
 import subprocess
 import time
 
@@ -77,7 +78,9 @@ def main():
         help="Same timing protocol, fixed first-seed depth-one pilot models",
     )
     parser.add_argument("--primary-only", action="store_true")
-    parser.add_argument("--method", help="One method from the frozen roster; enables disjoint GPU workers")
+    parser.add_argument(
+        "--method", help="One method from the frozen roster; enables disjoint GPU workers"
+    )
     args = parser.parse_args()
     setup(73)
     out = root(args.output)
@@ -113,8 +116,10 @@ def main():
     original_ids = {id(p) for p in original.parameters()}
     native_forward = original.forward
     blocks = torch.load(out / "data/language-selection.pt", weights_only=True)
-    tokens = torch.cat([blocks[:8], blocks[8:16]], -1)
-    forced = blocks[16:24, :32].cuda()
+    # One native BOS per synthetic request; no BOS injected into forced decoding.
+    assert (blocks[:, 0] == model.config.text_config.bos_token_id).all()
+    tokens = torch.cat([blocks[:8], blocks[8:16, 1:]], -1)
+    forced = blocks[16:24, 1:33].cuda()
     shapes = (
         [(8, 512)] if args.primary_only else [(b, length) for b in [1, 8] for length in [128, 512]]
     )
@@ -170,6 +175,15 @@ def main():
                     "samples": samples,
                     "telemetry_before": before,
                     "telemetry_after": telemetry(),
+                    "cuda_visible_devices": os.environ.get("CUDA_VISIBLE_DEVICES"),
+                    "device_name": torch.cuda.get_device_name(),
+                    "device_uuid": str(
+                        getattr(
+                            torch.cuda.get_device_properties(0),
+                            "uuid",
+                            "See device telemetry and CUDA_VISIBLE_DEVICES",
+                        )
+                    ),
                     "original_accounting": base_accounting,
                     "student_module_accounting": student_accounting,
                     "freeze_sha256": digest(frozen),
