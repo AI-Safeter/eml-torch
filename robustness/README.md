@@ -37,6 +37,17 @@ CUDA_VISIBLE_DEVICES=0 python run_evaluation.py qwen17b
 
 For this checkout layout, pass the absolute sibling run directory to `--output` (or `../../emltorch-robustness-runs/qwen17b` when starting inside `robustness/`). `run_fits.py` and `run_evaluation.py` use the location defined in `runtime.py`. Repeat for `qwen4b` on another GPU. The `smollm` option remains for reproduction of the superseded arm; use the separate Gemma entry points below for its replacement. The evaluator checks that all ten candidates per operation/method have finished, creates missing sparse/linear controls, validates restoration and all-token hooks, then evaluates every selected head and every seed. It does not choose a model on test performance.
 
+Qwen evaluation stages now cache unchanged layers before the scalar intervention when token IDs and attention masks match. See [the execution amendment](PREFIX_CACHE_AMENDMENT.md). Gemma, generation, and whole-block timing retain their native execution paths. Both Qwen models passed bitwise validation checks, and a full Qwen3-1.7B primary intervention replay reproduced the original file hash. The direct-script evaluator also reproduced four original validation cohorts exactly (`prefix-dispatch-validation.json`).
+
+To reproduce the cache checks, use the original Qwen environment:
+
+```bash
+CUDA_VISIBLE_DEVICES=0 python validate_prefix.py qwen17b
+CUDA_VISIBLE_DEVICES=0 python prefix_replay.py qwen17b add --output /tmp/eml-prefix-replay.json
+```
+
+The validation command writes a separate reproduction record, preserving the frozen reference timings. Full replay requires a previously completed uncached reference cohort and a new output file outside the source/run directories. Preliminary repeated-forward timings describe this research workload, not a general LLM throughput improvement.
+
 The primary result is `MODEL/OPERATION/robust-results.json`. Original dense MLPs still execute in scalar replacement. This path cannot demonstrate full-block compression or a model speedup.
 
 Gemma's adapter and collection entry points, run inside a separate environment with `gemma/requirements.txt` and the core package installed:

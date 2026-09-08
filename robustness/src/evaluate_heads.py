@@ -5,8 +5,10 @@ import hashlib
 import json
 import os
 import re
+import sys
 import time
 from contextlib import contextmanager
+from pathlib import Path
 
 import torch
 
@@ -393,6 +395,10 @@ def main():
     selected = freeze(out, args.directories)
     rep = Replacements(out, selected)
     model, tok = load()
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+    from prefix_execution import install
+
+    install(model, rep.layer, globals())
     problems = json.loads((out / "problems.json").read_text())
     extra = json.loads((out / "extra-problems.json").read_text())
     assert digest(out / "problems.json") == selected["problems_sha256"]

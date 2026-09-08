@@ -46,6 +46,9 @@ def main():
     rep = Replacements(out, selected)
     rep.kinds = ["original", *rep.models]
     model, tok = load()
+    from prefix_execution import install
+
+    install(model, rep.layer, globals())
     problems = json.loads((out / "problems.json").read_text())
     rows = expand(problems["test"], STYLES)
     with torch.inference_mode():

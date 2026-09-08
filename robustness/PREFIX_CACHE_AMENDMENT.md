@@ -1,0 +1,11 @@
+# Cache unchanged Qwen prefix layers during repeated intervention evaluation
+
+This execution amendment preserves the existing data, learned checkpoints, interventions, selection rules, precision, and acceptance criteria. It was made after partial held-out results were observed. It changes computation reuse, not the experiment or the fitted replacement.
+
+For the two pinned Qwen3 models only, repeated `logits` calls on identical token IDs and attention masks reuse the outputs of layers strictly before the component being intervened on. The component layer and every subsequent layer still execute. Prefix outputs are cloned to protect cached values; input content, shape, dtype, and device changes invalidate the cache. Generation calls execute the original forwards. The model and upstream prefix must remain fixed and in eval mode, and gradients must be disabled.
+
+Gemma remains on its native uncached execution path. Its shared attention state requires separate validation; returning cached hidden states alone is not assumed sufficient. The whole-block utility and timing experiments also remain uncached. These measurements do not establish a general LLM throughput gain or a speedup from EML replacement itself.
+
+Before integration, both Qwen models passed 60 validation interventions with bitwise-identical full-vocabulary logits, changed-input/batch checks, and generation checks. Preliminary repeated-forward timing on shared H100 hardware showed ratios of about 3.8 and 2.6, respectively; these are not end-to-end or controlled production benchmarks. A full Qwen3-1.7B addition primary intervention replay reproduced all 221,184 raw records and the original file SHA-256 exactly. Its cache-source hash is recorded in `prefix-replay-qwen17b-add.json`.
+
+The only changes to previously frozen evaluation sources are imports and installation calls after model/component loading in the selected-head, all-seed, and geometry entry points. The cache dispatcher updates both imported and direct-script namespaces. A new append-only snapshot supersedes those entry-point hashes and the source verifier; original snapshots are retained. Running processes already loaded the earlier evaluator and continue unchanged. Future Qwen stages use the cache; there is no change to training or to Gemma evaluation.

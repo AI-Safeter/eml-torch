@@ -1,0 +1,19 @@
+{
+  "model": "qwen17b",
+  "operation": "add",
+  "scope": "Entire previously completed primary intervention cohort; all raw records exactly equal to the frozen uncached evaluator",
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "torch": "2.5.0a0+e000cf0ad9.nv24.10",
+  "cached_layers": 21,
+  "prefix_executions": 2016,
+  "prefix_cache_hits": 72576,
+  "trace_audit": {
+    "methods": 12,
+    "unique_conditions_per_method": 18432
+  },
+  "raw_records_identical": true,
+  "source_sha256": "b743c5ea392a6a557c4c090b357d302c3097059d2fc9f1455e83580a2dffb366",
+  "replay_sha256": "b743c5ea392a6a557c4c090b357d302c3097059d2fc9f1455e83580a2dffb366",
+  "cache_source_sha256": "b7cc10f5b9c0724c6a0a8f9190ec791aa533a9312dc0bf64852f9d9339a478f6",
+  "seconds": 345.7494689002633
+}

@@ -1,0 +1,61 @@
+{
+  "model": "qwen17b",
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "torch": "2.5.0a0+e000cf0ad9.nv24.10",
+  "cached_layers": 21,
+  "validation_interventions_bitwise_identical": 60,
+  "all_kinds": [
+    "original",
+    "restore",
+    "mean",
+    "heads/eml",
+    "heads/neural",
+    "heads-active-r32-g0/eml",
+    "heads-active-r32-g0/neural",
+    "heads-active-r32-g0.1/eml",
+    "heads-active-r32-g0.1/neural",
+    "sparse16",
+    "sparse_selected",
+    "linear"
+  ],
+  "input_content_and_batch_invalidation_verified": true,
+  "generation_does_not_use_cache": true,
+  "prefix_executions": 147,
+  "prefix_cache_hits": 1449,
+  "paired_seconds": [
+    {
+      "original": 0.053180472925305367,
+      "cached": 0.038817666471004486
+    },
+    {
+      "original": 0.09639100544154644,
+      "cached": 0.01685313507914543
+    },
+    {
+      "original": 0.16330265253782272,
+      "cached": 0.016619784757494926
+    },
+    {
+      "original": 0.09133717603981495,
+      "cached": 0.016063684597611427
+    },
+    {
+      "original": 0.14166713319718838,
+      "cached": 0.0301307812333107
+    },
+    {
+      "original": 0.09124618582427502,
+      "cached": 0.030957013368606567
+    },
+    {
+      "original": 0.09935391135513783,
+      "cached": 0.03619646467268467
+    },
+    {
+      "original": 0.0867372490465641,
+      "cached": 0.032449714839458466
+    }
+  ],
+  "speed_ratio": 3.774691232417136,
+  "scope": "Validation only; optional optimization not installed in live study jobs"
+}

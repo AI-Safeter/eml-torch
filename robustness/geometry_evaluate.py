@@ -77,6 +77,9 @@ def main():
     selected = freeze(out, ["heads", "heads-active-r32-g0", "heads-active-r32-g0.1"])
     rep = Replacements(out, selected)
     model, tok = load()
+    from prefix_execution import install
+
+    install(model, rep.layer, globals())
     problems = json.loads((out / "problems.json").read_text())
     rows = expand(
         problems["validation"][:4] if args.validation_only else problems["test"][:32], STYLES
