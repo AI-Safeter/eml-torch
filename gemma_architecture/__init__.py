@@ -1,1 +1,1 @@
-"""Full-width architecture screen; no arithmetic-mechanism discovery."""
+"""Reusable full-width MLP replacements and checkpoint inference."""

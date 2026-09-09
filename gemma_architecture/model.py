@@ -8,7 +8,37 @@ from torch import nn
 from torch.nn import functional as F
 
 from emltorch.operator import safe_eml
-from gemma_mechanisms.student import Stage
+
+
+class Stage(nn.Module):
+    def __init__(self, width, hidden, kind, depth):
+        super().__init__()
+        self.kind, self.scale = kind, depth**-0.5
+        self.norm = nn.LayerNorm(width)
+        self.arguments = nn.Linear(width, hidden * (2 if kind == "eml" else 1))
+        self.readout = nn.Linear(hidden, width)
+        nn.init.normal_(self.arguments.weight, std=0.2 / math.sqrt(width))
+        nn.init.zeros_(self.arguments.bias)
+        if kind == "eml":
+            with torch.no_grad():
+                self.arguments.bias[hidden:].fill_(0.3)
+        nn.init.normal_(self.readout.weight, std=0.001 / math.sqrt(hidden))
+        nn.init.zeros_(self.readout.bias)
+        self.diagnostics = False
+        self.clamps, self.arguments_seen, self.max_argument = 0, 0, 0.0
+
+    def forward(self, x):
+        a = self.arguments(self.norm(x))
+        if self.kind == "eml":
+            left, right = a.chunk(2, dim=-1)
+            if self.diagnostics:
+                self.clamps += int((left.abs() > 12).sum())
+                self.arguments_seen += left.numel()
+                self.max_argument = max(self.max_argument, float(left.abs().max()))
+            y = safe_eml(left, 1 + right.square(), clamp_val=12.0) - 1
+        else:
+            y = torch.nn.functional.silu(a)
+        return x + self.scale * self.readout(y)
 
 
 class StructuredProjection(nn.Module):

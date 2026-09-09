@@ -1,7 +1,0 @@
-{
-  "id": "google/gemma-4-E2B-it",
-  "revision": "3e22461f65e89153144f8adb70e3b8c2cc9845a7",
-  "torch": "2.9.0+cu128",
-  "transformers": "5.16.1",
-  "precision": "float32"
-}

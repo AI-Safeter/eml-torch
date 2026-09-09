@@ -4,7 +4,8 @@ import argparse
 
 import torch
 
-from .common import accounting, load, prompt, setup, text_layers, tokenizer
+from gemma_mechanisms.runtime import accounting, load, prompt, setup, text_layers, tokenizer
+
 from .export import load_export
 
 

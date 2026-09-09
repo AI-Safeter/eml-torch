@@ -1,9 +1,0 @@
-{
-  "completed_epoch": 1788808335.317936,
-  "all_48_candidate_records_identical_except_runtime": true,
-  "all_1503_teacher_and_student_predictions_bitwise_identical": true,
-  "maximum_metric_difference": 2.220446049250313e-16,
-  "difference_source": "Last-bit float64 grouped-sum/quantile variation; point predictions and validation selections are identical.",
-  "standalone_export_passed": true,
-  "gpu": "NVIDIA H100 80GB HBM3"
-}

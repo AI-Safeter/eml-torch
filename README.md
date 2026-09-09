@@ -189,7 +189,7 @@ The earlier [architecture screen](gemma_architecture/results/summary.json) found
 that removing a mandatory output bottleneck helped both EML and SiLU modestly.
 None of its six candidates passed its quality gate. Earlier
 [complete-block results](gemma_mechanisms/results/summary.json) and
-[quantization-correction evidence](kv_correction/evidence) also failed to establish
+[quantization-correction evidence](https://github.com/AI-Safeter/eml-torch/tree/bb2f3c1b05269277e880f2887181adc6b4ac182b/kv_correction/evidence) also failed to establish
 a consistent EML benefit. The deployment targets remain 20% fewer total parameters,
 10% lower end-to-end latency, and at most one percentage point of accuracy loss.
 Activation fitting here has not established a recovered arithmetic algorithm.
@@ -200,28 +200,23 @@ in the local Hugging Face cache; it is not included in a fresh clone. The weekda
 screen above can regenerate its inputs from that model. Hybrid inference requires
 a new checkpoint because the failed replacement weights were deleted.
 
-Keep environments and run outputs inside this repository. `.venv-gemma/` and
-`.artifacts/` are ignored by Git. Cleanup removed 3.79 GiB of local run artifacts
-and 1,088 tracked tensor files (52.5 MiB), including old activation dumps and fitted
-heads. Generated research tensors are now ignored. Published reports, protocols,
-and per-example measurements remain; their artifact paths and hashes are historical
-references. Removed research tensors are listed in [OMITTED.json](research/OMITTED.json).
+The source tree now keeps three directories: `emltorch/` for the library,
+`gemma_architecture/` for replacement networks and checkpoint inference, and
+`gemma_mechanisms/` for the weekday experiment and shared Gemma runtime. The final
+Gemma reports and their protocols remain alongside the code. Their historical
+source hashes identify the implementations used to produce the measurements.
 
-Historical runners that hash Markdown protocols need their recorded source
-revision. The [archived documentation](https://github.com/AI-Safeter/eml-torch/tree/29886f0cab0d45857075f9456ef1c075de980e2c)
-includes the full reports and reproduction commands. This README is the only
-Markdown document in the current source tree.
+Old experiment drivers, raw datasets, dashboards, and intermediate records are in
+the [archived study snapshot](https://github.com/AI-Safeter/eml-torch/tree/bb2f3c1b05269277e880f2887181adc6b4ac182b).
+Earlier runners that hash Markdown protocols require their recorded source revision;
+the [archived documentation](https://github.com/AI-Safeter/eml-torch/tree/29886f0cab0d45857075f9456ef1c075de980e2c)
+contains those reports and commands. This README is the only current Markdown file.
+
+Keep environments and run outputs inside this repository. `.venv-gemma/`,
+`.artifacts/`, and generated `.pt` files are ignored by Git. Local failed-run data
+and checkpoints have been removed; further experiments must regenerate their inputs.
 
 The EML library is [MIT licensed](LICENSE). Andrzej Odrzywołek introduced the EML operator
 and its [universality construction](https://arxiv.org/abs/2603.21852).
-The Jacobian-lens adaptation credits Anthropic in [jspace/NOTICE](jspace/NOTICE)
-and retains its [Apache 2.0 license](jspace/LICENSE).
-Included Qwen-derived artifacts retain the
-[Apache 2.0 license](research/licenses/Qwen-Apache-2.0.txt).
-
-The included Airfoil Self-Noise data are by Thomas F. Brooks, D. Stuart Pope, and
-Michael A. Marcolini, distributed by UCI under
-[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/),
-[DOI 10.24432/C5VW2C](https://doi.org/10.24432/C5VW2C). SQuAD/Wikipedia excerpts
-retain the attribution and CC BY-SA 4.0 terms recorded in `jspace/NOTICE` and
-their evidence files. Model weights and other datasets retain their own terms.
+Third-party notices and dataset attributions remain with their artifacts in the
+archived study snapshot. The local Gemma checkpoint retains its own license terms.

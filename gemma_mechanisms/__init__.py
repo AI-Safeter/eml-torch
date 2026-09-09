@@ -1,1 +1,1 @@
-"""Prospective Gemma whole-MLP replacement and arithmetic mediation study."""
+"""Pinned Gemma runtime and weekday intervention experiment."""

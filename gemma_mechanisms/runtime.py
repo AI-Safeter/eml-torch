@@ -1,4 +1,4 @@
-"""Isolated paths, model identity, accounting, and native Gemma loading."""
+"""Pinned model identity, CUDA accounting, and native Gemma loading."""
 
 import hashlib
 import json
@@ -17,19 +17,6 @@ SNAPSHOT = (
     / ".cache/huggingface/hub/models--google--gemma-4-E2B-it/snapshots"
     / SPEC["model"]["revision"]
 )
-
-
-def root(path=None):
-    path = Path(
-        path
-        or os.environ.get(
-            "EML_GEMMA_MECHANISMS_RUNS",
-            HERE.parent / ".artifacts/gemma-replacement",
-        )
-    ).resolve()
-    assert "robustness-runs" not in str(path), "Do not write into the running scalar study"
-    path.mkdir(parents=True, exist_ok=True)
-    return path
 
 
 def digest(path):
@@ -151,11 +138,3 @@ def prompt(tok, content):
 
 def text_layers(model):
     return model.model.language_model.layers
-
-
-def sources():
-    return {str(p.relative_to(HERE)): digest(p) for p in sorted(HERE.rglob("*.py"))} | {
-        "protocol.json": digest(HERE / "protocol.json"),
-        "PROTOCOL.md": digest(HERE / "PROTOCOL.md"),
-        "../emltorch/operator.py": digest(HERE.parent / "emltorch/operator.py"),
-    }
