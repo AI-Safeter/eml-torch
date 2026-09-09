@@ -87,7 +87,17 @@ def main():
         record = json.loads(path.read_text())
         for relative, sha in record["sources"].items():
             assert digest(HERE.parent / relative) == sha
+    decision = json.loads((out / "decision.json").read_text())
+    if decision["status"] == "stop":
+        assert not (out / "selection.json").exists()
+        assert not list((out / "evaluation/confirmation").glob("*.json"))
+    ledger = json.loads((out / "budget.json").read_text())
+    assert ledger["jobs"]["prepare-data"]["finished_unix"] < min(
+        row["started_unix"] for key, row in ledger["jobs"].items() if key.startswith("fit-")
+    )
     record = {
+        "fresh_confirmation_unopened": decision["status"] == "stop",
+        "data_frozen_before_training": True,
         "fits": checked,
         "matched_minibatch_rng_states": True,
         "paired_statistics_match_previous_reference": True,
