@@ -1,0 +1,50 @@
+{
+  "version": 2,
+  "implementation_amendment": "The initial mixed-length padded run was invalidated by a CUDA batch-versus-single audit: identical prompts changed from correct weekday names to whitespace when padded. Explicit positions did not repair it; all-ones versus omitted masks agreed for single prompts. Rerun at batch 1, prohibit padding, retain every scientific choice and gate. Old run and both audit records remain under .artifacts/gemma-weekdays. Their combined cost counts toward the original cap.",
+  "prior_gpu_hours": 0.028380504743609993,
+  "question": "Can compact weekday features support natural-scale causal edits before EML equation fitting?",
+  "inspiration": "https://arxiv.org/abs/2605.01148",
+  "model": "google/gemma-4-E2B-it",
+  "revision": "3e22461f65e89153144f8adb70e3b8c2cc9845a7",
+  "config_sha256": "1b28f3d2c3100f6c594754b81107428bd7b822a7f48272ca681dae9d2ec38330",
+  "gpu_hour_cap": 1.0,
+  "feasibility_gpu_hour_cap": 0.4,
+  "budget_accounting": "One occupied H100 times elapsed process wall time, including shared-device delays and loading. No concurrent study jobs. Stop between batches at the phase deadline; retain partial records.",
+  "seed": 2026090901,
+  "layers": [4, 10, 17],
+  "ranks": [2, 6],
+  "batch_size": 1,
+  "train_offsets": [1, 2, 3, 4, 5, 8, 9, 10, 11, 12],
+  "development_offsets": [6, 7, 13, 14],
+  "formats": [
+    "Today is {day}. What day of the week will it be {offset} days later? Answer with only the weekday name.",
+    "Start on {day} and advance by {offset} days. Give only the resulting weekday.",
+    "A meeting happens on {day}. The next meeting is scheduled {offset} days afterward. Name its weekday, without explanation."
+  ],
+  "training_formats": [0, 1],
+  "development_formats": [0, 1, 2],
+  "donor_shifts": [1, 3],
+  "patch_site": "Only the last token of the source weekday, at the output of one zero-indexed text block. The source weekday precedes the offset. No answer or future-token activations are patched.",
+  "features": "Mean training hidden state per weekday; Fourier contrast matrix at harmonics 1 (rank 2) or 1,2,3 (rank 6), followed by QR. All six contrasts span arbitrary centered weekday means, so rank 6 is a categorical control, not evidence of a circle. No counterfactual-label optimization.",
+  "edits": "h + alpha * U U^T (h_donor - h), with a natural donor from the same offset and format. Alpha=1 for the gate. Full-state natural donor patch is the positive control. Random control uses a seeded direction orthogonal to U, matched to each realized semantic edit's norm.",
+  "scoring": "Unconditional full-vocabulary first-token argmax. Weekday names must each be one token. Restricted seven-name accuracy and logit margins are diagnostics. Paired results cluster both donor shifts and all formats by (source weekday, offset); exploratory 95% cluster bootstrap intervals, not population guarantees.",
+  "gate": {
+    "native_accuracy_min": 0.8,
+    "full_patch_target_accuracy_min": 0.7,
+    "feature_target_accuracy_min": 0.7,
+    "new_format_feature_target_accuracy_min": 0.6,
+    "feature_minus_random_accuracy_min": 0.3,
+    "feature_minus_random_bootstrap_lower_min": 0.0,
+    "selection": "Among passing layer/rank pairs, choose lowest rank, then highest new-format target accuracy, then earliest layer. This is a development screen, not confirmation."
+  },
+  "stopping": "Stop this direction if no feature passes. Do not increase edit scale, train new directions, change prompts, or fit EML after inspecting a failure in this run. If a feature passes, freeze a separate equation protocol before fitting; compare EML with linear, polynomial, Fourier/bilinear, and conventional symbolic regression. Hold out new contexts, offsets and edit strengths; use three search seeds. Total combined budget remains one H100-hour.",
+  "confirmation_reserved": {
+    "offsets": [15, 16, 17, 18, 19, 20, 21],
+    "formats": [
+      "It is {day} when a trip begins. After {offset} days have elapsed, which weekday is it? Reply with the name alone.",
+      "On {day}, set a timer for exactly {offset} days. On which weekday does it finish? Only output that weekday."
+    ],
+    "access": "Not rendered, run, or scored in the prerequisite screen."
+  },
+  "limits": "Natural donor inference is allowed for causal experiments, not a deployable replacement. A successful source-token patch establishes controllability of an input representation, not a recovered addition or modulo algorithm. Seven weekday labels constrain geometric claims. Previously inspected Gemma arithmetic remains development evidence."
+}

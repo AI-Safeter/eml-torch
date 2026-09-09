@@ -3,9 +3,10 @@
 `emltorch` fits symbolic expressions and trains neural heads in PyTorch using
 `eml(x, y) = exp(x) - log(y)`.
 
-Research is paused after the architecture and hybrid screens. The LLM experiments
-have not established a consistent EML advantage over SiLU or met the deployment
-targets. The library, replacement code, and measurements remain available.
+The LLM experiments have not established a consistent EML advantage over SiLU or
+met the deployment targets. A later interpretability screen also failed its
+prerequisite for fitting causal equations. The library, experiment code, and
+measurements remain available; compression research is paused.
 
 Install with Python 3.10 or later and a PyTorch build suited to your CUDA version:
 
@@ -49,13 +50,81 @@ symbolic expression search runs through `fit`. Numerical guards clip exponential
 arguments and protect the logarithm. The SMT exports describe real-valued formulas;
 they do not certify floating-point or approximation error.
 
-The Gemma experiments replace layer 26's complete MLP in `google/gemma-4-E2B-it`,
+The latest experiment tested weekday features in the local Gemma model, inspired by
+[Goodfire's arithmetic study](https://arxiv.org/abs/2605.01148). We fitted two- and
+six-dimensional feature spaces from source-weekday token states, then patched
+natural donor coordinates while holding the offset fixed. The model, feature
+construction, and patch site differ from Goodfire's Llama experiment.
+
+Calibration used 140 prompts. Development used 84 prompts covering 28 held-out
+weekday/offset groups in three formats, including one new format. Each source had
+two donor weekdays. All 2,520 scored interventions are included in the
+[results](gemma_mechanisms/results/weekdays.json), with paired group bootstrap
+intervals and conditional diagnostics. Unconditional counterfactual accuracy was:
+
+| Block | Feature dimensions | Feature edit | Matched random edit | Full source-state patch |
+|---|---:|---:|---:|---:|
+| 4 | 2 | 11.9% | 11.3% | 13.7% |
+| 4 | 6 | 13.1% | 7.1% | 13.7% |
+| 10 | 2 | 13.1% | 10.1% | 13.1% |
+| 10 | 6 | 11.9% | 11.9% | 13.1% |
+| 17 | 2 | 11.3% | 11.3% | 11.3% |
+| 17 | 6 | 11.3% | 11.3% | 11.3% |
+
+The original model answered 53/84 prompts correctly under the declared first-token
+criterion: 63.1%, with an exploratory 95% interval of 47.6–77.4%. This measures the
+full-vocabulary next-token argmax, not accuracy after generating a complete answer.
+The frozen gate required at least 80% native accuracy and 70% counterfactual
+accuracy. No candidate passed. EML fitting and fresh confirmation stayed closed.
+
+At blocks 4 and 10, the six-dimensional features decoded the source weekday with
+100% development accuracy. Their weak interventions, including the full-state
+controls, show that the chosen source-token interface was inadequate for this task.
+The six Fourier contrasts span all centered means of seven weekday labels; this
+removes a constraint on class-mean variation but says nothing about variation within
+a label or preservation of the model's computation. Earlier blocks may already
+have copied weekday information elsewhere in the prompt. That explanation remains
+a hypothesis because those other paths were not localized.
+
+The late-layer failure has a specific architectural explanation. Gemma's final 20
+blocks reuse keys and values written at blocks 13 and 14. Once those are computed,
+changing only an earlier source token's block output cannot change other tokens'
+queries or the stored keys and values. Twelve source-state edits after blocks 14
+and 17 left every answer logit bitwise unchanged across three prompts and both SDPA
+and eager attention. Six edits after block 13 changed logits. This result concerns
+source-token-only edits; it does not establish an arithmetic algorithm or an EML
+limitation.
+
+The initial padded SDPA run was invalidated when the same prompt produced a weekday
+alone and whitespace in a mixed-length batch. The screen was rerun at batch 1 with
+the same scientific criteria, and the runner now rejects padding. Eager attention
+preserved the two audited padded answers. The SDPA anomaly's kernel-level cause
+remains unresolved. The result file retains the invalid run's metadata, both batch
+audits, and two failed diagnostic attempts. Total charged cost was 0.134 H100-hours
+against a one-hour cap, including conservative charges for those failed attempts.
+
+Run the screen and its posthoc implementation audit inside the repository:
+
+```bash
+CUDA_VISIBLE_DEVICES=1 .venv-gemma/bin/python -m gemma_mechanisms.weekdays \
+  --run-dir .artifacts/gemma-weekdays-reproduce
+CUDA_VISIBLE_DEVICES=1 .venv-gemma/bin/python -m gemma_mechanisms.weekday_audit \
+  --run-dir .artifacts/gemma-weekdays-reproduce
+```
+
+These commands require the pinned local model and environment described below.
+The [protocol](gemma_mechanisms/weekday-protocol.json) records the gate, budget,
+batching correction, and reserved confirmation data. Feature bases contain 3,072
+or 9,216 FP32 coefficients. Causal tests also require donor model activations;
+they are not deployment replacements. No EML comparison was warranted by this run.
+
+The MLP replacement experiments replace layer 26's complete MLP in `google/gemma-4-E2B-it`,
 revision `3e22461f65e89153144f8adb70e3b8c2cc9845a7`. The local configuration identifies
 its native activation as GELU. The checkpoint contains 5,104,297,504 unique parameters;
 the original MLP contains 56,623,104. During replacement inference, that MLP is removed
 and teacher activations are not inputs.
 
-The latest screen tested a SiLU network with a small EML correction against SiLU,
+The hybrid screen tested a SiLU network with a small EML correction against SiLU,
 EML, and SiLU with a SiLU correction. Each candidate used a full-width affine
 shortcut, a shared 512-wide nonlinear path, and one nonlinear stage. Two-branch
 candidates allocated about 600k coefficients to the correction, with a learned gate
