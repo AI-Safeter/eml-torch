@@ -180,19 +180,10 @@ fit, per-example predictions, branch ablations, paired uncertainty, and timing.
 The [frozen protocol](gemma_architecture/hybrid-protocol.json) records the two H100-hour
 cap and stopping rules. The screen and inference check used 0.266 H100 device
 hours, including shared-device delays and process startup. Earlier activation
-collection is outside that total. With the retained activation files and pinned
-environment, a new run can be started inside the repository:
-
-```bash
-EML_HYBRID_RUNS="$PWD/.artifacts/gemma-hybrid-reproduce" \
-  .venv-gemma/bin/python -m gemma_architecture.hybrid run --gpu 0 --eval-gpu 1
-```
-
-Choose GPUs with available memory. The runner preserves completed jobs and stops
-at its budget or quality gate. The development data were inspected in previous
-studies; confirmation files are opened only after the gate passes and all selected
-checkpoints are frozen. A fresh clone also needs the local prerequisite activations
-and initialization recorded in the result's input hashes.
+collection is outside that total. The training caches, initialization files, and
+fitted checkpoints have since been deleted. Repeating this study requires
+regenerating those inputs using their recorded source revisions. The published
+results retain their input hashes and per-example measurements.
 
 The earlier [architecture screen](gemma_architecture/results/summary.json) found
 that removing a mandatory output bottleneck helped both EML and SiLU modestly.
@@ -203,23 +194,18 @@ a consistent EML benefit. The deployment targets remain 20% fewer total paramete
 10% lower end-to-end latency, and at most one percentage point of accuracy loss.
 Activation fitting here has not established a recovered arithmetic algorithm.
 
-For local inference with the hybrid checkpoint, run from the repository root:
-
-```bash
-CUDA_VISIBLE_DEVICES=1 .venv-gemma/bin/python -m gemma_architecture.infer \
-  --hybrid --checkpoint .artifacts/gemma-hybrid/training/silu_eml-s1103.pt \
-  --prompt 'Say hello in one short sentence.' --tokens 24
-```
-
-This command requires the pinned model in the local Hugging Face cache and the
-trained checkpoint. Neither is included in a fresh clone. The local Gemma environment
-uses PyTorch 2.9.0+cu128 and Transformers 5.16.1, with dependencies from the existing
-shared Python environments. These replacement weights failed the quality gate.
+The local Gemma environment uses PyTorch 2.9.0+cu128 and Transformers 5.16.1, with
+dependencies from the existing shared Python environments. The pinned model remains
+in the local Hugging Face cache; it is not included in a fresh clone. The weekday
+screen above can regenerate its inputs from that model. Hybrid inference requires
+a new checkpoint because the failed replacement weights were deleted.
 
 Keep environments and run outputs inside this repository. `.venv-gemma/` and
-`.artifacts/` are ignored by Git. The latter holds the architecture and hybrid runs,
-retained exports, and prerequisite activation data. Older fitted weights were
-deleted. Published records retain their original paths and hashes.
+`.artifacts/` are ignored by Git. Cleanup removed 3.79 GiB of local run artifacts
+and 1,088 tracked tensor files (52.5 MiB), including old activation dumps and fitted
+heads. Generated research tensors are now ignored. Published reports, protocols,
+and per-example measurements remain; their artifact paths and hashes are historical
+references. Removed research tensors are listed in [OMITTED.json](research/OMITTED.json).
 
 Historical runners that hash Markdown protocols need their recorded source
 revision. The [archived documentation](https://github.com/AI-Safeter/eml-torch/tree/29886f0cab0d45857075f9456ef1c075de980e2c)

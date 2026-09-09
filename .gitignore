@@ -4,6 +4,8 @@ __pycache__/
 .venv/
 .venv-gemma/
 .artifacts/
+/research/**/*.pt
+/jspace/evidence/*.pt
 build/
 dist/
 .ruff_cache/

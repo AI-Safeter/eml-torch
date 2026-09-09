@@ -20,10 +20,6 @@
       "bytes": 9910,
       "sha256": "381b60a67c413ca7977276efc247c7cccff8a1ef07bac7126c2566ff606b1377"
     },
-    "evidence/selected-lens.pt": {
-      "bytes": 444501,
-      "sha256": "9cb4c2fa614997d35d37727cc07c0a9bf6663f996ef9c3ddcebddc77976b3ed7"
-    },
     "evidence/calibration.json": {
       "bytes": 1633,
       "sha256": "1fe71340bd089c57bea577b867ebd233b1b92aed98882e0a581b6e498d686741"
@@ -52,5 +48,13 @@
     }
   },
   "calibration_implementation": "lens.py",
-  "reference_revision": "581d398613e5602a5af361e1c34d3a92ea82ba8e"
+  "reference_revision": "581d398613e5602a5af361e1c34d3a92ea82ba8e",
+  "removed": {
+    "evidence/selected-lens.pt": {
+      "bytes": 444501,
+      "sha256": "9cb4c2fa614997d35d37727cc07c0a9bf6663f996ef9c3ddcebddc77976b3ed7",
+      "reason": "Failed semantic-interface gate; generated lens tensor removed during cleanup.",
+      "last_present_commit": "6bce90b589540e8da2cc27008d9eaed56ad9f85a"
+    }
+  }
 }
