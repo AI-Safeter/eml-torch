@@ -3,9 +3,9 @@
 `emltorch` fits symbolic expressions and trains neural heads in PyTorch using
 `eml(x, y) = exp(x) - log(y)`.
 
-Research is paused. The LLM experiments did not establish a consistent advantage
-over SiLU or meet the deployment targets. The library and experimental replacement
-code remain available, along with the measurements behind that decision.
+Research is paused after the architecture and hybrid screens. The LLM experiments
+have not established a consistent EML advantage over SiLU or met the deployment
+targets. The library, replacement code, and measurements remain available.
 
 Install with Python 3.10 or later and a PyTorch build suited to your CUDA version:
 
@@ -49,66 +49,108 @@ symbolic expression search runs through `fit`. Numerical guards clip exponential
 arguments and protect the logarithm. The SMT exports describe real-valued formulas;
 they do not certify floating-point or approximation error.
 
-The last experiment replaced layer 26's complete MLP in `google/gemma-4-E2B-it`,
-revision `3e22461f65e89153144f8adb70e3b8c2cc9845a7`. The checkpoint contains
-5,104,297,504 unique parameters; the original MLP contains 56,623,104. Each
-replacement uses about six million coefficients. During replacement inference,
-the original MLP is removed and teacher activations are not inputs.
+The Gemma experiments replace layer 26's complete MLP in `google/gemma-4-E2B-it`,
+revision `3e22461f65e89153144f8adb70e3b8c2cc9845a7`. The local configuration identifies
+its native activation as GELU. The checkpoint contains 5,104,297,504 unique parameters;
+the original MLP contains 56,623,104. During replacement inference, that MLP is removed
+and teacher activations are not inputs.
 
-We compared a 512-state bottleneck, a full-width affine shortcut with a nonlinear
-correction, and a network with structured full-width states. Both EML and SiLU
-used one nonlinear stage, seed 1103, and 12,000 training updates. Development
-reconstruction errors were:
+The latest screen tested a SiLU network with a small EML correction against SiLU,
+EML, and SiLU with a SiLU correction. Each candidate used a full-width affine
+shortcut, a shared 512-wide nonlinear path, and one nonlinear stage. Two-branch
+candidates allocated about 600k coefficients to the correction, with a learned gate
+initialized at 0.01. Total counts, including buffers, were 5,999,066–5,999,773.
 
-| Architecture | EML error | SiLU error |
-|---|---:|---:|
-| Bottleneck | 0.255290 | 0.257667 |
-| Affine shortcut | 0.243286 | 0.244154 |
-| Structured states | 0.250279 | 0.239963 |
+All four fits used seed 1103, identical training batches, and 12,000 updates.
+Development results were:
 
-These errors are mean squared MLP errors divided by training target variance.
-The shortcut reduced error by 4.7% for EML and 5.2% for SiLU. Both benefited from
-the architectural change. Answer quality still fell: ARC accuracy was 73.96% for
-the original model, 63.54% for shortcut EML, and 64.58% for shortcut SiLU.
+| Replacement | MLP error ↓ | Contribution error ↓ | Arithmetic | ARC |
+|---|---:|---:|---:|---:|
+| Original | — | — | 64.6% | 65.6% |
+| SiLU | 0.245214 | 0.257763 | 61.5% | 59.4% |
+| EML | 0.243637 | 0.255766 | 61.5% | 59.4% |
+| SiLU + SiLU | 0.240731 | 0.253263 | 63.5% | 53.1% |
+| SiLU + EML | 0.247306 | 0.259337 | 62.5% | 56.3% |
 
-Shortcut EML reduced end-to-end latency by 0.18%, with a 95% interval of
-[-1.18%, 1.87%], at batch 8, 512 input tokens, and 32 cached decoding steps.
-That measurement does not establish a speed improvement. The deployment targets
-of 20% fewer total parameters, 10% lower latency, and at most one percentage point
-of accuracy loss remain unmet.
+MLP error is mean squared error divided by training target variance. Contribution
+error measures the native normalized MLP contribution, scaled by its training
+second moment. Both average arithmetic and language domains equally. Quality
+scores include every prompt: 48 operand groups in two formats and 32 ARC questions.
+These are development results from one seed, with substantial sampling uncertainty.
+Reported bootstrap intervals are exploratory and unadjusted. Zero observed paired
+disagreements can give a [0, 0] interval; that does not certify equivalence.
 
-None of the six candidates passed the development gate. The study stopped before
-additional seeds, deeper training, or fresh confirmation. It used 1.416 H100 device
-hours. Training curves were still improving, so the results do not separate
-remaining capacity limits from incomplete optimization. They also do not establish
-a general mathematical limit on EML.
+Removing the trained EML branch reduced arithmetic accuracy from 62.5% to 51.0%
+(a paired drop of 11.5 percentage points; bootstrap 95% interval 3.1–20.8). This drop
+came from addition. Removing the branch improved shifted arithmetic from
+33.3% to 41.7%, so its contribution did not transfer consistently.
+The complete hybrid had 2.7% higher reconstruction error than SiLU + SiLU. Its shifted arithmetic accuracy was
+33.3%, versus 37.5% for SiLU + SiLU and 41.7% for SiLU. The hybrid had the lowest
+language cross-entropy on 16 development documents, 4.8719 nats, compared with
+4.8773 for SiLU + SiLU. That small difference does not establish a language benefit.
 
-[The result data](gemma_architecture/results/summary.json) contain all completed
-fits, quality measurements, and uncertainty estimates. The
-[protocol](gemma_architecture/protocol.json) records the budget and acceptance
-criteria. Earlier [complete-block results](gemma_mechanisms/results/summary.json)
-and the [quantization-correction evidence](kv_correction/evidence) remain available.
-Those experiments also failed to establish a consistent EML benefit. Activation
-fitting in this repository has not established a recovered arithmetic algorithm.
+The hybrid failed the frozen advancement gate. No additional seeds were trained,
+and fresh confirmation stayed closed. Three fits selected their last checkpoint;
+training may still be incomplete. About 56% of the hybrid's development error lay
+outside its learned decoder subspace. The full-width shortcut still leaves the
+nonlinear correction limited to 512 output directions. These results cannot separate
+remaining architectural limits, optimization, and the choice to spend part of the
+budget on EML. They do not establish a general limitation of the operator.
 
-For local inference with one of the retained experimental exports, run from the
-repository root and choose a GPU with enough free memory:
+At batch 1 with 128 prompt tokens and 16 decoding steps, the hybrid averaged
+68.3 ms for prefill, 786.4 ms for decoding, and 854.6 ms end to end. SiLU averaged
+844.9 ms end to end. The paired hybrid/SiLU latency ratio was 1.013, with a 95%
+interval of [0.987, 1.039]. These measurements used a shared H100, native eager
+execution, and CPU lookup of Gemma's auxiliary embedding table. They do not
+establish a serving speed advantage. The two-SiLU branches could also be merged
+algebraically; that optimization was not applied in this screen. Full timing,
+throughput, memory, and training-cost records are in the result file.
+
+[The hybrid results](gemma_architecture/results/hybrid.json) include every completed
+fit, per-example predictions, branch ablations, paired uncertainty, and timing.
+The [frozen protocol](gemma_architecture/hybrid-protocol.json) records the two H100-hour
+cap and stopping rules. The screen and inference check used 0.266 H100 device
+hours, including shared-device delays and process startup. Earlier activation
+collection is outside that total. With the retained activation files and pinned
+environment, a new run can be started inside the repository:
+
+```bash
+EML_HYBRID_RUNS="$PWD/.artifacts/gemma-hybrid-reproduce" \
+  .venv-gemma/bin/python -m gemma_architecture.hybrid run --gpu 0 --eval-gpu 1
+```
+
+Choose GPUs with available memory. The runner preserves completed jobs and stops
+at its budget or quality gate. The development data were inspected in previous
+studies; confirmation files are opened only after the gate passes and all selected
+checkpoints are frozen. A fresh clone also needs the local prerequisite activations
+and initialization recorded in the result's input hashes.
+
+The earlier [architecture screen](gemma_architecture/results/summary.json) found
+that removing a mandatory output bottleneck helped both EML and SiLU modestly.
+None of its six candidates passed its quality gate. Earlier
+[complete-block results](gemma_mechanisms/results/summary.json) and
+[quantization-correction evidence](kv_correction/evidence) also failed to establish
+a consistent EML benefit. The deployment targets remain 20% fewer total parameters,
+10% lower end-to-end latency, and at most one percentage point of accuracy loss.
+Activation fitting here has not established a recovered arithmetic algorithm.
+
+For local inference with the hybrid checkpoint, run from the repository root:
 
 ```bash
 CUDA_VISIBLE_DEVICES=1 .venv-gemma/bin/python -m gemma_architecture.infer \
-  --checkpoint .artifacts/gemma-architecture-release-5c87a61/exports/shortcut-eml-d1-s1103-n12000.pt \
+  --hybrid --checkpoint .artifacts/gemma-hybrid/training/silu_eml-s1103.pt \
   --prompt 'Say hello in one short sentence.' --tokens 24
 ```
 
 This command requires the pinned model in the local Hugging Face cache and the
-retained export. Neither is included in a fresh clone. The local Gemma environment
+trained checkpoint. Neither is included in a fresh clone. The local Gemma environment
 uses PyTorch 2.9.0+cu128 and Transformers 5.16.1, with dependencies from the existing
 shared Python environments. These replacement weights failed the quality gate.
 
 Keep environments and run outputs inside this repository. `.venv-gemma/` and
-`.artifacts/` are ignored by Git. The latter holds the final run, its six exports,
-and prerequisite activation data. Older fitted weights were deleted. Published
-records retain their original paths and hashes.
+`.artifacts/` are ignored by Git. The latter holds the architecture and hybrid runs,
+retained exports, and prerequisite activation data. Older fitted weights were
+deleted. Published records retain their original paths and hashes.
 
 Historical runners that hash Markdown protocols need their recorded source
 revision. The [archived documentation](https://github.com/AI-Safeter/eml-torch/tree/29886f0cab0d45857075f9456ef1c075de980e2c)

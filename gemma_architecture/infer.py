@@ -11,6 +11,7 @@ from .export import load_export
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--checkpoint", required=True)
+    p.add_argument("--hybrid", action="store_true", help="Load a SiLU/EML hybrid-study checkpoint")
     p.add_argument("--prompt", default="Reply with only the integer value of 731 + 862.")
     p.add_argument("--tokens", type=int, default=64)
     a = p.parse_args()
@@ -25,7 +26,13 @@ def main():
 
     removed.forward = forbidden
     removed.cpu()
-    text_layers(model)[26].mlp = load_export(a.checkpoint)
+    if a.hybrid:
+        from .hybrid_model import load_hybrid
+
+        replacement = load_hybrid(a.checkpoint)
+    else:
+        replacement = load_export(a.checkpoint)
+    text_layers(model)[26].mlp = replacement
     assert not original_ids.intersection(id(p) for p in model.parameters())
     del removed
     inputs = tok(prompt(tok, a.prompt), add_special_tokens=False, return_tensors="pt").to("cuda")
