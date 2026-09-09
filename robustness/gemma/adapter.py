@@ -101,7 +101,7 @@ def install():
         EMLTORCH_MODEL_ID=SPEC["id"],
         EMLTORCH_MODEL_REVISION=SPEC["revision"],
         EMLTORCH_MODEL_PATH=str(SNAPSHOT),
-        EMLTORCH_RESEARCH_ROOT=str(STUDY.parent.parent / "emltorch-robustness-runs/gemma"),
+        EMLTORCH_RESEARCH_ROOT=str(STUDY.parent / ".artifacts/robustness/gemma"),
     )
     sys.path.insert(0, str(STUDY / "src"))
     import model_io

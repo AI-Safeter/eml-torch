@@ -13,8 +13,8 @@ ROOT = HERE.parent
 sys.path.insert(0, str(ROOT))
 
 SPEC = json.loads((HERE / "protocol.json").read_text())
-PILOT = ROOT.parent / "emltorch-kv-runs"
-RUN = Path(os.environ.get("EML_CORRECTION_RUN", str(ROOT.parent / "emltorch-correction-runs")))
+PILOT = ROOT / ".artifacts/kv-cache"
+RUN = Path(os.environ.get("EML_CORRECTION_RUN", str(ROOT / ".artifacts/kv-correction")))
 SNAPSHOT = (
     Path.home()
     / ".cache/huggingface/hub/models--google--gemma-4-E2B-it/snapshots"

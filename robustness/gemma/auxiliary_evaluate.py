@@ -86,10 +86,10 @@ def main():
     parser.add_argument("--publish", action="store_true")
     args = parser.parse_args()
     generation_execute.verify()
-    runs = adapter.STUDY.parent.parent / "emltorch-robustness-runs"
+    runs = runtime.RUNS
     source = runs / "gemma" / args.operation
     root = args.output.resolve()
-    assert not root.is_relative_to(runs) and not root.is_relative_to(adapter.STUDY.parent)
+    assert not root.is_relative_to(runs) and not root.is_relative_to(adapter.STUDY)
     out = root / args.operation
     if args.publish:
         assert args.engine == "cached" and not args.validate_only

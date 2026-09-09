@@ -58,16 +58,16 @@ CUDA_VISIBLE_DEVICES=0 python validate_extensions.py
 
 ## Scalar study
 
-Use one GPU per model where memory permits. Actual free memory on shared hardware matters; the 4B model is loaded in float32. Activations, checkpoints, and raw results live in the sibling directory `emltorch-robustness-runs/`, keeping them separate from the core library.
+Use one GPU per model where memory permits. Actual free memory on shared hardware matters; the 4B model is loaded in float32. New activations, checkpoints, and raw results belong in `.artifacts/robustness/` inside the repository. The old external run artifacts were deleted during cleanup; published evidence remains in Git. Frozen historical studies require their recorded source revision.
 
 ```bash
-CUDA_VISIBLE_DEVICES=0 python run_collection.py qwen17b --output ../../emltorch-robustness-runs/qwen17b
+CUDA_VISIBLE_DEVICES=0 python run_collection.py qwen17b --output ../.artifacts/robustness/qwen17b
 CUDA_VISIBLE_DEVICES=0 python validate_generation.py qwen17b
 CUDA_VISIBLE_DEVICES=0 python run_fits.py qwen17b
 CUDA_VISIBLE_DEVICES=0 python run_evaluation.py qwen17b
 ```
 
-For this checkout layout, pass the absolute sibling run directory to `--output` (or `../../emltorch-robustness-runs/qwen17b` when starting inside `robustness/`). `run_fits.py` and `run_evaluation.py` use the location defined in `runtime.py`. Repeat for `qwen4b` on another GPU. The `smollm` option remains for reproduction of the superseded arm; use the separate Gemma entry points below for its replacement. The evaluator checks that all ten candidates per operation/method have finished, creates missing sparse/linear controls, validates restoration and all-token hooks, then evaluates every selected head and every seed. It does not choose a model on test performance.
+Pass `../.artifacts/robustness/qwen17b` to `--output` when starting inside `robustness/`. `run_fits.py` and `run_evaluation.py` use the location defined in `runtime.py`. Repeat for `qwen4b` on another GPU. The `smollm` option remains for reproduction of the superseded arm; use the separate Gemma entry points below for its replacement. The evaluator checks that all ten candidates per operation/method have finished, creates missing sparse/linear controls, validates restoration and all-token hooks, then evaluates every selected head and every seed. It does not choose a model on test performance.
 
 Qwen evaluation stages now cache unchanged layers before the scalar intervention when token IDs and attention masks match. See [the execution amendment](PREFIX_CACHE_AMENDMENT.md). Qwen generation and whole-block timing retain their native execution paths. Gemma's default entry points also retain native execution; the separately validated [host execution driver](gemma/HOST_EXECUTION.md) enables its non-generative prefix reuse, and the [generation driver](gemma/GENERATION_EXECUTION.md) extends reuse to generation prefill. Both Qwen models passed bitwise validation checks, and a full Qwen3-1.7B primary intervention replay reproduced the original file hash. The direct-script evaluator also reproduced four original validation cohorts exactly (`prefix-dispatch-validation.json`).
 

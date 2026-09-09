@@ -31,7 +31,7 @@ Allow additional memory for CUDA and shared GPU workloads.
 Run from the repository root with a fresh output directory:
 
 ```bash
-export EML_JSPACE_RUN=/absolute/path/to/new-run
+export EML_JSPACE_RUN="$PWD/.artifacts/jspace"
 export CUDA_VISIBLE_DEVICES=3
 mkdir -p "$EML_JSPACE_RUN"
 gzip -dc jspace/evidence/documents.json.gz > "$EML_JSPACE_RUN/documents.json"

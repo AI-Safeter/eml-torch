@@ -263,9 +263,7 @@ def questions(out, previous, rng):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--previous", default="/home/ubuntu/samuel/emltorch-gemma-replacement-runs-bos"
-    )
+    parser.add_argument("--previous", default=str(HERE.parent / ".artifacts/gemma-replacement-bos"))
     parser.add_argument("--output")
     args = parser.parse_args()
     setup(SPEC["data_seed"])

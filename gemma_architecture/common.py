@@ -23,9 +23,7 @@ SPEC = json.loads((HERE / "protocol.json").read_text())
 def root(path=None):
     out = Path(
         path
-        or os.environ.get(
-            "EML_ARCHITECTURE_RUNS", "/home/ubuntu/samuel/emltorch-gemma-architecture-runs"
-        )
+        or os.environ.get("EML_ARCHITECTURE_RUNS", HERE.parent / ".artifacts/gemma-architecture")
     ).resolve()
     assert "replacement-runs" not in str(out)
     out.mkdir(parents=True, exist_ok=True)

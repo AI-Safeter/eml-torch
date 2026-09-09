@@ -13,9 +13,9 @@ Training minimizes an equal-weight combination of V MSE and attention-output MSE
 Run from the repository root using the pinned Gemma environment (PyTorch 2.9.0+cu128, Transformers 5.16.1) and the locally cached model revision from `protocol.json`. Reuse the published split to reproduce without the retired pilot runners:
 
 ```bash
-export EML_CORRECTION_RUN=/path/to/new-correction-run
+export EML_CORRECTION_RUN="$PWD/.artifacts/kv-correction"
 export CUDA_VISIBLE_DEVICES=3
-KV_PY=../emltorch-gemma-env/bin/python
+KV_PY="$PWD/.venv-gemma/bin/python"
 mkdir -p "$EML_CORRECTION_RUN"
 cp kv_correction/evidence/design.json "$EML_CORRECTION_RUN/design.json"
 gzip -dc kv_correction/evidence/documents.json.gz > "$EML_CORRECTION_RUN/documents.json"
@@ -25,7 +25,7 @@ $KV_PY kv_correction/replay.py
 $KV_PY kv_correction/gate.py
 ```
 
-Collection preserves the native SDPA backend and causal masks. GPU replay requires bitwise agreement for V, attention weights and the output projection after removing dependencies on the retired pilot. The gate reloads all 15 deployed checkpoints, recomputes selection objectives, checks byte budgets, and freezes source/checkpoint hashes before evaluating the untouched articles. Existing completed runs are protected against replacement. Evidence includes raw errors and timings, fit histories, hashes and the published split. Large activation tensors and trained weights stay in `../emltorch-correction-runs`.
+Collection preserves the native SDPA backend and causal masks. GPU replay requires bitwise agreement for V, attention weights and the output projection after removing dependencies on the retired pilot. The gate reloads all 15 deployed checkpoints, recomputes selection objectives, checks byte budgets, and freezes source/checkpoint hashes before evaluating the untouched articles. Existing completed runs are protected against replacement. Evidence includes raw errors and timings, fit histories, hashes and the published split. New activation tensors and trained weights belong in `.artifacts/kv-correction`; the old external run artifacts were deleted during cleanup.
 
 This is a fixed-format, one-layer experiment. Q and K are held at native values; it does not test feedback through later layers or quantify a total-cache or model-speed benefit. [KIVI](https://arxiv.org/abs/2402.02750) motivates separate per-channel K and per-token V quantization experiments, but this EML gate did not justify advancing to them.
 

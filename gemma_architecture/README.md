@@ -29,8 +29,8 @@ this stopped study.
 Run commands from the repository root in the pinned Gemma environment:
 
 ```bash
-export EML_ARCHITECTURE_RUNS=/home/ubuntu/samuel/emltorch-gemma-architecture-runs
-EML_PY=/home/ubuntu/samuel/emltorch-gemma-env/bin/python
+export EML_ARCHITECTURE_RUNS="$PWD/.artifacts/gemma-architecture"
+EML_PY="$PWD/.venv-gemma/bin/python"
 "$EML_PY" -m gemma_architecture.reproduce \
   --fit-gpu 0 --model-gpu 3 --audit-gpu 2 --release
 ```
@@ -42,10 +42,10 @@ availability; the observed study initially spread independent fits across GPUs
 0, 1, and 2 and ran model evaluation/timing on GPU 3.
 
 For a fresh reproduction, set `EML_ARCHITECTURE_RUNS` to a new empty directory.
-The prior corrected study at
-`/home/ubuntu/samuel/emltorch-gemma-replacement-runs-bos` and its historical
-companion run are required: activation datasets, native normalization weights,
-old evaluation records, and dataset shards supply training and exclusions.
+The prior corrected inputs at `.artifacts/gemma-replacement-bos` and historical
+JSON records at `.artifacts/gemma-replacement` are required: activation datasets,
+native normalization weights, old evaluation records, and dataset shards supply
+training and exclusions.
 Their hashes are bound in `data-freeze.json` and the training freeze. See
 [the preceding study's commands](../gemma_mechanisms/COMMANDS.md) to regenerate
 those inputs. Fresh preparation rewrites the local stage's identity/data
@@ -76,7 +76,7 @@ path and refuses to silently advance a different outcome.
 
 ## Use an exported replacement
 
-Exports are stored under `$EML_ARCHITECTURE_RUNS/exports`; large tensor artifacts
+New exports are stored under `$EML_ARCHITECTURE_RUNS/exports`; large tensor artifacts
 remain outside Git. Their hashes, byte sizes, tensor accounting, and bitwise
 reload checks are in the result manifests. The inference command loads only the
 base checkpoint and the exported replacement; it does not read activation data.
@@ -84,7 +84,7 @@ base checkpoint and the exported replacement; it does not read activation data.
 ```bash
 "$EML_PY" -m gemma_architecture.budget \
   --phase benchmark_and_audit --label demo-shortcut --gpu 3 --seconds 120 \
-  infer --checkpoint "$EML_ARCHITECTURE_RUNS/exports/shortcut-eml-d1-s1103-n12000.pt" \
+  infer --checkpoint "$PWD/.artifacts/gemma-architecture-release-5c87a61/exports/shortcut-eml-d1-s1103-n12000.pt" \
   --prompt 'Say hello in one short sentence.' --tokens 24
 ```
 
@@ -94,6 +94,18 @@ preserved rather than executed again.
 The base checkpoint is loaded before swapping out the MLP. The removed module
 is absent during generation and its forward is forbidden. These experimental
 weights have **not** passed a deployment quality gate.
+
+The local cleanup retained the complete published run under
+`.artifacts/gemma-architecture-release-5c87a61`, including all six exports and
+training checkpoints. Its freezes retain the original absolute paths and source
+hashes. Read it as an archive; use a fresh run directory for reproduction with
+the updated path defaults. The four prerequisite activation files, native
+normalization weights, corrected datasets, and historical JSON exclusion records
+remain under `.artifacts/gemma-replacement-bos` and `.artifacts/gemma-replacement`.
+Older fitted weights and superseded run directories were deleted. Historical
+source versions remain in Git. The Gemma environment still uses the existing
+shared Python dependencies configured in `.venv-gemma`; those shared environments
+were left in place.
 
 ## Files and accounting
 

@@ -24,7 +24,7 @@ def root(path=None):
         path
         or os.environ.get(
             "EML_GEMMA_MECHANISMS_RUNS",
-            "/home/ubuntu/samuel/emltorch-gemma-replacement-runs",
+            HERE.parent / ".artifacts/gemma-replacement",
         )
     ).resolve()
     assert "robustness-runs" not in str(path), "Do not write into the running scalar study"

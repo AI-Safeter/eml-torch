@@ -39,7 +39,7 @@ def main():
     with tempfile.TemporaryDirectory() as temporary:
         root = Path(temporary)
         fixture = root / "fixture"
-        study, runs = fixture / "eml-torch/robustness", fixture / "emltorch-robustness-runs"
+        study, runs = fixture / "eml-torch/robustness", fixture / "eml-torch/.artifacts/robustness"
         study.mkdir(parents=True)
         out = runs / "qwen17b/divide"
         out.mkdir(parents=True)
@@ -107,7 +107,7 @@ def main():
         with patch.multiple(
             bundle,
             HERE=relocated / "eml-torch/robustness",
-            RUNS=relocated / "emltorch-robustness-runs",
+            RUNS=relocated / "eml-torch/.artifacts/robustness",
         ):
             assert bundle.require_audit() == audit
             assert bundle.report_provenance(audit) == provenance

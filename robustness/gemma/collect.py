@@ -8,7 +8,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 STUDY = HERE.parent
-ROOT = STUDY.parent.parent / "emltorch-robustness-runs/gemma"
+ROOT = STUDY.parent / ".artifacts/robustness/gemma"
 
 
 def stage(name, *args):

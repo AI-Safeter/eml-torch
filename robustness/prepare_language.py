@@ -12,7 +12,7 @@ from transformers import AutoTokenizer
 
 HERE = Path(__file__).resolve().parent
 REVISION = "b08601e04326c79dfdd32d625aee71d232d685c3"
-DESTINATION = HERE.parent.parent / "emltorch-robustness-runs/whole-block"
+DESTINATION = HERE.parent / ".artifacts/robustness/whole-block"
 
 
 def main():

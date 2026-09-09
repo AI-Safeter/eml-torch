@@ -2,6 +2,11 @@
 
 GPU-batched symbolic regression with `eml(x, y) = exp(x) - log(y)`.
 
+Keep checkouts, environments, and experiment outputs inside this repository.
+Run outputs default to the ignored `.artifacts/` directory; the local Gemma
+environment is `.venv-gemma/`. Use `.artifacts/<experiment>` for explicit output
+paths too. Historical results retain their original paths and source hashes.
+
 ```bash
 pip install -e .
 # Optional formula solvers:

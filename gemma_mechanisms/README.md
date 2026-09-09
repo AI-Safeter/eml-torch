@@ -29,7 +29,13 @@ are not a recovered symbolic arithmetic algorithm.
 
 The runtime enforces torch 2.9.0+cu128 and transformers 5.16.1; [environment.json](environment.json) records supporting packages. Model weights must already be available at the pinned Hugging Face snapshot. Dataset IDs, revisions, seeds, splits, training budgets and acceptance criteria are fixed in `protocol.json`. `prepare.py` now includes native BOS for each document.
 
-The local diagnostic root is `/home/ubuntu/samuel/emltorch-gemma-replacement-runs`; the corrected replacement root appends `-bos`. Use a fresh directory for a new reproduction. The original 42 fits are retained as diagnostics after the BOS correction; they are not the accepted replacement experiment. `prepare_corrected.py` reproduces that amendment from original 256-token files. Do not apply it to already corrected 257-token inputs.
+Local historical JSON records are under `.artifacts/gemma-replacement`; corrected
+datasets and the inputs needed by the architecture study are under
+`.artifacts/gemma-replacement-bos`. Older fitted weights were removed during
+cleanup. Published diagnostics remain in Git. Use a fresh directory inside
+`.artifacts/` for reproduction. `prepare_corrected.py` reproduces the historical
+BOS amendment from original 256-token files. Do not apply it to already corrected
+257-token inputs.
 
 Quality evaluation uses native BF16 scoring with the PLE table on CPU, identically for all methods and validated against a fully resident model. Timing uses the fully GPU-resident model, native eager SDPA, 10 warm-ups and 50 alternating paired repetitions. Prefill, decoding, throughput, allocated/reserved memory, CUDA timing and model end-to-end latency are reported separately. Loading, tokenization and service queuing are outside this declared workload. Other users share the H100s; CPU offloading is memory placement, not parameter compression.
 

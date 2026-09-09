@@ -21,7 +21,7 @@ def main():
     args = parser.parse_args()
     destination = args.output.resolve()
     assert not destination.exists(), "Use a new isolated replay directory"
-    assert not destination.is_relative_to(HERE.parent) and not destination.is_relative_to(RUNS)
+    assert not destination.is_relative_to(HERE) and not destination.is_relative_to(RUNS)
     study = destination / "eml-torch/robustness"
     shutil.copytree(HERE, study, ignore=shutil.ignore_patterns("__pycache__", "results"))
     subprocess.run([sys.executable, str(study / "gemma/collect.py")], check=True)
@@ -38,7 +38,7 @@ def main():
             "gradients-active.pt",
         ]:
             original = RUNS / "gemma" / op / name
-            replay = destination / "emltorch-robustness-runs/gemma" / op / name
+            replay = destination / "eml-torch/.artifacts/robustness/gemma" / op / name
             compare(torch.load(original, weights_only=True), torch.load(replay, weights_only=True))
             archives.append(
                 {

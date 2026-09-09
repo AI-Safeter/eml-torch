@@ -18,7 +18,7 @@ import torch
 
 HERE = Path(__file__).resolve().parent
 SPEC = json.loads((HERE / "protocol.json").read_text())
-RUN = Path(os.environ.get("EML_JSPACE_RUN", str(HERE.parent.parent / "emltorch-jspace-runs")))
+RUN = Path(os.environ.get("EML_JSPACE_RUN", str(HERE.parent / ".artifacts/jspace")))
 SNAPSHOT = (
     Path.home()
     / ".cache/huggingface/hub/models--google--gemma-4-E2B-it/snapshots"
@@ -108,9 +108,7 @@ def source_rows(native, tok):
 
 def make_documents(tok):
     source = Path(
-        os.environ.get(
-            "EML_SQUAD_TRAIN", str(HERE.parent.parent / "emltorch-kv-runs/squad-train.json")
-        )
+        os.environ.get("EML_SQUAD_TRAIN", str(HERE.parent / ".artifacts/kv-cache/squad-train.json"))
     )
     assert sha(source) == SPEC["calibration"]["source_sha256"]
     articles = json.loads(source.read_text())["data"]

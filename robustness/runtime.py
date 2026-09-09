@@ -7,7 +7,7 @@ import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-RUNS = HERE.parent.parent / "emltorch-robustness-runs"
+RUNS = HERE.parent / ".artifacts/robustness"
 sys.path.insert(0, str(HERE / "src"))
 
 

@@ -9,7 +9,7 @@ temporarily needs about 16 GiB. Adjust device placement for another machine.
 ## Use a trained replacement
 
 ```bash
-GEMMA_PYTHON=/home/ubuntu/samuel/emltorch-gemma-env/bin/python
+GEMMA_PYTHON="$PWD/.venv-gemma/bin/python"
 CUDA_VISIBLE_DEVICES=0 "$GEMMA_PYTHON" -m gemma_mechanisms.deploy \
   --checkpoint /path/to/selected-training-checkpoint.pt \
   --text 'What is 573 + 846? Return only the integer answer.'

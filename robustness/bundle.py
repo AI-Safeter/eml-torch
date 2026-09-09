@@ -136,10 +136,10 @@ def create(destination):
     for source in evidence_paths(roster):
         copy(
             source,
-            "emltorch-robustness-runs/" + str(source.relative_to(RUNS)),
+            "eml-torch/.artifacts/robustness/" + str(source.relative_to(RUNS)),
             source.suffix == ".json",
         )
-    copy(RUNS / "audit.json", "emltorch-robustness-runs/audit.json", True)
+    copy(RUNS / "audit.json", "eml-torch/.artifacts/robustness/audit.json", True)
     instructions = """# EML component robustness bundle
 
 Read `eml-torch/robustness/results/REPORT.md` and open its adjacent `explorer.html`.
