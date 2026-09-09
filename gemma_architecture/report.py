@@ -154,6 +154,7 @@ def main():
         "budget.json",
         "validation.json",
         "integration.json",
+        "precision-audit.json",
         "screen-d1-n12000.json",
     ]:
         shutil.copy2(out / filename, destination / filename)
@@ -301,6 +302,13 @@ learned affine component relative to that empirical optimum. The complete
 shortcut floor also allows the decoder to move and is therefore lower.
 Inside/outside quantities use each model's own decoder, not identical axes.
 
+The shortcut's full affine map uses 2,360,832 coefficients. At the fixed budget,
+the compact EML nonlinear width drops from 2,873 to 1,339 units, and SiLU width
+from 4,311 to 2,009. Structured EML uses rank 393 per map and structured SiLU rank
+590: EML pays for two independent argument maps, while both retain the same
+1,536-dimensional state. Matching budget therefore does not mean matching
+inner width or factor rank.
+
 This supports a concrete capacity-allocation explanation: part of the recovered
 output-space capacity is offset by a harder or less capable nonlinear fit at
 the same coefficient budget. It does not uniquely separate encoder loss,
@@ -323,6 +331,15 @@ telemetry: bottleneck and shortcut EML have zero clamps; structured EML has
 updates. This limited telemetry does not rule out optimization difficulties.
 Training versus selection error gaps persist for every design; the experiment
 does not assign them uniquely to distribution shift or capacity.
+
+A separate CUDA precision audit evaluates all 32,768 selection positions in
+unfolded FP32, folded FP32, folded BF16, and unfolded BF16. Folding alone changes
+normalized predictions by at most 4.02e-12 MSE. BF16 deployment changes raw target
+MSE by at most 0.000226 in absolute value, below 0.1% of each corresponding
+FP32 raw MSE. It therefore does not explain the bulk reconstruction gap.
+Small numerical changes can still alter individual downstream answers; this
+check is not an end-to-end precision-invariance guarantee. See
+`precision-audit.json` for every architecture and activation.
 
 ## Complete accounting and measured inference cost
 

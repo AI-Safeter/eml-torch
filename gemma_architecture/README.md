@@ -98,6 +98,7 @@ weights have **not** passed a deployment quality gate.
 `train.py` implements initialization, certified empirical bounds, fitting, and
 continuation. `evaluate.py` runs native arithmetic, ARC, and document scoring.
 `diagnose.py` separates raw errors and measures covariance/local sensitivities.
+`precision.py` measures trained FP32 folding and BF16 deployment roundoff.
 `benchmark.py` measures fully GPU-resident prefill and cached decoding.
 `export.py`, `infer.py`, and `audit.py` verify the standalone replacement path.
 `statistics.py` and `summarize.py` preserve paired uncertainty and every outcome.

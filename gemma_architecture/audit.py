@@ -95,7 +95,12 @@ def main():
     assert ledger["jobs"]["prepare-data"]["finished_unix"] < min(
         row["started_unix"] for key, row in ledger["jobs"].items() if key.startswith("fit-")
     )
+    precision = json.loads((out / "precision-audit.json").read_text())
+    for method, row in precision["methods"].items():
+        assert row["checkpoint_sha256"] == checked[method]["checkpoint_sha256"]
+        assert row["metrics"]["folded_fp32"]["prediction_mse_vs_fp32"] < 1e-10
     record = {
+        "precision_audit_sha256": digest(out / "precision-audit.json"),
         "fresh_confirmation_unopened": decision["status"] == "stop",
         "data_frozen_before_training": True,
         "fits": checked,
