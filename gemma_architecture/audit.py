@@ -1,12 +1,15 @@
 """CUDA release audit: accounting, paired statistics, update streams, and bound closure."""
 
+import hashlib
 import json
+import platform
+import subprocess
 
 import torch
 
 from gemma_mechanisms.quality_summary import accuracy as reference_accuracy
 
-from .common import HERE, accounting, digest, root, save, setup, sources
+from .common import HERE, SPEC, accounting, digest, root, save, setup, sources
 from .model import load_replacement
 from .statistics import accuracy
 
@@ -99,7 +102,30 @@ def main():
     for method, row in precision["methods"].items():
         assert row["checkpoint_sha256"] == checked[method]["checkpoint_sha256"]
         assert row["metrics"]["folded_fp32"]["prediction_mse_vs_fp32"] < 1e-10
+    inherited = {}
+    for relative in [
+        "gemma_mechanisms/runtime.py",
+        "gemma_mechanisms/student.py",
+        "gemma_mechanisms/train.py",
+        "gemma_mechanisms/evaluate.py",
+        "gemma_mechanisms/prepare.py",
+        "gemma_mechanisms/quality_summary.py",
+        "gemma_mechanisms/protocol.json",
+        "emltorch/operator.py",
+    ]:
+        original = subprocess.check_output(
+            ["git", "show", SPEC["previous_commit"] + ":" + relative], cwd=HERE.parent
+        )
+        sha = hashlib.sha256(original).hexdigest()
+        assert digest(HERE.parent / relative) == sha
+        inherited[relative] = sha
     record = {
+        "inherited_sources_unchanged_from_previous_commit": inherited,
+        "environment": {
+            "python": platform.python_version(),
+            "torch": str(torch.__version__),
+            "cuda": torch.version.cuda,
+        },
         "precision_audit_sha256": digest(out / "precision-audit.json"),
         "fresh_confirmation_unopened": decision["status"] == "stop",
         "data_frozen_before_training": True,
@@ -109,7 +135,8 @@ def main():
         "raw_error_replay_and_decomposition_pass": True,
         "inputs": bindings,
         "sources": sources("audit.py", "model.py", "statistics.py"),
-        "all_validation_on_cuda": True,
+        "model_and_tensor_checks_on_cuda": True,
+        "scalar_probability_quantiles": "SciPy beta inverse CDF on CPU; paired bootstrap on CUDA",
     }
     save(out / "release-audit.json", record)
     print("RELEASE AUDIT COMPLETE", len(checked), len(bindings), flush=True)
