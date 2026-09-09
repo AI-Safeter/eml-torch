@@ -1,0 +1,18 @@
+{
+  "sources": {
+    "gemma_architecture/evaluate.py": "6bc46ab9d1900ed793420c27371ff0fb90269247bd79bff645fb9cbdcf73c303",
+    "gemma_architecture/model.py": "c572fa54ee8e27c1767c85a3a262d140f60704a37b87fe3e5f186b16278158d2",
+    "gemma_architecture/statistics.py": "9c61063c87d1eb8cd9a9c1528b7bc4e4da9435ee9087d045c93a5f5f8d0542ac",
+    "gemma_architecture/../gemma_mechanisms/evaluate.py": "44a9ec050a5d19c003ace8f5207dede6564d9cd800c8f8f0d8ab54886d5022dd",
+    "gemma_architecture/../gemma_mechanisms/prepare.py": "bf3080a2dd5d3341feab3c4aa1d542b9171e337c9fb50e5d135971154493fef4",
+    "gemma_architecture/../gemma_mechanisms/student.py": "d1b1fa25edbd48c076a16745476644ecc08a98db06bd087db8b2568ef8fe0d0c",
+    "gemma_architecture/protocol.json": "45aed8b84b0237205c663263ce5503f4be421aeadcd0b2db1b40fb3e86efdd23",
+    "emltorch/operator.py": "03d92ec3bbe02256c1785e46f85d97bb1f990c08410bd2d4e78eb8d699a8a0d8",
+    "gemma_mechanisms/runtime.py": "09adb4b0b0a030ba64613e36870aa2ad4373d646ab6989339c3f6fff3eacb5e2"
+  },
+  "data_freeze_sha256": "8c089468bad47a201a2f9748d420a31ca6c56d62fa13a0761fe8ecbc379027e2",
+  "checkpoint_sha256": "5c7761498c1ea9cdca9d1522d929529c664fe946b5e20d1900fd814c87caabb7",
+  "selection_sha256": null,
+  "split": "development",
+  "method": "bottleneck-silu-d1-s1103-n12000"
+}

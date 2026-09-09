@@ -1,0 +1,749 @@
+{
+  "inherited_sources_unchanged_from_previous_commit": {
+    "gemma_mechanisms/runtime.py": "09adb4b0b0a030ba64613e36870aa2ad4373d646ab6989339c3f6fff3eacb5e2",
+    "gemma_mechanisms/student.py": "d1b1fa25edbd48c076a16745476644ecc08a98db06bd087db8b2568ef8fe0d0c",
+    "gemma_mechanisms/train.py": "b9800c64e96f62961c735abcca3bec5358cbbfbfde74d5641e099b6fffb6b90e",
+    "gemma_mechanisms/evaluate.py": "44a9ec050a5d19c003ace8f5207dede6564d9cd800c8f8f0d8ab54886d5022dd",
+    "gemma_mechanisms/prepare.py": "bf3080a2dd5d3341feab3c4aa1d542b9171e337c9fb50e5d135971154493fef4",
+    "gemma_mechanisms/quality_summary.py": "eb02d5da02616785bca887ab8d0fd0c1511932e1bd3e496ac74f4dcddc4a81f9",
+    "gemma_mechanisms/protocol.json": "6b8f66b9cf4d129ee216935ab5bf42f7ebaafba32422fdef69d91b40fd8a7fe1",
+    "emltorch/operator.py": "03d92ec3bbe02256c1785e46f85d97bb1f990c08410bd2d4e78eb8d699a8a0d8"
+  },
+  "environment": {
+    "python": "3.10.12",
+    "torch": "2.9.0+cu128",
+    "cuda": "12.8"
+  },
+  "precision_audit_sha256": "bd2f793c853e40da4511ed0f9773e8e5569df879cc44d75c6153b18f39e37fef",
+  "fresh_confirmation_unopened": true,
+  "data_frozen_before_training": true,
+  "fits": {
+    "bottleneck-eml-d1-s1103-n12000": {
+      "training": {
+        "parameters": 5995122,
+        "parameter_bytes": 23980488,
+        "buffers": 4609,
+        "buffer_bytes": 18436,
+        "coefficients": 5999731,
+        "by_device": {
+          "cuda": 23998924
+        }
+      },
+      "deployed": {
+        "parameters": 5994610,
+        "parameter_bytes": 11989220,
+        "buffers": 0,
+        "buffer_bytes": 0,
+        "coefficients": 5994610,
+        "by_device": {
+          "cuda": 11989220
+        }
+      },
+      "deployed_tensors": {
+        "network.encoder.weight": {
+          "shape": [
+            512,
+            1536
+          ],
+          "coefficients": 786432,
+          "bytes": 1572864
+        },
+        "network.encoder.bias": {
+          "shape": [
+            512
+          ],
+          "coefficients": 512,
+          "bytes": 1024
+        },
+        "network.decoder.weight": {
+          "shape": [
+            1536,
+            512
+          ],
+          "coefficients": 786432,
+          "bytes": 1572864
+        },
+        "network.decoder.bias": {
+          "shape": [
+            1536
+          ],
+          "coefficients": 1536,
+          "bytes": 3072
+        },
+        "network.stages.0.norm.weight": {
+          "shape": [
+            512
+          ],
+          "coefficients": 512,
+          "bytes": 1024
+        },
+        "network.stages.0.norm.bias": {
+          "shape": [
+            512
+          ],
+          "coefficients": 512,
+          "bytes": 1024
+        },
+        "network.stages.0.arguments.weight": {
+          "shape": [
+            5746,
+            512
+          ],
+          "coefficients": 2941952,
+          "bytes": 5883904
+        },
+        "network.stages.0.arguments.bias": {
+          "shape": [
+            5746
+          ],
+          "coefficients": 5746,
+          "bytes": 11492
+        },
+        "network.stages.0.readout.weight": {
+          "shape": [
+            512,
+            2873
+          ],
+          "coefficients": 1470976,
+          "bytes": 2941952
+        }
+      },
+      "checkpoint_sha256": "dd6cb738bd23854e7c6d0d9508115c49d0f73a2e2a57111a8421850ddd831e0b",
+      "fit_record_sha256": "1346d61a0bb2f7b1f236b78040710ea1010928f82629ff0ac478a0fe6e9306f5"
+    },
+    "bottleneck-silu-d1-s1103-n12000": {
+      "training": {
+        "parameters": 5995223,
+        "parameter_bytes": 23980892,
+        "buffers": 4609,
+        "buffer_bytes": 18436,
+        "coefficients": 5999832,
+        "by_device": {
+          "cuda": 23999328
+        }
+      },
+      "deployed": {
+        "parameters": 5994711,
+        "parameter_bytes": 11989422,
+        "buffers": 0,
+        "buffer_bytes": 0,
+        "coefficients": 5994711,
+        "by_device": {
+          "cuda": 11989422
+        }
+      },
+      "deployed_tensors": {
+        "network.encoder.weight": {
+          "shape": [
+            512,
+            1536
+          ],
+          "coefficients": 786432,
+          "bytes": 1572864
+        },
+        "network.encoder.bias": {
+          "shape": [
+            512
+          ],
+          "coefficients": 512,
+          "bytes": 1024
+        },
+        "network.decoder.weight": {
+          "shape": [
+            1536,
+            512
+          ],
+          "coefficients": 786432,
+          "bytes": 1572864
+        },
+        "network.decoder.bias": {
+          "shape": [
+            1536
+          ],
+          "coefficients": 1536,
+          "bytes": 3072
+        },
+        "network.stages.0.norm.weight": {
+          "shape": [
+            512
+          ],
+          "coefficients": 512,
+          "bytes": 1024
+        },
+        "network.stages.0.norm.bias": {
+          "shape": [
+            512
+          ],
+          "coefficients": 512,
+          "bytes": 1024
+        },
+        "network.stages.0.arguments.weight": {
+          "shape": [
+            4311,
+            512
+          ],
+          "coefficients": 2207232,
+          "bytes": 4414464
+        },
+        "network.stages.0.arguments.bias": {
+          "shape": [
+            4311
+          ],
+          "coefficients": 4311,
+          "bytes": 8622
+        },
+        "network.stages.0.readout.weight": {
+          "shape": [
+            512,
+            4311
+          ],
+          "coefficients": 2207232,
+          "bytes": 4414464
+        }
+      },
+      "checkpoint_sha256": "5c7761498c1ea9cdca9d1522d929529c664fe946b5e20d1900fd814c87caabb7",
+      "fit_record_sha256": "f6a7c3535352fdb23701813c62c9081478951b7e2ab71fb1413d85e33d60f548"
+    },
+    "shortcut-eml-d1-s1103-n12000": {
+      "training": {
+        "parameters": 5995126,
+        "parameter_bytes": 23980504,
+        "buffers": 4609,
+        "buffer_bytes": 18436,
+        "coefficients": 5999735,
+        "by_device": {
+          "cuda": 23998940
+        }
+      },
+      "deployed": {
+        "parameters": 5994614,
+        "parameter_bytes": 11989228,
+        "buffers": 0,
+        "buffer_bytes": 0,
+        "coefficients": 5994614,
+        "by_device": {
+          "cuda": 11989228
+        }
+      },
+      "deployed_tensors": {
+        "network.encoder.weight": {
+          "shape": [
+            512,
+            1536
+          ],
+          "coefficients": 786432,
+          "bytes": 1572864
+        },
+        "network.encoder.bias": {
+          "shape": [
+            512
+          ],
+          "coefficients": 512,
+          "bytes": 1024
+        },
+        "network.decoder.weight": {
+          "shape": [
+            1536,
+            512
+          ],
+          "coefficients": 786432,
+          "bytes": 1572864
+        },
+        "network.shortcut.weight": {
+          "shape": [
+            1536,
+            1536
+          ],
+          "coefficients": 2359296,
+          "bytes": 4718592
+        },
+        "network.shortcut.bias": {
+          "shape": [
+            1536
+          ],
+          "coefficients": 1536,
+          "bytes": 3072
+        },
+        "network.stages.0.norm.weight": {
+          "shape": [
+            512
+          ],
+          "coefficients": 512,
+          "bytes": 1024
+        },
+        "network.stages.0.norm.bias": {
+          "shape": [
+            512
+          ],
+          "coefficients": 512,
+          "bytes": 1024
+        },
+        "network.stages.0.arguments.weight": {
+          "shape": [
+            2678,
+            512
+          ],
+          "coefficients": 1371136,
+          "bytes": 2742272
+        },
+        "network.stages.0.arguments.bias": {
+          "shape": [
+            2678
+          ],
+          "coefficients": 2678,
+          "bytes": 5356
+        },
+        "network.stages.0.readout.weight": {
+          "shape": [
+            512,
+            1339
+          ],
+          "coefficients": 685568,
+          "bytes": 1371136
+        }
+      },
+      "checkpoint_sha256": "2ece8b14a63850b468550bbcb780cf9a8075497b1be15e4fd17a063f0dc1457f",
+      "fit_record_sha256": "b2d0ae7fba9edb52662eab33ff402189cf1cdbbde8fcb49818c98f81dadfa638"
+    },
+    "shortcut-silu-d1-s1103-n12000": {
+      "training": {
+        "parameters": 5994969,
+        "parameter_bytes": 23979876,
+        "buffers": 4609,
+        "buffer_bytes": 18436,
+        "coefficients": 5999578,
+        "by_device": {
+          "cuda": 23998312
+        }
+      },
+      "deployed": {
+        "parameters": 5994457,
+        "parameter_bytes": 11988914,
+        "buffers": 0,
+        "buffer_bytes": 0,
+        "coefficients": 5994457,
+        "by_device": {
+          "cuda": 11988914
+        }
+      },
+      "deployed_tensors": {
+        "network.encoder.weight": {
+          "shape": [
+            512,
+            1536
+          ],
+          "coefficients": 786432,
+          "bytes": 1572864
+        },
+        "network.encoder.bias": {
+          "shape": [
+            512
+          ],
+          "coefficients": 512,
+          "bytes": 1024
+        },
+        "network.decoder.weight": {
+          "shape": [
+            1536,
+            512
+          ],
+          "coefficients": 786432,
+          "bytes": 1572864
+        },
+        "network.shortcut.weight": {
+          "shape": [
+            1536,
+            1536
+          ],
+          "coefficients": 2359296,
+          "bytes": 4718592
+        },
+        "network.shortcut.bias": {
+          "shape": [
+            1536
+          ],
+          "coefficients": 1536,
+          "bytes": 3072
+        },
+        "network.stages.0.norm.weight": {
+          "shape": [
+            512
+          ],
+          "coefficients": 512,
+          "bytes": 1024
+        },
+        "network.stages.0.norm.bias": {
+          "shape": [
+            512
+          ],
+          "coefficients": 512,
+          "bytes": 1024
+        },
+        "network.stages.0.arguments.weight": {
+          "shape": [
+            2009,
+            512
+          ],
+          "coefficients": 1028608,
+          "bytes": 2057216
+        },
+        "network.stages.0.arguments.bias": {
+          "shape": [
+            2009
+          ],
+          "coefficients": 2009,
+          "bytes": 4018
+        },
+        "network.stages.0.readout.weight": {
+          "shape": [
+            512,
+            2009
+          ],
+          "coefficients": 1028608,
+          "bytes": 2057216
+        }
+      },
+      "checkpoint_sha256": "6863f1fe5c98c9f326c40bdb1a6afe0f3c9aba3a97c1aff288daa0f6e5748f07",
+      "fit_record_sha256": "e67d0045f1944db06e8a12c92683ac7f98ac14dc0de4cd0f5a56e56c86fdd70d"
+    },
+    "structured-eml-d1-s1103-n12000": {
+      "training": {
+        "parameters": 5995008,
+        "parameter_bytes": 23980032,
+        "buffers": 4609,
+        "buffer_bytes": 18436,
+        "coefficients": 5999617,
+        "by_device": {
+          "cuda": 23998468
+        }
+      },
+      "deployed": {
+        "parameters": 5993472,
+        "parameter_bytes": 11986944,
+        "buffers": 3072,
+        "buffer_bytes": 6144,
+        "coefficients": 5996544,
+        "by_device": {
+          "cuda": 11993088
+        }
+      },
+      "deployed_tensors": {
+        "network.stages.0.norm.weight": {
+          "shape": [
+            1536
+          ],
+          "coefficients": 1536,
+          "bytes": 3072
+        },
+        "network.stages.0.norm.bias": {
+          "shape": [
+            1536
+          ],
+          "coefficients": 1536,
+          "bytes": 3072
+        },
+        "network.stages.0.arguments.down": {
+          "shape": [
+            2,
+            393,
+            1536
+          ],
+          "coefficients": 1207296,
+          "bytes": 2414592
+        },
+        "network.stages.0.arguments.up": {
+          "shape": [
+            2,
+            1536,
+            393
+          ],
+          "coefficients": 1207296,
+          "bytes": 2414592
+        },
+        "network.stages.0.arguments.diagonal": {
+          "shape": [
+            2,
+            1536
+          ],
+          "coefficients": 3072,
+          "bytes": 6144
+        },
+        "network.stages.0.arguments.bias": {
+          "shape": [
+            2,
+            1536
+          ],
+          "coefficients": 3072,
+          "bytes": 6144
+        },
+        "network.stages.0.readout.down": {
+          "shape": [
+            1,
+            393,
+            1536
+          ],
+          "coefficients": 603648,
+          "bytes": 1207296
+        },
+        "network.stages.0.readout.up": {
+          "shape": [
+            1,
+            1536,
+            393
+          ],
+          "coefficients": 603648,
+          "bytes": 1207296
+        },
+        "network.stages.0.readout.diagonal": {
+          "shape": [
+            1,
+            1536
+          ],
+          "coefficients": 1536,
+          "bytes": 3072
+        },
+        "network.decoder.weight": {
+          "shape": [
+            1536,
+            1536
+          ],
+          "coefficients": 2359296,
+          "bytes": 4718592
+        },
+        "network.decoder.bias": {
+          "shape": [
+            1536
+          ],
+          "coefficients": 1536,
+          "bytes": 3072
+        },
+        "xmean": {
+          "shape": [
+            1536
+          ],
+          "coefficients": 1536,
+          "bytes": 3072
+        },
+        "xstd": {
+          "shape": [
+            1536
+          ],
+          "coefficients": 1536,
+          "bytes": 3072
+        }
+      },
+      "checkpoint_sha256": "d3fa8fa51b32d384db27e6a1ad44176168cbec8f58f39d2eba0b889087b6a7fb",
+      "fit_record_sha256": "b811bf9fa79d9d13e270585625621514ab157d0d9fa8956d6d75196a3ff9a7ad"
+    },
+    "structured-silu-d1-s1103-n12000": {
+      "training": {
+        "parameters": 5995008,
+        "parameter_bytes": 23980032,
+        "buffers": 4609,
+        "buffer_bytes": 18436,
+        "coefficients": 5999617,
+        "by_device": {
+          "cuda": 23998468
+        }
+      },
+      "deployed": {
+        "parameters": 5993472,
+        "parameter_bytes": 11986944,
+        "buffers": 3072,
+        "buffer_bytes": 6144,
+        "coefficients": 5996544,
+        "by_device": {
+          "cuda": 11993088
+        }
+      },
+      "deployed_tensors": {
+        "network.stages.0.norm.weight": {
+          "shape": [
+            1536
+          ],
+          "coefficients": 1536,
+          "bytes": 3072
+        },
+        "network.stages.0.norm.bias": {
+          "shape": [
+            1536
+          ],
+          "coefficients": 1536,
+          "bytes": 3072
+        },
+        "network.stages.0.arguments.down": {
+          "shape": [
+            1,
+            590,
+            1536
+          ],
+          "coefficients": 906240,
+          "bytes": 1812480
+        },
+        "network.stages.0.arguments.up": {
+          "shape": [
+            1,
+            1536,
+            590
+          ],
+          "coefficients": 906240,
+          "bytes": 1812480
+        },
+        "network.stages.0.arguments.diagonal": {
+          "shape": [
+            1,
+            1536
+          ],
+          "coefficients": 1536,
+          "bytes": 3072
+        },
+        "network.stages.0.arguments.bias": {
+          "shape": [
+            1,
+            1536
+          ],
+          "coefficients": 1536,
+          "bytes": 3072
+        },
+        "network.stages.0.readout.down": {
+          "shape": [
+            1,
+            590,
+            1536
+          ],
+          "coefficients": 906240,
+          "bytes": 1812480
+        },
+        "network.stages.0.readout.up": {
+          "shape": [
+            1,
+            1536,
+            590
+          ],
+          "coefficients": 906240,
+          "bytes": 1812480
+        },
+        "network.stages.0.readout.diagonal": {
+          "shape": [
+            1,
+            1536
+          ],
+          "coefficients": 1536,
+          "bytes": 3072
+        },
+        "network.decoder.weight": {
+          "shape": [
+            1536,
+            1536
+          ],
+          "coefficients": 2359296,
+          "bytes": 4718592
+        },
+        "network.decoder.bias": {
+          "shape": [
+            1536
+          ],
+          "coefficients": 1536,
+          "bytes": 3072
+        },
+        "xmean": {
+          "shape": [
+            1536
+          ],
+          "coefficients": 1536,
+          "bytes": 3072
+        },
+        "xstd": {
+          "shape": [
+            1536
+          ],
+          "coefficients": 1536,
+          "bytes": 3072
+        }
+      },
+      "checkpoint_sha256": "8a7763f985de883acab6b32334ae9ffd3530014527a8adbc71ff53f98139f899",
+      "fit_record_sha256": "c386ddd0ed5808f15dcf00247cec4695ea0dc66edd45a76029f8a2f467cd3442"
+    }
+  },
+  "matched_minibatch_rng_states": true,
+  "paired_statistics_match_previous_reference": true,
+  "paired_float_absolute_tolerance": 1e-12,
+  "paired_integer_and_boolean_comparisons_exact": true,
+  "raw_error_replay_and_decomposition_pass": true,
+  "inputs": {
+    "training/bottleneck-eml-d1-s1103-n12000.json": "1346d61a0bb2f7b1f236b78040710ea1010928f82629ff0ac478a0fe6e9306f5",
+    "training/bottleneck-silu-d1-s1103-n12000.json": "f6a7c3535352fdb23701813c62c9081478951b7e2ab71fb1413d85e33d60f548",
+    "training/freeze.json": "9c6b3e0206c7693690de259e69720f69ee2bdd410723e0b0676e57f7b1d41625",
+    "training/initialization.json": "f47c4c1f1c4103aca77ceecfffb1a0056f3c48197aaa8a02f694137211dcee5a",
+    "training/shortcut-eml-d1-s1103-n12000.json": "b2d0ae7fba9edb52662eab33ff402189cf1cdbbde8fcb49818c98f81dadfa638",
+    "training/shortcut-silu-d1-s1103-n12000.json": "e67d0045f1944db06e8a12c92683ac7f98ac14dc0de4cd0f5a56e56c86fdd70d",
+    "training/structured-eml-d1-s1103-n12000.json": "b811bf9fa79d9d13e270585625621514ab157d0d9fa8956d6d75196a3ff9a7ad",
+    "training/structured-silu-d1-s1103-n12000.json": "c386ddd0ed5808f15dcf00247cec4695ea0dc66edd45a76029f8a2f467cd3442",
+    "evaluation/development/bottleneck-eml-d1-s1103-n12000-freeze.json": "d00c8f90422dca542d4b18d3f6e1ecec2bd46bc77f02847d99903b65035e4bbd",
+    "evaluation/development/bottleneck-eml-d1-s1103-n12000.json": "5dd0bebe20deffc52d41d79d2284003f36416e5ffdc4ec7a5ff5957af8c7d867",
+    "evaluation/development/bottleneck-silu-d1-s1103-n12000-freeze.json": "5c1f256610b21579201775ebb40f23ef3a091c152ac82d5073651155f5c6c5ad",
+    "evaluation/development/bottleneck-silu-d1-s1103-n12000.json": "b83aa765cd2628567fdbe207f26a3a78cc96b2c017135f1a580e849fea2db7d0",
+    "evaluation/development/original-freeze.json": "1b0cc8c332c01f4271f988a54e7ea08e75265b8a417a40fcf83b9a37fbd9fe71",
+    "evaluation/development/original.json": "766fde411c53edea04a788a131bc4f4bb5ba9847cd36179605898482026cf566",
+    "evaluation/development/shortcut-eml-d1-s1103-n12000-freeze.json": "4d4b05e9be1f3d04d9981234691182c1438a5c09ffa9cc931b68b7a61fefc375",
+    "evaluation/development/shortcut-eml-d1-s1103-n12000.json": "f3743fd06342789f7e798a84dbe07aa7ff02e6f5126e80b39f8ced0698286e68",
+    "evaluation/development/shortcut-silu-d1-s1103-n12000-freeze.json": "8be5cbc9d3befcd4081c2f8cbbac77384b43fa228f44e474c38cefca3ca8015c",
+    "evaluation/development/shortcut-silu-d1-s1103-n12000.json": "6c030ba541df44691d73bc4e761fdc7df0248f742abc06b737bfdf1704ed2ab3",
+    "evaluation/development/structured-eml-d1-s1103-n12000-freeze.json": "33661ae02fef49f386a4b79e8c3e04b7df4a43f6df6d9499d0df5d6e9170b82c",
+    "evaluation/development/structured-eml-d1-s1103-n12000.json": "cccd7f22f3888af85112bbaf453df9aa16e6daf33f5ecb4327d9217b490307fc",
+    "evaluation/development/structured-silu-d1-s1103-n12000-freeze.json": "a6297f155921266f579414ef1665986ab7509c651e0685f288b149fb74bb0780",
+    "evaluation/development/structured-silu-d1-s1103-n12000.json": "b7146a8c0b107a4edce773f257adb8fc5fb50af61bdf913fb13213215ec486dc",
+    "diagnostics/bottleneck-eml-d1-s1103-n12000.json": "ee2fa37789822a23a900c04e1b982d83f8e0d342dbe5f18a8a646eccc43ba1f7",
+    "diagnostics/bottleneck-silu-d1-s1103-n12000.json": "2e0ce818968c8675aaf802dd79954305ec66a18c309c4b3855dfd1f79202b618",
+    "diagnostics/shortcut-eml-d1-s1103-n12000.json": "ac980fd2d4355f26646812a5558895ac94155826a73d5ceceb77b78dc4c00656",
+    "diagnostics/shortcut-silu-d1-s1103-n12000.json": "d3e1270ee6854170317cfe18820a869f107d991bdde2d2914c48e631fd800423",
+    "diagnostics/structured-eml-d1-s1103-n12000.json": "755d20012a9eda50d989ca71f4c250e8c7a1048c3549084f54de512b0e9bf4c5",
+    "diagnostics/structured-silu-d1-s1103-n12000.json": "4dc66d2f3f762e69a20ca4b78decaeb33770b2b88ce1f0f6f00e8baaec84441c",
+    "exports/bottleneck-eml-d1-s1103-n12000.json": "3eac1be491a18b946c04bd3f0e1b3071cab4a194756ee4f0fe27dbcc1ccabda3",
+    "exports/bottleneck-silu-d1-s1103-n12000.json": "2c9a5e2bca484c2b9baf204bbf3e4b10abe0efea769661dc06e36f69d355c513",
+    "exports/shortcut-eml-d1-s1103-n12000.json": "288e5e66c8ea57d3fc019296ae8dda547dfeb1a6adbb859fb00c05a0566d8be2",
+    "exports/shortcut-silu-d1-s1103-n12000.json": "24cba8dad2ac4a98c090b120152acb44c2e855e76b758add83524908dd4e7b2c",
+    "exports/structured-eml-d1-s1103-n12000.json": "929ff270b7fe280fddf9b85d6944ee7c59e9c8fbd7905f273d237130805d4158",
+    "exports/structured-silu-d1-s1103-n12000.json": "4695c81e9abe8191775d8a86d0917773758c02612fc9e3b03f8aea367b9ca1af",
+    "benchmark/bottleneck-eml-d1-s1103-n12000-b1-p128.json": "bed0c998a7595e7a83b81fd3056a74923dd9da89e6914c86a36df8c452d5898c",
+    "benchmark/bottleneck-eml-d1-s1103-n12000-b1-p512.json": "020714da227cecf419e6a967370932a8cb20bd1a7b1a303a9095773c0fbd190a",
+    "benchmark/bottleneck-eml-d1-s1103-n12000-b8-p128.json": "a12f23fd5bc15e7db01b253b798a85166c9d5ed96aa12f6321e4a693ae6da3ad",
+    "benchmark/bottleneck-eml-d1-s1103-n12000-b8-p512.json": "9aa84817a3f7d138f9d9b6cb8ef369ad9dbd342274f11deee0c19cd8bdf44adc",
+    "benchmark/bottleneck-eml-d1-s1103-n12000-freeze.json": "169664c8dee821d248fb5f4b5ed86561727dddc8da42e6d957798389d86e11d9",
+    "benchmark/bottleneck-silu-d1-s1103-n12000-b1-p128.json": "26bf44ef72b676e8025f93a631a6557f7445d539d82ef9ebebae480f95d30e77",
+    "benchmark/bottleneck-silu-d1-s1103-n12000-b1-p512.json": "5c7b8f1c2f606c116d8857590b5388c80291a4f7d7650da2295c5141e39e944d",
+    "benchmark/bottleneck-silu-d1-s1103-n12000-b8-p128.json": "00116b56f9097a9747260289358d476fa4094df36a52596691b4c3f7432d41e5",
+    "benchmark/bottleneck-silu-d1-s1103-n12000-b8-p512.json": "610bfcb121bf324f18a604206b065ec72a081062798a74796d035398d7a4981c",
+    "benchmark/bottleneck-silu-d1-s1103-n12000-freeze.json": "525d5fe2d877434eeca24163dc52f537938cf685876bf42dfa91e3fa4bca8d0b",
+    "benchmark/shortcut-eml-d1-s1103-n12000-b1-p128.json": "111cbbd7de6558649fab637e426098029e23816272a8b4d34e1fbea981feccba",
+    "benchmark/shortcut-eml-d1-s1103-n12000-b1-p512.json": "501629b5668191905d19870974aedcd3f341f9d0ee4305fd22d5d4c353266564",
+    "benchmark/shortcut-eml-d1-s1103-n12000-b8-p128.json": "34df61a970ca91c6f647609d966e6f33dbb7e5f45e267c04b2b0e38fd7c052a0",
+    "benchmark/shortcut-eml-d1-s1103-n12000-b8-p512.json": "6c73d89dcc3eabe97ba1dd009f52cf64559db38d8bf95d7eacd14d7132898371",
+    "benchmark/shortcut-eml-d1-s1103-n12000-freeze.json": "0fedcec3f2ad2e33acc9aecbce58973f89f90a2e498e6d569d7661bc5f5f8e28",
+    "benchmark/shortcut-silu-d1-s1103-n12000-b1-p128.json": "272cfe355f2135ba5cf910c92b867ac218de472d94014334f3f8388967e23fd0",
+    "benchmark/shortcut-silu-d1-s1103-n12000-b1-p512.json": "abdb14db6e60796c9a327389d6a3fecf28a5c2dbb4e5587ef37dc8a3fd03cd52",
+    "benchmark/shortcut-silu-d1-s1103-n12000-b8-p128.json": "6e4c6238a6f22a60f1bdbff8f543b5ed60d0945edd1544854eb2305c95ef272f",
+    "benchmark/shortcut-silu-d1-s1103-n12000-b8-p512.json": "52af82c76c62feafb35e564aa8a958fee43dfc2aa1d27668be0a7558e165616e",
+    "benchmark/shortcut-silu-d1-s1103-n12000-freeze.json": "e1ac46439b89f3cd95aa99bae11331c0d1a47da071cbf5e5f6fdb26609dafa8a",
+    "benchmark/structured-eml-d1-s1103-n12000-b1-p128.json": "6112d917c46eaa1416488f7cbe8e8bc48302e862d295fe79e24218a7a857276f",
+    "benchmark/structured-eml-d1-s1103-n12000-b1-p512.json": "7884297a7ca2379cc2a695955fc0e5210462888cb984cf6644a6957df3afd19d",
+    "benchmark/structured-eml-d1-s1103-n12000-b8-p128.json": "6041af92fa725014081c9406ed5998d4549c83e908468ea253491e0847e1d7f1",
+    "benchmark/structured-eml-d1-s1103-n12000-b8-p512.json": "6e67f893c295e941814a8f02880b55fd5b559d3d7fb6d3b97c519403ee598d9b",
+    "benchmark/structured-eml-d1-s1103-n12000-freeze.json": "9574063849ba5241047660126708cf930bf1015bb2bc854190c9cdeeb1d52a63",
+    "benchmark/structured-silu-d1-s1103-n12000-b1-p128.json": "2ed80deb04e1827e898ee7b3e79c90bf76e65b3a9dc33721192ca6c958d5f4a2",
+    "benchmark/structured-silu-d1-s1103-n12000-b1-p512.json": "04be4521598c89100e242b6b98f88d2f7eb54823c827b187c9f37d47946a98cc",
+    "benchmark/structured-silu-d1-s1103-n12000-b8-p128.json": "ae78eef36c9002d11b43929662e50759479eb8cf2214d5e9dde4a94a97535485",
+    "benchmark/structured-silu-d1-s1103-n12000-b8-p512.json": "76105c7f01261368aa281926fecd1544d0c49263d011b78dd1675a79d62d60dd",
+    "benchmark/structured-silu-d1-s1103-n12000-freeze.json": "da8546e383440bc19f7a0d1f26d8dd75875cd8b71c7d3ae53eeca438769fd4fc"
+  },
+  "sources": {
+    "gemma_architecture/audit.py": "a4c84669d5095fd5a64456ee6b0cb80814cf6ca3bab3b46af0ee9a0ca0e19da6",
+    "gemma_architecture/model.py": "c572fa54ee8e27c1767c85a3a262d140f60704a37b87fe3e5f186b16278158d2",
+    "gemma_architecture/statistics.py": "9c61063c87d1eb8cd9a9c1528b7bc4e4da9435ee9087d045c93a5f5f8d0542ac",
+    "gemma_architecture/protocol.json": "45aed8b84b0237205c663263ce5503f4be421aeadcd0b2db1b40fb3e86efdd23",
+    "emltorch/operator.py": "03d92ec3bbe02256c1785e46f85d97bb1f990c08410bd2d4e78eb8d699a8a0d8",
+    "gemma_mechanisms/runtime.py": "09adb4b0b0a030ba64613e36870aa2ad4373d646ab6989339c3f6fff3eacb5e2"
+  },
+  "model_and_tensor_checks_on_cuda": true,
+  "scalar_probability_quantiles": "SciPy beta inverse CDF on CPU; paired bootstrap on CUDA"
+}

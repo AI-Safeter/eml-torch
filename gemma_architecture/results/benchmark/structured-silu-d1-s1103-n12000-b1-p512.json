@@ -1,0 +1,1171 @@
+{
+  "method": "structured-silu-d1-s1103-n12000",
+  "batch": 1,
+  "prefill_tokens": 512,
+  "decode_steps": 32,
+  "samples": [
+    {
+      "repeat": 0,
+      "order": [
+        "original",
+        "structured-silu-d1-s1103-n12000"
+      ],
+      "original": {
+        "prefill_seconds": 0.06294710747897625,
+        "decode_seconds": 1.2291086707264185,
+        "end_to_end_seconds": 1.29205665551126,
+        "prefill_gpu_ms": 60.53193664550781,
+        "decode_gpu_ms": 1226.6678466796875,
+        "prefill_tokens_per_second": 8133.812982129532,
+        "decode_tokens_per_second": 26.035126724057363,
+        "output_tokens_per_second": 24.766715811960868,
+        "total_tokens_per_second": 421.03416880333475,
+        "peak_allocated_bytes": 10335496704,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      },
+      "structured-silu-d1-s1103-n12000": {
+        "prefill_seconds": 0.06497130542993546,
+        "decode_seconds": 1.276278454810381,
+        "end_to_end_seconds": 1.3412504848092794,
+        "prefill_gpu_ms": 62.554561614990234,
+        "decode_gpu_ms": 1273.8363037109375,
+        "prefill_tokens_per_second": 7880.401919153937,
+        "decode_tokens_per_second": 25.07289837839839,
+        "output_tokens_per_second": 23.858332475868796,
+        "total_tokens_per_second": 405.5916520897695,
+        "peak_allocated_bytes": 10234835456,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      }
+    },
+    {
+      "repeat": 1,
+      "order": [
+        "structured-silu-d1-s1103-n12000",
+        "original"
+      ],
+      "structured-silu-d1-s1103-n12000": {
+        "prefill_seconds": 0.05683943070471287,
+        "decode_seconds": 1.2569578438997269,
+        "end_to_end_seconds": 1.3137978799641132,
+        "prefill_gpu_ms": 54.40915298461914,
+        "decode_gpu_ms": 1254.698974609375,
+        "prefill_tokens_per_second": 9007.831247640333,
+        "decode_tokens_per_second": 25.458292141858642,
+        "output_tokens_per_second": 24.356866827090702,
+        "total_tokens_per_second": 414.0667360605419,
+        "peak_allocated_bytes": 10234835456,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      },
+      "original": {
+        "prefill_seconds": 0.06185581535100937,
+        "decode_seconds": 1.283395066857338,
+        "end_to_end_seconds": 1.3452523536980152,
+        "prefill_gpu_ms": 59.45945739746094,
+        "decode_gpu_ms": 1280.9853515625,
+        "prefill_tokens_per_second": 8277.313896754658,
+        "decode_tokens_per_second": 24.933865515284168,
+        "output_tokens_per_second": 23.78735849228138,
+        "total_tokens_per_second": 404.3850943687835,
+        "peak_allocated_bytes": 10335496704,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      }
+    },
+    {
+      "repeat": 2,
+      "order": [
+        "original",
+        "structured-silu-d1-s1103-n12000"
+      ],
+      "original": {
+        "prefill_seconds": 0.06553437747061253,
+        "decode_seconds": 1.2960435878485441,
+        "end_to_end_seconds": 1.361579068005085,
+        "prefill_gpu_ms": 63.10041427612305,
+        "decode_gpu_ms": 1293.5706787109375,
+        "prefill_tokens_per_second": 7812.693425364349,
+        "decode_tokens_per_second": 24.690527618072306,
+        "output_tokens_per_second": 23.50212393238737,
+        "total_tokens_per_second": 399.5361068505853,
+        "peak_allocated_bytes": 10335496704,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      },
+      "structured-silu-d1-s1103-n12000": {
+        "prefill_seconds": 0.0623688530176878,
+        "decode_seconds": 1.2842879183590412,
+        "end_to_end_seconds": 1.3466579504311085,
+        "prefill_gpu_ms": 59.95276641845703,
+        "decode_gpu_ms": 1281.9041748046875,
+        "prefill_tokens_per_second": 8209.225843143162,
+        "decode_tokens_per_second": 24.916531209673764,
+        "output_tokens_per_second": 23.762530039462337,
+        "total_tokens_per_second": 403.9630106708598,
+        "peak_allocated_bytes": 10234835456,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      }
+    },
+    {
+      "repeat": 3,
+      "order": [
+        "structured-silu-d1-s1103-n12000",
+        "original"
+      ],
+      "structured-silu-d1-s1103-n12000": {
+        "prefill_seconds": 0.062310172244906425,
+        "decode_seconds": 1.2920725122094154,
+        "end_to_end_seconds": 1.3543832674622536,
+        "prefill_gpu_ms": 59.91350555419922,
+        "decode_gpu_ms": 1289.6351318359375,
+        "prefill_tokens_per_second": 8216.956903723752,
+        "decode_tokens_per_second": 24.76641186745836,
+        "output_tokens_per_second": 23.62699006165316,
+        "total_tokens_per_second": 401.6588310481037,
+        "peak_allocated_bytes": 10234835456,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      },
+      "original": {
+        "prefill_seconds": 0.05922599695622921,
+        "decode_seconds": 1.2791838850826025,
+        "end_to_end_seconds": 1.3384105544537306,
+        "prefill_gpu_ms": 56.8125114440918,
+        "decode_gpu_ms": 1278.8504638671875,
+        "prefill_tokens_per_second": 8644.852367422232,
+        "decode_tokens_per_second": 25.015949913982556,
+        "output_tokens_per_second": 23.908956705037888,
+        "total_tokens_per_second": 406.4522639856441,
+        "peak_allocated_bytes": 10335496704,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      }
+    },
+    {
+      "repeat": 4,
+      "order": [
+        "original",
+        "structured-silu-d1-s1103-n12000"
+      ],
+      "original": {
+        "prefill_seconds": 0.0568075105547905,
+        "decode_seconds": 1.2479832917451859,
+        "end_to_end_seconds": 1.3047915380448103,
+        "prefill_gpu_ms": 56.75852966308594,
+        "decode_gpu_ms": 1245.5491943359375,
+        "prefill_tokens_per_second": 9012.89274956309,
+        "decode_tokens_per_second": 25.64136892830596,
+        "output_tokens_per_second": 24.52499044249705,
+        "total_tokens_per_second": 416.9248375224499,
+        "peak_allocated_bytes": 10335496704,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      },
+      "structured-silu-d1-s1103-n12000": {
+        "prefill_seconds": 0.06731961108744144,
+        "decode_seconds": 1.2616509106010199,
+        "end_to_end_seconds": 1.328971441835165,
+        "prefill_gpu_ms": 64.90803527832031,
+        "decode_gpu_ms": 1259.2056884765625,
+        "prefill_tokens_per_second": 7605.510366584905,
+        "decode_tokens_per_second": 25.363592837860338,
+        "output_tokens_per_second": 24.078771742311844,
+        "total_tokens_per_second": 409.33911961930136,
+        "peak_allocated_bytes": 10234835456,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      }
+    },
+    {
+      "repeat": 5,
+      "order": [
+        "structured-silu-d1-s1103-n12000",
+        "original"
+      ],
+      "structured-silu-d1-s1103-n12000": {
+        "prefill_seconds": 0.06562881171703339,
+        "decode_seconds": 1.2841580267995596,
+        "end_to_end_seconds": 1.3497874289751053,
+        "prefill_gpu_ms": 63.187137603759766,
+        "decode_gpu_ms": 1281.7044677734375,
+        "prefill_tokens_per_second": 7801.451627793451,
+        "decode_tokens_per_second": 24.91905149691891,
+        "output_tokens_per_second": 23.70743667712006,
+        "total_tokens_per_second": 403.02642351104106,
+        "peak_allocated_bytes": 10234835456,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      },
+      "original": {
+        "prefill_seconds": 0.06084819696843624,
+        "decode_seconds": 1.3659153617918491,
+        "end_to_end_seconds": 1.426764726638794,
+        "prefill_gpu_ms": 58.448638916015625,
+        "decode_gpu_ms": 1363.4666748046875,
+        "prefill_tokens_per_second": 8414.382438736673,
+        "decode_tokens_per_second": 23.427513076667818,
+        "output_tokens_per_second": 22.428364959222364,
+        "total_tokens_per_second": 381.28220430678016,
+        "peak_allocated_bytes": 10335496704,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      }
+    },
+    {
+      "repeat": 6,
+      "order": [
+        "original",
+        "structured-silu-d1-s1103-n12000"
+      ],
+      "original": {
+        "prefill_seconds": 0.0672123096883297,
+        "decode_seconds": 1.2735777739435434,
+        "end_to_end_seconds": 1.340791067108512,
+        "prefill_gpu_ms": 64.79548645019531,
+        "decode_gpu_ms": 1271.170166015625,
+        "prefill_tokens_per_second": 7617.652218383745,
+        "decode_tokens_per_second": 25.126066624823597,
+        "output_tokens_per_second": 23.866507455937725,
+        "total_tokens_per_second": 405.7306267509413,
+        "peak_allocated_bytes": 10335496704,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      },
+      "structured-silu-d1-s1103-n12000": {
+        "prefill_seconds": 0.06515436805784702,
+        "decode_seconds": 1.2986187729984522,
+        "end_to_end_seconds": 1.363773848861456,
+        "prefill_gpu_ms": 62.72550582885742,
+        "decode_gpu_ms": 1296.200927734375,
+        "prefill_tokens_per_second": 7858.260547403714,
+        "decode_tokens_per_second": 24.641565843156144,
+        "output_tokens_per_second": 23.464300937222944,
+        "total_tokens_per_second": 398.89311593279,
+        "peak_allocated_bytes": 10234835456,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      }
+    },
+    {
+      "repeat": 7,
+      "order": [
+        "structured-silu-d1-s1103-n12000",
+        "original"
+      ],
+      "structured-silu-d1-s1103-n12000": {
+        "prefill_seconds": 0.0655797403305769,
+        "decode_seconds": 1.3405587207525969,
+        "end_to_end_seconds": 1.4061396773904562,
+        "prefill_gpu_ms": 63.14566421508789,
+        "decode_gpu_ms": 1338.1114501953125,
+        "prefill_tokens_per_second": 7807.289224066618,
+        "decode_tokens_per_second": 23.870644011800564,
+        "output_tokens_per_second": 22.757340906122696,
+        "total_tokens_per_second": 386.87479540408583,
+        "peak_allocated_bytes": 10234835456,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      },
+      "original": {
+        "prefill_seconds": 0.05196678452193737,
+        "decode_seconds": 1.3024212028831244,
+        "end_to_end_seconds": 1.3543887753039598,
+        "prefill_gpu_ms": 50.422752380371094,
+        "decode_gpu_ms": 1299.97900390625,
+        "prefill_tokens_per_second": 9852.447187373373,
+        "decode_tokens_per_second": 24.56962458009952,
+        "output_tokens_per_second": 23.62689397866456,
+        "total_tokens_per_second": 401.65719763729754,
+        "peak_allocated_bytes": 10335496704,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      }
+    },
+    {
+      "repeat": 8,
+      "order": [
+        "original",
+        "structured-silu-d1-s1103-n12000"
+      ],
+      "original": {
+        "prefill_seconds": 0.06172179989516735,
+        "decode_seconds": 1.346275383606553,
+        "end_to_end_seconds": 1.4079978223890066,
+        "prefill_gpu_ms": 59.296897888183594,
+        "decode_gpu_ms": 1343.82080078125,
+        "prefill_tokens_per_second": 8295.286282474211,
+        "decode_tokens_per_second": 23.76928256258747,
+        "output_tokens_per_second": 22.72730787729793,
+        "total_tokens_per_second": 386.3642339140648,
+        "peak_allocated_bytes": 10335496704,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      },
+      "structured-silu-d1-s1103-n12000": {
+        "prefill_seconds": 0.06500331126153469,
+        "decode_seconds": 1.3377040587365627,
+        "end_to_end_seconds": 1.4027086831629276,
+        "prefill_gpu_ms": 62.60793685913086,
+        "decode_gpu_ms": 1335.267578125,
+        "prefill_tokens_per_second": 7876.521827326862,
+        "decode_tokens_per_second": 23.9215839938644,
+        "output_tokens_per_second": 22.813004855608447,
+        "total_tokens_per_second": 387.82108254534364,
+        "peak_allocated_bytes": 10234835456,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      }
+    },
+    {
+      "repeat": 9,
+      "order": [
+        "structured-silu-d1-s1103-n12000",
+        "original"
+      ],
+      "structured-silu-d1-s1103-n12000": {
+        "prefill_seconds": 0.06523505039513111,
+        "decode_seconds": 1.3221874665468931,
+        "end_to_end_seconds": 1.3874237909913063,
+        "prefill_gpu_ms": 62.805633544921875,
+        "decode_gpu_ms": 1319.765869140625,
+        "prefill_tokens_per_second": 7848.541495695904,
+        "decode_tokens_per_second": 24.202316849647037,
+        "output_tokens_per_second": 23.064329880876688,
+        "total_tokens_per_second": 392.0936079749037,
+        "peak_allocated_bytes": 10234835456,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      },
+      "original": {
+        "prefill_seconds": 0.0649549700319767,
+        "decode_seconds": 1.2911621518433094,
+        "end_to_end_seconds": 1.3561179023236036,
+        "prefill_gpu_ms": 62.53203201293945,
+        "decode_gpu_ms": 1288.7198486328125,
+        "prefill_tokens_per_second": 7882.383745969668,
+        "decode_tokens_per_second": 24.78387393428134,
+        "output_tokens_per_second": 23.596768352641362,
+        "total_tokens_per_second": 401.14506199490313,
+        "peak_allocated_bytes": 10335496704,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      }
+    },
+    {
+      "repeat": 10,
+      "order": [
+        "original",
+        "structured-silu-d1-s1103-n12000"
+      ],
+      "original": {
+        "prefill_seconds": 0.05996180139482021,
+        "decode_seconds": 1.3031014539301395,
+        "end_to_end_seconds": 1.3630640134215355,
+        "prefill_gpu_ms": 59.914974212646484,
+        "decode_gpu_ms": 1300.65576171875,
+        "prefill_tokens_per_second": 8538.769484737812,
+        "decode_tokens_per_second": 24.55679863105697,
+        "output_tokens_per_second": 23.47652031372632,
+        "total_tokens_per_second": 399.1008453333474,
+        "peak_allocated_bytes": 10335496704,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      },
+      "structured-silu-d1-s1103-n12000": {
+        "prefill_seconds": 0.05879421345889568,
+        "decode_seconds": 1.2699070982635021,
+        "end_to_end_seconds": 1.3287020847201347,
+        "prefill_gpu_ms": 58.74662399291992,
+        "decode_gpu_ms": 1267.474853515625,
+        "prefill_tokens_per_second": 8708.339985838069,
+        "decode_tokens_per_second": 25.1986937026791,
+        "output_tokens_per_second": 24.083653038551663,
+        "total_tokens_per_second": 409.42210165537824,
+        "peak_allocated_bytes": 10234835456,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      }
+    },
+    {
+      "repeat": 11,
+      "order": [
+        "structured-silu-d1-s1103-n12000",
+        "original"
+      ],
+      "structured-silu-d1-s1103-n12000": {
+        "prefill_seconds": 0.06440511532127857,
+        "decode_seconds": 1.3009601328521967,
+        "end_to_end_seconds": 1.365365955978632,
+        "prefill_gpu_ms": 62.00624084472656,
+        "decode_gpu_ms": 1298.52294921875,
+        "prefill_tokens_per_second": 7949.679112380103,
+        "decode_tokens_per_second": 24.597218002248766,
+        "output_tokens_per_second": 23.436940008558995,
+        "total_tokens_per_second": 398.42798014550294,
+        "peak_allocated_bytes": 10234835456,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      },
+      "original": {
+        "prefill_seconds": 0.051392748951911926,
+        "decode_seconds": 1.2746381051838398,
+        "end_to_end_seconds": 1.3260317780077457,
+        "prefill_gpu_ms": 49.61414337158203,
+        "decode_gpu_ms": 1274.341796875,
+        "prefill_tokens_per_second": 9962.494913029019,
+        "decode_tokens_per_second": 25.105165042421724,
+        "output_tokens_per_second": 24.13215168046529,
+        "total_tokens_per_second": 410.24657856791,
+        "peak_allocated_bytes": 10335496704,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      }
+    },
+    {
+      "repeat": 12,
+      "order": [
+        "original",
+        "structured-silu-d1-s1103-n12000"
+      ],
+      "original": {
+        "prefill_seconds": 0.06248946115374565,
+        "decode_seconds": 1.2887188363820314,
+        "end_to_end_seconds": 1.351208958774805,
+        "prefill_gpu_ms": 60.06409454345703,
+        "decode_gpu_ms": 1286.273193359375,
+        "prefill_tokens_per_second": 8193.381580620502,
+        "decode_tokens_per_second": 24.830862323575,
+        "output_tokens_per_second": 23.682495436542748,
+        "total_tokens_per_second": 402.6024224212267,
+        "peak_allocated_bytes": 10335496704,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      },
+      "structured-silu-d1-s1103-n12000": {
+        "prefill_seconds": 0.06569285318255424,
+        "decode_seconds": 1.3206952009350061,
+        "end_to_end_seconds": 1.3863887693732977,
+        "prefill_gpu_ms": 63.223358154296875,
+        "decode_gpu_ms": 1318.2435302734375,
+        "prefill_tokens_per_second": 7793.84628914199,
+        "decode_tokens_per_second": 24.22966326927297,
+        "output_tokens_per_second": 23.081548773988743,
+        "total_tokens_per_second": 392.38632915780863,
+        "peak_allocated_bytes": 10234835456,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      }
+    },
+    {
+      "repeat": 13,
+      "order": [
+        "structured-silu-d1-s1103-n12000",
+        "original"
+      ],
+      "structured-silu-d1-s1103-n12000": {
+        "prefill_seconds": 0.06665387749671936,
+        "decode_seconds": 1.2510534804314375,
+        "end_to_end_seconds": 1.317708108574152,
+        "prefill_gpu_ms": 64.17984008789062,
+        "decode_gpu_ms": 1248.5999755859375,
+        "prefill_tokens_per_second": 7681.473595068796,
+        "decode_tokens_per_second": 25.57844288876004,
+        "output_tokens_per_second": 24.284589122416598,
+        "total_tokens_per_second": 412.8380150810822,
+        "peak_allocated_bytes": 10234835456,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      },
+      "original": {
+        "prefill_seconds": 0.061261553317308426,
+        "decode_seconds": 1.2703599072992802,
+        "end_to_end_seconds": 1.3316223043948412,
+        "prefill_gpu_ms": 58.862815856933594,
+        "decode_gpu_ms": 1267.891845703125,
+        "prefill_tokens_per_second": 8357.607214888281,
+        "decode_tokens_per_second": 25.189711841607433,
+        "output_tokens_per_second": 24.030838094546993,
+        "total_tokens_per_second": 408.5242476072989,
+        "peak_allocated_bytes": 10335496704,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      }
+    },
+    {
+      "repeat": 14,
+      "order": [
+        "original",
+        "structured-silu-d1-s1103-n12000"
+      ],
+      "original": {
+        "prefill_seconds": 0.06490302830934525,
+        "decode_seconds": 1.270422887057066,
+        "end_to_end_seconds": 1.3353271782398224,
+        "prefill_gpu_ms": 62.45555114746094,
+        "decode_gpu_ms": 1268.0313720703125,
+        "prefill_tokens_per_second": 7888.691996923019,
+        "decode_tokens_per_second": 25.188463090528845,
+        "output_tokens_per_second": 23.964164379684973,
+        "total_tokens_per_second": 407.39079445464455,
+        "peak_allocated_bytes": 10335496704,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      },
+      "structured-silu-d1-s1103-n12000": {
+        "prefill_seconds": 0.061481013894081116,
+        "decode_seconds": 1.271493200212717,
+        "end_to_end_seconds": 1.3329752571880817,
+        "prefill_gpu_ms": 59.05187225341797,
+        "decode_gpu_ms": 1269.05126953125,
+        "prefill_tokens_per_second": 8327.77417890454,
+        "decode_tokens_per_second": 25.16726003304343,
+        "output_tokens_per_second": 24.00644710202961,
+        "total_tokens_per_second": 408.1096007345034,
+        "peak_allocated_bytes": 10234835456,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      }
+    },
+    {
+      "repeat": 15,
+      "order": [
+        "structured-silu-d1-s1103-n12000",
+        "original"
+      ],
+      "structured-silu-d1-s1103-n12000": {
+        "prefill_seconds": 0.059381622821092606,
+        "decode_seconds": 1.3276673033833504,
+        "end_to_end_seconds": 1.3870496209710836,
+        "prefill_gpu_ms": 59.08332824707031,
+        "decode_gpu_ms": 1325.2255859375,
+        "prefill_tokens_per_second": 8622.196155577874,
+        "decode_tokens_per_second": 24.102423791301522,
+        "output_tokens_per_second": 23.07055170643179,
+        "total_tokens_per_second": 392.1993790093404,
+        "peak_allocated_bytes": 10234835456,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      },
+      "original": {
+        "prefill_seconds": 0.06524679064750671,
+        "decode_seconds": 1.3649553526192904,
+        "end_to_end_seconds": 1.430203203111887,
+        "prefill_gpu_ms": 64.8529281616211,
+        "decode_gpu_ms": 1362.5150146484375,
+        "prefill_tokens_per_second": 7847.129259829198,
+        "decode_tokens_per_second": 23.443990265757325,
+        "output_tokens_per_second": 22.374442967526058,
+        "total_tokens_per_second": 380.36553044794294,
+        "peak_allocated_bytes": 10335496704,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      }
+    },
+    {
+      "repeat": 16,
+      "order": [
+        "original",
+        "structured-silu-d1-s1103-n12000"
+      ],
+      "original": {
+        "prefill_seconds": 0.06189997307956219,
+        "decode_seconds": 1.361441744491458,
+        "end_to_end_seconds": 1.4233426973223686,
+        "prefill_gpu_ms": 59.45119857788086,
+        "decode_gpu_ms": 1359.029296875,
+        "prefill_tokens_per_second": 8271.409089983103,
+        "decode_tokens_per_second": 23.504494503327443,
+        "output_tokens_per_second": 22.482287688129695,
+        "total_tokens_per_second": 382.1988906982048,
+        "peak_allocated_bytes": 10335496704,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      },
+      "structured-silu-d1-s1103-n12000": {
+        "prefill_seconds": 0.05824180692434311,
+        "decode_seconds": 1.3473247364163399,
+        "end_to_end_seconds": 1.4055673833936453,
+        "prefill_gpu_ms": 56.455135345458984,
+        "decode_gpu_ms": 1344.886962890625,
+        "prefill_tokens_per_second": 8790.936048139696,
+        "decode_tokens_per_second": 23.75077005200297,
+        "output_tokens_per_second": 22.766606836548963,
+        "total_tokens_per_second": 387.03231622133234,
+        "peak_allocated_bytes": 10234835456,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      }
+    },
+    {
+      "repeat": 17,
+      "order": [
+        "structured-silu-d1-s1103-n12000",
+        "original"
+      ],
+      "structured-silu-d1-s1103-n12000": {
+        "prefill_seconds": 0.06467258743941784,
+        "decode_seconds": 1.3178944867104292,
+        "end_to_end_seconds": 1.3825678750872612,
+        "prefill_gpu_ms": 62.237728118896484,
+        "decode_gpu_ms": 1315.45458984375,
+        "prefill_tokens_per_second": 7916.800924033183,
+        "decode_tokens_per_second": 24.281154768220162,
+        "output_tokens_per_second": 23.145337438120578,
+        "total_tokens_per_second": 393.4707364480498,
+        "peak_allocated_bytes": 10234835456,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      },
+      "original": {
+        "prefill_seconds": 0.06087928079068661,
+        "decode_seconds": 1.2667588479816914,
+        "end_to_end_seconds": 1.3276387676596642,
+        "prefill_gpu_ms": 58.46416091918945,
+        "decode_gpu_ms": 1264.2919921875,
+        "prefill_tokens_per_second": 8410.086212423299,
+        "decode_tokens_per_second": 25.261319509222407,
+        "output_tokens_per_second": 24.10294183892278,
+        "total_tokens_per_second": 409.7500112616873,
+        "peak_allocated_bytes": 10335496704,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      }
+    },
+    {
+      "repeat": 18,
+      "order": [
+        "original",
+        "structured-silu-d1-s1103-n12000"
+      ],
+      "original": {
+        "prefill_seconds": 0.0650230161845684,
+        "decode_seconds": 1.2559772115200758,
+        "end_to_end_seconds": 1.32100111246109,
+        "prefill_gpu_ms": 62.59027099609375,
+        "decode_gpu_ms": 1253.5263671875,
+        "prefill_tokens_per_second": 7874.134883972215,
+        "decode_tokens_per_second": 25.4781692744817,
+        "output_tokens_per_second": 24.22405227228191,
+        "total_tokens_per_second": 411.8088886287925,
+        "peak_allocated_bytes": 10335496704,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      },
+      "structured-silu-d1-s1103-n12000": {
+        "prefill_seconds": 0.06421818025410175,
+        "decode_seconds": 1.2752924412488937,
+        "end_to_end_seconds": 1.3395114485174417,
+        "prefill_gpu_ms": 61.758689880371094,
+        "decode_gpu_ms": 1274.873046875,
+        "prefill_tokens_per_second": 7972.820126233606,
+        "decode_tokens_per_second": 25.09228390678957,
+        "output_tokens_per_second": 23.88930683303774,
+        "total_tokens_per_second": 406.11821616164156,
+        "peak_allocated_bytes": 10234835456,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      }
+    },
+    {
+      "repeat": 19,
+      "order": [
+        "structured-silu-d1-s1103-n12000",
+        "original"
+      ],
+      "structured-silu-d1-s1103-n12000": {
+        "prefill_seconds": 0.07042662985622883,
+        "decode_seconds": 1.2684654537588358,
+        "end_to_end_seconds": 1.3388928528875113,
+        "prefill_gpu_ms": 68.01737976074219,
+        "decode_gpu_ms": 1266.0228271484375,
+        "prefill_tokens_per_second": 7269.977294742247,
+        "decode_tokens_per_second": 25.22733268389344,
+        "output_tokens_per_second": 23.900344176897715,
+        "total_tokens_per_second": 406.3058510072612,
+        "peak_allocated_bytes": 10234835456,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      },
+      "original": {
+        "prefill_seconds": 0.04992856830358505,
+        "decode_seconds": 1.3322016708552837,
+        "end_to_end_seconds": 1.382130827754736,
+        "prefill_gpu_ms": 47.53577423095703,
+        "decode_gpu_ms": 1329.763427734375,
+        "prefill_tokens_per_second": 10254.65014111443,
+        "decode_tokens_per_second": 24.020387228200782,
+        "output_tokens_per_second": 23.15265628796069,
+        "total_tokens_per_second": 393.59515689533174,
+        "peak_allocated_bytes": 10335496704,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      }
+    },
+    {
+      "repeat": 20,
+      "order": [
+        "original",
+        "structured-silu-d1-s1103-n12000"
+      ],
+      "original": {
+        "prefill_seconds": 0.05892846919596195,
+        "decode_seconds": 1.287038454785943,
+        "end_to_end_seconds": 1.3459676280617714,
+        "prefill_gpu_ms": 58.879329681396484,
+        "decode_gpu_ms": 1284.573974609375,
+        "prefill_tokens_per_second": 8688.499921784573,
+        "decode_tokens_per_second": 24.86328196411362,
+        "output_tokens_per_second": 23.774717409868792,
+        "total_tokens_per_second": 404.1701959677695,
+        "peak_allocated_bytes": 10335496704,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      },
+      "structured-silu-d1-s1103-n12000": {
+        "prefill_seconds": 0.06773663125932217,
+        "decode_seconds": 1.2757834438234568,
+        "end_to_end_seconds": 1.3435209840536118,
+        "prefill_gpu_ms": 67.34198760986328,
+        "decode_gpu_ms": 1273.3487548828125,
+        "prefill_tokens_per_second": 7558.687086753176,
+        "decode_tokens_per_second": 25.082626800750496,
+        "output_tokens_per_second": 23.81801280352989,
+        "total_tokens_per_second": 404.9062176600081,
+        "peak_allocated_bytes": 10234835456,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      }
+    },
+    {
+      "repeat": 21,
+      "order": [
+        "structured-silu-d1-s1103-n12000",
+        "original"
+      ],
+      "structured-silu-d1-s1103-n12000": {
+        "prefill_seconds": 0.06499068439006805,
+        "decode_seconds": 1.2563633546233177,
+        "end_to_end_seconds": 1.3213550802320242,
+        "prefill_gpu_ms": 62.58870315551758,
+        "decode_gpu_ms": 1253.9779052734375,
+        "prefill_tokens_per_second": 7878.052136318854,
+        "decode_tokens_per_second": 25.470338562679764,
+        "output_tokens_per_second": 24.217563075007014,
+        "total_tokens_per_second": 411.69857227511926,
+        "peak_allocated_bytes": 10234835456,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      },
+      "original": {
+        "prefill_seconds": 0.06487103551626205,
+        "decode_seconds": 1.322828033939004,
+        "end_to_end_seconds": 1.3877001851797104,
+        "prefill_gpu_ms": 62.45014572143555,
+        "decode_gpu_ms": 1320.406494140625,
+        "prefill_tokens_per_second": 7892.582505048041,
+        "decode_tokens_per_second": 24.19059709878777,
+        "output_tokens_per_second": 23.05973605952638,
+        "total_tokens_per_second": 392.0155130119484,
+        "peak_allocated_bytes": 10335496704,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      }
+    },
+    {
+      "repeat": 22,
+      "order": [
+        "original",
+        "structured-silu-d1-s1103-n12000"
+      ],
+      "original": {
+        "prefill_seconds": 0.06875721737742424,
+        "decode_seconds": 1.2665640637278557,
+        "end_to_end_seconds": 1.3353220243006945,
+        "prefill_gpu_ms": 66.34166717529297,
+        "decode_gpu_ms": 1264.1346435546875,
+        "prefill_tokens_per_second": 7446.490994385561,
+        "decode_tokens_per_second": 25.265204434914224,
+        "output_tokens_per_second": 23.9642568741112,
+        "total_tokens_per_second": 407.3923668598904,
+        "peak_allocated_bytes": 10335496704,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      },
+      "structured-silu-d1-s1103-n12000": {
+        "prefill_seconds": 0.06468950770795345,
+        "decode_seconds": 1.3331974409520626,
+        "end_to_end_seconds": 1.3978879116475582,
+        "prefill_gpu_ms": 62.31254577636719,
+        "decode_gpu_ms": 1330.81103515625,
+        "prefill_tokens_per_second": 7914.730195682886,
+        "decode_tokens_per_second": 24.002446312189264,
+        "output_tokens_per_second": 22.891678033244187,
+        "total_tokens_per_second": 389.1585265651512,
+        "peak_allocated_bytes": 10234835456,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      }
+    },
+    {
+      "repeat": 23,
+      "order": [
+        "structured-silu-d1-s1103-n12000",
+        "original"
+      ],
+      "structured-silu-d1-s1103-n12000": {
+        "prefill_seconds": 0.06261134147644043,
+        "decode_seconds": 1.318840604275465,
+        "end_to_end_seconds": 1.3814528975635767,
+        "prefill_gpu_ms": 62.32262420654297,
+        "decode_gpu_ms": 1316.5072021484375,
+        "prefill_tokens_per_second": 8177.432202002201,
+        "decode_tokens_per_second": 24.263735811788965,
+        "output_tokens_per_second": 23.164018155405337,
+        "total_tokens_per_second": 393.78830864189075,
+        "peak_allocated_bytes": 10234835456,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      },
+      "original": {
+        "prefill_seconds": 0.06690379604697227,
+        "decode_seconds": 1.335830332711339,
+        "end_to_end_seconds": 1.4027349539101124,
+        "prefill_gpu_ms": 64.51007843017578,
+        "decode_gpu_ms": 1333.3778076171875,
+        "prefill_tokens_per_second": 7652.779517032659,
+        "decode_tokens_per_second": 23.95513802643596,
+        "output_tokens_per_second": 22.812577608335957,
+        "total_tokens_per_second": 387.8138193417113,
+        "peak_allocated_bytes": 10335496704,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      }
+    },
+    {
+      "repeat": 24,
+      "order": [
+        "original",
+        "structured-silu-d1-s1103-n12000"
+      ],
+      "original": {
+        "prefill_seconds": 0.057801004499197006,
+        "decode_seconds": 1.2658205963671207,
+        "end_to_end_seconds": 1.323622103780508,
+        "prefill_gpu_ms": 55.39567947387695,
+        "decode_gpu_ms": 1265.499267578125,
+        "prefill_tokens_per_second": 8857.977546170723,
+        "decode_tokens_per_second": 25.28004370590852,
+        "output_tokens_per_second": 24.1760846306526,
+        "total_tokens_per_second": 410.9934387210942,
+        "peak_allocated_bytes": 10335496704,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      },
+      "structured-silu-d1-s1103-n12000": {
+        "prefill_seconds": 0.06275416910648346,
+        "decode_seconds": 1.303872024640441,
+        "end_to_end_seconds": 1.3666268810629845,
+        "prefill_gpu_ms": 60.35276794433594,
+        "decode_gpu_ms": 1301.4285888671875,
+        "prefill_tokens_per_second": 8158.820478225448,
+        "decode_tokens_per_second": 24.54228589559961,
+        "output_tokens_per_second": 23.415315799371577,
+        "total_tokens_per_second": 398.0603685893168,
+        "peak_allocated_bytes": 10234835456,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      }
+    },
+    {
+      "repeat": 25,
+      "order": [
+        "structured-silu-d1-s1103-n12000",
+        "original"
+      ],
+      "structured-silu-d1-s1103-n12000": {
+        "prefill_seconds": 0.0642207432538271,
+        "decode_seconds": 1.292084690183401,
+        "end_to_end_seconds": 1.3563062231987715,
+        "prefill_gpu_ms": 62.51625442504883,
+        "decode_gpu_ms": 1289.67236328125,
+        "prefill_tokens_per_second": 7972.501937206846,
+        "decode_tokens_per_second": 24.76617844257396,
+        "output_tokens_per_second": 23.593491980394965,
+        "total_tokens_per_second": 401.0893636667144,
+        "peak_allocated_bytes": 10234835456,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      },
+      "original": {
+        "prefill_seconds": 0.062101827934384346,
+        "decode_seconds": 1.2641797382384539,
+        "end_to_end_seconds": 1.326282862573862,
+        "prefill_gpu_ms": 59.674495697021484,
+        "decode_gpu_ms": 1261.794677734375,
+        "prefill_tokens_per_second": 8244.523825304625,
+        "decode_tokens_per_second": 25.31285625933996,
+        "output_tokens_per_second": 24.127583114433772,
+        "total_tokens_per_second": 410.16891294537413,
+        "peak_allocated_bytes": 10335496704,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      }
+    },
+    {
+      "repeat": 26,
+      "order": [
+        "original",
+        "structured-silu-d1-s1103-n12000"
+      ],
+      "original": {
+        "prefill_seconds": 0.07381273061037064,
+        "decode_seconds": 1.3095246627926826,
+        "end_to_end_seconds": 1.383338525891304,
+        "prefill_gpu_ms": 71.38652801513672,
+        "decode_gpu_ms": 1309.112548828125,
+        "prefill_tokens_per_second": 6936.472824757744,
+        "decode_tokens_per_second": 24.43634771395373,
+        "output_tokens_per_second": 23.132443289238953,
+        "total_tokens_per_second": 393.2515359170622,
+        "peak_allocated_bytes": 10335496704,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      },
+      "structured-silu-d1-s1103-n12000": {
+        "prefill_seconds": 0.05139158293604851,
+        "decode_seconds": 1.2864551730453968,
+        "end_to_end_seconds": 1.337847527116537,
+        "prefill_gpu_ms": 50.401023864746094,
+        "decode_gpu_ms": 1284.0667724609375,
+        "prefill_tokens_per_second": 9962.720950571436,
+        "decode_tokens_per_second": 24.874555033462308,
+        "output_tokens_per_second": 23.919018685910796,
+        "total_tokens_per_second": 406.6233176604835,
+        "peak_allocated_bytes": 10234835456,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      }
+    },
+    {
+      "repeat": 27,
+      "order": [
+        "structured-silu-d1-s1103-n12000",
+        "original"
+      ],
+      "structured-silu-d1-s1103-n12000": {
+        "prefill_seconds": 0.05413333140313625,
+        "decode_seconds": 1.2651958595961332,
+        "end_to_end_seconds": 1.3193298820406199,
+        "prefill_gpu_ms": 53.84543991088867,
+        "decode_gpu_ms": 1262.75146484375,
+        "prefill_tokens_per_second": 9458.128416060072,
+        "decode_tokens_per_second": 25.292526652920607,
+        "output_tokens_per_second": 24.254737526679303,
+        "total_tokens_per_second": 412.3305379535481,
+        "peak_allocated_bytes": 10234835456,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      },
+      "original": {
+        "prefill_seconds": 0.06490539573132992,
+        "decode_seconds": 1.3031970541924238,
+        "end_to_end_seconds": 1.36810358799994,
+        "prefill_gpu_ms": 62.47750473022461,
+        "decode_gpu_ms": 1300.7559814453125,
+        "prefill_tokens_per_second": 7888.40425716497,
+        "decode_tokens_per_second": 24.5549971871522,
+        "output_tokens_per_second": 23.39004171956123,
+        "total_tokens_per_second": 397.6307092325409,
+        "peak_allocated_bytes": 10335496704,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      }
+    },
+    {
+      "repeat": 28,
+      "order": [
+        "original",
+        "structured-silu-d1-s1103-n12000"
+      ],
+      "original": {
+        "prefill_seconds": 0.06143006682395935,
+        "decode_seconds": 1.2768791057169437,
+        "end_to_end_seconds": 1.3383104000240564,
+        "prefill_gpu_ms": 58.99689483642578,
+        "decode_gpu_ms": 1274.48876953125,
+        "prefill_tokens_per_second": 8334.680824411971,
+        "decode_tokens_per_second": 25.061103950034955,
+        "output_tokens_per_second": 23.91074596702289,
+        "total_tokens_per_second": 406.4826814393892,
+        "peak_allocated_bytes": 10335496704,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      },
+      "structured-silu-d1-s1103-n12000": {
+        "prefill_seconds": 0.05273524299263954,
+        "decode_seconds": 1.2612486835569143,
+        "end_to_end_seconds": 1.313984852284193,
+        "prefill_gpu_ms": 50.312992095947266,
+        "decode_gpu_ms": 1258.7952880859375,
+        "prefill_tokens_per_second": 9708.877231711282,
+        "decode_tokens_per_second": 25.371681586025606,
+        "output_tokens_per_second": 24.35340098812565,
+        "total_tokens_per_second": 414.007816798136,
+        "peak_allocated_bytes": 10234835456,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      }
+    },
+    {
+      "repeat": 29,
+      "order": [
+        "structured-silu-d1-s1103-n12000",
+        "original"
+      ],
+      "structured-silu-d1-s1103-n12000": {
+        "prefill_seconds": 0.0614565908908844,
+        "decode_seconds": 1.2608217019587755,
+        "end_to_end_seconds": 1.322279043495655,
+        "prefill_gpu_ms": 59.032737731933594,
+        "decode_gpu_ms": 1258.363525390625,
+        "prefill_tokens_per_second": 8331.083657228095,
+        "decode_tokens_per_second": 25.380273793103132,
+        "output_tokens_per_second": 24.200640672185887,
+        "total_tokens_per_second": 411.41089142716004,
+        "peak_allocated_bytes": 10234835456,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      },
+      "original": {
+        "prefill_seconds": 0.06336635909974575,
+        "decode_seconds": 1.2920128554105759,
+        "end_to_end_seconds": 1.3553799577057362,
+        "prefill_gpu_ms": 60.94771194458008,
+        "decode_gpu_ms": 1289.5697021484375,
+        "prefill_tokens_per_second": 8079.997135294686,
+        "decode_tokens_per_second": 24.76755542020597,
+        "output_tokens_per_second": 23.609615752446782,
+        "total_tokens_per_second": 401.36346779159527,
+        "peak_allocated_bytes": 10335496704,
+        "peak_reserved_bytes": 10403971072,
+        "cache_cuda_storage_bytes": 9633888,
+        "cache_total_storage_bytes": 9633888
+      }
+    }
+  ],
+  "isolated_memory": {
+    "original": {
+      "peak_allocated_bytes": 10338118144,
+      "peak_reserved_bytes": 10391388160,
+      "cache_cuda_storage_bytes": 9633888,
+      "cache_total_storage_bytes": 9633888
+    },
+    "structured-silu-d1-s1103-n12000": {
+      "peak_allocated_bytes": 10237479424,
+      "peak_reserved_bytes": 10290724864,
+      "cache_cuda_storage_bytes": 9633888,
+      "cache_total_storage_bytes": 9633888
+    }
+  },
+  "allocator_policy": "First warm-up per path starts with an empty unused allocator cache and records isolated working memory. Nine interleaved warm-ups follow. No allocator clearing between timed switches; reserved memory in timed samples can retain comparison allocations.",
+  "telemetry_before": [
+    "0, GPU-49c83277-cb07-75ee-b58a-8beadfc00cf0, NVIDIA H100 80GB HBM3, 75125 MiB, 5966 MiB, 95 %",
+    "1, GPU-026e38f1-2523-2925-1bed-7dc187d46062, NVIDIA H100 80GB HBM3, 71833 MiB, 9258 MiB, 100 %",
+    "2, GPU-6c58a2c6-f9d9-436d-8cd5-ce988d1c3551, NVIDIA H100 80GB HBM3, 79573 MiB, 1518 MiB, 75 %",
+    "3, GPU-146dd56f-95c5-b931-44a3-fd85a21bf2fd, NVIDIA H100 80GB HBM3, 78989 MiB, 2102 MiB, 100 %"
+  ],
+  "telemetry_after": [
+    "0, GPU-49c83277-cb07-75ee-b58a-8beadfc00cf0, NVIDIA H100 80GB HBM3, 75125 MiB, 5966 MiB, 92 %",
+    "1, GPU-026e38f1-2523-2925-1bed-7dc187d46062, NVIDIA H100 80GB HBM3, 71833 MiB, 9258 MiB, 100 %",
+    "2, GPU-6c58a2c6-f9d9-436d-8cd5-ce988d1c3551, NVIDIA H100 80GB HBM3, 79573 MiB, 1518 MiB, 100 %",
+    "3, GPU-146dd56f-95c5-b931-44a3-fd85a21bf2fd, NVIDIA H100 80GB HBM3, 79051 MiB, 2040 MiB, 100 %"
+  ],
+  "cuda_visible_devices": "3",
+  "device_name": "NVIDIA H100 80GB HBM3",
+  "device_uuid": "146dd56f-95c5-b931-44a3-fd85a21bf2fd",
+  "original_accounting": {
+    "parameters": 5104297504,
+    "parameter_bytes": 10208595008,
+    "buffers": 2289,
+    "buffer_bytes": 6178,
+    "coefficients": 5104299793,
+    "by_device": {
+      "cuda": 10208601186
+    }
+  },
+  "student_module_accounting": {
+    "parameters": 5993472,
+    "parameter_bytes": 11986944,
+    "buffers": 3072,
+    "buffer_bytes": 6144,
+    "coefficients": 5996544,
+    "by_device": {
+      "cuda": 11993088
+    }
+  },
+  "freeze_sha256": "da8546e383440bc19f7a0d1f26d8dd75875cd8b71c7d3ae53eeca438769fd4fc",
+  "sharing": "Other processes are present. These paired measurements describe this shared-device workload, not exclusive serving.",
+  "timing_excludes": "Model loading, comparison module transfers, tokenization and warm-up; includes native prefill, cached decoding, fixed-token feeding, and phase synchronization."
+}

@@ -132,7 +132,7 @@ def main():
             method,
         )
     job("benchmark_and_audit", "deployment-precision", a.audit_gpu, 120, "precision")
-    job("benchmark_and_audit", "release-audit", a.audit_gpu, 180, "audit")
+    job("benchmark_and_audit", "release-audit-v2", a.audit_gpu, 180, "audit")
     job("benchmark_and_audit", "release-summary", a.audit_gpu, 180, "summarize")
 
 

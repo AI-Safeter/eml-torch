@@ -1,192 +1,4 @@
-"""Render tables and a standalone research figure from audited numerical artifacts."""
-
-import csv
-import json
-import shutil
-from pathlib import Path
-
-import matplotlib
-
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-
-from .common import HERE, digest, root
-
-
-def main():
-    out = root()
-    s = json.loads((out / "summary.json").read_text())
-    destination = HERE / "results"
-    destination.mkdir(exist_ok=True)
-
-    table = [
-        "| Design | Activation | Raw MSE | Contribution MSE | Add % | Multiply % | Divide % | ARC % | CE nats | Fit seconds |",
-        "|---|---|---:|---:|---:|---:|---:|---:|---:|---:|",
-    ]
-    account = [
-        "| Design | Activation | Trainable parameters | Training buffers | Deployed parameters | Deployed buffers |",
-        "|---|---|---:|---:|---:|---:|",
-    ]
-    timing = [
-        "| Design | Activation | Original E2E ms | Replacement E2E ms | Reduction % [95% block CI] |",
-        "|---|---|---:|---:|---:|",
-    ]
-    error = [
-        "| Design | Activation | Train raw MSE | Outside decoder MSE | Within decoder MSE | Output covariance rank |",
-        "|---|---|---:|---:|---:|---:|",
-    ]
-    training = []
-    timing_rows = []
-    for arch in ["bottleneck", "shortcut", "structured"]:
-        for act in ["eml", "silu"]:
-            key = f"{arch}-{act}-d1-s1103-n12000"
-            r = s["fits"][key]
-            q = s["quality"][key]["point"]
-            d = s["diagnostics"][key]["train"]
-            raw = sum(v["raw_mse"] for v in r["selection"].values()) / 2
-            contrib = sum(v["contribution_mse"] for v in r["selection"].values()) / 2
-            table.append(
-                f"| {arch} | {act} | {raw:.6f} | {contrib:.6f} | {q['add'] * 100:.2f} | {q['multiply'] * 100:.2f} | {q['divide'] * 100:.2f} | {q['arc'] * 100:.2f} | {q['ce']:.4f} | {r['training_seconds']:.1f} |"
-            )
-            counts = r["accounting"]
-            deploy = r["deployed_accounting"]
-            account.append(
-                f"| {arch} | {act} | {counts['parameters']:,} | {counts['buffers']:,} | {deploy['parameters']:,} | {deploy['buffers']:,} |"
-            )
-            outside = "—" if d["outside_decoder_mse"] is None else f"{d['outside_decoder_mse']:.6f}"
-            inside = "—" if d["within_decoder_mse"] is None else f"{d['within_decoder_mse']:.6f}"
-            error.append(
-                f"| {arch} | {act} | {d['raw_mse']:.6f} | {outside} | {inside} | {d['output_covariance_rank_relative_1e_minus_6']} |"
-            )
-            training.append(
-                {
-                    "method": key,
-                    "raw_mse": raw,
-                    "contribution_mse": contrib,
-                    **q,
-                    "training_seconds": r["training_seconds"],
-                    "selected_step": r["selected_step"],
-                }
-            )
-            primary = s["timings"][key + "-b8-p512"]["timing"]["end_to_end_seconds"]
-            lo, hi = primary["relative_reduction_95_block_bootstrap"]
-            timing.append(
-                f"| {arch} | {act} | {primary['original_mean'] * 1000:.2f} | {primary['replacement_mean'] * 1000:.2f} | {primary['relative_reduction'] * 100:.2f} [{lo * 100:.2f}, {hi * 100:.2f}] |"
-            )
-    for key, r in s["timings"].items():
-        for phase, v in r["timing"].items():
-            timing_rows.append(
-                {
-                    "method": r["method"],
-                    "batch": r["batch"],
-                    "prefill_tokens": r["prefill_tokens"],
-                    "decode_steps": 32,
-                    "phase": phase,
-                    **{k: value for k, value in v.items() if not isinstance(value, list)},
-                    "ci_low": v["relative_reduction_95_block_bootstrap"][0],
-                    "ci_high": v["relative_reduction_95_block_bootstrap"][1],
-                }
-            )
-    for filename, rows in [("development.csv", training), ("timing.csv", timing_rows)]:
-        with (destination / filename).open("w") as f:
-            writer = csv.DictWriter(f, fieldnames=rows[0].keys())
-            writer.writeheader()
-            writer.writerows(rows)
-    # Standalone artifact: no image generation or alteration of experimental data.
-    fig, axes = plt.subplots(1, 3, figsize=(13.5, 4), layout="constrained")
-    colors = {"eml": "#b44432", "silu": "#286d9f"}
-    for i, arch in enumerate(["bottleneck", "shortcut", "structured"]):
-        for act, offset in [("eml", -0.12), ("silu", 0.12)]:
-            r = next(v for v in training if v["method"] == f"{arch}-{act}-d1-s1103-n12000")
-            axes[0].scatter(
-                i + offset, r["raw_mse"], color=colors[act], label=act.upper() if i == 0 else None
-            )
-            axes[1].scatter(i + offset, r["arc"] * 100, color=colors[act])
-            t = s["timings"][r["method"] + "-b8-p512"]["timing"]["end_to_end_seconds"]
-            mean = t["relative_reduction"] * 100
-            lo, hi = [v * 100 for v in t["relative_reduction_95_block_bootstrap"]]
-            axes[2].plot([i + offset] * 2, [lo, hi], color=colors[act])
-            axes[2].scatter(i + offset, mean, color=colors[act])
-    axes[0].set_ylabel("Development raw MLP MSE")
-    axes[0].legend(frameon=False)
-    axes[1].set_ylabel("Development ARC accuracy (%)")
-    axes[1].axhline(
-        s["quality"]["original"]["point"]["arc"] * 100, color="0.4", ls="--", label="Original"
-    )
-    axes[1].legend(frameon=False)
-    axes[2].set_ylabel("End-to-end latency reduction (%)")
-    axes[2].axhline(0, color="0.4", ls="--")
-    for ax in axes:
-        ax.set_xticks(range(3), ["Bottleneck", "Shortcut", "Structured"], rotation=15)
-        ax.spines[["top", "right"]].set_visible(False)
-    fig.suptitle("One-seed development screen; timing: B8, 512-token prefill, 32 decode steps")
-    fig.savefig(destination / "architecture-screen.png", dpi=180)
-    fig.savefig(destination / "architecture-screen.pdf")
-    plt.close(fig)
-    phase_table = [
-        "| Design / activation | Prefill ms, original → replacement | Decode ms, original → replacement | Output tokens/s, original → replacement | Peak allocated GiB, original → replacement |",
-        "|---|---:|---:|---:|---:|",
-    ]
-    for row in training:
-        method = row["method"]
-        r = s["timings"][method + "-b8-p512"]
-        pre, dec = r["timing"]["prefill_seconds"], r["timing"]["decode_seconds"]
-        tp = r["throughput_mean"]
-        mem = r["isolated_memory"]
-        phase_table.append(
-            f"| {method.split('-d1')[0]} | {pre['original_mean'] * 1000:.2f} → {pre['replacement_mean'] * 1000:.2f} | "
-            f"{dec['original_mean'] * 1000:.2f} → {dec['replacement_mean'] * 1000:.2f} | "
-            f"{tp['original']['output_tokens_per_second']:.2f} → {tp[method]['output_tokens_per_second']:.2f} | "
-            f"{mem['original']['peak_allocated_bytes'] / 2**30:.4f} → {mem[method]['peak_allocated_bytes'] / 2**30:.4f} |"
-        )
-    sections = {
-        "development_table": "\n".join(table),
-        "accounting_table": "\n".join(account),
-        "timing_table": "\n".join(timing),
-        "error_table": "\n".join(error),
-        "phase_table": "\n".join(phase_table),
-    }
-    (destination / "tables.json").write_text(json.dumps(sections, indent=2) + "\n")
-    for filename in [
-        "summary.json",
-        "release-audit.json",
-        "decision.json",
-        "budget.json",
-        "validation.json",
-        "integration.json",
-        "precision-audit.json",
-        "screen-d1-n12000.json",
-    ]:
-        shutil.copy2(out / filename, destination / filename)
-    logs = destination / "audit-logs"
-    logs.mkdir(exist_ok=True)
-    for label in ["release-audit", "release-audit-v2"]:
-        path = out / "logs" / f"{label}.log"
-        if path.exists():
-            shutil.copy2(path, logs / path.name)
-    for sub in ["evaluation/development", "benchmark", "exports"]:
-        target = destination / Path(sub).name
-        target.mkdir(exist_ok=True)
-        for p in sorted((out / sub).glob("*.json")):
-            shutil.copy2(p, target / p.name)
-    (destination / "render-provenance.json").write_text(
-        json.dumps(
-            {
-                "source_sha256": digest(HERE / "report.py"),
-                "summary_sha256": digest(out / "summary.json"),
-                "audit_sha256": digest(out / "release-audit.json"),
-            },
-            indent=2,
-        )
-        + "\n"
-    )
-    ledger = json.loads((out / "budget.json").read_text())
-    hours = (
-        sum(v.get("elapsed_seconds", v["allowance_seconds"]) for v in ledger["jobs"].values())
-        / 3600
-    )
-    original = s["quality"]["original"]["point"]
-    report = f"""# Removing the decoder bottleneck: architecture screen
+# Removing the decoder bottleneck: architecture screen
 
 Removing the fixed output subspace improves reconstruction, but it does not
 restore the model's quality at this budget. The affine shortcut lowers development
@@ -248,12 +60,19 @@ formats; 32 larger-operand groups per operation are diagnostic. It also uses
 at 24 tokens and malformed responses remain wrong. Previously inspected data
 are deliberately treated as development, including the former final split.
 
-Original development scores: addition **{original["add"] * 100:.2f}%**,
-multiplication **{original["multiply"] * 100:.2f}%**, division
-**{original["divide"] * 100:.2f}%**, ARC **{original["arc"] * 100:.2f}%**,
-and document CE **{original["ce"]:.4f} nats**.
+Original development scores: addition **95.31%**,
+multiplication **45.31%**, division
+**43.75%**, ARC **73.96%**,
+and document CE **4.5721 nats**.
 
-{sections["development_table"]}
+| Design | Activation | Raw MSE | Contribution MSE | Add % | Multiply % | Divide % | ARC % | CE nats | Fit seconds |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| bottleneck | eml | 0.255290 | 0.266346 | 94.53 | 35.94 | 44.53 | 68.75 | 4.4747 | 162.4 |
+| bottleneck | silu | 0.257667 | 0.268949 | 93.75 | 37.50 | 42.19 | 68.75 | 4.4752 | 80.3 |
+| shortcut | eml | 0.243286 | 0.255790 | 93.75 | 37.50 | 42.97 | 63.54 | 4.5089 | 302.2 |
+| shortcut | silu | 0.244154 | 0.257878 | 94.53 | 39.06 | 43.75 | 64.58 | 4.5062 | 283.7 |
+| structured | eml | 0.250279 | 0.261665 | 95.31 | 37.50 | 42.19 | 63.54 | 4.5031 | 131.9 |
+| structured | silu | 0.239963 | 0.252402 | 93.75 | 37.50 | 42.97 | 64.58 | 4.5018 | 88.1 |
 
 All full-width variants lose 4.17–5.21 ARC points relative to their matching
 bottleneck control. Language CE improves relative to the original for every
@@ -299,7 +118,14 @@ general bound here is zero, which is not evidence that its finite network can
 achieve zero error. These are training-distribution bounds, not bounds on
 contribution error, unseen data, answer quality, or EML in general.
 
-{sections["error_table"]}
+| Design | Activation | Train raw MSE | Outside decoder MSE | Within decoder MSE | Output covariance rank |
+|---|---|---:|---:|---:|---:|
+| bottleneck | eml | 0.225248 | 0.148124 | 0.077124 | 512 |
+| bottleneck | silu | 0.226827 | 0.148408 | 0.078419 | 512 |
+| shortcut | eml | 0.212267 | 0.123445 | 0.088821 | 1536 |
+| shortcut | silu | 0.216391 | 0.126793 | 0.089598 | 1536 |
+| structured | eml | 0.221693 | — | — | 1483 |
+| structured | silu | 0.210786 | — | — | 1487 |
 
 For EML, shortcut outside-decoder error falls from 0.148124 to 0.123445, while
 inside-decoder error rises from 0.077124 to 0.088821. Its best-affine floor outside
@@ -349,7 +175,14 @@ check is not an end-to-end precision-invariance guarantee. See
 
 ## Complete accounting and measured inference cost
 
-{sections["accounting_table"]}
+| Design | Activation | Trainable parameters | Training buffers | Deployed parameters | Deployed buffers |
+|---|---|---:|---:|---:|---:|
+| bottleneck | eml | 5,995,122 | 4,609 | 5,994,610 | 0 |
+| bottleneck | silu | 5,995,223 | 4,609 | 5,994,711 | 0 |
+| shortcut | eml | 5,995,126 | 4,609 | 5,994,614 | 0 |
+| shortcut | silu | 5,994,969 | 4,609 | 5,994,457 | 0 |
+| structured | eml | 5,995,008 | 4,609 | 5,993,472 | 3,072 |
+| structured | silu | 5,995,008 | 4,609 | 5,993,472 | 3,072 |
 
 The native pre/post-feedforward normalizations retain 3,072 parameters in the
 complete model. Structured deployment retains 3,072 input-normalization values;
@@ -370,7 +203,14 @@ resamples six contiguous blocks of five pairs with 10,000 bootstrap replicates.
 Positive reduction means faster replacement. All four batch/prefill workloads
 are recorded separately in `timing.csv` and `benchmark/`.
 
-{sections["timing_table"]}
+| Design | Activation | Original E2E ms | Replacement E2E ms | Reduction % [95% block CI] |
+|---|---|---:|---:|---:|
+| bottleneck | eml | 1327.28 | 1325.19 | 0.16 [-0.73, 1.10] |
+| bottleneck | silu | 1465.77 | 1471.80 | -0.41 [-1.33, 0.58] |
+| shortcut | eml | 1299.00 | 1296.66 | 0.18 [-1.18, 1.87] |
+| shortcut | silu | 1476.13 | 1489.88 | -0.93 [-1.68, 0.33] |
+| structured | eml | 1462.12 | 1496.06 | -2.32 [-3.50, -1.16] |
+| structured | silu | 1489.80 | 1491.07 | -0.09 [-0.66, 0.39] |
 
 No primary-workload point estimate or its 95% interval reaches the 10% latency
 reduction target. Shortcut EML's measured reduction is 0.18% [-1.18, 1.87];
@@ -379,7 +219,14 @@ means must not be compared across separate candidate runs: the original model
 itself ranges from 1.299 to 1.490 seconds as shared-GPU conditions change.
 The within-run paired comparison is the supported cost comparison.
 
-{sections["phase_table"]}
+| Design / activation | Prefill ms, original → replacement | Decode ms, original → replacement | Output tokens/s, original → replacement | Peak allocated GiB, original → replacement |
+|---|---:|---:|---:|---:|
+| bottleneck-eml | 72.61 → 72.30 | 1254.67 → 1252.89 | 193.07 → 193.38 | 10.1058 → 10.0118 |
+| bottleneck-silu | 152.60 → 149.97 | 1313.17 → 1321.83 | 174.76 → 174.06 | 10.1058 → 10.0115 |
+| shortcut-eml | 73.00 → 72.05 | 1226.00 → 1224.61 | 197.17 → 197.48 | 10.1058 → 10.0118 |
+| shortcut-silu | 150.89 → 150.35 | 1325.24 → 1339.53 | 173.53 → 171.91 | 10.1058 → 10.0118 |
+| structured-eml | 149.99 → 154.72 | 1312.12 → 1341.34 | 175.25 → 171.32 | 10.1058 → 10.0121 |
+| structured-silu | 151.80 → 150.80 | 1337.99 → 1340.27 | 171.98 → 171.83 | 10.1058 → 10.0120 |
 
 Prefill, decoding, output/total/prefill throughput, CUDA event time, peak allocated
 and reserved memory, and unique cache storage are separate fields in the raw
@@ -402,7 +249,7 @@ table on GPU and include its storage.
 ## Budget, reproducibility, and defensible claim
 
 The declared cap was eight H100 device-hours. This completed run charged
-**{hours:.4f} device-hours**, counting elapsed time of our GPU subprocesses,
+**1.4164 device-hours**, counting elapsed time of our GPU subprocesses,
 including startup, training, checks, exports, shared-device delays, and timing.
 The ledger preserves every job. No other experiment was stopped. Unused budget
 does not override the prospective screen's stopping rules. The initial release
@@ -440,10 +287,3 @@ out treating high output covariance rank as a sufficient remedy. It does not
 establish a general EML limitation or identify optimization versus finite
 capacity as the sole remaining cause. No deployment success or recovered
 arithmetic algorithm is claimed.
-"""
-    (destination / "REPORT.md").write_text(report)
-    print("REPORT TABLES AND FIGURE RENDERED", destination)
-
-
-if __name__ == "__main__":
-    main()

@@ -1,0 +1,11 @@
+{
+  "status": "stop",
+  "promising_architecture": null,
+  "diagnostic_leader": null,
+  "screen_sha256": "1f8ee3066c93b0a25be24eeef6c3ca23184fc8a55c2b88a4fa8fb445c077af2a",
+  "confirmation_opened": false,
+  "additional_seeds_run": false,
+  "depth_screen_run": false,
+  "longer_training_run": false,
+  "reason": "No architecture passed the frozen screen. None improved both activation errors by 10% in both activations, so the conditional longer-training diagnostic did not activate."
+}

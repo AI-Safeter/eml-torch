@@ -88,6 +88,9 @@ base checkpoint and the exported replacement; it does not read activation data.
   --prompt 'Say hello in one short sentence.' --tokens 24
 ```
 
+Use a new budget-job label for a new inference request; completed labels are
+preserved rather than executed again.
+
 The base checkpoint is loaded before swapping out the MLP. The removed module
 is absent during generation and its forward is forbidden. These experimental
 weights have **not** passed a deployment quality gate.

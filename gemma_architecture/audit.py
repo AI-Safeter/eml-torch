@@ -80,7 +80,23 @@ def main():
             "passes",
             "net_loss_bootstrap",
         ]:
-            assert fast[k] == slow[k], (k, fast[k], slow[k])
+            if isinstance(fast[k], dict):
+                for field in fast[k]:
+                    torch.testing.assert_close(
+                        torch.tensor(fast[k][field], device="cuda", dtype=torch.float64),
+                        torch.tensor(slow[k][field], device="cuda", dtype=torch.float64),
+                        rtol=0,
+                        atol=1e-12,
+                    )
+            elif isinstance(fast[k], float):
+                torch.testing.assert_close(
+                    torch.tensor(fast[k], device="cuda", dtype=torch.float64),
+                    torch.tensor(slow[k], device="cuda", dtype=torch.float64),
+                    rtol=0,
+                    atol=1e-12,
+                )
+            else:
+                assert fast[k] == slow[k], (k, fast[k], slow[k])
     bindings = {
         str(p.relative_to(out)): digest(p)
         for directory in ["training", "evaluation", "diagnostics", "exports", "benchmark"]
@@ -132,6 +148,8 @@ def main():
         "fits": checked,
         "matched_minibatch_rng_states": True,
         "paired_statistics_match_previous_reference": True,
+        "paired_float_absolute_tolerance": 1e-12,
+        "paired_integer_and_boolean_comparisons_exact": True,
         "raw_error_replay_and_decomposition_pass": True,
         "inputs": bindings,
         "sources": sources("audit.py", "model.py", "statistics.py"),

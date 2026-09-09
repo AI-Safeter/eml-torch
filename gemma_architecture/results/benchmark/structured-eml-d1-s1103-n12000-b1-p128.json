@@ -1,0 +1,1171 @@
+{
+  "method": "structured-eml-d1-s1103-n12000",
+  "batch": 1,
+  "prefill_tokens": 128,
+  "decode_steps": 32,
+  "samples": [
+    {
+      "repeat": 0,
+      "order": [
+        "original",
+        "structured-eml-d1-s1103-n12000"
+      ],
+      "original": {
+        "prefill_seconds": 0.062374264001846313,
+        "decode_seconds": 1.3234823346138,
+        "end_to_end_seconds": 1.3858576454222202,
+        "prefill_gpu_ms": 59.984832763671875,
+        "decode_gpu_ms": 1321.02099609375,
+        "prefill_tokens_per_second": 2052.128422648981,
+        "decode_tokens_per_second": 24.17863779748733,
+        "output_tokens_per_second": 23.090394677767044,
+        "total_tokens_per_second": 115.45197338883521,
+        "peak_allocated_bytes": 10278468096,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      },
+      "structured-eml-d1-s1103-n12000": {
+        "prefill_seconds": 0.05298192426562309,
+        "decode_seconds": 1.3177418410778046,
+        "end_to_end_seconds": 1.370724769309163,
+        "prefill_gpu_ms": 52.167232513427734,
+        "decode_gpu_ms": 1315.2750244140625,
+        "prefill_tokens_per_second": 2415.9182924024485,
+        "decode_tokens_per_second": 24.283967468033516,
+        "output_tokens_per_second": 23.34531389268453,
+        "total_tokens_per_second": 116.72656946342263,
+        "peak_allocated_bytes": 10178208256,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      }
+    },
+    {
+      "repeat": 1,
+      "order": [
+        "structured-eml-d1-s1103-n12000",
+        "original"
+      ],
+      "structured-eml-d1-s1103-n12000": {
+        "prefill_seconds": 0.05837583541870117,
+        "decode_seconds": 1.3309381324797869,
+        "end_to_end_seconds": 1.3893147371709347,
+        "prefill_gpu_ms": 55.93500900268555,
+        "decode_gpu_ms": 1328.49658203125,
+        "prefill_tokens_per_second": 2192.6881059931547,
+        "decode_tokens_per_second": 24.043191204070478,
+        "output_tokens_per_second": 23.032937853348972,
+        "total_tokens_per_second": 115.16468926674486,
+        "peak_allocated_bytes": 10178208256,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      },
+      "original": {
+        "prefill_seconds": 0.06248391419649124,
+        "decode_seconds": 1.313323374837637,
+        "end_to_end_seconds": 1.3758085034787655,
+        "prefill_gpu_ms": 60.05497741699219,
+        "decode_gpu_ms": 1312.628173828125,
+        "prefill_tokens_per_second": 2048.5272353054315,
+        "decode_tokens_per_second": 24.365666988875518,
+        "output_tokens_per_second": 23.25905089195714,
+        "total_tokens_per_second": 116.29525445978571,
+        "peak_allocated_bytes": 10278468096,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      }
+    },
+    {
+      "repeat": 2,
+      "order": [
+        "original",
+        "structured-eml-d1-s1103-n12000"
+      ],
+      "original": {
+        "prefill_seconds": 0.05711122788488865,
+        "decode_seconds": 1.3126167096197605,
+        "end_to_end_seconds": 1.3697291910648346,
+        "prefill_gpu_ms": 54.74812698364258,
+        "decode_gpu_ms": 1310.171142578125,
+        "prefill_tokens_per_second": 2241.2405535736725,
+        "decode_tokens_per_second": 24.37878458005443,
+        "output_tokens_per_second": 23.362282273566088,
+        "total_tokens_per_second": 116.81141136783043,
+        "peak_allocated_bytes": 10278468096,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      },
+      "structured-eml-d1-s1103-n12000": {
+        "prefill_seconds": 0.06121430732309818,
+        "decode_seconds": 1.320545930415392,
+        "end_to_end_seconds": 1.3817610032856464,
+        "prefill_gpu_ms": 58.852638244628906,
+        "decode_gpu_ms": 1319.494384765625,
+        "prefill_tokens_per_second": 2091.014431060978,
+        "decode_tokens_per_second": 24.23240211715624,
+        "output_tokens_per_second": 23.15885303168073,
+        "total_tokens_per_second": 115.79426515840365,
+        "peak_allocated_bytes": 10178208256,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      }
+    },
+    {
+      "repeat": 3,
+      "order": [
+        "structured-eml-d1-s1103-n12000",
+        "original"
+      ],
+      "structured-eml-d1-s1103-n12000": {
+        "prefill_seconds": 0.06254416145384312,
+        "decode_seconds": 1.3912237212061882,
+        "end_to_end_seconds": 1.4537689480930567,
+        "prefill_gpu_ms": 60.125823974609375,
+        "decode_gpu_ms": 1388.8363037109375,
+        "prefill_tokens_per_second": 2046.553939242795,
+        "decode_tokens_per_second": 23.001332936054357,
+        "output_tokens_per_second": 22.01175093330695,
+        "total_tokens_per_second": 110.05875466653474,
+        "peak_allocated_bytes": 10178208256,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      },
+      "original": {
+        "prefill_seconds": 0.06019202060997486,
+        "decode_seconds": 1.383999103680253,
+        "end_to_end_seconds": 1.4441920835524797,
+        "prefill_gpu_ms": 57.778465270996094,
+        "decode_gpu_ms": 1381.556396484375,
+        "prefill_tokens_per_second": 2126.5277141865577,
+        "decode_tokens_per_second": 23.121402257347846,
+        "output_tokens_per_second": 22.15771735937311,
+        "total_tokens_per_second": 110.78858679686554,
+        "peak_allocated_bytes": 10278468096,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      }
+    },
+    {
+      "repeat": 4,
+      "order": [
+        "original",
+        "structured-eml-d1-s1103-n12000"
+      ],
+      "original": {
+        "prefill_seconds": 0.06285339966416359,
+        "decode_seconds": 1.3400704190135002,
+        "end_to_end_seconds": 1.4029250089079142,
+        "prefill_gpu_ms": 60.440799713134766,
+        "decode_gpu_ms": 1337.62841796875,
+        "prefill_tokens_per_second": 2036.4849106639542,
+        "decode_tokens_per_second": 23.8793421196156,
+        "output_tokens_per_second": 22.809487176303115,
+        "total_tokens_per_second": 114.04743588151557,
+        "peak_allocated_bytes": 10278468096,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      },
+      "structured-eml-d1-s1103-n12000": {
+        "prefill_seconds": 0.059378525242209435,
+        "decode_seconds": 1.3289351556450129,
+        "end_to_end_seconds": 1.3883145935833454,
+        "prefill_gpu_ms": 56.95452880859375,
+        "decode_gpu_ms": 1326.47119140625,
+        "prefill_tokens_per_second": 2155.661486671797,
+        "decode_tokens_per_second": 24.07942920621169,
+        "output_tokens_per_second": 23.049530810884562,
+        "total_tokens_per_second": 115.24765405442281,
+        "peak_allocated_bytes": 10178208256,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      }
+    },
+    {
+      "repeat": 5,
+      "order": [
+        "structured-eml-d1-s1103-n12000",
+        "original"
+      ],
+      "structured-eml-d1-s1103-n12000": {
+        "prefill_seconds": 0.06324060447514057,
+        "decode_seconds": 1.3595825377851725,
+        "end_to_end_seconds": 1.4228241108357906,
+        "prefill_gpu_ms": 60.80342483520508,
+        "decode_gpu_ms": 1357.1373291015625,
+        "prefill_tokens_per_second": 2024.0160742030207,
+        "decode_tokens_per_second": 23.536636512064646,
+        "output_tokens_per_second": 22.490481962104695,
+        "total_tokens_per_second": 112.45240981052348,
+        "peak_allocated_bytes": 10178208256,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      },
+      "original": {
+        "prefill_seconds": 0.06309362687170506,
+        "decode_seconds": 1.326377458870411,
+        "end_to_end_seconds": 1.3894721791148186,
+        "prefill_gpu_ms": 60.652767181396484,
+        "decode_gpu_ms": 1323.91455078125,
+        "prefill_tokens_per_second": 2028.7310517158244,
+        "decode_tokens_per_second": 24.125862352374646,
+        "output_tokens_per_second": 23.03032797704954,
+        "total_tokens_per_second": 115.15163988524772,
+        "peak_allocated_bytes": 10278468096,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      }
+    },
+    {
+      "repeat": 6,
+      "order": [
+        "original",
+        "structured-eml-d1-s1103-n12000"
+      ],
+      "original": {
+        "prefill_seconds": 0.06464504823088646,
+        "decode_seconds": 1.3225595317780972,
+        "end_to_end_seconds": 1.3872056882828474,
+        "prefill_gpu_ms": 62.22732925415039,
+        "decode_gpu_ms": 1320.451416015625,
+        "prefill_tokens_per_second": 1980.0433831039122,
+        "decode_tokens_per_second": 24.19550820292984,
+        "output_tokens_per_second": 23.067956158405895,
+        "total_tokens_per_second": 115.33978079202949,
+        "peak_allocated_bytes": 10278468096,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      },
+      "structured-eml-d1-s1103-n12000": {
+        "prefill_seconds": 0.0610177218914032,
+        "decode_seconds": 1.3055852446705103,
+        "end_to_end_seconds": 1.366603795439005,
+        "prefill_gpu_ms": 58.61043167114258,
+        "decode_gpu_ms": 1303.1998291015625,
+        "prefill_tokens_per_second": 2097.7512111613914,
+        "decode_tokens_per_second": 24.51008092395822,
+        "output_tokens_per_second": 23.415711347209005,
+        "total_tokens_per_second": 117.07855673604502,
+        "peak_allocated_bytes": 10178208256,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      }
+    },
+    {
+      "repeat": 7,
+      "order": [
+        "structured-eml-d1-s1103-n12000",
+        "original"
+      ],
+      "structured-eml-d1-s1103-n12000": {
+        "prefill_seconds": 0.06082644499838352,
+        "decode_seconds": 1.337956814095378,
+        "end_to_end_seconds": 1.398784577846527,
+        "prefill_gpu_ms": 58.4005126953125,
+        "decode_gpu_ms": 1335.5198974609375,
+        "prefill_tokens_per_second": 2104.347870459989,
+        "decode_tokens_per_second": 23.917064932798976,
+        "output_tokens_per_second": 22.8770037265245,
+        "total_tokens_per_second": 114.3850186326225,
+        "peak_allocated_bytes": 10178208256,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      },
+      "original": {
+        "prefill_seconds": 0.062232859432697296,
+        "decode_seconds": 1.3517940677702427,
+        "end_to_end_seconds": 1.414028026163578,
+        "prefill_gpu_ms": 59.852256774902344,
+        "decode_gpu_ms": 1351.383056640625,
+        "prefill_tokens_per_second": 2056.7912380504968,
+        "decode_tokens_per_second": 23.67224473235288,
+        "output_tokens_per_second": 22.63038596683243,
+        "total_tokens_per_second": 113.15192983416216,
+        "peak_allocated_bytes": 10278468096,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      }
+    },
+    {
+      "repeat": 8,
+      "order": [
+        "original",
+        "structured-eml-d1-s1103-n12000"
+      ],
+      "original": {
+        "prefill_seconds": 0.06215396337211132,
+        "decode_seconds": 1.3219376765191555,
+        "end_to_end_seconds": 1.3840926978737116,
+        "prefill_gpu_ms": 60.66572952270508,
+        "decode_gpu_ms": 1319.4967041015625,
+        "prefill_tokens_per_second": 2059.402056690628,
+        "decode_tokens_per_second": 24.206890058735915,
+        "output_tokens_per_second": 23.11983875730249,
+        "total_tokens_per_second": 115.59919378651244,
+        "peak_allocated_bytes": 10278468096,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      },
+      "structured-eml-d1-s1103-n12000": {
+        "prefill_seconds": 0.047575343400239944,
+        "decode_seconds": 1.3225252721458673,
+        "end_to_end_seconds": 1.3701017498970032,
+        "prefill_gpu_ms": 47.30083084106445,
+        "decode_gpu_ms": 1321.234619140625,
+        "prefill_tokens_per_second": 2690.4692820221335,
+        "decode_tokens_per_second": 24.196134980527294,
+        "output_tokens_per_second": 23.355929588737176,
+        "total_tokens_per_second": 116.77964794368589,
+        "peak_allocated_bytes": 10178208256,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      }
+    },
+    {
+      "repeat": 9,
+      "order": [
+        "structured-eml-d1-s1103-n12000",
+        "original"
+      ],
+      "structured-eml-d1-s1103-n12000": {
+        "prefill_seconds": 0.0540306493639946,
+        "decode_seconds": 1.3193018473684788,
+        "end_to_end_seconds": 1.3733337949961424,
+        "prefill_gpu_ms": 51.632606506347656,
+        "decode_gpu_ms": 1316.8619384765625,
+        "prefill_tokens_per_second": 2369.025756801245,
+        "decode_tokens_per_second": 24.255252930804435,
+        "output_tokens_per_second": 23.300963040882486,
+        "total_tokens_per_second": 116.50481520441244,
+        "peak_allocated_bytes": 10178208256,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      },
+      "original": {
+        "prefill_seconds": 0.05132339149713516,
+        "decode_seconds": 1.3119138926267624,
+        "end_to_end_seconds": 1.3632382433861494,
+        "prefill_gpu_ms": 49.28255844116211,
+        "decode_gpu_ms": 1309.4547119140625,
+        "prefill_tokens_per_second": 2493.9895097763538,
+        "decode_tokens_per_second": 24.391844754329433,
+        "output_tokens_per_second": 23.473519874644328,
+        "total_tokens_per_second": 117.36759937322164,
+        "peak_allocated_bytes": 10278468096,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      }
+    },
+    {
+      "repeat": 10,
+      "order": [
+        "original",
+        "structured-eml-d1-s1103-n12000"
+      ],
+      "original": {
+        "prefill_seconds": 0.05741776339709759,
+        "decode_seconds": 1.2755249682813883,
+        "end_to_end_seconds": 1.332943832501769,
+        "prefill_gpu_ms": 54.98495864868164,
+        "decode_gpu_ms": 1273.0845947265625,
+        "prefill_tokens_per_second": 2229.2752700024234,
+        "decode_tokens_per_second": 25.087709606434466,
+        "output_tokens_per_second": 24.007013063663752,
+        "total_tokens_per_second": 120.03506531831877,
+        "peak_allocated_bytes": 10278468096,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      },
+      "structured-eml-d1-s1103-n12000": {
+        "prefill_seconds": 0.05252382718026638,
+        "decode_seconds": 1.3111582454293966,
+        "end_to_end_seconds": 1.363683257251978,
+        "prefill_gpu_ms": 51.5313606262207,
+        "decode_gpu_ms": 1308.731689453125,
+        "prefill_tokens_per_second": 2436.989207977796,
+        "decode_tokens_per_second": 24.405902271178707,
+        "output_tokens_per_second": 23.465859707396202,
+        "total_tokens_per_second": 117.32929853698101,
+        "peak_allocated_bytes": 10178208256,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      }
+    },
+    {
+      "repeat": 11,
+      "order": [
+        "structured-eml-d1-s1103-n12000",
+        "original"
+      ],
+      "structured-eml-d1-s1103-n12000": {
+        "prefill_seconds": 0.06208456680178642,
+        "decode_seconds": 1.3105339482426643,
+        "end_to_end_seconds": 1.3726195357739925,
+        "prefill_gpu_ms": 59.66169738769531,
+        "decode_gpu_ms": 1308.10205078125,
+        "prefill_tokens_per_second": 2061.704004614508,
+        "decode_tokens_per_second": 24.417528476015285,
+        "output_tokens_per_second": 23.313087979587763,
+        "total_tokens_per_second": 116.56543989793882,
+        "peak_allocated_bytes": 10178208256,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      },
+      "original": {
+        "prefill_seconds": 0.059945810586214066,
+        "decode_seconds": 1.2833801470696926,
+        "end_to_end_seconds": 1.3433273546397686,
+        "prefill_gpu_ms": 57.58201599121094,
+        "decode_gpu_ms": 1280.9931640625,
+        "prefill_tokens_per_second": 2135.2618097625086,
+        "decode_tokens_per_second": 24.93415538105739,
+        "output_tokens_per_second": 23.821445971061337,
+        "total_tokens_per_second": 119.10722985530668,
+        "peak_allocated_bytes": 10278468096,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      }
+    },
+    {
+      "repeat": 12,
+      "order": [
+        "original",
+        "structured-eml-d1-s1103-n12000"
+      ],
+      "original": {
+        "prefill_seconds": 0.06017659790813923,
+        "decode_seconds": 1.297370245680213,
+        "end_to_end_seconds": 1.3575479574501514,
+        "prefill_gpu_ms": 57.75465774536133,
+        "decode_gpu_ms": 1294.927734375,
+        "prefill_tokens_per_second": 2127.072723442999,
+        "decode_tokens_per_second": 24.665279712209184,
+        "output_tokens_per_second": 23.571911271631837,
+        "total_tokens_per_second": 117.85955635815918,
+        "peak_allocated_bytes": 10278468096,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      },
+      "structured-eml-d1-s1103-n12000": {
+        "prefill_seconds": 0.06108446419239044,
+        "decode_seconds": 1.3413327150046825,
+        "end_to_end_seconds": 1.402417914941907,
+        "prefill_gpu_ms": 58.68582534790039,
+        "decode_gpu_ms": 1340.931396484375,
+        "prefill_tokens_per_second": 2095.45915958031,
+        "decode_tokens_per_second": 23.856869844472772,
+        "output_tokens_per_second": 22.817734755852396,
+        "total_tokens_per_second": 114.08867377926198,
+        "peak_allocated_bytes": 10178208256,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      }
+    },
+    {
+      "repeat": 13,
+      "order": [
+        "structured-eml-d1-s1103-n12000",
+        "original"
+      ],
+      "structured-eml-d1-s1103-n12000": {
+        "prefill_seconds": 0.06113276444375515,
+        "decode_seconds": 1.3205725066363811,
+        "end_to_end_seconds": 1.3817060384899378,
+        "prefill_gpu_ms": 58.68048095703125,
+        "decode_gpu_ms": 1318.305908203125,
+        "prefill_tokens_per_second": 2093.8035628630155,
+        "decode_tokens_per_second": 24.23191444558158,
+        "output_tokens_per_second": 23.159774299729268,
+        "total_tokens_per_second": 115.79887149864633,
+        "peak_allocated_bytes": 10178208256,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      },
+      "original": {
+        "prefill_seconds": 0.05859069153666496,
+        "decode_seconds": 1.2872749604284763,
+        "end_to_end_seconds": 1.3458667360246181,
+        "prefill_gpu_ms": 57.750526428222656,
+        "decode_gpu_ms": 1284.84619140625,
+        "prefill_tokens_per_second": 2184.647367063418,
+        "decode_tokens_per_second": 24.85871393734609,
+        "output_tokens_per_second": 23.776499666319612,
+        "total_tokens_per_second": 118.88249833159807,
+        "peak_allocated_bytes": 10278468096,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      }
+    },
+    {
+      "repeat": 14,
+      "order": [
+        "original",
+        "structured-eml-d1-s1103-n12000"
+      ],
+      "original": {
+        "prefill_seconds": 0.05936752073466778,
+        "decode_seconds": 1.2936135828495026,
+        "end_to_end_seconds": 1.3529821317642927,
+        "prefill_gpu_ms": 56.95142364501953,
+        "decode_gpu_ms": 1291.1649169921875,
+        "prefill_tokens_per_second": 2156.0610653099775,
+        "decode_tokens_per_second": 24.73690785583135,
+        "output_tokens_per_second": 23.651457952568748,
+        "total_tokens_per_second": 118.25728976284374,
+        "peak_allocated_bytes": 10278468096,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      },
+      "structured-eml-d1-s1103-n12000": {
+        "prefill_seconds": 0.06085018813610077,
+        "decode_seconds": 1.358304077759385,
+        "end_to_end_seconds": 1.4191550742834806,
+        "prefill_gpu_ms": 60.10902404785156,
+        "decode_gpu_ms": 1355.88232421875,
+        "prefill_tokens_per_second": 2103.526774867292,
+        "decode_tokens_per_second": 23.558789614168113,
+        "output_tokens_per_second": 22.548628109691627,
+        "total_tokens_per_second": 112.74314054845813,
+        "peak_allocated_bytes": 10178208256,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      }
+    },
+    {
+      "repeat": 15,
+      "order": [
+        "structured-eml-d1-s1103-n12000",
+        "original"
+      ],
+      "structured-eml-d1-s1103-n12000": {
+        "prefill_seconds": 0.06269851513206959,
+        "decode_seconds": 1.3271312303841114,
+        "end_to_end_seconds": 1.389830445870757,
+        "prefill_gpu_ms": 62.29395294189453,
+        "decode_gpu_ms": 1324.6883544921875,
+        "prefill_tokens_per_second": 2041.5156520115008,
+        "decode_tokens_per_second": 24.112159571995186,
+        "output_tokens_per_second": 23.024391281017987,
+        "total_tokens_per_second": 115.12195640508993,
+        "peak_allocated_bytes": 10178208256,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      },
+      "original": {
+        "prefill_seconds": 0.056912172585725784,
+        "decode_seconds": 1.3587056957185268,
+        "end_to_end_seconds": 1.4156186319887638,
+        "prefill_gpu_ms": 54.51023864746094,
+        "decode_gpu_ms": 1356.26513671875,
+        "prefill_tokens_per_second": 2249.0794883501576,
+        "decode_tokens_per_second": 23.55182590375275,
+        "output_tokens_per_second": 22.60495819770617,
+        "total_tokens_per_second": 113.02479098853085,
+        "peak_allocated_bytes": 10278468096,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      }
+    },
+    {
+      "repeat": 16,
+      "order": [
+        "original",
+        "structured-eml-d1-s1103-n12000"
+      ],
+      "original": {
+        "prefill_seconds": 0.048191700130701065,
+        "decode_seconds": 1.313777981325984,
+        "end_to_end_seconds": 1.3619705233722925,
+        "prefill_gpu_ms": 48.14259338378906,
+        "decode_gpu_ms": 1311.39111328125,
+        "prefill_tokens_per_second": 2656.059023708445,
+        "decode_tokens_per_second": 24.357235739103114,
+        "output_tokens_per_second": 23.495368989900562,
+        "total_tokens_per_second": 117.4768449495028,
+        "peak_allocated_bytes": 10278468096,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      },
+      "structured-eml-d1-s1103-n12000": {
+        "prefill_seconds": 0.05470665544271469,
+        "decode_seconds": 1.4100242424756289,
+        "end_to_end_seconds": 1.4647320564836264,
+        "prefill_gpu_ms": 52.26047897338867,
+        "decode_gpu_ms": 1407.637451171875,
+        "prefill_tokens_per_second": 2339.7518814513055,
+        "decode_tokens_per_second": 22.694645266393774,
+        "output_tokens_per_second": 21.846999154795732,
+        "total_tokens_per_second": 109.23499577397867,
+        "peak_allocated_bytes": 10178208256,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      }
+    },
+    {
+      "repeat": 17,
+      "order": [
+        "structured-eml-d1-s1103-n12000",
+        "original"
+      ],
+      "structured-eml-d1-s1103-n12000": {
+        "prefill_seconds": 0.06299934908747673,
+        "decode_seconds": 1.3505502678453922,
+        "end_to_end_seconds": 1.4135504513978958,
+        "prefill_gpu_ms": 60.550846099853516,
+        "decode_gpu_ms": 1348.1414794921875,
+        "prefill_tokens_per_second": 2031.7670238507967,
+        "decode_tokens_per_second": 23.694045872910287,
+        "output_tokens_per_second": 22.638031750726967,
+        "total_tokens_per_second": 113.19015875363483,
+        "peak_allocated_bytes": 10178208256,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      },
+      "original": {
+        "prefill_seconds": 0.06472818925976753,
+        "decode_seconds": 1.342363515868783,
+        "end_to_end_seconds": 1.4070927053689957,
+        "prefill_gpu_ms": 62.308929443359375,
+        "decode_gpu_ms": 1339.9154052734375,
+        "prefill_tokens_per_second": 1977.5000886601304,
+        "decode_tokens_per_second": 23.838550155536275,
+        "output_tokens_per_second": 22.74192729299121,
+        "total_tokens_per_second": 113.70963646495605,
+        "peak_allocated_bytes": 10278468096,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      }
+    },
+    {
+      "repeat": 18,
+      "order": [
+        "original",
+        "structured-eml-d1-s1103-n12000"
+      ],
+      "original": {
+        "prefill_seconds": 0.07030471041798592,
+        "decode_seconds": 1.342019783332944,
+        "end_to_end_seconds": 1.4123254995793104,
+        "prefill_gpu_ms": 67.97350311279297,
+        "decode_gpu_ms": 1341.2860107421875,
+        "prefill_tokens_per_second": 1820.6461450306183,
+        "decode_tokens_per_second": 23.844655941305945,
+        "output_tokens_per_second": 22.657666387480678,
+        "total_tokens_per_second": 113.2883319374034,
+        "peak_allocated_bytes": 10278468096,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      },
+      "structured-eml-d1-s1103-n12000": {
+        "prefill_seconds": 0.05957374349236488,
+        "decode_seconds": 1.356142994016409,
+        "end_to_end_seconds": 1.415717551484704,
+        "prefill_gpu_ms": 57.15657424926758,
+        "decode_gpu_ms": 1353.7003173828125,
+        "prefill_tokens_per_second": 2148.5975615483153,
+        "decode_tokens_per_second": 23.59633175940207,
+        "output_tokens_per_second": 22.6033787364158,
+        "total_tokens_per_second": 113.016893682079,
+        "peak_allocated_bytes": 10178208256,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      }
+    },
+    {
+      "repeat": 19,
+      "order": [
+        "structured-eml-d1-s1103-n12000",
+        "original"
+      ],
+      "structured-eml-d1-s1103-n12000": {
+        "prefill_seconds": 0.06222829408943653,
+        "decode_seconds": 1.3534354232251644,
+        "end_to_end_seconds": 1.415664428845048,
+        "prefill_gpu_ms": 59.83216094970703,
+        "decode_gpu_ms": 1353.0145263671875,
+        "prefill_tokens_per_second": 2056.9421333651576,
+        "decode_tokens_per_second": 23.643536626036955,
+        "output_tokens_per_second": 22.60422692551991,
+        "total_tokens_per_second": 113.02113462759957,
+        "peak_allocated_bytes": 10178208256,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      },
+      "original": {
+        "prefill_seconds": 0.062483787536621094,
+        "decode_seconds": 1.3862000554800034,
+        "end_to_end_seconds": 1.4486849885433912,
+        "prefill_gpu_ms": 60.116031646728516,
+        "decode_gpu_ms": 1383.7646484375,
+        "prefill_tokens_per_second": 2048.5313878416946,
+        "decode_tokens_per_second": 23.084691039721008,
+        "output_tokens_per_second": 22.0889981280023,
+        "total_tokens_per_second": 110.4449906400115,
+        "peak_allocated_bytes": 10278468096,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      }
+    },
+    {
+      "repeat": 20,
+      "order": [
+        "original",
+        "structured-eml-d1-s1103-n12000"
+      ],
+      "original": {
+        "prefill_seconds": 0.06431950069963932,
+        "decode_seconds": 1.3581713680177927,
+        "end_to_end_seconds": 1.422492140904069,
+        "prefill_gpu_ms": 61.890846252441406,
+        "decode_gpu_ms": 1355.7249755859375,
+        "prefill_tokens_per_second": 1990.0651996310937,
+        "decode_tokens_per_second": 23.561091592368765,
+        "output_tokens_per_second": 22.495730612376043,
+        "total_tokens_per_second": 112.47865306188022,
+        "peak_allocated_bytes": 10278468096,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      },
+      "structured-eml-d1-s1103-n12000": {
+        "prefill_seconds": 0.06196477264165878,
+        "decode_seconds": 1.3905625119805336,
+        "end_to_end_seconds": 1.4525282829999924,
+        "prefill_gpu_ms": 59.55459213256836,
+        "decode_gpu_ms": 1390.2330322265625,
+        "prefill_tokens_per_second": 2065.6898192820267,
+        "decode_tokens_per_second": 23.01227001612709,
+        "output_tokens_per_second": 22.030552089428863,
+        "total_tokens_per_second": 110.15276044714432,
+        "peak_allocated_bytes": 10178208256,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      }
+    },
+    {
+      "repeat": 21,
+      "order": [
+        "structured-eml-d1-s1103-n12000",
+        "original"
+      ],
+      "structured-eml-d1-s1103-n12000": {
+        "prefill_seconds": 0.057747406885027885,
+        "decode_seconds": 1.3933214154094458,
+        "end_to_end_seconds": 1.4510698392987251,
+        "prefill_gpu_ms": 57.47382354736328,
+        "decode_gpu_ms": 1390.8819580078125,
+        "prefill_tokens_per_second": 2216.5497449061463,
+        "decode_tokens_per_second": 22.966703623511293,
+        "output_tokens_per_second": 22.05269459357311,
+        "total_tokens_per_second": 110.26347296786555,
+        "peak_allocated_bytes": 10178208256,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      },
+      "original": {
+        "prefill_seconds": 0.06296154670417309,
+        "decode_seconds": 1.3865822535008192,
+        "end_to_end_seconds": 1.44954501837492,
+        "prefill_gpu_ms": 60.52716827392578,
+        "decode_gpu_ms": 1384.1651611328125,
+        "prefill_tokens_per_second": 2032.9869055061852,
+        "decode_tokens_per_second": 23.078327967350617,
+        "output_tokens_per_second": 22.075892500306818,
+        "total_tokens_per_second": 110.37946250153408,
+        "peak_allocated_bytes": 10278468096,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      }
+    },
+    {
+      "repeat": 22,
+      "order": [
+        "original",
+        "structured-eml-d1-s1103-n12000"
+      ],
+      "original": {
+        "prefill_seconds": 0.057691773399710655,
+        "decode_seconds": 1.3303791247308254,
+        "end_to_end_seconds": 1.3880719374865294,
+        "prefill_gpu_ms": 55.264801025390625,
+        "decode_gpu_ms": 1327.9261474609375,
+        "prefill_tokens_per_second": 2218.6872140879964,
+        "decode_tokens_per_second": 24.053293835676005,
+        "output_tokens_per_second": 23.05356021961257,
+        "total_tokens_per_second": 115.26780109806285,
+        "peak_allocated_bytes": 10278468096,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      },
+      "structured-eml-d1-s1103-n12000": {
+        "prefill_seconds": 0.05927920900285244,
+        "decode_seconds": 1.3447448126971722,
+        "end_to_end_seconds": 1.4040253721177578,
+        "prefill_gpu_ms": 56.896480560302734,
+        "decode_gpu_ms": 1342.3153076171875,
+        "prefill_tokens_per_second": 2159.2730765662004,
+        "decode_tokens_per_second": 23.79633644826425,
+        "output_tokens_per_second": 22.79161091778056,
+        "total_tokens_per_second": 113.9580545889028,
+        "peak_allocated_bytes": 10178208256,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      }
+    },
+    {
+      "repeat": 23,
+      "order": [
+        "structured-eml-d1-s1103-n12000",
+        "original"
+      ],
+      "structured-eml-d1-s1103-n12000": {
+        "prefill_seconds": 0.05986557528376579,
+        "decode_seconds": 1.323777947574854,
+        "end_to_end_seconds": 1.3836445230990648,
+        "prefill_gpu_ms": 59.80665588378906,
+        "decode_gpu_ms": 1321.36767578125,
+        "prefill_tokens_per_second": 2138.1236109946935,
+        "decode_tokens_per_second": 24.173238463915823,
+        "output_tokens_per_second": 23.12732747882882,
+        "total_tokens_per_second": 115.6366373941441,
+        "peak_allocated_bytes": 10178208256,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      },
+      "original": {
+        "prefill_seconds": 0.05554087087512016,
+        "decode_seconds": 1.3217480536550283,
+        "end_to_end_seconds": 1.3772898465394974,
+        "prefill_gpu_ms": 55.48918533325195,
+        "decode_gpu_ms": 1319.2978515625,
+        "prefill_tokens_per_second": 2304.609164083855,
+        "decode_tokens_per_second": 24.210362868710444,
+        "output_tokens_per_second": 23.234034637227186,
+        "total_tokens_per_second": 116.17017318613594,
+        "peak_allocated_bytes": 10278468096,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      }
+    },
+    {
+      "repeat": 24,
+      "order": [
+        "original",
+        "structured-eml-d1-s1103-n12000"
+      ],
+      "original": {
+        "prefill_seconds": 0.06126146577298641,
+        "decode_seconds": 1.3837798833847046,
+        "end_to_end_seconds": 1.4450527969747782,
+        "prefill_gpu_ms": 61.21440124511719,
+        "decode_gpu_ms": 1381.3563232421875,
+        "prefill_tokens_per_second": 2089.4047895347994,
+        "decode_tokens_per_second": 23.125065181413454,
+        "output_tokens_per_second": 22.14451960993542,
+        "total_tokens_per_second": 110.72259804967709,
+        "peak_allocated_bytes": 10278468096,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      },
+      "structured-eml-d1-s1103-n12000": {
+        "prefill_seconds": 0.06246308609843254,
+        "decode_seconds": 1.419048760086298,
+        "end_to_end_seconds": 1.481512675061822,
+        "prefill_gpu_ms": 60.03855895996094,
+        "decode_gpu_ms": 1416.6083984375,
+        "prefill_tokens_per_second": 2049.2103095625316,
+        "decode_tokens_per_second": 22.550317438037826,
+        "output_tokens_per_second": 21.599545207174604,
+        "total_tokens_per_second": 107.99772603587301,
+        "peak_allocated_bytes": 10178208256,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      }
+    },
+    {
+      "repeat": 25,
+      "order": [
+        "structured-eml-d1-s1103-n12000",
+        "original"
+      ],
+      "structured-eml-d1-s1103-n12000": {
+        "prefill_seconds": 0.05354873277246952,
+        "decode_seconds": 1.4499638583511114,
+        "end_to_end_seconds": 1.503513514995575,
+        "prefill_gpu_ms": 51.158782958984375,
+        "decode_gpu_ms": 1447.523681640625,
+        "prefill_tokens_per_second": 2390.3460151685863,
+        "decode_tokens_per_second": 22.069515605989086,
+        "output_tokens_per_second": 21.283480115637126,
+        "total_tokens_per_second": 106.41740057818562,
+        "peak_allocated_bytes": 10178208256,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      },
+      "original": {
+        "prefill_seconds": 0.0608851183205843,
+        "decode_seconds": 1.3718919306993484,
+        "end_to_end_seconds": 1.4327781368047,
+        "prefill_gpu_ms": 58.43708801269531,
+        "decode_gpu_ms": 1369.4466552734375,
+        "prefill_tokens_per_second": 2102.3199680097396,
+        "decode_tokens_per_second": 23.32545245286732,
+        "output_tokens_per_second": 22.33423248023911,
+        "total_tokens_per_second": 111.67116240119555,
+        "peak_allocated_bytes": 10278468096,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      }
+    },
+    {
+      "repeat": 26,
+      "order": [
+        "original",
+        "structured-eml-d1-s1103-n12000"
+      ],
+      "original": {
+        "prefill_seconds": 0.05876098945736885,
+        "decode_seconds": 1.3480483610183,
+        "end_to_end_seconds": 1.4068101346492767,
+        "prefill_gpu_ms": 58.49769592285156,
+        "decode_gpu_ms": 1345.6058349609375,
+        "prefill_tokens_per_second": 2178.315940252574,
+        "decode_tokens_per_second": 23.738020775328543,
+        "output_tokens_per_second": 22.746495217691706,
+        "total_tokens_per_second": 113.73247608845854,
+        "peak_allocated_bytes": 10278468096,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      },
+      "structured-eml-d1-s1103-n12000": {
+        "prefill_seconds": 0.057706886902451515,
+        "decode_seconds": 1.3878904189914465,
+        "end_to_end_seconds": 1.4455983024090528,
+        "prefill_gpu_ms": 57.65977478027344,
+        "decode_gpu_ms": 1385.46044921875,
+        "prefill_tokens_per_second": 2218.1061372513977,
+        "decode_tokens_per_second": 23.056575333414138,
+        "output_tokens_per_second": 22.136163238897563,
+        "total_tokens_per_second": 110.68081619448782,
+        "peak_allocated_bytes": 10178208256,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      }
+    },
+    {
+      "repeat": 27,
+      "order": [
+        "structured-eml-d1-s1103-n12000",
+        "original"
+      ],
+      "structured-eml-d1-s1103-n12000": {
+        "prefill_seconds": 0.05521737225353718,
+        "decode_seconds": 1.4674018137156963,
+        "end_to_end_seconds": 1.5226201750338078,
+        "prefill_gpu_ms": 52.82643127441406,
+        "decode_gpu_ms": 1465.05908203125,
+        "prefill_tokens_per_second": 2318.111036002812,
+        "decode_tokens_per_second": 21.807251225191603,
+        "output_tokens_per_second": 21.016403515925752,
+        "total_tokens_per_second": 105.08201757962875,
+        "peak_allocated_bytes": 10178208256,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      },
+      "original": {
+        "prefill_seconds": 0.04686636105179787,
+        "decode_seconds": 1.4105656761676073,
+        "end_to_end_seconds": 1.4574330933392048,
+        "prefill_gpu_ms": 46.48640060424805,
+        "decode_gpu_ms": 1408.3846435546875,
+        "prefill_tokens_per_second": 2731.1700146408043,
+        "decode_tokens_per_second": 22.685934118956734,
+        "output_tokens_per_second": 21.95641099838281,
+        "total_tokens_per_second": 109.78205499191407,
+        "peak_allocated_bytes": 10278468096,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      }
+    },
+    {
+      "repeat": 28,
+      "order": [
+        "original",
+        "structured-eml-d1-s1103-n12000"
+      ],
+      "original": {
+        "prefill_seconds": 0.061280542984604836,
+        "decode_seconds": 1.391191117465496,
+        "end_to_end_seconds": 1.452472634613514,
+        "prefill_gpu_ms": 60.94620895385742,
+        "decode_gpu_ms": 1388.7479248046875,
+        "prefill_tokens_per_second": 2088.754338096461,
+        "decode_tokens_per_second": 23.001871991749297,
+        "output_tokens_per_second": 22.031396142974376,
+        "total_tokens_per_second": 110.15698071487188,
+        "peak_allocated_bytes": 10278468096,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      },
+      "structured-eml-d1-s1103-n12000": {
+        "prefill_seconds": 0.06217066943645477,
+        "decode_seconds": 1.4101482201367617,
+        "end_to_end_seconds": 1.4723196998238564,
+        "prefill_gpu_ms": 59.775169372558594,
+        "decode_gpu_ms": 1409.734619140625,
+        "prefill_tokens_per_second": 2058.8486686769556,
+        "decode_tokens_per_second": 22.692649994549164,
+        "output_tokens_per_second": 21.734409995212573,
+        "total_tokens_per_second": 108.67204997606287,
+        "peak_allocated_bytes": 10178208256,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      }
+    },
+    {
+      "repeat": 29,
+      "order": [
+        "structured-eml-d1-s1103-n12000",
+        "original"
+      ],
+      "structured-eml-d1-s1103-n12000": {
+        "prefill_seconds": 0.07196191884577274,
+        "decode_seconds": 1.4467766713351011,
+        "end_to_end_seconds": 1.5187396313995123,
+        "prefill_gpu_ms": 69.50911712646484,
+        "decode_gpu_ms": 1444.35302734375,
+        "prefill_tokens_per_second": 1778.7185507702607,
+        "decode_tokens_per_second": 22.118133803242802,
+        "output_tokens_per_second": 21.07010269463511,
+        "total_tokens_per_second": 105.35051347317555,
+        "peak_allocated_bytes": 10178208256,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      },
+      "original": {
+        "prefill_seconds": 0.0625634454190731,
+        "decode_seconds": 1.3915679212659597,
+        "end_to_end_seconds": 1.454132579267025,
+        "prefill_gpu_ms": 60.13443374633789,
+        "decode_gpu_ms": 1389.1549072265625,
+        "prefill_tokens_per_second": 2045.9231287952357,
+        "decode_tokens_per_second": 22.995643626858286,
+        "output_tokens_per_second": 22.00624651166954,
+        "total_tokens_per_second": 110.0312325583477,
+        "peak_allocated_bytes": 10278468096,
+        "peak_reserved_bytes": 10338959360,
+        "cache_cuda_storage_bytes": 2949216,
+        "cache_total_storage_bytes": 2949216
+      }
+    }
+  ],
+  "isolated_memory": {
+    "original": {
+      "peak_allocated_bytes": 10277419520,
+      "peak_reserved_bytes": 10315890688,
+      "cache_cuda_storage_bytes": 2949216,
+      "cache_total_storage_bytes": 2949216
+    },
+    "structured-eml-d1-s1103-n12000": {
+      "peak_allocated_bytes": 10178208256,
+      "peak_reserved_bytes": 10225713152,
+      "cache_cuda_storage_bytes": 2949216,
+      "cache_total_storage_bytes": 2949216
+    }
+  },
+  "allocator_policy": "First warm-up per path starts with an empty unused allocator cache and records isolated working memory. Nine interleaved warm-ups follow. No allocator clearing between timed switches; reserved memory in timed samples can retain comparison allocations.",
+  "telemetry_before": [
+    "0, GPU-49c83277-cb07-75ee-b58a-8beadfc00cf0, NVIDIA H100 80GB HBM3, 75125 MiB, 5966 MiB, 0 %",
+    "1, GPU-026e38f1-2523-2925-1bed-7dc187d46062, NVIDIA H100 80GB HBM3, 71833 MiB, 9258 MiB, 84 %",
+    "2, GPU-6c58a2c6-f9d9-436d-8cd5-ce988d1c3551, NVIDIA H100 80GB HBM3, 79573 MiB, 1518 MiB, 0 %",
+    "3, GPU-146dd56f-95c5-b931-44a3-fd85a21bf2fd, NVIDIA H100 80GB HBM3, 78751 MiB, 2340 MiB, 79 %"
+  ],
+  "telemetry_after": [
+    "0, GPU-49c83277-cb07-75ee-b58a-8beadfc00cf0, NVIDIA H100 80GB HBM3, 75125 MiB, 5966 MiB, 100 %",
+    "1, GPU-026e38f1-2523-2925-1bed-7dc187d46062, NVIDIA H100 80GB HBM3, 71833 MiB, 9258 MiB, 100 %",
+    "2, GPU-6c58a2c6-f9d9-436d-8cd5-ce988d1c3551, NVIDIA H100 80GB HBM3, 79573 MiB, 1518 MiB, 54 %",
+    "3, GPU-146dd56f-95c5-b931-44a3-fd85a21bf2fd, NVIDIA H100 80GB HBM3, 78989 MiB, 2102 MiB, 100 %"
+  ],
+  "cuda_visible_devices": "3",
+  "device_name": "NVIDIA H100 80GB HBM3",
+  "device_uuid": "146dd56f-95c5-b931-44a3-fd85a21bf2fd",
+  "original_accounting": {
+    "parameters": 5104297504,
+    "parameter_bytes": 10208595008,
+    "buffers": 2289,
+    "buffer_bytes": 6178,
+    "coefficients": 5104299793,
+    "by_device": {
+      "cuda": 10208601186
+    }
+  },
+  "student_module_accounting": {
+    "parameters": 5993472,
+    "parameter_bytes": 11986944,
+    "buffers": 3072,
+    "buffer_bytes": 6144,
+    "coefficients": 5996544,
+    "by_device": {
+      "cuda": 11993088
+    }
+  },
+  "freeze_sha256": "9574063849ba5241047660126708cf930bf1015bb2bc854190c9cdeeb1d52a63",
+  "sharing": "Other processes are present. These paired measurements describe this shared-device workload, not exclusive serving.",
+  "timing_excludes": "Model loading, comparison module transfers, tokenization and warm-up; includes native prefill, cached decoding, fixed-token feeding, and phase synchronization."
+}
