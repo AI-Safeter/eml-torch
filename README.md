@@ -55,3 +55,10 @@ acceptance criteria and [held-out results](gemma_mechanisms/results/REPORT.md).
 The selected EML replacement failed the quality gate; expansion to several
 blocks stopped. The report explains the measured capacity and input-sufficiency
 limits without claiming a consistent EML advantage or a recovered arithmetic algorithm.
+
+The [full-width architecture screen](gemma_architecture/README.md) compares
+bottleneck, affine-shortcut, and structured replacements with matched EML and
+SiLU budgets. Removing the decoder restriction modestly improves reconstruction
+for both activations, but no candidate passes the development quality screen.
+Fresh confirmation remains unopened; the report includes installed-path timing,
+capacity bounds, and explicit limits on the conclusion.
