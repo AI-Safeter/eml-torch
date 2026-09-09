@@ -9,7 +9,7 @@ import time
 
 import torch
 
-from .common import HERE, SPEC, accounting, digest, load, root, save, setup, text_layers
+from .common import SPEC, accounting, digest, load, root, save, setup, sources, text_layers
 from .model import load_replacement
 
 
@@ -110,9 +110,9 @@ def main():
     directory = out / "benchmark"
     directory.mkdir(exist_ok=True)
     freeze = {
-        "sources": {
-            p: digest(HERE / p) for p in ["benchmark.py", "model.py", "common.py", "protocol.json"]
-        },
+        "sources": sources(
+            "benchmark.py", "model.py", "common.py", "../gemma_mechanisms/student.py"
+        ),
         "checkpoints": {m: digest(out / "training" / f"{m}.pt") for m in methods},
         "protocol": SPEC["benchmark"],
         "placement": "Entire native model and PLE table on GPU; staged comparison modules on CPU outside timing",
