@@ -1,0 +1,17 @@
+{
+  "model": {
+    "id": "google/gemma-4-E2B-it",
+    "revision": "3e22461f65e89153144f8adb70e3b8c2cc9845a7",
+    "layer": 26,
+    "dimension": 1536
+  },
+  "architecture": [
+    "Gemma4ForConditionalGeneration"
+  ],
+  "config_sha256": "1b28f3d2c3100f6c594754b81107428bd7b822a7f48272ca681dae9d2ec38330",
+  "safetensors_header_sha256": "74e51188bf4d249f9d8ae43909ee684701278e0f009398e08b19193db931ce75",
+  "parameters": 5104297504,
+  "buffers": 2289,
+  "native_mlp_parameters": 56623104,
+  "note": "Configuration and meta architecture reverified locally; full-model CUDA integration is validated separately. E2B is effective size, not stored parameter count."
+}
